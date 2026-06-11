@@ -1605,6 +1605,7 @@
           - [可爱风格](zh/skills/creative/baoyu-infographic/references/styles/kawaii.md)
           - [Knolling布局风格](zh/skills/creative/baoyu-infographic/references/styles/knolling.md)
           - [乐高积木风格](zh/skills/creative/baoyu-infographic/references/styles/lego-brick.md)
+          - [morandi-journal](zh/skills/creative/baoyu-infographic/references/styles/morandi-journal.md)
           - [折纸风格](zh/skills/creative/baoyu-infographic/references/styles/origami.md)
           - [像素艺术风格](zh/skills/creative/baoyu-infographic/references/styles/pixel-art.md)
           - [pop-laboratory](zh/skills/creative/baoyu-infographic/references/styles/pop-laboratory.md)
