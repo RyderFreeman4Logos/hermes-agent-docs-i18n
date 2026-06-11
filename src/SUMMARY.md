@@ -1832,6 +1832,7 @@
     - [Jupyter Live Kernel]()
       - [Jupyter 实时内核（hamelnb）](zh/skills/data-science/jupyter-live-kernel/SKILL.md)
   - [Dogfood]()
+    - [Dogfood：系统化的Web应用程序质量检测](zh/skills/dogfood/SKILL.md)
     - [References]()
       - [问题分类体系](zh/skills/dogfood/references/issue-taxonomy.md)
     - [Templates]()
