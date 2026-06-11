@@ -1419,6 +1419,7 @@
       - [Prompts]()
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
+        - [使用方式](zh/optional-skills/creative/baoyu-article-illustrator/references/usage.md)
         - [Palettes]()
           - [马卡龙风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/macaron.md)
           - [单色墨水风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/mono-ink.md)
