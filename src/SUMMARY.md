@@ -1727,5 +1727,7 @@
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
         - [Bundled]()
+          - [Apple]()
+            - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
