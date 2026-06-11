@@ -1493,6 +1493,8 @@
   - [Finance]()
     - [Dcf Model]()
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
+    - [Stocks]()
+      - [股票功能](zh/optional-skills/finance/stocks/SKILL.md)
   - [Gaming]()
     - [Description](zh/optional-skills/gaming/DESCRIPTION.md)
   - [Health]()
