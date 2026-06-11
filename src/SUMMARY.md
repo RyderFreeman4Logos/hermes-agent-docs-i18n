@@ -1610,6 +1610,7 @@
     - [Web Pentest]()
       - [References]()
         - [范围管控机制](zh/optional-skills/security/web-pentest/references/scope-enforcement.md)
+        - [漏洞分类体系](zh/optional-skills/security/web-pentest/references/vuln-taxonomy.md)
       - [Templates]()
         - [测试授权申请](zh/optional-skills/security/web-pentest/templates/authorization.md)
   - [Software Development]()
