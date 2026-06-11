@@ -1459,6 +1459,7 @@
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/warm.md)
           - [水彩风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/watercolor.md)
     - [Baoyu Comic]()
+      - [端口说明 — baoyu-comic](zh/optional-skills/creative/baoyu-comic/PORT_NOTES.md)
       - [References]()
         - [漫画内容分析框架](zh/optional-skills/creative/baoyu-comic/references/analysis-framework.md)
         - [自动选择功能](zh/optional-skills/creative/baoyu-comic/references/auto-selection.md)
