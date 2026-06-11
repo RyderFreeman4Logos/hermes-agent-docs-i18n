@@ -1663,6 +1663,8 @@
       - [Templates]()
         - [法证调查报告](zh/optional-skills/security/oss-forensics/templates/forensic-report.md)
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
+    - [Sherlock]()
+      - [Sherlock OSINT用户名查询功能](zh/optional-skills/security/sherlock/SKILL.md)
     - [Web Pentest]()
       - [References]()
         - [绕过技巧](zh/optional-skills/security/web-pentest/references/bypass-techniques.md)
