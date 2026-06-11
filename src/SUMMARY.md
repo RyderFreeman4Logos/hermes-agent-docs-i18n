@@ -1472,6 +1472,7 @@
           - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
           - [数据看板](zh/skills/creative/baoyu-infographic/references/layouts/dashboard.md)
           - [漏斗图](zh/skills/creative/baoyu-infographic/references/layouts/funnel.md)
+          - [中心辐射型结构](zh/skills/creative/baoyu-infographic/references/layouts/hub-spoke.md)
           - [等轴测地图](zh/skills/creative/baoyu-infographic/references/layouts/isometric-map.md)
           - [拼图模型](zh/skills/creative/baoyu-infographic/references/layouts/jigsaw.md)
           - [元素周期表](zh/skills/creative/baoyu-infographic/references/layouts/periodic-table.md)
