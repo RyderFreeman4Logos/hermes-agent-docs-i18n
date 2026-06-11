@@ -1743,6 +1743,7 @@
         - [GLSL 参考手册](zh/skills/creative/touchdesigner-mcp/references/glsl.md)
         - [布局合成器参考手册](zh/skills/creative/touchdesigner-mcp/references/layout-compositor.md)
         - [操作员指南](zh/skills/creative/touchdesigner-mcp/references/operator-tips.md)
+        - [后处理特效参考](zh/skills/creative/touchdesigner-mcp/references/postfx.md)
   - [Data Science]()
     - [Description](zh/skills/data-science/DESCRIPTION.md)
   - [Dogfood]()
