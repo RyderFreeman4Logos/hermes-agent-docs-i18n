@@ -1892,6 +1892,8 @@
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
+          - [Creative]()
+            - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
