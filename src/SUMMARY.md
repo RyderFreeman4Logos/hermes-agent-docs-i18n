@@ -1744,6 +1744,7 @@
         - [图表、绘图与数据可视化](zh/skills/creative/manim-video/references/graphs-and-data.md)
         - [场景规划参考指南](zh/skills/creative/manim-video/references/scene-planning.md)
         - [故障排除](zh/skills/creative/manim-video/references/troubleshooting.md)
+        - [视觉设计原则](zh/skills/creative/manim-video/references/visual-design.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
     - [Popular Web Designs]()
       - [Templates]()
