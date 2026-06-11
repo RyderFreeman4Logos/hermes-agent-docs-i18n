@@ -1432,6 +1432,7 @@
           - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
           - [playful风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/playful.md)
           - [复古风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/retro.md)
+          - [科学风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/scientific.md)
           - [草图模式](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/sketch.md)
     - [Baoyu Comic]()
       - [References]()
