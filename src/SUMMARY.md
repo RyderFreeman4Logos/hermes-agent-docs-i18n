@@ -1853,6 +1853,8 @@
 - [Website](zh/website/README.md)
   - [Docs]()
     - [User Stories](zh/website/docs/user-stories.md)
+    - [Guides]()
+      - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
     - [Reference]()
       - [模型目录](zh/website/docs/reference/model-catalog.md)
     - [User Guide]()
