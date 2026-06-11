@@ -1430,6 +1430,7 @@
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
         - [Styles]()
           - [设计蓝图](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/blueprint.md)
+          - [黑板风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/chalkboard.md)
           - [编辑风格指南](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/editorial.md)
           - [elegant风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/elegant.md)
           - [梦幻动画风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/fantasy-animation.md)
