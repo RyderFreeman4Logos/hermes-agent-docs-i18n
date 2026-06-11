@@ -1416,6 +1416,7 @@
       - [References]()
         - [Palettes]()
           - [Neon风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/neon.md)
+          - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
     - [Baoyu Comic]()
       - [References]()
         - [Layouts]()
