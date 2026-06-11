@@ -1864,6 +1864,7 @@
           - [服务器部署指南](zh/skills/mlops/inference/llama-cpp/references/server.md)
       - [Vllm]()
         - [References]()
+          - [性能优化](zh/skills/mlops/inference/vllm/references/optimization.md)
           - [服务器部署模式](zh/skills/mlops/inference/vllm/references/server-deployment.md)
     - [Models]()
       - [Description](zh/skills/mlops/models/DESCRIPTION.md)
