@@ -1724,6 +1724,8 @@
       - [Codex CLI](zh/skills/autonomous-ai-agents/codex/SKILL.md)
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
+    - [Architecture Diagram]()
+      - [架构图生成功能](zh/skills/creative/architecture-diagram/SKILL.md)
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
       - [References]()
