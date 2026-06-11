@@ -1457,6 +1457,8 @@
         - [模块：`{{MODULE_NAME}}`](zh/optional-skills/software-development/code-wiki/templates/module.md)
   - [Web Development]()
     - [网页开发](zh/optional-skills/web-development/DESCRIPTION.md)
+- [Packaging]()
+  - [Homebrew](zh/packaging/homebrew/README.md)
 - [Skills]()
   - [Apple]()
     - [Description](zh/skills/apple/DESCRIPTION.md)
