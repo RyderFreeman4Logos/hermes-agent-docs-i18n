@@ -1591,6 +1591,8 @@
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
     - [Tensorrt Llm]()
       - [TensorRT-LLM](zh/optional-skills/mlops/tensorrt-llm/SKILL.md)
+      - [References]()
+        - [TensorRT-LLM 优化指南](zh/optional-skills/mlops/tensorrt-llm/references/optimization.md)
     - [Torchtitan]()
       - [References]()
         - [TorchTitan中的检查点机制](zh/optional-skills/mlops/torchtitan/references/checkpoint.md)
