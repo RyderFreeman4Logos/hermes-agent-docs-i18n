@@ -1790,5 +1790,7 @@
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
         - [Optional]()
+          - [Finance]()
+            - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
           - [Mlops]()
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
