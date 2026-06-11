@@ -1783,6 +1783,8 @@
         - [后处理特效参考](zh/skills/creative/touchdesigner-mcp/references/postfx.md)
   - [Data Science]()
     - [Description](zh/skills/data-science/DESCRIPTION.md)
+    - [Jupyter Live Kernel]()
+      - [Jupyter 实时内核（hamelnb）](zh/skills/data-science/jupyter-live-kernel/SKILL.md)
   - [Dogfood]()
     - [References]()
       - [问题分类体系](zh/skills/dogfood/references/issue-taxonomy.md)
