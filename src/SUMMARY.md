@@ -1463,6 +1463,7 @@
     - [Concept Diagrams]()
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
+        - [实体物体绘制指南](zh/optional-skills/creative/concept-diagrams/references/physical-shape-cookbook.md)
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
     - [Pixel Art]()
