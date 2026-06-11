@@ -1425,6 +1425,7 @@
         - [Layouts]()
           - [电影风格](zh/optional-skills/creative/baoyu-comic/references/layouts/cinematic.md)
           - [密集型布局](zh/optional-skills/creative/baoyu-comic/references/layouts/dense.md)
+          - [四格漫画格式](zh/optional-skills/creative/baoyu-comic/references/layouts/four-panel.md)
           - [混合布局](zh/optional-skills/creative/baoyu-comic/references/layouts/mixed.md)
           - [首页展示区](zh/optional-skills/creative/baoyu-comic/references/layouts/splash.md)
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
