@@ -1483,6 +1483,7 @@
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Presets]()
+          - [concept-story](zh/optional-skills/creative/baoyu-comic/references/presets/concept-story.md)
           - [四格漫画预设——极简风格的四格商业寓言漫画](zh/optional-skills/creative/baoyu-comic/references/presets/four-panel.md)
           - [ohmsha预设——运用视觉隐喻的科普漫画风格](zh/optional-skills/creative/baoyu-comic/references/presets/ohmsha.md)
           - [少女风格](zh/optional-skills/creative/baoyu-comic/references/presets/shoujo.md)
