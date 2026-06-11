@@ -1763,6 +1763,7 @@
     - [Popular Web Designs]()
       - [Templates]()
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
+        - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
     - [Touchdesigner Mcp]()
       - [References]()
