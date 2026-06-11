@@ -1671,6 +1671,7 @@
     - [Manim Video](zh/skills/creative/manim-video/README.md)
       - [References]()
         - [场景规划参考指南](zh/skills/creative/manim-video/references/scene-planning.md)
+    - [P5Js](zh/skills/creative/p5js/README.md)
   - [Data Science]()
     - [Description](zh/skills/data-science/DESCRIPTION.md)
   - [Dogfood]()
