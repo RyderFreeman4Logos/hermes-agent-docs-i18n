@@ -1500,6 +1500,7 @@
         - [发现应用](zh/optional-skills/devops/cli/references/app-discovery.md)
         - [认证与设置](zh/optional-skills/devops/cli/references/authentication.md)
         - [CLI 参考手册](zh/optional-skills/devops/cli/references/cli-reference.md)
+        - [运行应用](zh/optional-skills/devops/cli/references/running-apps.md)
   - [Dogfood]()
     - [内部测试工具——高级质量保障与测试技能](zh/optional-skills/dogfood/DESCRIPTION.md)
   - [Finance]()
