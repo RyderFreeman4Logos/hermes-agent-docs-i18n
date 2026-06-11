@@ -1403,6 +1403,8 @@
 
 # 中文
 
+- [Apps]()
+  - [Desktop](zh/apps/desktop/README.md)
 - [Docker]()
   - [Hermes Agent 人格设定](zh/docker/SOUL.md)
 - [Docs]()
