@@ -1703,6 +1703,8 @@
       - [iMessage](zh/skills/apple/imessage/SKILL.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/skills/autonomous-ai-agents/DESCRIPTION.md)
+    - [Codex]()
+      - [Codex CLI](zh/skills/autonomous-ai-agents/codex/SKILL.md)
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Baoyu Infographic]()
