@@ -5,7 +5,7 @@ After=network-online.target
 [Service]
 Type=oneshot
 WorkingDirectory=/home/obj/project/github/RyderFreeman4Logos/hermes-agent-docs-i18n
-ExecStart=/usr/bin/env python3 /home/obj/project/github/RyderFreeman4Logos/hermes-agent-docs-i18n/scripts/sync_docs.py --commit --push
+ExecStart=/usr/bin/env python3 /home/obj/project/github/RyderFreeman4Logos/hermes-agent-docs-i18n/scripts/sync_docs.py --update-source --commit --push
 TimeoutStartSec=6h
 Nice=10
 IOSchedulingClass=best-effort

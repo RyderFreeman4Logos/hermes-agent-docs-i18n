@@ -58,6 +58,30 @@ def run(cmd: list[str], *, cwd: Path = REPO_ROOT, check: bool = True) -> subproc
     return subprocess.run(cmd, cwd=cwd, text=True, check=check)
 
 
+def output(cmd: list[str], *, cwd: Path, check: bool = True) -> str:
+    result = subprocess.run(
+        cmd,
+        cwd=cwd,
+        text=True,
+        check=check,
+        capture_output=True,
+    )
+    return result.stdout
+
+
+def maybe_update_source(source_root: Path) -> None:
+    if not (source_root / ".git").exists():
+        print(f"Source is not a git checkout; skipping source update: {source_root}")
+        return
+    status = output(["git", "status", "--porcelain"], cwd=source_root)
+    if status.strip():
+        print("Source checkout has local changes; skipping git pull --ff-only.")
+        print(status.rstrip())
+        return
+    print("Updating source checkout with git pull --ff-only.")
+    run(["git", "pull", "--ff-only"], cwd=source_root)
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -266,6 +290,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=DEFAULT_SOURCE_ROOT)
     parser.add_argument("--lang", default="zh")
+    parser.add_argument("--update-source", action="store_true")
     parser.add_argument("--skip-translation", action="store_true")
     parser.add_argument("--max-files", type=int, default=None)
     parser.add_argument("--commit", action="store_true")
@@ -275,6 +300,8 @@ def main() -> int:
     source_root = args.source_root.expanduser().resolve()
     if not source_root.exists():
         raise SystemExit(f"source root does not exist: {source_root}")
+    if args.update_source:
+        maybe_update_source(source_root)
 
     docs = collect_docs(source_root)
     if not docs:

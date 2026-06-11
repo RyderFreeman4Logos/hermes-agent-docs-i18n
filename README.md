@@ -63,9 +63,10 @@ python3 scripts/sync_docs.py --max-files 20 --commit --push
 scripts/install-systemd-user-timer.sh
 ```
 
-The timer runs as the `obj` user, syncs after the normal Hermes update window,
-translates only changed files, commits any resulting changes, and pushes to
-GitHub.
+The timer runs as the `obj` user after the normal Hermes update window. It tries
+to fast-forward the Hermes Agent source checkout when that checkout is clean,
+skips source updates when local changes are present, translates only changed
+files, commits any resulting changes, and pushes to GitHub.
 
 ## GitHub Pages
 
