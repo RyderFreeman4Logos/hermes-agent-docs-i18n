@@ -1495,6 +1495,7 @@
           - [storybook-watercolor](zh/skills/creative/baoyu-infographic/references/styles/storybook-watercolor.md)
           - [subway-map](zh/skills/creative/baoyu-infographic/references/styles/subway-map.md)
           - [UI线框图](zh/skills/creative/baoyu-infographic/references/styles/ui-wireframe.md)
+    - [Manim Video](zh/skills/creative/manim-video/README.md)
   - [Data Science]()
     - [Description](zh/skills/data-science/DESCRIPTION.md)
   - [Email]()
