@@ -1473,6 +1473,7 @@
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
     - [Pixel Art]()
+      - [出处说明](zh/optional-skills/creative/pixel-art/ATTRIBUTION.md)
       - [References]()
         - [命名调色板](zh/optional-skills/creative/pixel-art/references/palettes.md)
   - [Devops]()
