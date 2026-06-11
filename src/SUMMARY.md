@@ -1510,6 +1510,7 @@
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
     - [Hyperframes]()
       - [References]()
+        - [HyperFrames 的 GSAP 功能](zh/optional-skills/creative/hyperframes/references/gsap.md)
         - [故障排除](zh/optional-skills/creative/hyperframes/references/troubleshooting.md)
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
     - [Meme Generation]()
