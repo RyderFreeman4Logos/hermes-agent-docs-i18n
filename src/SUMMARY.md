@@ -1568,6 +1568,7 @@
         - [References](zh/optional-skills/mlops/training/axolotl/references/index.md)
       - [Trl Fine Tuning]()
         - [References]()
+          - [DPO 变体](zh/optional-skills/mlops/training/trl-fine-tuning/references/dpo-variants.md)
           - [在线强化学习方法](zh/optional-skills/mlops/training/trl-fine-tuning/references/online-rl.md)
           - [奖励模型](zh/optional-skills/mlops/training/trl-fine-tuning/references/reward-modeling.md)
           - [SFT训练指南](zh/optional-skills/mlops/training/trl-fine-tuning/references/sft-training.md)
