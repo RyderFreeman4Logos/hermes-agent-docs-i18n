@@ -1641,6 +1641,7 @@
     - [Mem0](zh/plugins/memory/mem0/README.md)
     - [Openviking](zh/plugins/memory/openviking/README.md)
     - [Retaindb](zh/plugins/memory/retaindb/README.md)
+    - [Supermemory](zh/plugins/memory/supermemory/README.md)
   - [Model Providers](zh/plugins/model-providers/README.md)
   - [Observability]()
     - [Langfuse](zh/plugins/observability/langfuse/README.md)
