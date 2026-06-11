@@ -1740,6 +1740,7 @@
         - [Bundled]()
           - [Apple]()
             - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
+            - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
           - [Media]()
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
           - [Productivity]()
