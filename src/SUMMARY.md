@@ -1912,6 +1912,7 @@
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [Features]()
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
+        - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
       - [Messaging]()
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
