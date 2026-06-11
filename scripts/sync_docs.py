@@ -26,10 +26,13 @@ EXCLUDED_DIRS = {
     ".next",
     ".turbo",
     ".venv",
+    "venv",
+    "__pycache__",
     "build",
     "coverage",
     "dist",
     "node_modules",
+    "site-packages",
 }
 
 EXCLUDED_FILES = {
