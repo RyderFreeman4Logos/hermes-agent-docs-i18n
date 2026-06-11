@@ -1637,6 +1637,7 @@
           - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
           - [对比矩阵](zh/skills/creative/baoyu-infographic/references/layouts/comparison-matrix.md)
           - [数据看板](zh/skills/creative/baoyu-infographic/references/layouts/dashboard.md)
+          - [高密度模块](zh/skills/creative/baoyu-infographic/references/layouts/dense-modules.md)
           - [漏斗图](zh/skills/creative/baoyu-infographic/references/layouts/funnel.md)
           - [层级结构](zh/skills/creative/baoyu-infographic/references/layouts/hierarchical-layers.md)
           - [中心辐射型结构](zh/skills/creative/baoyu-infographic/references/layouts/hub-spoke.md)
