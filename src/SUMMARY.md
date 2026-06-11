@@ -1585,6 +1585,7 @@
           - [参议院游说披露信息 —— 游说披露法案（LD-1 / LD-2）](zh/optional-skills/research/osint-investigation/references/sources/senate-ld.md)
           - [USAspending — 联邦政府合同与拨款信息](zh/optional-skills/research/osint-investigation/references/sources/usaspending.md)
           - [Wayback Machine — Internet Archive CDX](zh/optional-skills/research/osint-investigation/references/sources/wayback.md)
+          - [维基百科 + 维基数据](zh/optional-skills/research/osint-investigation/references/sources/wikipedia.md)
       - [Templates]()
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
   - [Security]()
