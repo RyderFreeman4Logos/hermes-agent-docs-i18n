@@ -1696,6 +1696,7 @@
         - [Excalidraw 深色模式图表](zh/skills/creative/excalidraw/references/dark-mode.md)
     - [Manim Video](zh/skills/creative/manim-video/README.md)
       - [References]()
+        - [相机与 3D 参考资料](zh/skills/creative/manim-video/references/camera-and-3d.md)
         - [场景规划参考指南](zh/skills/creative/manim-video/references/scene-planning.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
     - [Touchdesigner Mcp]()
