@@ -1537,6 +1537,8 @@
         - [SEC 文件数据提取参考指南](zh/optional-skills/finance/3-statement-model/references/sec-filings.md)
     - [Dcf Model]()
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
+    - [Merger Model]()
+      - [合并模型](zh/optional-skills/finance/merger-model/SKILL.md)
     - [Stocks]()
       - [股票功能](zh/optional-skills/finance/stocks/SKILL.md)
   - [Gaming]()
