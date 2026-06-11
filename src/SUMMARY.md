@@ -1417,6 +1417,8 @@
         - [Antigravity CLI文档精简版](zh/optional-skills/autonomous-ai-agents/antigravity-cli/references/cli-docs.md)
   - [Communication]()
     - [Description](zh/optional-skills/communication/DESCRIPTION.md)
+    - [One Three One Rule]()
+      - [1-3-1 沟通规则](zh/optional-skills/communication/one-three-one-rule/SKILL.md)
   - [Creative]()
     - [Baoyu Article Illustrator]()
       - [端口说明 — baoyu-article-illustrator](zh/optional-skills/creative/baoyu-article-illustrator/PORT_NOTES.md)
