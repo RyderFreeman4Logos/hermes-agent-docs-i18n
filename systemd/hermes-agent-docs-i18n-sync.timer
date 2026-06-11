@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Hermes Agent documentation translation sync
+
+[Timer]
+OnCalendar=*-*-* 05:30:00
+RandomizedDelaySec=20min
+Persistent=true
+Unit=hermes-agent-docs-i18n-sync.service
+
+[Install]
+WantedBy=timers.target

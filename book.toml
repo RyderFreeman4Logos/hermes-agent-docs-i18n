@@ -1,0 +1,11 @@
+[book]
+authors = ["RyderFreeman4Logos"]
+language = "en"
+src = "src"
+title = "Hermes Agent Docs i18n"
+
+[output.html]
+git-repository-url = "https://github.com/RyderFreeman4Logos/hermes-agent-docs-i18n"
+site-url = "/hermes-agent-docs-i18n/"
+additional-css = ["theme/language-toggle.css"]
+additional-js = ["theme/language-toggle.js"]
