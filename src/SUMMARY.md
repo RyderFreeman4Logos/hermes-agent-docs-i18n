@@ -1795,6 +1795,7 @@
       - [References]()
         - [相机与 3D 参考资料](zh/skills/creative/manim-video/references/camera-and-3d.md)
         - [装饰元素与视觉美化](zh/skills/creative/manim-video/references/decorations.md)
+        - [方程式与 LaTeX 参考手册](zh/skills/creative/manim-video/references/equations.md)
         - [图表、绘图与数据可视化](zh/skills/creative/manim-video/references/graphs-and-data.md)
         - [生产质量检查清单](zh/skills/creative/manim-video/references/production-quality.md)
         - [渲染参考文档](zh/skills/creative/manim-video/references/rendering.md)
