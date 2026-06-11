@@ -1415,6 +1415,8 @@
     - [Antigravity Cli]()
       - [References]()
         - [Antigravity CLI文档精简版](zh/optional-skills/autonomous-ai-agents/antigravity-cli/references/cli-docs.md)
+    - [Blackbox]()
+      - [Blackbox CLI](zh/optional-skills/autonomous-ai-agents/blackbox/SKILL.md)
   - [Communication]()
     - [Description](zh/optional-skills/communication/DESCRIPTION.md)
     - [One Three One Rule]()
