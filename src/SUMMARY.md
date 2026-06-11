@@ -1782,6 +1782,8 @@
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
+          - [Research]()
+            - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
         - [Optional]()
