@@ -1497,6 +1497,8 @@
       - [References](zh/optional-skills/mlops/pytorch-fsdp/references/index.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
+    - [Saelens]()
+      - [References](zh/optional-skills/mlops/saelens/references/README.md)
     - [Training]()
       - [Axolotl]()
         - [References](zh/optional-skills/mlops/training/axolotl/references/index.md)
