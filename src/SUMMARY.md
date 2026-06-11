@@ -1775,6 +1775,8 @@
       - [OpenHue CLI](zh/skills/smart-home/openhue/SKILL.md)
   - [Social Media]()
     - [Description](zh/skills/social-media/DESCRIPTION.md)
+  - [Yuanbao]()
+    - [元宝群组交互功能](zh/skills/yuanbao/SKILL.md)
 - [Tests]()
   - [E2E]()
     - [Matrix Xsign Bootstrap](zh/tests/e2e/matrix_xsign_bootstrap/README.md)
