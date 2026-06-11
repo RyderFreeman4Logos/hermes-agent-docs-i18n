@@ -1426,6 +1426,7 @@
           - [Neon风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/neon.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
         - [Styles]()
+          - [设计蓝图](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/blueprint.md)
           - [编辑风格指南](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/editorial.md)
           - [elegant风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/elegant.md)
           - [平面风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat.md)
