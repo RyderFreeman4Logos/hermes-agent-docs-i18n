@@ -1461,6 +1461,7 @@
   - [Homebrew](zh/packaging/homebrew/README.md)
 - [Plugins]()
   - [Memory]()
+    - [Byterover](zh/plugins/memory/byterover/README.md)
     - [Mem0](zh/plugins/memory/mem0/README.md)
 - [Skills]()
   - [Apple]()
