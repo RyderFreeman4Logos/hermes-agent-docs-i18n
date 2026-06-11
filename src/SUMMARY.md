@@ -1956,6 +1956,8 @@
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
+          - [Communication]()
+            - [1-3-1 规则](zh/website/docs/user-guide/skills/optional/communication/communication-one-three-one-rule.md)
           - [Creative]()
             - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
           - [Devops]()
