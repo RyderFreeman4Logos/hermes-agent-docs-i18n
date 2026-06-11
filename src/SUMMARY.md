@@ -1819,6 +1819,7 @@
       - [Description](zh/skills/mlops/inference/DESCRIPTION.md)
       - [Llama Cpp]()
         - [References]()
+          - [llama.cpp 的 Hugging Face URL 工作流](zh/skills/mlops/inference/llama-cpp/references/hub-discovery.md)
           - [性能优化指南](zh/skills/mlops/inference/llama-cpp/references/optimization.md)
           - [服务器部署指南](zh/skills/mlops/inference/llama-cpp/references/server.md)
     - [Models]()
