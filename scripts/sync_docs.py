@@ -4,11 +4,15 @@
 from __future__ import annotations
 
 import argparse
+import collections
+import concurrent.futures
 import hashlib
 import os
 import shutil
 import subprocess
 import sys
+import time
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,6 +24,10 @@ ZH_ROOT = REPO_ROOT / "src" / "zh"
 STATE_FILE = REPO_ROOT / "state" / "translation-hashes.tsv"
 SUMMARY_FILE = REPO_ROOT / "src" / "SUMMARY.md"
 INDEX_FILE = REPO_ROOT / "src" / "index.md"
+DEFAULT_CONFIG_FILE = REPO_ROOT / "config" / "sync.toml"
+DEFAULT_TRANSLATION_WORKERS = 1
+DEFAULT_WORKER_CEILING = 10
+DEFAULT_CONFIG_RELOAD_SECONDS = 10.0
 
 EXCLUDED_DIRS = {
     ".git",
@@ -55,6 +63,13 @@ class DocFile:
     source: Path
     rel: Path
     sha256: str
+
+
+@dataclass(frozen=True)
+class SyncConfig:
+    translation_workers: int
+    worker_ceiling: int
+    hot_reload_interval_seconds: float
 
 
 def run(cmd: list[str], *, cwd: Path = REPO_ROOT, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -147,6 +162,64 @@ def save_state(state: dict[str, str]) -> None:
     STATE_FILE.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
 
 
+def positive_int(value: object, *, name: str, default: int) -> int:
+    if value is None:
+        return default
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def positive_float(value: object, *, name: str, default: float) -> float:
+    if value is None:
+        return default
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+        raise ValueError(f"{name} must be a positive number")
+    return float(value)
+
+
+def parse_sync_config(path: Path) -> SyncConfig:
+    data: dict[str, object] = {}
+    if path.exists():
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    translation = data.get("translation", {})
+    if not isinstance(translation, dict):
+        raise ValueError("translation must be a TOML table")
+
+    workers = positive_int(
+        translation.get("workers"),
+        name="translation.workers",
+        default=DEFAULT_TRANSLATION_WORKERS,
+    )
+    worker_ceiling = positive_int(
+        translation.get("worker_ceiling"),
+        name="translation.worker_ceiling",
+        default=DEFAULT_WORKER_CEILING,
+    )
+    reload_seconds = positive_float(
+        translation.get("hot_reload_interval_seconds"),
+        name="translation.hot_reload_interval_seconds",
+        default=DEFAULT_CONFIG_RELOAD_SECONDS,
+    )
+    if workers > worker_ceiling:
+        raise ValueError("translation.workers cannot exceed translation.worker_ceiling")
+    return SyncConfig(
+        translation_workers=workers,
+        worker_ceiling=worker_ceiling,
+        hot_reload_interval_seconds=reload_seconds,
+    )
+
+
+def load_sync_config(path: Path, *, fallback: SyncConfig | None = None) -> SyncConfig:
+    try:
+        return parse_sync_config(path)
+    except (OSError, tomllib.TOMLDecodeError, ValueError) as error:
+        if fallback is None:
+            raise SystemExit(f"invalid sync config {path}: {error}") from error
+        print(f"WARNING: keeping previous sync config; failed to load {path}: {error}", file=sys.stderr)
+        return fallback
+
+
 def replace_tree(root: Path) -> None:
     if root.exists():
         shutil.rmtree(root)
@@ -181,11 +254,11 @@ def prune_empty_dirs(root: Path) -> None:
                 pass
 
 
-def translate(doc: DocFile, *, lang: str) -> None:
+def translate(doc: DocFile, *, lang: str) -> subprocess.CompletedProcess[str]:
     source = EN_ROOT / doc.rel
     output = ZH_ROOT / doc.rel
     output.parent.mkdir(parents=True, exist_ok=True)
-    run(
+    return subprocess.run(
         [
             "hymt",
             "translate-doc",
@@ -202,7 +275,11 @@ def translate(doc: DocFile, *, lang: str) -> None:
             "Hermes Agent technical documentation, CLI usage, agent skills, plugins, providers, and developer guides.",
             "--instructions",
             TRANSLATION_INSTRUCTIONS,
-        ]
+        ],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
     )
 
 
@@ -289,6 +366,82 @@ def commit_and_push(*, push: bool) -> None:
         run(["git", "push", "-u", "origin", "HEAD"])
 
 
+def translate_changed(
+    docs: list[DocFile],
+    *,
+    lang: str,
+    state: dict[str, str],
+    config_path: Path,
+    initial_config: SyncConfig,
+) -> None:
+    if not docs:
+        return
+    worker_ceiling = initial_config.worker_ceiling
+    config = initial_config
+    next_reload = 0.0
+    last_reported_workers: int | None = None
+    pending = collections.deque(docs)
+    completed = 0
+    failures: list[tuple[DocFile, subprocess.CompletedProcess[str]]] = []
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=worker_ceiling) as executor:
+        future_to_doc: dict[concurrent.futures.Future[subprocess.CompletedProcess[str]], DocFile] = {}
+        while pending or future_to_doc:
+            now = time.monotonic()
+            if now >= next_reload:
+                config = load_sync_config(config_path, fallback=config)
+                next_reload = now + config.hot_reload_interval_seconds
+                if config.translation_workers != last_reported_workers:
+                    last_reported_workers = config.translation_workers
+                    print(
+                        f"Active translation worker limit: {config.translation_workers} "
+                        f"(ceiling {worker_ceiling})",
+                        flush=True,
+                    )
+
+            while pending and len(future_to_doc) < config.translation_workers:
+                doc = pending.popleft()
+                future = executor.submit(translate, doc, lang=lang)
+                future_to_doc[future] = doc
+                print(f"queued {doc.rel.as_posix()}", flush=True)
+
+            if not future_to_doc:
+                continue
+
+            done, _pending = concurrent.futures.wait(
+                future_to_doc,
+                timeout=config.hot_reload_interval_seconds,
+                return_when=concurrent.futures.FIRST_COMPLETED,
+            )
+            if not done:
+                continue
+
+            for future in done:
+                doc = future_to_doc.pop(future)
+                completed += 1
+                print(f"[{completed}/{len(docs)}] completed {doc.rel.as_posix()}", flush=True)
+                try:
+                    result = future.result()
+                except Exception as error:  # subprocess setup failure, not translation quality.
+                    print(f"ERROR: translation task crashed for {doc.rel.as_posix()}: {error}", file=sys.stderr)
+                    raise
+                if result.stdout:
+                    print(result.stdout.rstrip())
+                if result.stderr:
+                    print(result.stderr.rstrip(), file=sys.stderr)
+                if result.returncode == 0:
+                    state[doc.rel.as_posix()] = doc.sha256
+                    save_state(state)
+                else:
+                    failures.append((doc, result))
+    if failures:
+        lines = [
+            f"{doc.rel.as_posix()} exited {result.returncode}"
+            for doc, result in failures
+        ]
+        raise SystemExit("translation failures:\n" + "\n".join(lines))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=DEFAULT_SOURCE_ROOT)
@@ -296,6 +449,13 @@ def main() -> int:
     parser.add_argument("--update-source", action="store_true")
     parser.add_argument("--skip-translation", action="store_true")
     parser.add_argument("--max-files", type=int, default=None)
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_FILE)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="Initial translation worker limit before config hot reload. Prefer config/sync.toml.",
+    )
     parser.add_argument("--commit", action="store_true")
     parser.add_argument("--push", action="store_true")
     args = parser.parse_args()
@@ -305,6 +465,14 @@ def main() -> int:
         raise SystemExit(f"source root does not exist: {source_root}")
     if args.update_source:
         maybe_update_source(source_root)
+    config_path = args.config.expanduser().resolve()
+    config = load_sync_config(config_path)
+    if args.workers is not None:
+        config = SyncConfig(
+            translation_workers=positive_int(args.workers, name="--workers", default=config.translation_workers),
+            worker_ceiling=max(config.worker_ceiling, args.workers),
+            hot_reload_interval_seconds=config.hot_reload_interval_seconds,
+        )
 
     docs = collect_docs(source_root)
     if not docs:
@@ -329,11 +497,14 @@ def main() -> int:
     print(f"Files needing translation this run: {len(changed)}")
 
     if not args.skip_translation:
-        for index, doc in enumerate(changed, start=1):
-            print(f"[{index}/{len(changed)}] translating {doc.rel.as_posix()}", flush=True)
-            translate(doc, lang=args.lang)
-            state[doc.rel.as_posix()] = doc.sha256
-            save_state(state)
+        print(f"Config file: {config_path}")
+        translate_changed(
+            changed,
+            lang=args.lang,
+            state=state,
+            config_path=config_path,
+            initial_config=config,
+        )
 
     translated_count = sum(1 for doc in docs if (ZH_ROOT / doc.rel).exists())
     generate_index(source_root, docs, translated_count)

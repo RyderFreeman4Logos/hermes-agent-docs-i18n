@@ -1043,6 +1043,7 @@
 - [optional-skills/autonomous-ai-agents/DESCRIPTION.md - Description](zh/optional-skills/autonomous-ai-agents/DESCRIPTION.md)
 - [optional-skills/communication/DESCRIPTION.md - Description](zh/optional-skills/communication/DESCRIPTION.md)
 - [optional-skills/creative/baoyu-comic/references/layouts/dense.md - 密集型布局](zh/optional-skills/creative/baoyu-comic/references/layouts/dense.md)
+- [optional-skills/creative/baoyu-comic/references/layouts/mixed.md - 混合布局](zh/optional-skills/creative/baoyu-comic/references/layouts/mixed.md)
 - [optional-skills/dogfood/DESCRIPTION.md - 内部测试工具——高级质量保障与测试技能](zh/optional-skills/dogfood/DESCRIPTION.md)
 - [optional-skills/gaming/DESCRIPTION.md - Description](zh/optional-skills/gaming/DESCRIPTION.md)
 - [optional-skills/health/DESCRIPTION.md - Description](zh/optional-skills/health/DESCRIPTION.md)

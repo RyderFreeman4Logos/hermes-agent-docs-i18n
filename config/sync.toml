@@ -1,0 +1,10 @@
+[translation]
+# Active hymt document jobs. The sync process reloads this value while running.
+workers = 1
+
+# Upper bound for hot-reloaded workers during one process run. Raising this
+# value above 10 requires restarting the sync process.
+worker_ceiling = 10
+
+# Seconds between config reload checks during long translation runs.
+hot_reload_interval_seconds = 10
