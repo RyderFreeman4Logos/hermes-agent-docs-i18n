@@ -320,7 +320,7 @@ def generate_index(source_root: Path, docs: list[DocFile], translated_count: int
     )
 
 
-def generate_summary(docs: list[DocFile]) -> None:
+def generate_summary(docs: list[DocFile], translated_rels: set[str] | None = None) -> None:
     lines = [
         "# Summary",
         "",
@@ -334,7 +334,9 @@ def generate_summary(docs: list[DocFile]) -> None:
         title = f"{doc.rel.as_posix()} - {first_heading(path)}"
         lines.append(f"- [{title}](en/{doc.rel.as_posix()})")
 
-    zh_docs = [doc for doc in docs if (ZH_ROOT / doc.rel).exists()]
+    if translated_rels is None:
+        translated_rels = {doc.rel.as_posix() for doc in docs if (ZH_ROOT / doc.rel).exists()}
+    zh_docs = [doc for doc in docs if doc.rel.as_posix() in translated_rels]
     if zh_docs:
         lines.extend(["", "# 中文", ""])
         for doc in zh_docs:
@@ -366,13 +368,63 @@ def commit_and_push(*, push: bool) -> None:
         run(["git", "push", "-u", "origin", "HEAD"])
 
 
+def git_stage_existing(paths: list[Path]) -> None:
+    existing = [str(path) for path in paths if path.exists()]
+    if existing:
+        run(["git", "add", "--", *existing])
+
+
+def commit_subject_for_doc(doc: DocFile) -> str:
+    rel = doc.rel.as_posix()
+    subject = f"docs: translate {rel}"
+    if len(subject) <= 72:
+        return subject
+    return f"docs: translate {doc.rel.name}"
+
+
+def commit_translated_doc(
+    doc: DocFile,
+    *,
+    source_root: Path,
+    docs: list[DocFile],
+    state: dict[str, str],
+    push: bool,
+) -> None:
+    translated_rels = set(state)
+    generate_index(source_root, docs, len(translated_rels))
+    generate_summary(docs, translated_rels)
+    save_state(state)
+    git_stage_existing(
+        [
+            EN_ROOT / doc.rel,
+            ZH_ROOT / doc.rel,
+            SUMMARY_FILE,
+            INDEX_FILE,
+            STATE_FILE,
+        ]
+    )
+    status = output(["git", "diff", "--cached", "--name-only"], cwd=REPO_ROOT)
+    if not status.strip():
+        print(f"No staged changes for {doc.rel.as_posix()}; skipping commit.")
+        return
+    subject = commit_subject_for_doc(doc)
+    body = f"Translated Hermes Agent source document:\n\n{doc.rel.as_posix()}"
+    run(["git", "commit", "-m", subject, "-m", body])
+    if push:
+        run(["git", "push", "-u", "origin", "HEAD"])
+
+
 def translate_changed(
     docs: list[DocFile],
     *,
     lang: str,
+    source_root: Path,
+    all_docs: list[DocFile],
     state: dict[str, str],
     config_path: Path,
     initial_config: SyncConfig,
+    commit_each: bool,
+    push: bool,
 ) -> None:
     if not docs:
         return
@@ -432,6 +484,14 @@ def translate_changed(
                 if result.returncode == 0:
                     state[doc.rel.as_posix()] = doc.sha256
                     save_state(state)
+                    if commit_each:
+                        commit_translated_doc(
+                            doc,
+                            source_root=source_root,
+                            docs=all_docs,
+                            state=state,
+                            push=push,
+                        )
                 else:
                     failures.append((doc, result))
     if failures:
@@ -501,17 +561,21 @@ def main() -> int:
         translate_changed(
             changed,
             lang=args.lang,
+            source_root=source_root,
+            all_docs=docs,
             state=state,
             config_path=config_path,
             initial_config=config,
+            commit_each=args.commit or args.push,
+            push=args.push,
         )
 
-    translated_count = sum(1 for doc in docs if (ZH_ROOT / doc.rel).exists())
+    translated_count = sum(1 for doc in docs if doc.rel.as_posix() in state)
     generate_index(source_root, docs, translated_count)
-    generate_summary(docs)
+    generate_summary(docs, set(state))
     save_state(state)
 
-    if args.commit or args.push:
+    if (args.commit or args.push) and args.skip_translation:
         commit_and_push(push=args.push)
 
     return 0
