@@ -1573,6 +1573,8 @@
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
     - [Saelens]()
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
+    - [Tensorrt Llm]()
+      - [TensorRT-LLM](zh/optional-skills/mlops/tensorrt-llm/SKILL.md)
     - [Torchtitan]()
       - [References]()
         - [TorchTitan中的检查点机制](zh/optional-skills/mlops/torchtitan/references/checkpoint.md)
