@@ -1453,6 +1453,7 @@
           - [水彩风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/watercolor.md)
     - [Baoyu Comic]()
       - [References]()
+        - [Base Prompt](zh/optional-skills/creative/baoyu-comic/references/base-prompt.md)
         - [Ohmsha漫画风格指南](zh/optional-skills/creative/baoyu-comic/references/ohmsha-guide.md)
         - [部分工作流](zh/optional-skills/creative/baoyu-comic/references/partial-workflows.md)
         - [Art Styles]()
