@@ -1921,6 +1921,7 @@
     - [Developer Guide]()
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
     - [Guides]()
+      - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
     - [Reference]()
       - [模型目录](zh/website/docs/reference/model-catalog.md)
