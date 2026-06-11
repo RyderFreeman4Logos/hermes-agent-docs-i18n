@@ -1621,6 +1621,7 @@
         - [漏洞分类体系](zh/optional-skills/security/web-pentest/references/vuln-taxonomy.md)
       - [Templates]()
         - [测试授权申请](zh/optional-skills/security/web-pentest/templates/authorization.md)
+        - [渗透测试报告](zh/optional-skills/security/web-pentest/templates/pentest-report.md)
   - [Software Development]()
     - [Code Wiki]()
       - [Templates](zh/optional-skills/software-development/code-wiki/templates/README.md)
