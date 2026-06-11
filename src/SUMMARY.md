@@ -1428,6 +1428,8 @@
           - [首页展示区](zh/optional-skills/creative/baoyu-comic/references/layouts/splash.md)
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
+    - [Meme Generation]()
+      - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
   - [Dogfood]()
     - [内部测试工具——高级质量保障与测试技能](zh/optional-skills/dogfood/DESCRIPTION.md)
   - [Gaming]()
