@@ -1578,6 +1578,7 @@
         - [TorchTitan中的FSDP2](zh/optional-skills/mlops/torchtitan/references/fsdp.md)
     - [Training]()
       - [Axolotl]()
+        - [Axolotl 技能](zh/optional-skills/mlops/training/axolotl/SKILL.md)
         - [References](zh/optional-skills/mlops/training/axolotl/references/index.md)
       - [Trl Fine Tuning]()
         - [References]()
