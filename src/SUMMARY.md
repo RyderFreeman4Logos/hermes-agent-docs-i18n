@@ -1704,6 +1704,8 @@
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
   - [Smart Home]()
     - [Description](zh/skills/smart-home/DESCRIPTION.md)
+    - [Openhue]()
+      - [OpenHue CLI](zh/skills/smart-home/openhue/SKILL.md)
   - [Social Media]()
     - [Description](zh/skills/social-media/DESCRIPTION.md)
 - [Tests]()
