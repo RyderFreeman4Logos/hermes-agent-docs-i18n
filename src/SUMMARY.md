@@ -1505,6 +1505,7 @@
         - [命名调色板](zh/optional-skills/creative/pixel-art/references/palettes.md)
   - [Devops]()
     - [Cli]()
+      - [inference.sh CLI](zh/optional-skills/devops/cli/SKILL.md)
       - [References]()
         - [发现应用](zh/optional-skills/devops/cli/references/app-discovery.md)
         - [认证与设置](zh/optional-skills/devops/cli/references/authentication.md)
