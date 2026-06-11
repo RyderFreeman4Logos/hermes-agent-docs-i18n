@@ -1423,6 +1423,8 @@
           - [马卡龙风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/macaron.md)
           - [Neon风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/neon.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
+        - [Styles]()
+          - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
     - [Baoyu Comic]()
       - [References]()
         - [Layouts]()
