@@ -1620,6 +1620,8 @@
       - [Apple Notes](zh/skills/apple/apple-notes/SKILL.md)
     - [Apple Reminders]()
       - [Apple提醒事项](zh/skills/apple/apple-reminders/SKILL.md)
+    - [Findmy]()
+      - [查找我的（Apple）](zh/skills/apple/findmy/SKILL.md)
     - [Imessage]()
       - [iMessage](zh/skills/apple/imessage/SKILL.md)
   - [Autonomous Ai Agents]()
