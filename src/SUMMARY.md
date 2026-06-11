@@ -1559,6 +1559,8 @@
 - [Skills]()
   - [Apple]()
     - [Description](zh/skills/apple/DESCRIPTION.md)
+    - [Apple Notes]()
+      - [Apple Notes](zh/skills/apple/apple-notes/SKILL.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/skills/autonomous-ai-agents/DESCRIPTION.md)
   - [Creative]()
