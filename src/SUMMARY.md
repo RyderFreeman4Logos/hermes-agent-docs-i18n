@@ -1454,6 +1454,7 @@
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Tones]()
           - [中性基调](zh/optional-skills/creative/baoyu-comic/references/tones/neutral.md)
+          - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Concept Diagrams]()
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
