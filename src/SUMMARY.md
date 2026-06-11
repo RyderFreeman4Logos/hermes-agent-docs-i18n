@@ -1423,6 +1423,7 @@
       - [Prompts]()
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
+        - [样式预设](zh/optional-skills/creative/baoyu-article-illustrator/references/style-presets.md)
         - [使用方式](zh/optional-skills/creative/baoyu-article-illustrator/references/usage.md)
         - [Palettes]()
           - [马卡龙风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/macaron.md)
