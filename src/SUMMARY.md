@@ -1511,6 +1511,7 @@
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
+      - [模因生成](zh/optional-skills/creative/meme-generation/SKILL.md)
     - [Pixel Art]()
       - [出处说明](zh/optional-skills/creative/pixel-art/ATTRIBUTION.md)
       - [References]()
