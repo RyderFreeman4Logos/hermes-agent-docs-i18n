@@ -1609,6 +1609,7 @@
   - [Security]()
     - [安全性](zh/optional-skills/security/DESCRIPTION.md)
     - [1Password]()
+      - [1Password CLI](zh/optional-skills/security/1password/SKILL.md)
       - [References]()
         - [op CLI 示例](zh/optional-skills/security/1password/references/cli-examples.md)
         - [1Password CLI 入门指南（概要）](zh/optional-skills/security/1password/references/get-started.md)
