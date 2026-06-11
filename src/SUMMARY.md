@@ -1644,6 +1644,8 @@
         - [Pr Body Feature](zh/skills/github/github-pr-workflow/templates/pr-body-feature.md)
   - [Media]()
     - [Description](zh/skills/media/DESCRIPTION.md)
+    - [Songsee]()
+      - [songsee](zh/skills/media/songsee/SKILL.md)
     - [Youtube Content]()
       - [References]()
         - [输出格式示例](zh/skills/media/youtube-content/references/output-formats.md)
