@@ -1620,6 +1620,7 @@
           - [corporate-memphis](zh/skills/creative/baoyu-infographic/references/styles/corporate-memphis.md)
           - [手工艺术风格（默认）](zh/skills/creative/baoyu-infographic/references/styles/craft-handmade.md)
           - [cyberpunk-neon](zh/skills/creative/baoyu-infographic/references/styles/cyberpunk-neon.md)
+          - [hand-drawn-edu](zh/skills/creative/baoyu-infographic/references/styles/hand-drawn-edu.md)
           - [ikea-manual](zh/skills/creative/baoyu-infographic/references/styles/ikea-manual.md)
           - [可爱风格](zh/skills/creative/baoyu-infographic/references/styles/kawaii.md)
           - [Knolling布局风格](zh/skills/creative/baoyu-infographic/references/styles/knolling.md)
