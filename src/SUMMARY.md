@@ -1616,6 +1616,8 @@
     - [Description](zh/skills/apple/DESCRIPTION.md)
     - [Apple Notes]()
       - [Apple Notes](zh/skills/apple/apple-notes/SKILL.md)
+    - [Apple Reminders]()
+      - [Apple提醒事项](zh/skills/apple/apple-reminders/SKILL.md)
     - [Imessage]()
       - [iMessage](zh/skills/apple/imessage/SKILL.md)
   - [Autonomous Ai Agents]()
