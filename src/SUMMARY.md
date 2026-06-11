@@ -1631,6 +1631,7 @@
     - [Subagent Driven Development]()
       - [References]()
         - [上下文预算管理机制](zh/optional-skills/software-development/subagent-driven-development/references/context-budget-discipline.md)
+        - [门控分类体系](zh/optional-skills/software-development/subagent-driven-development/references/gates-taxonomy.md)
   - [Web Development]()
     - [网页开发](zh/optional-skills/web-development/DESCRIPTION.md)
 - [Packaging]()
