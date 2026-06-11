@@ -1485,6 +1485,8 @@
           - [浪漫风格](zh/optional-skills/creative/baoyu-comic/references/tones/romantic.md)
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
+    - [Blender Mcp]()
+      - [Blender MCP](zh/optional-skills/creative/blender-mcp/SKILL.md)
     - [Concept Diagrams]()
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
