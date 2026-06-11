@@ -1649,6 +1649,8 @@
         - [Bug Report](zh/skills/github/github-issues/templates/bug-report.md)
         - [Example usage](zh/skills/github/github-issues/templates/feature-request.md)
     - [Github Pr Workflow]()
+      - [References]()
+        - [Conventional Commits 快速参考](zh/skills/github/github-pr-workflow/references/conventional-commits.md)
       - [Templates]()
         - [Pr Body Bugfix](zh/skills/github/github-pr-workflow/templates/pr-body-bugfix.md)
         - [Pr Body Feature](zh/skills/github/github-pr-workflow/templates/pr-body-feature.md)
