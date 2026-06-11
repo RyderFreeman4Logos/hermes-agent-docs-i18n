@@ -1437,6 +1437,7 @@
           - [梦幻动画风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/fantasy-animation.md)
           - [扁平涂鸦风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat-doodle.md)
           - [平面风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat.md)
+          - [ink-notes](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/ink-notes.md)
           - [intuition-machine](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/intuition-machine.md)
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
           - [自然风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/nature.md)
