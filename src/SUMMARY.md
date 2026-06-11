@@ -1425,6 +1425,7 @@
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
         - [Styles]()
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
+          - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
     - [Baoyu Comic]()
       - [References]()
         - [Layouts]()
