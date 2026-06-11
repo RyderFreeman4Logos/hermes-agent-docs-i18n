@@ -1519,6 +1519,8 @@
   - [Platforms]()
     - [Photon]()
       - [Sidecar](zh/plugins/platforms/photon/sidecar/README.md)
+- [Scripts]()
+  - [工具搜索实时测试套件](zh/scripts/LIVETEST_README.md)
 - [Skills]()
   - [Apple]()
     - [Description](zh/skills/apple/DESCRIPTION.md)
