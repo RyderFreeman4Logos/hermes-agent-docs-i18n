@@ -1520,6 +1520,7 @@
     - [3 Statement Model]()
       - [References]()
         - [格式标准参考](zh/optional-skills/finance/3-statement-model/references/formatting.md)
+        - [SEC 文件数据提取参考指南](zh/optional-skills/finance/3-statement-model/references/sec-filings.md)
     - [Dcf Model]()
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
     - [Stocks]()
