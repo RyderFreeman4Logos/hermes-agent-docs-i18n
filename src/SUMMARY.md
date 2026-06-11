@@ -1592,6 +1592,8 @@
       - [Templates]()
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
     - [Web Pentest]()
+      - [References]()
+        - [范围管控机制](zh/optional-skills/security/web-pentest/references/scope-enforcement.md)
       - [Templates]()
         - [测试授权申请](zh/optional-skills/security/web-pentest/templates/authorization.md)
   - [Software Development]()
