@@ -1496,6 +1496,7 @@
         - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
         - [Layouts]()
           - [bento-grid](zh/skills/creative/baoyu-infographic/references/layouts/bento-grid.md)
+          - [二元对比](zh/skills/creative/baoyu-infographic/references/layouts/binary-comparison.md)
           - [桥梁](zh/skills/creative/baoyu-infographic/references/layouts/bridge.md)
           - [循环流程](zh/skills/creative/baoyu-infographic/references/layouts/circular-flow.md)
           - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
