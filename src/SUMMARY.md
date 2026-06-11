@@ -1570,6 +1570,7 @@
       - [References]()
         - [Sources]()
           - [CourtListener — 免费法律项目](zh/optional-skills/research/osint-investigation/references/sources/courtlistener.md)
+          - [GDELT — 全球新闻监测服务](zh/optional-skills/research/osint-investigation/references/sources/gdelt.md)
           - [NYC ACRIS — 纽约市房地产记录系统](zh/optional-skills/research/osint-investigation/references/sources/nyc-acris.md)
           - [OFAC SDN——特别指定国民名单](zh/optional-skills/research/osint-investigation/references/sources/ofac-sdn.md)
           - [SEC EDGAR — 公司备案文件](zh/optional-skills/research/osint-investigation/references/sources/sec-edgar.md)
