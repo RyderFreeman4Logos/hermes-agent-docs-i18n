@@ -1582,6 +1582,8 @@
     - [Canvas]()
       - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)
   - [Research]()
+    - [Domain Intel]()
+      - [域名情报——被动式开源情报收集](zh/optional-skills/research/domain-intel/SKILL.md)
     - [Drug Discovery]()
       - [References]()
         - [ADMET参考指南](zh/optional-skills/research/drug-discovery/references/ADMET_REFERENCE.md)
