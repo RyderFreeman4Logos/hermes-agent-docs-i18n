@@ -1615,6 +1615,7 @@
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
     - [Web Pentest]()
       - [References]()
+        - [绕过技巧](zh/optional-skills/security/web-pentest/references/bypass-techniques.md)
         - [范围管控机制](zh/optional-skills/security/web-pentest/references/scope-enforcement.md)
         - [漏洞分类体系](zh/optional-skills/security/web-pentest/references/vuln-taxonomy.md)
       - [Templates]()
