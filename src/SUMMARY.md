@@ -1605,6 +1605,7 @@
           - [乐高积木风格](zh/skills/creative/baoyu-infographic/references/styles/lego-brick.md)
           - [折纸风格](zh/skills/creative/baoyu-infographic/references/styles/origami.md)
           - [像素艺术风格](zh/skills/creative/baoyu-infographic/references/styles/pixel-art.md)
+          - [pop-laboratory](zh/skills/creative/baoyu-infographic/references/styles/pop-laboratory.md)
           - [retro-pop-grid](zh/skills/creative/baoyu-infographic/references/styles/retro-pop-grid.md)
           - [storybook-watercolor](zh/skills/creative/baoyu-infographic/references/styles/storybook-watercolor.md)
           - [subway-map](zh/skills/creative/baoyu-infographic/references/styles/subway-map.md)
