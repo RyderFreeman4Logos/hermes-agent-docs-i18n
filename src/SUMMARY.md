@@ -1907,6 +1907,7 @@
     - [Reference]()
       - [模型目录](zh/website/docs/reference/model-catalog.md)
     - [User Guide]()
+      - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [Features]()
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
