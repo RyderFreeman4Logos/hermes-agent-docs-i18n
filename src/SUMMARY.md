@@ -1460,6 +1460,7 @@
           - [水彩风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/watercolor.md)
     - [Baoyu Comic]()
       - [References]()
+        - [漫画内容分析框架](zh/optional-skills/creative/baoyu-comic/references/analysis-framework.md)
         - [自动选择功能](zh/optional-skills/creative/baoyu-comic/references/auto-selection.md)
         - [Base Prompt](zh/optional-skills/creative/baoyu-comic/references/base-prompt.md)
         - [角色定义模板](zh/optional-skills/creative/baoyu-comic/references/character-template.md)
