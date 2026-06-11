@@ -1809,6 +1809,8 @@
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Polymarket]()
       - [Polymarket — 预测市场数据](zh/skills/research/polymarket/SKILL.md)
+      - [References]()
+        - [Polymarket API 接口参考文档](zh/skills/research/polymarket/references/api-endpoints.md)
     - [Research Paper Writing]()
       - [Templates]()
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
