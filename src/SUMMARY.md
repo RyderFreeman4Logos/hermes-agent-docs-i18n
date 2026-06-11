@@ -1958,6 +1958,7 @@
           - [Mcp]()
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
           - [Mlops]()
+            - [Axolotl](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md)
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
