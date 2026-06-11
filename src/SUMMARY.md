@@ -1484,6 +1484,7 @@
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Baoyu Infographic]()
       - [References]()
+        - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
         - [Layouts]()
           - [bento-grid](zh/skills/creative/baoyu-infographic/references/layouts/bento-grid.md)
           - [桥梁](zh/skills/creative/baoyu-infographic/references/layouts/bridge.md)
