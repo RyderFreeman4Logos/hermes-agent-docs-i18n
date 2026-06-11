@@ -1669,6 +1669,8 @@
         - [Pr Body Feature](zh/skills/github/github-pr-workflow/templates/pr-body-feature.md)
   - [Media]()
     - [Description](zh/skills/media/DESCRIPTION.md)
+    - [Gif Search]()
+      - [GIF搜索（Tenor API）](zh/skills/media/gif-search/SKILL.md)
     - [Songsee]()
       - [songsee](zh/skills/media/songsee/SKILL.md)
     - [Youtube Content]()
