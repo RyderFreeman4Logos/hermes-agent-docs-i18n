@@ -1683,6 +1683,7 @@
           - [UI线框图](zh/skills/creative/baoyu-infographic/references/styles/ui-wireframe.md)
     - [Comfyui]()
       - [Tests](zh/skills/creative/comfyui/tests/README.md)
+      - [Workflows](zh/skills/creative/comfyui/workflows/README.md)
     - [Design Md]()
       - [Templates]()
         - [Starter](zh/skills/creative/design-md/templates/starter.md)
