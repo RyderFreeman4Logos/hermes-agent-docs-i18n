@@ -1775,6 +1775,8 @@
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
+          - [Note Taking]()
+            - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
           - [Smart Home]()
