@@ -1519,6 +1519,7 @@
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Baoyu Infographic]()
+      - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
       - [References]()
         - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
         - [Layouts]()
