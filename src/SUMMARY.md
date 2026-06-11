@@ -1468,6 +1468,7 @@
       - [References]()
         - [Layouts]()
           - [循环流程](zh/skills/creative/baoyu-infographic/references/layouts/circular-flow.md)
+          - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
           - [数据看板](zh/skills/creative/baoyu-infographic/references/layouts/dashboard.md)
           - [漏斗图](zh/skills/creative/baoyu-infographic/references/layouts/funnel.md)
           - [等轴测地图](zh/skills/creative/baoyu-infographic/references/layouts/isometric-map.md)
