@@ -1426,6 +1426,7 @@
         - [Styles]()
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
           - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
+          - [复古风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/retro.md)
     - [Baoyu Comic]()
       - [References]()
         - [Layouts]()
