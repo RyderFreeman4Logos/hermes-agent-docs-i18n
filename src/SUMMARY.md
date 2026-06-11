@@ -1622,6 +1622,8 @@
     - [网页开发](zh/optional-skills/web-development/DESCRIPTION.md)
 - [Packaging]()
   - [Homebrew](zh/packaging/homebrew/README.md)
+- [Plans]()
+  - [Gemini OAuth 提供方 —— 实施方案](zh/plans/gemini-oauth-provider.md)
 - [Plugins]()
   - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
   - [Memory]()
