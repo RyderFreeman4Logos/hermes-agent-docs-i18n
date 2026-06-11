@@ -1457,6 +1457,7 @@
           - [ink-brush](zh/optional-skills/creative/baoyu-comic/references/art-styles/ink-brush.md)
           - [清线画风](zh/optional-skills/creative/baoyu-comic/references/art-styles/ligne-claire.md)
           - [漫画风格](zh/optional-skills/creative/baoyu-comic/references/art-styles/manga.md)
+          - [写实风格](zh/optional-skills/creative/baoyu-comic/references/art-styles/realistic.md)
         - [Layouts]()
           - [电影风格](zh/optional-skills/creative/baoyu-comic/references/layouts/cinematic.md)
           - [密集型布局](zh/optional-skills/creative/baoyu-comic/references/layouts/dense.md)
