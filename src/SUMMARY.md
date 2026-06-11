@@ -1657,6 +1657,7 @@
     - [Oss Forensics]()
       - [References]()
         - [证据类型参考](zh/optional-skills/security/oss-forensics/references/evidence-types.md)
+        - [GitHub 存档查询指南（BigQuery）](zh/optional-skills/security/oss-forensics/references/github-archive-guide.md)
         - [调查模板](zh/optional-skills/security/oss-forensics/references/investigation-templates.md)
         - [已删除内容的恢复方法](zh/optional-skills/security/oss-forensics/references/recovery-techniques.md)
       - [Templates]()
