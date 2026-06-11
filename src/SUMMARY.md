@@ -1419,6 +1419,7 @@
     - [Description](zh/optional-skills/communication/DESCRIPTION.md)
   - [Creative]()
     - [Baoyu Article Illustrator]()
+      - [端口说明 — baoyu-article-illustrator](zh/optional-skills/creative/baoyu-article-illustrator/PORT_NOTES.md)
       - [Prompts]()
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
