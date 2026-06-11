@@ -1824,6 +1824,7 @@
     - [Description](zh/skills/email/DESCRIPTION.md)
     - [Himalaya]()
       - [References]()
+        - [Himalaya 配置参考手册](zh/skills/email/himalaya/references/configuration.md)
         - [使用 MML（MIME 元语言）构建邮件内容](zh/skills/email/himalaya/references/message-composition.md)
   - [Github]()
     - [Description](zh/skills/github/DESCRIPTION.md)
