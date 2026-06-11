@@ -1553,6 +1553,8 @@
     - [Chroma]()
       - [References]()
         - [Chroma 集成指南](zh/optional-skills/mlops/chroma/references/integration.md)
+    - [Faiss]()
+      - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
     - [Instructor]()
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
