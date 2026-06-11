@@ -1512,6 +1512,8 @@
     - [Fastmcp]()
       - [References]()
         - [FastMCP CLI 参考手册](zh/optional-skills/mcp/fastmcp/references/fastmcp-cli.md)
+    - [Mcporter]()
+      - [mcporter](zh/optional-skills/mcp/mcporter/SKILL.md)
   - [Migration]()
     - [Description](zh/optional-skills/migration/DESCRIPTION.md)
   - [Mlops]()
