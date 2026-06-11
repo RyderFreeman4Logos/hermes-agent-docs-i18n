@@ -1808,5 +1808,7 @@
         - [Optional]()
           - [Finance]()
             - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
+          - [Mcp]()
+            - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
           - [Mlops]()
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
