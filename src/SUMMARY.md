@@ -1429,6 +1429,7 @@
           - [设计蓝图](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/blueprint.md)
           - [编辑风格指南](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/editorial.md)
           - [elegant风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/elegant.md)
+          - [梦幻动画风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/fantasy-animation.md)
           - [扁平涂鸦风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat-doodle.md)
           - [平面风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat.md)
           - [intuition-machine](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/intuition-machine.md)
