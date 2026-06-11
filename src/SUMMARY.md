@@ -1908,3 +1908,5 @@
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
+          - [Security]()
+            - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
