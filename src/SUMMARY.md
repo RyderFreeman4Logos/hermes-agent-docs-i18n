@@ -1552,6 +1552,7 @@
       - [References]()
         - [Sources]()
           - [SEC EDGAR — 公司备案文件](zh/optional-skills/research/osint-investigation/references/sources/sec-edgar.md)
+          - [Wayback Machine — Internet Archive CDX](zh/optional-skills/research/osint-investigation/references/sources/wayback.md)
       - [Templates]()
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
   - [Security]()
