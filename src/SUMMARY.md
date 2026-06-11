@@ -1416,6 +1416,7 @@
   - [Autonomous Ai Agents]()
     - [Description](zh/optional-skills/autonomous-ai-agents/DESCRIPTION.md)
     - [Antigravity Cli]()
+      - [Antigravity CLI（`agy`）](zh/optional-skills/autonomous-ai-agents/antigravity-cli/SKILL.md)
       - [References]()
         - [Antigravity CLI文档精简版](zh/optional-skills/autonomous-ai-agents/antigravity-cli/references/cli-docs.md)
     - [Blackbox]()
