@@ -1904,6 +1904,8 @@
         - [Optional]()
           - [Creative]()
             - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
+          - [Devops]()
+            - [监视器](zh/website/docs/user-guide/skills/optional/devops/devops-watchers.md)
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
