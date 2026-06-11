@@ -1507,6 +1507,7 @@
           - [冰山模型](zh/skills/creative/baoyu-infographic/references/layouts/iceberg.md)
           - [等轴测地图](zh/skills/creative/baoyu-infographic/references/layouts/isometric-map.md)
           - [拼图模型](zh/skills/creative/baoyu-infographic/references/layouts/jigsaw.md)
+          - [线性流程图](zh/skills/creative/baoyu-infographic/references/layouts/linear-progression.md)
           - [元素周期表](zh/skills/creative/baoyu-infographic/references/layouts/periodic-table.md)
           - [story-mountain](zh/skills/creative/baoyu-infographic/references/layouts/story-mountain.md)
           - [结构分解](zh/skills/creative/baoyu-infographic/references/layouts/structural-breakdown.md)
