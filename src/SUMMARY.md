@@ -1822,3 +1822,5 @@
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
           - [Mlops]()
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
+          - [Productivity]()
+            - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
