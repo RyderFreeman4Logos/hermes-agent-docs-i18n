@@ -1482,6 +1482,7 @@
     - [Byterover](zh/plugins/memory/byterover/README.md)
     - [Holographic](zh/plugins/memory/holographic/README.md)
     - [Mem0](zh/plugins/memory/mem0/README.md)
+    - [Openviking](zh/plugins/memory/openviking/README.md)
     - [Retaindb](zh/plugins/memory/retaindb/README.md)
 - [Skills]()
   - [Apple]()
