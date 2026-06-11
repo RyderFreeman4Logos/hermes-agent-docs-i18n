@@ -1543,7 +1543,7 @@
     - [Description](zh/skills/smart-home/DESCRIPTION.md)
   - [Social Media]()
     - [Description](zh/skills/social-media/DESCRIPTION.md)
-- [Website]()
+- [Website](zh/website/README.md)
   - [Docs]()
     - [User Stories](zh/website/docs/user-stories.md)
     - [User Guide]()
