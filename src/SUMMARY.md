@@ -1941,6 +1941,8 @@
             - [Apple 提醒事项](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
             - [Findmy](zh/website/docs/user-guide/skills/bundled/apple/apple-findmy.md)
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
+          - [Data Science]()
+            - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Github]()
             - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
           - [Media]()
