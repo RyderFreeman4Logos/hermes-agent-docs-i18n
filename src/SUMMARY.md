@@ -1429,6 +1429,8 @@
           - [首页展示区](zh/optional-skills/creative/baoyu-comic/references/layouts/splash.md)
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
+        - [Tones]()
+          - [中性基调](zh/optional-skills/creative/baoyu-comic/references/tones/neutral.md)
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
   - [Devops]()
