@@ -1891,6 +1891,8 @@
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
+          - [Email]()
+            - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
             - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
           - [Mcp]()
