@@ -1428,6 +1428,7 @@
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
           - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
           - [复古风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/retro.md)
+          - [草图模式](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/sketch.md)
     - [Baoyu Comic]()
       - [References]()
         - [Layouts]()
