@@ -1475,6 +1475,7 @@
           - [bento-grid](zh/skills/creative/baoyu-infographic/references/layouts/bento-grid.md)
           - [循环流程](zh/skills/creative/baoyu-infographic/references/layouts/circular-flow.md)
           - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
+          - [对比矩阵](zh/skills/creative/baoyu-infographic/references/layouts/comparison-matrix.md)
           - [数据看板](zh/skills/creative/baoyu-infographic/references/layouts/dashboard.md)
           - [漏斗图](zh/skills/creative/baoyu-infographic/references/layouts/funnel.md)
           - [中心辐射型结构](zh/skills/creative/baoyu-infographic/references/layouts/hub-spoke.md)
