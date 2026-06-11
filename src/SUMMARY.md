@@ -1556,6 +1556,7 @@
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
     - [Torchtitan]()
       - [References]()
+        - [TorchTitan中的检查点机制](zh/optional-skills/mlops/torchtitan/references/checkpoint.md)
         - [TorchTitan中的Float8训练](zh/optional-skills/mlops/torchtitan/references/float8.md)
         - [TorchTitan中的FSDP2](zh/optional-skills/mlops/torchtitan/references/fsdp.md)
     - [Training]()
