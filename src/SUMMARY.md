@@ -1595,6 +1595,7 @@
         - [Styles]()
           - [aged-academia](zh/skills/creative/baoyu-infographic/references/styles/aged-academia.md)
           - [夸张漫画风格](zh/skills/creative/baoyu-infographic/references/styles/bold-graphic.md)
+          - [黑板风格](zh/skills/creative/baoyu-infographic/references/styles/chalkboard.md)
           - [泥偶风格](zh/skills/creative/baoyu-infographic/references/styles/claymation.md)
           - [corporate-memphis](zh/skills/creative/baoyu-infographic/references/styles/corporate-memphis.md)
           - [手工艺术风格（默认）](zh/skills/creative/baoyu-infographic/references/styles/craft-handmade.md)
