@@ -1960,6 +1960,7 @@
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
+            - [OCR与文档处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-ocr-and-documents.md)
           - [Research]()
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
             - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
