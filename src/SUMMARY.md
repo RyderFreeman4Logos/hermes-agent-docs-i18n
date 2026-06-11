@@ -1472,6 +1472,7 @@
   - [Devops]()
     - [Cli]()
       - [References]()
+        - [发现应用](zh/optional-skills/devops/cli/references/app-discovery.md)
         - [认证与设置](zh/optional-skills/devops/cli/references/authentication.md)
   - [Dogfood]()
     - [内部测试工具——高级质量保障与测试技能](zh/optional-skills/dogfood/DESCRIPTION.md)
