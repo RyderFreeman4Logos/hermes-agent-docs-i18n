@@ -1502,6 +1502,7 @@
         - [Chroma 集成指南](zh/optional-skills/mlops/chroma/references/integration.md)
     - [Instructor]()
       - [References]()
+        - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
         - [提供商配置](zh/optional-skills/mlops/instructor/references/providers.md)
     - [Nemo Curator]()
       - [References]()
