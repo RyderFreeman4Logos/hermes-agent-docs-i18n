@@ -1839,6 +1839,8 @@
     - [Reference]()
       - [模型目录](zh/website/docs/reference/model-catalog.md)
     - [User Guide]()
+      - [Messaging]()
+        - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
         - [Bundled]()
