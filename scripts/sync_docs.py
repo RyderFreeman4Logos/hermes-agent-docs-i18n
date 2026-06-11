@@ -72,6 +72,12 @@ class SyncConfig:
     hot_reload_interval_seconds: float
 
 
+@dataclass
+class SummaryNode:
+    dirs: dict[str, "SummaryNode"]
+    files: list[DocFile]
+
+
 def run(cmd: list[str], *, cwd: Path = REPO_ROOT, check: bool = True) -> subprocess.CompletedProcess[str]:
     return subprocess.run(cmd, cwd=cwd, text=True, check=check)
 
@@ -294,6 +300,10 @@ def first_heading(path: Path) -> str:
     return path.stem.replace("-", " ").replace("_", " ").title()
 
 
+def display_title(value: str) -> str:
+    return value.replace("-", " ").replace("_", " ").title()
+
+
 def generate_index(source_root: Path, docs: list[DocFile], translated_count: int) -> None:
     total_bytes = sum(doc.source.stat().st_size for doc in docs)
     INDEX_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -320,6 +330,67 @@ def generate_index(source_root: Path, docs: list[DocFile], translated_count: int
     )
 
 
+def build_summary_tree(docs: list[DocFile]) -> SummaryNode:
+    root = SummaryNode(dirs={}, files=[])
+    for doc in docs:
+        node = root
+        for part in doc.rel.parts[:-1]:
+            node = node.dirs.setdefault(part, SummaryNode(dirs={}, files=[]))
+        node.files.append(doc)
+    return root
+
+
+def preferred_index_doc(node: SummaryNode) -> DocFile | None:
+    by_name = {doc.rel.name.lower(): doc for doc in node.files}
+    return by_name.get("readme.md") or by_name.get("index.md")
+
+
+def doc_summary_title(doc: DocFile, content_root: Path) -> str:
+    return first_heading(content_root / doc.rel)
+
+
+def render_summary_tree(
+    node: SummaryNode,
+    *,
+    content_root: Path,
+    book_prefix: str,
+    level: int = 0,
+    skip_doc: DocFile | None = None,
+) -> list[str]:
+    lines: list[str] = []
+    indent = "  " * level
+    skip_rel = skip_doc.rel if skip_doc else None
+
+    files = sorted(node.files, key=lambda doc: doc.rel.name.lower())
+    index_doc = preferred_index_doc(node)
+    if level > 0 and index_doc is not None:
+        files = [index_doc] + [doc for doc in files if doc.rel != index_doc.rel]
+    for doc in files:
+        if doc.rel == skip_rel:
+            continue
+        title = doc_summary_title(doc, content_root)
+        lines.append(f"{indent}- [{title}]({book_prefix}/{doc.rel.as_posix()})")
+
+    for dirname, child in sorted(node.dirs.items()):
+        index_doc = preferred_index_doc(child)
+        title = display_title(dirname)
+        if index_doc is not None:
+            lines.append(f"{indent}- [{title}]({book_prefix}/{index_doc.rel.as_posix()})")
+        else:
+            lines.append(f"{indent}- [{title}]()")
+        lines.extend(
+            render_summary_tree(
+                child,
+                content_root=content_root,
+                book_prefix=book_prefix,
+                level=level + 1,
+                skip_doc=index_doc,
+            )
+        )
+
+    return lines
+
+
 def generate_summary(docs: list[DocFile], translated_rels: set[str] | None = None) -> None:
     lines = [
         "# Summary",
@@ -329,20 +400,14 @@ def generate_summary(docs: list[DocFile], translated_rels: set[str] | None = Non
         "# English",
         "",
     ]
-    for doc in docs:
-        path = EN_ROOT / doc.rel
-        title = f"{doc.rel.as_posix()} - {first_heading(path)}"
-        lines.append(f"- [{title}](en/{doc.rel.as_posix()})")
+    lines.extend(render_summary_tree(build_summary_tree(docs), content_root=EN_ROOT, book_prefix="en"))
 
     if translated_rels is None:
         translated_rels = {doc.rel.as_posix() for doc in docs if (ZH_ROOT / doc.rel).exists()}
     zh_docs = [doc for doc in docs if doc.rel.as_posix() in translated_rels]
     if zh_docs:
         lines.extend(["", "# 中文", ""])
-        for doc in zh_docs:
-            path = ZH_ROOT / doc.rel
-            title = f"{doc.rel.as_posix()} - {first_heading(path)}"
-            lines.append(f"- [{title}](zh/{doc.rel.as_posix()})")
+        lines.extend(render_summary_tree(build_summary_tree(zh_docs), content_root=ZH_ROOT, book_prefix="zh"))
 
     SUMMARY_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

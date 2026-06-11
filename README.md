@@ -11,8 +11,10 @@ Published site:
 
 ## Translation Backend
 
-The Chinese translation is produced locally by `hymt`, backed by a 6-bit
-quantized HY translation model currently running on this host:
+The Chinese translation is produced locally by
+[`hymt`](https://github.com/RyderFreeman4Logos/hymt), another open-source
+project developed by RyderFreeman4Logos. It is backed by a 6-bit quantized HY
+translation model currently running on this host:
 
 - Model file: `/ssd/mirror-rootfs/home/obj/models/hy-mt2/Hy-MT2-7B.i1-Q6_K.gguf`
 - Quantization: `Q6_K` GGUF, 6-bit class quantization
@@ -92,3 +94,7 @@ the process is interrupted.
 
 GitHub Actions builds the mdBook on every push to `master` and deploys it using
 GitHub Pages.
+
+## License
+
+Apache-2.0
