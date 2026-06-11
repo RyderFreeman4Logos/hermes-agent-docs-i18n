@@ -1691,6 +1691,7 @@
       - [Llama Cpp]()
         - [References]()
           - [性能优化指南](zh/skills/mlops/inference/llama-cpp/references/optimization.md)
+          - [服务器部署指南](zh/skills/mlops/inference/llama-cpp/references/server.md)
     - [Models]()
       - [Description](zh/skills/mlops/models/DESCRIPTION.md)
   - [Note Taking]()
