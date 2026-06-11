@@ -1461,6 +1461,7 @@
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Tones]()
           - [戏剧风格](zh/optional-skills/creative/baoyu-comic/references/tones/dramatic.md)
+          - [活力基调](zh/optional-skills/creative/baoyu-comic/references/tones/energetic.md)
           - [中性基调](zh/optional-skills/creative/baoyu-comic/references/tones/neutral.md)
           - [浪漫风格](zh/optional-skills/creative/baoyu-comic/references/tones/romantic.md)
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
