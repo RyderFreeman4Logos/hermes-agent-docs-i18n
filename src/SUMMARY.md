@@ -1831,6 +1831,7 @@
           - [Apple]()
             - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
             - [Apple 提醒事项](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
+            - [Findmy](zh/website/docs/user-guide/skills/bundled/apple/apple-findmy.md)
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
