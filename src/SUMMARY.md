@@ -1543,6 +1543,7 @@
 - [Packaging]()
   - [Homebrew](zh/packaging/homebrew/README.md)
 - [Plugins]()
+  - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
   - [Memory]()
     - [Byterover](zh/plugins/memory/byterover/README.md)
     - [Holographic](zh/plugins/memory/holographic/README.md)
