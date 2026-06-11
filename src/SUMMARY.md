@@ -1417,6 +1417,7 @@
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
         - [Palettes]()
+          - [马卡龙风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/macaron.md)
           - [Neon风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/neon.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/warm.md)
     - [Baoyu Comic]()
