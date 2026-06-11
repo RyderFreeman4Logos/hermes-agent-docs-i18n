@@ -1532,6 +1532,7 @@
           - [夸张漫画风格](zh/skills/creative/baoyu-infographic/references/styles/bold-graphic.md)
           - [泥偶风格](zh/skills/creative/baoyu-infographic/references/styles/claymation.md)
           - [corporate-memphis](zh/skills/creative/baoyu-infographic/references/styles/corporate-memphis.md)
+          - [手工艺术风格（默认）](zh/skills/creative/baoyu-infographic/references/styles/craft-handmade.md)
           - [cyberpunk-neon](zh/skills/creative/baoyu-infographic/references/styles/cyberpunk-neon.md)
           - [ikea-manual](zh/skills/creative/baoyu-infographic/references/styles/ikea-manual.md)
           - [可爱风格](zh/skills/creative/baoyu-infographic/references/styles/kawaii.md)
