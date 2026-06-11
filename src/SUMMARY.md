@@ -1508,6 +1508,7 @@
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
     - [Hyperframes]()
       - [References]()
+        - [故障排除](zh/optional-skills/creative/hyperframes/references/troubleshooting.md)
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
