@@ -1413,6 +1413,8 @@
     - [Description](zh/optional-skills/communication/DESCRIPTION.md)
   - [Creative]()
     - [Baoyu Article Illustrator]()
+      - [Prompts]()
+        - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
         - [Palettes]()
           - [Neon风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/neon.md)
