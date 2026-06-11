@@ -1073,6 +1073,7 @@
 - [skills/creative/baoyu-infographic/references/layouts/circular-flow.md - 循环流程](zh/skills/creative/baoyu-infographic/references/layouts/circular-flow.md)
 - [skills/creative/baoyu-infographic/references/layouts/dashboard.md - 数据看板](zh/skills/creative/baoyu-infographic/references/layouts/dashboard.md)
 - [skills/creative/baoyu-infographic/references/layouts/funnel.md - 漏斗图](zh/skills/creative/baoyu-infographic/references/layouts/funnel.md)
+- [skills/creative/baoyu-infographic/references/layouts/isometric-map.md - 等轴测地图](zh/skills/creative/baoyu-infographic/references/layouts/isometric-map.md)
 - [skills/creative/baoyu-infographic/references/layouts/periodic-table.md - 元素周期表](zh/skills/creative/baoyu-infographic/references/layouts/periodic-table.md)
 - [skills/creative/baoyu-infographic/references/layouts/story-mountain.md - story-mountain](zh/skills/creative/baoyu-infographic/references/layouts/story-mountain.md)
 - [skills/creative/baoyu-infographic/references/layouts/venn-diagram.md - 维恩图](zh/skills/creative/baoyu-infographic/references/layouts/venn-diagram.md)
