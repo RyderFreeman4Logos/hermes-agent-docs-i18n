@@ -1503,6 +1503,7 @@
           - [拼图模型](zh/skills/creative/baoyu-infographic/references/layouts/jigsaw.md)
           - [元素周期表](zh/skills/creative/baoyu-infographic/references/layouts/periodic-table.md)
           - [story-mountain](zh/skills/creative/baoyu-infographic/references/layouts/story-mountain.md)
+          - [结构分解](zh/skills/creative/baoyu-infographic/references/layouts/structural-breakdown.md)
           - [树状分支结构](zh/skills/creative/baoyu-infographic/references/layouts/tree-branching.md)
           - [维恩图](zh/skills/creative/baoyu-infographic/references/layouts/venn-diagram.md)
           - [弯曲路线图](zh/skills/creative/baoyu-infographic/references/layouts/winding-roadmap.md)
