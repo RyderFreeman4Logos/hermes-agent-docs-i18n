@@ -1763,6 +1763,8 @@
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
+          - [Smart Home]()
+            - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
         - [Optional]()
           - [Mlops]()
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
