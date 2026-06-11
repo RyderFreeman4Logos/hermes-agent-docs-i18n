@@ -1855,6 +1855,7 @@
         - [Notion 块类型](zh/skills/productivity/notion/references/block-types.md)
     - [Ocr And Documents]()
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
+      - [PDF与文档提取功能](zh/skills/productivity/ocr-and-documents/SKILL.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Blogwatcher]()
