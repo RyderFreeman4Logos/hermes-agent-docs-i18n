@@ -1623,6 +1623,7 @@
         - [1Password CLI 入门指南（概要）](zh/optional-skills/security/1password/references/get-started.md)
     - [Oss Forensics]()
       - [Templates]()
+        - [法证调查报告](zh/optional-skills/security/oss-forensics/templates/forensic-report.md)
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
     - [Web Pentest]()
       - [References]()
