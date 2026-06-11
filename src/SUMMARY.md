@@ -1834,6 +1834,8 @@
             - [Apple 提醒事项](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
             - [Findmy](zh/website/docs/user-guide/skills/bundled/apple/apple-findmy.md)
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
+          - [Github]()
+            - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
