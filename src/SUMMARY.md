@@ -1882,6 +1882,8 @@
 - [Website](zh/website/README.md)
   - [Docs]()
     - [User Stories](zh/website/docs/user-stories.md)
+    - [Developer Guide]()
+      - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
     - [Guides]()
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
     - [Reference]()
