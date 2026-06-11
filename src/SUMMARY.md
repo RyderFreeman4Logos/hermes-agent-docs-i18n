@@ -1656,3 +1656,7 @@
     - [User Stories](zh/website/docs/user-stories.md)
     - [User Guide]()
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
+      - [Skills]()
+        - [Bundled]()
+          - [Productivity]()
+            - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
