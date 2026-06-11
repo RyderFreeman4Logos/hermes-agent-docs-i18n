@@ -1567,6 +1567,7 @@
         - [Sources]()
           - [CourtListener — 免费法律项目](zh/optional-skills/research/osint-investigation/references/sources/courtlistener.md)
           - [NYC ACRIS — 纽约市房地产记录系统](zh/optional-skills/research/osint-investigation/references/sources/nyc-acris.md)
+          - [OFAC SDN——特别指定国民名单](zh/optional-skills/research/osint-investigation/references/sources/ofac-sdn.md)
           - [SEC EDGAR — 公司备案文件](zh/optional-skills/research/osint-investigation/references/sources/sec-edgar.md)
           - [参议院游说披露信息 —— 游说披露法案（LD-1 / LD-2）](zh/optional-skills/research/osint-investigation/references/sources/senate-ld.md)
           - [Wayback Machine — Internet Archive CDX](zh/optional-skills/research/osint-investigation/references/sources/wayback.md)
