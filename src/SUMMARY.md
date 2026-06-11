@@ -1512,6 +1512,7 @@
         - [基础设施设计模式](zh/optional-skills/creative/concept-diagrams/references/infrastructure-patterns.md)
         - [实体物体绘制指南](zh/optional-skills/creative/concept-diagrams/references/physical-shape-cookbook.md)
     - [Creative Ideation]()
+      - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
     - [Hyperframes]()
