@@ -1544,6 +1544,7 @@
         - [References]()
           - [在线强化学习方法](zh/optional-skills/mlops/training/trl-fine-tuning/references/online-rl.md)
           - [奖励模型](zh/optional-skills/mlops/training/trl-fine-tuning/references/reward-modeling.md)
+          - [SFT训练指南](zh/optional-skills/mlops/training/trl-fine-tuning/references/sft-training.md)
       - [Unsloth]()
         - [Unsloth 技能](zh/optional-skills/mlops/training/unsloth/SKILL.md)
         - [References](zh/optional-skills/mlops/training/unsloth/references/index.md)
