@@ -1462,6 +1462,7 @@
 - [Plugins]()
   - [Memory]()
     - [Byterover](zh/plugins/memory/byterover/README.md)
+    - [Holographic](zh/plugins/memory/holographic/README.md)
     - [Mem0](zh/plugins/memory/mem0/README.md)
 - [Skills]()
   - [Apple]()
