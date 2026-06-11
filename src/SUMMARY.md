@@ -1750,6 +1750,7 @@
     - [Manim Video](zh/skills/creative/manim-video/README.md)
       - [References]()
         - [相机与 3D 参考资料](zh/skills/creative/manim-video/references/camera-and-3d.md)
+        - [装饰元素与视觉美化](zh/skills/creative/manim-video/references/decorations.md)
         - [图表、绘图与数据可视化](zh/skills/creative/manim-video/references/graphs-and-data.md)
         - [场景规划参考指南](zh/skills/creative/manim-video/references/scene-planning.md)
         - [故障排除](zh/skills/creative/manim-video/references/troubleshooting.md)
