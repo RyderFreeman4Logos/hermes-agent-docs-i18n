@@ -1640,6 +1640,7 @@
 - [Tests]()
   - [E2E]()
     - [Matrix Xsign Bootstrap](zh/tests/e2e/matrix_xsign_bootstrap/README.md)
+  - [Stress](zh/tests/stress/README.md)
 - [Website](zh/website/README.md)
   - [Docs]()
     - [User Stories](zh/website/docs/user-stories.md)
