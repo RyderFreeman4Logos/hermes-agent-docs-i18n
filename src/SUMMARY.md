@@ -1507,6 +1507,7 @@
     - [Nemo Curator]()
       - [References]()
         - [重复内容去重指南](zh/optional-skills/mlops/nemo-curator/references/deduplication.md)
+        - [质量过滤指南](zh/optional-skills/mlops/nemo-curator/references/filtering.md)
     - [Pytorch Fsdp]()
       - [References](zh/optional-skills/mlops/pytorch-fsdp/references/index.md)
     - [Research]()
