@@ -1471,6 +1471,7 @@
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Presets]()
+          - [少女风格](zh/optional-skills/creative/baoyu-comic/references/presets/shoujo.md)
           - [武侠](zh/optional-skills/creative/baoyu-comic/references/presets/wuxia.md)
         - [Tones]()
           - [动作风格](zh/optional-skills/creative/baoyu-comic/references/tones/action.md)
