@@ -1473,6 +1473,7 @@
       - [References]()
         - [Layouts]()
           - [bento-grid](zh/skills/creative/baoyu-infographic/references/layouts/bento-grid.md)
+          - [桥梁](zh/skills/creative/baoyu-infographic/references/layouts/bridge.md)
           - [循环流程](zh/skills/creative/baoyu-infographic/references/layouts/circular-flow.md)
           - [漫画条](zh/skills/creative/baoyu-infographic/references/layouts/comic-strip.md)
           - [对比矩阵](zh/skills/creative/baoyu-infographic/references/layouts/comparison-matrix.md)
