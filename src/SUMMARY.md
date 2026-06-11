@@ -1712,6 +1712,8 @@
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
+    - [Polymarket]()
+      - [Polymarket — 预测市场数据](zh/skills/research/polymarket/SKILL.md)
     - [Research Paper Writing]()
       - [Templates]()
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
