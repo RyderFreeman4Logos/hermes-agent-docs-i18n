@@ -1444,6 +1444,7 @@
           - [playful风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/playful.md)
           - [复古风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/retro.md)
           - [科学风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/scientific.md)
+          - [蚀刻印刷风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/screen-print.md)
           - [草图风格笔记](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/sketch-notes.md)
           - [草图模式](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/sketch.md)
           - [向量插画风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/vector-illustration.md)
