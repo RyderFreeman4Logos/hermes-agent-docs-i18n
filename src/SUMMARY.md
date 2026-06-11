@@ -1649,6 +1649,7 @@
   - [Platforms]()
     - [Photon]()
       - [Sidecar](zh/plugins/platforms/photon/sidecar/README.md)
+  - [Security Guidance](zh/plugins/security-guidance/README.md)
 - [Providers](zh/providers/README.md)
 - [Scripts]()
   - [工具搜索实时测试套件](zh/scripts/LIVETEST_README.md)
