@@ -1403,6 +1403,7 @@
 
 # 中文
 
+- [Hermes Agent 自三月起已支持“Routines”功能](zh/hermes-already-has-routines.md)
 - [Apps]()
   - [Desktop](zh/apps/desktop/README.md)
 - [Docker]()
