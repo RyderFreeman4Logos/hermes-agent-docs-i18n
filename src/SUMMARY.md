@@ -1463,6 +1463,7 @@
           - [戏剧风格](zh/optional-skills/creative/baoyu-comic/references/tones/dramatic.md)
           - [中性基调](zh/optional-skills/creative/baoyu-comic/references/tones/neutral.md)
           - [浪漫风格](zh/optional-skills/creative/baoyu-comic/references/tones/romantic.md)
+          - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Concept Diagrams]()
       - [References]()
