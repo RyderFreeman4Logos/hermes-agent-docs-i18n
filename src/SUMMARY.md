@@ -1797,6 +1797,7 @@
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
+            - [YouTube 内容处理](zh/website/docs/user-guide/skills/bundled/media/media-youtube-content.md)
           - [Note Taking]()
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
