@@ -1575,6 +1575,8 @@
     - [Description](zh/skills/note-taking/DESCRIPTION.md)
   - [Productivity]()
     - [Description](zh/skills/productivity/DESCRIPTION.md)
+    - [Nano Pdf]()
+      - [nano-pdf](zh/skills/productivity/nano-pdf/SKILL.md)
     - [Ocr And Documents]()
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
   - [Research]()
