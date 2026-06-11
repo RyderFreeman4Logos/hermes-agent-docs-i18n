@@ -1790,6 +1790,7 @@
         - [Example usage](zh/skills/github/github-issues/templates/feature-request.md)
     - [Github Pr Workflow]()
       - [References]()
+        - [CI故障排查快速参考指南](zh/skills/github/github-pr-workflow/references/ci-troubleshooting.md)
         - [Conventional Commits 快速参考](zh/skills/github/github-pr-workflow/references/conventional-commits.md)
       - [Templates]()
         - [Pr Body Bugfix](zh/skills/github/github-pr-workflow/templates/pr-body-bugfix.md)
