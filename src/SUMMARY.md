@@ -1901,6 +1901,7 @@
     - [User Guide]()
       - [Features]()
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
+        - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
       - [Messaging]()
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
