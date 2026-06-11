@@ -1730,6 +1730,8 @@
     - [Description](zh/skills/mlops/DESCRIPTION.md)
     - [Evaluation]()
       - [Description](zh/skills/mlops/evaluation/DESCRIPTION.md)
+    - [Huggingface Hub]()
+      - [Hugging Face CLI (`hf`) 参考指南](zh/skills/mlops/huggingface-hub/SKILL.md)
     - [Inference]()
       - [Description](zh/skills/mlops/inference/DESCRIPTION.md)
       - [Llama Cpp]()
