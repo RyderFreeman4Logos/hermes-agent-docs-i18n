@@ -1696,6 +1696,8 @@
       - [Description](zh/skills/mlops/models/DESCRIPTION.md)
   - [Note Taking]()
     - [Description](zh/skills/note-taking/DESCRIPTION.md)
+    - [Obsidian]()
+      - [Obsidian Vault](zh/skills/note-taking/obsidian/SKILL.md)
   - [Productivity]()
     - [Description](zh/skills/productivity/DESCRIPTION.md)
     - [Google Workspace]()
