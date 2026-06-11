@@ -1598,6 +1598,8 @@
           - [subway-map](zh/skills/creative/baoyu-infographic/references/styles/subway-map.md)
           - [技术示意图](zh/skills/creative/baoyu-infographic/references/styles/technical-schematic.md)
           - [UI线框图](zh/skills/creative/baoyu-infographic/references/styles/ui-wireframe.md)
+    - [Comfyui]()
+      - [Tests](zh/skills/creative/comfyui/tests/README.md)
     - [Excalidraw]()
       - [References]()
         - [Excalidraw 颜色方案](zh/skills/creative/excalidraw/references/colors.md)
