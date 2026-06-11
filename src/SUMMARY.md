@@ -1729,5 +1729,7 @@
         - [Bundled]()
           - [Apple]()
             - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
+          - [Media]()
+            - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
           - [Productivity]()
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
