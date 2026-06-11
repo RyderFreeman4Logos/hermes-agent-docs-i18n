@@ -1587,6 +1587,7 @@
         - [Sources]()
           - [CourtListener — 免费法律项目](zh/optional-skills/research/osint-investigation/references/sources/courtlistener.md)
           - [GDELT — 全球新闻监测服务](zh/optional-skills/research/osint-investigation/references/sources/gdelt.md)
+          - [ICIJ离岸信息泄露数据库](zh/optional-skills/research/osint-investigation/references/sources/icij-offshore.md)
           - [NYC ACRIS — 纽约市房地产记录系统](zh/optional-skills/research/osint-investigation/references/sources/nyc-acris.md)
           - [OFAC SDN——特别指定国民名单](zh/optional-skills/research/osint-investigation/references/sources/ofac-sdn.md)
           - [OpenCorporates — 全球企业注册信息平台](zh/optional-skills/research/osint-investigation/references/sources/opencorporates.md)
