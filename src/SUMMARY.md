@@ -1454,6 +1454,7 @@
     - [Baoyu Comic]()
       - [References]()
         - [Art Styles]()
+          - [粉笔画风格](zh/optional-skills/creative/baoyu-comic/references/art-styles/chalk.md)
           - [ink-brush](zh/optional-skills/creative/baoyu-comic/references/art-styles/ink-brush.md)
           - [清线画风](zh/optional-skills/creative/baoyu-comic/references/art-styles/ligne-claire.md)
           - [漫画风格](zh/optional-skills/creative/baoyu-comic/references/art-styles/manga.md)
