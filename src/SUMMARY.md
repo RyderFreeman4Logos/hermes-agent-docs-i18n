@@ -1576,6 +1576,8 @@
         - [CLIP应用指南](zh/optional-skills/mlops/clip/references/applications.md)
     - [Faiss]()
       - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
+      - [References]()
+        - [FAISS 索引类型指南](zh/optional-skills/mlops/faiss/references/index_types.md)
     - [Instructor]()
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
