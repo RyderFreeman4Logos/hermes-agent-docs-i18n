@@ -1718,6 +1718,7 @@
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
       - [References]()
         - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
+        - [结构化内容模板](zh/skills/creative/baoyu-infographic/references/structured-content-template.md)
         - [Layouts]()
           - [bento-grid](zh/skills/creative/baoyu-infographic/references/layouts/bento-grid.md)
           - [二元对比](zh/skills/creative/baoyu-infographic/references/layouts/binary-comparison.md)
