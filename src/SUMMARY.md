@@ -1654,7 +1654,7 @@
   - [Gemini OAuth 提供方 —— 实施方案](zh/plans/gemini-oauth-provider.md)
 - [Plugins]()
   - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
-  - [Hermes Achievements]()
+  - [Hermes Achievements](zh/plugins/hermes-achievements/README.md)
     - [Docs]()
       - [Hermes 成就功能性能提升实施计划](zh/plugins/hermes-achievements/docs/achievements-performance-implementation-plan.md)
   - [Memory]()
