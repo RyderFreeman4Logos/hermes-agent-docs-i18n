@@ -1848,6 +1848,8 @@
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
+    - [Blogwatcher]()
+      - [Blogwatcher](zh/skills/research/blogwatcher/SKILL.md)
     - [Polymarket]()
       - [Polymarket — 预测市场数据](zh/skills/research/polymarket/SKILL.md)
       - [References]()
