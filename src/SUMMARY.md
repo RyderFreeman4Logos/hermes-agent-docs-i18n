@@ -1430,6 +1430,7 @@
           - [编辑风格指南](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/editorial.md)
           - [elegant风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/elegant.md)
           - [平面风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/flat.md)
+          - [intuition-machine](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/intuition-machine.md)
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
           - [自然风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/nature.md)
           - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
