@@ -1458,6 +1458,7 @@
       - [References]()
         - [自动选择功能](zh/optional-skills/creative/baoyu-comic/references/auto-selection.md)
         - [Base Prompt](zh/optional-skills/creative/baoyu-comic/references/base-prompt.md)
+        - [角色定义模板](zh/optional-skills/creative/baoyu-comic/references/character-template.md)
         - [Ohmsha漫画风格指南](zh/optional-skills/creative/baoyu-comic/references/ohmsha-guide.md)
         - [部分工作流](zh/optional-skills/creative/baoyu-comic/references/partial-workflows.md)
         - [分镜模板](zh/optional-skills/creative/baoyu-comic/references/storyboard-template.md)
