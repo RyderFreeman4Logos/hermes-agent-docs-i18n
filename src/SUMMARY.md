@@ -1994,6 +1994,7 @@
             - [1-3-1 规则](zh/website/docs/user-guide/skills/optional/communication/communication-one-three-one-rule.md)
           - [Creative]()
             - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
+            - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
           - [Devops]()
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-cli.md)
             - [监视器](zh/website/docs/user-guide/skills/optional/devops/devops-watchers.md)
