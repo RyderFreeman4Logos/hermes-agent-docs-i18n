@@ -1519,6 +1519,7 @@
         - [References]()
           - [在线强化学习方法](zh/optional-skills/mlops/training/trl-fine-tuning/references/online-rl.md)
       - [Unsloth]()
+        - [Unsloth 技能](zh/optional-skills/mlops/training/unsloth/SKILL.md)
         - [References](zh/optional-skills/mlops/training/unsloth/references/index.md)
   - [Research]()
     - [Drug Discovery]()
