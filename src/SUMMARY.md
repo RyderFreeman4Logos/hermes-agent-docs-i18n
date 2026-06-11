@@ -1649,6 +1649,7 @@
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Research Paper Writing]()
       - [Templates]()
+        - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
   - [Smart Home]()
     - [Description](zh/skills/smart-home/DESCRIPTION.md)
