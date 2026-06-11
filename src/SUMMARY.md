@@ -1647,6 +1647,7 @@
     - [Oss Forensics]()
       - [References]()
         - [证据类型参考](zh/optional-skills/security/oss-forensics/references/evidence-types.md)
+        - [调查模板](zh/optional-skills/security/oss-forensics/references/investigation-templates.md)
       - [Templates]()
         - [法证调查报告](zh/optional-skills/security/oss-forensics/templates/forensic-report.md)
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
