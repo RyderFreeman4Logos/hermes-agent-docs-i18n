@@ -1455,6 +1455,7 @@
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Tones]()
+          - [戏剧风格](zh/optional-skills/creative/baoyu-comic/references/tones/dramatic.md)
           - [中性基调](zh/optional-skills/creative/baoyu-comic/references/tones/neutral.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Concept Diagrams]()
