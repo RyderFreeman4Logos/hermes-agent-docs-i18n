@@ -1476,6 +1476,7 @@
           - [标准版](zh/optional-skills/creative/baoyu-comic/references/layouts/standard.md)
           - [webtoon](zh/optional-skills/creative/baoyu-comic/references/layouts/webtoon.md)
         - [Presets]()
+          - [ohmsha预设——运用视觉隐喻的科普漫画风格](zh/optional-skills/creative/baoyu-comic/references/presets/ohmsha.md)
           - [少女风格](zh/optional-skills/creative/baoyu-comic/references/presets/shoujo.md)
           - [武侠](zh/optional-skills/creative/baoyu-comic/references/presets/wuxia.md)
         - [Tones]()
