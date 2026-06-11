@@ -1790,6 +1790,8 @@
 - [Website](zh/website/README.md)
   - [Docs]()
     - [User Stories](zh/website/docs/user-stories.md)
+    - [Reference]()
+      - [模型目录](zh/website/docs/reference/model-catalog.md)
     - [User Guide]()
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
