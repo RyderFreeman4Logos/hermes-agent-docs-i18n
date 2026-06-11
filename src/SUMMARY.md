@@ -1945,6 +1945,7 @@
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
       - [Messaging]()
+        - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
