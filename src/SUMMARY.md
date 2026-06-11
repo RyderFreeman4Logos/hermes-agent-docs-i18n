@@ -1852,6 +1852,8 @@
             - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
+          - [Yuanbao]()
+            - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
           - [Finance]()
             - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
