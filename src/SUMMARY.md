@@ -1692,6 +1692,7 @@
     - [Songsee]()
       - [songsee](zh/skills/media/songsee/SKILL.md)
     - [Youtube Content]()
+      - [YouTube内容处理工具](zh/skills/media/youtube-content/SKILL.md)
       - [References]()
         - [输出格式示例](zh/skills/media/youtube-content/references/output-formats.md)
   - [Mlops]()
