@@ -1406,6 +1406,7 @@
 - [Docker]()
   - [Hermes Agent 人格设定](zh/docker/SOUL.md)
 - [Optional Skills]()
+  - [可选技能](zh/optional-skills/DESCRIPTION.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/optional-skills/autonomous-ai-agents/DESCRIPTION.md)
   - [Communication]()
