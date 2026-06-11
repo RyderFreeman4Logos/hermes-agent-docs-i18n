@@ -1435,6 +1435,7 @@
           - [极简风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/minimal.md)
           - [自然风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/nature.md)
           - [Notion风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/notion.md)
+          - [像素艺术风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/pixel-art.md)
           - [playful风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/playful.md)
           - [复古风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/retro.md)
           - [科学风格](zh/optional-skills/creative/baoyu-article-illustrator/references/styles/scientific.md)
