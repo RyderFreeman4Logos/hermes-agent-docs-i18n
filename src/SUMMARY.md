@@ -2071,6 +2071,7 @@
         - [References]()
           - [API评估](zh/skills/mlops/evaluation/lm-evaluation-harness/references/api-evaluation.md)
           - [基准测试指南](zh/skills/mlops/evaluation/lm-evaluation-harness/references/benchmark-guide.md)
+          - [分布式评估](zh/skills/mlops/evaluation/lm-evaluation-harness/references/distributed-eval.md)
     - [Huggingface Hub]()
       - [Hugging Face CLI (`hf`) 参考指南](zh/skills/mlops/huggingface-hub/SKILL.md)
     - [Inference]()
