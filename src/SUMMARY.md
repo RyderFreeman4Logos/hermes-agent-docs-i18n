@@ -1821,6 +1821,7 @@
       - [Tests](zh/skills/creative/comfyui/tests/README.md)
       - [Workflows](zh/skills/creative/comfyui/workflows/README.md)
     - [Design Md]()
+      - [DESIGN.md 技能](zh/skills/creative/design-md/SKILL.md)
       - [Templates]()
         - [Starter](zh/skills/creative/design-md/templates/starter.md)
     - [Excalidraw]()
