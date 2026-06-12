@@ -2051,6 +2051,8 @@
       - [提交前代码验证](zh/skills/software-development/requesting-code-review/SKILL.md)
     - [Simplify Code]()
       - [简化代码——并行审查与优化](zh/skills/software-development/simplify-code/SKILL.md)
+    - [Spike]()
+      - [临时探索任务（Spike）](zh/skills/software-development/spike/SKILL.md)
   - [Yuanbao]()
     - [元宝群组交互功能](zh/skills/yuanbao/SKILL.md)
 - [Tests]()
