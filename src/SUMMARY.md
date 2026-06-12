@@ -1664,6 +1664,8 @@
     - [Drug Discovery]()
       - [References]()
         - [ADMET参考指南](zh/optional-skills/research/drug-discovery/references/ADMET_REFERENCE.md)
+    - [Gitnexus Explorer]()
+      - [GitNexus Explorer](zh/optional-skills/research/gitnexus-explorer/SKILL.md)
     - [Osint Investigation]()
       - [References]()
         - [Sources]()
