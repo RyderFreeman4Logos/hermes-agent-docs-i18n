@@ -2026,6 +2026,7 @@
             - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
+            - [Heartmula](zh/website/docs/user-guide/skills/bundled/media/media-heartmula.md)
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
             - [YouTube 内容处理](zh/website/docs/user-guide/skills/bundled/media/media-youtube-content.md)
           - [Mlops]()
