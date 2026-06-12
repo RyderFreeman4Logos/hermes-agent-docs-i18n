@@ -1570,6 +1570,8 @@
       - [监视器](zh/optional-skills/devops/watchers/SKILL.md)
   - [Dogfood]()
     - [内部测试工具——高级质量保障与测试技能](zh/optional-skills/dogfood/DESCRIPTION.md)
+    - [Adversarial Ux Test]()
+      - [对抗性用户体验测试](zh/optional-skills/dogfood/adversarial-ux-test/SKILL.md)
   - [Email]()
     - [Agentmail]()
       - [AgentMail — 智能体专属邮箱收件箱](zh/optional-skills/email/agentmail/SKILL.md)
