@@ -2067,6 +2067,7 @@
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
         - [SMS 设置（Twilio）](zh/website/docs/user-guide/messaging/sms.md)
+        - [Microsoft Teams 会议功能](zh/website/docs/user-guide/messaging/teams-meetings.md)
         - [WeCom 回调（自建应用）](zh/website/docs/user-guide/messaging/wecom-callback.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
