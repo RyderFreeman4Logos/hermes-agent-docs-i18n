@@ -1940,6 +1940,7 @@
         - [设计系统：Intercom](zh/skills/creative/popular-web-designs/templates/intercom.md)
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
+        - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
     - [Sketch]()
