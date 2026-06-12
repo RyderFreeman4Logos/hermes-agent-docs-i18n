@@ -1445,6 +1445,7 @@
   - [Creative]()
     - [Baoyu Article Illustrator]()
       - [端口说明 — baoyu-article-illustrator](zh/optional-skills/creative/baoyu-article-illustrator/PORT_NOTES.md)
+      - [文章插画生成工具](zh/optional-skills/creative/baoyu-article-illustrator/SKILL.md)
       - [Prompts]()
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
