@@ -2214,6 +2214,7 @@
           - [Gaming]()
             - [Minecraft 模组包服务器](zh/website/docs/user-guide/skills/optional/gaming/gaming-minecraft-modpack-server.md)
           - [Mcp]()
+            - [Fastmcp](zh/website/docs/user-guide/skills/optional/mcp/mcp-fastmcp.md)
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
           - [Mlops]()
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
