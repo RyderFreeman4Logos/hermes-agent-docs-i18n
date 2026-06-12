@@ -1842,6 +1842,7 @@
       - [Templates]()
         - [Starter](zh/skills/creative/design-md/templates/starter.md)
     - [Excalidraw]()
+      - [Excalidraw 图表生成技能](zh/skills/creative/excalidraw/SKILL.md)
       - [References]()
         - [Excalidraw 颜色方案](zh/skills/creative/excalidraw/references/colors.md)
         - [Excalidraw 深色模式图表](zh/skills/creative/excalidraw/references/dark-mode.md)
