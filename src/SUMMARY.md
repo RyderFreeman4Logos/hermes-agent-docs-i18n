@@ -1553,6 +1553,7 @@
         - [故障排除](zh/optional-skills/creative/hyperframes/references/troubleshooting.md)
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
     - [Kanban Video Orchestrator]()
+      - [Kanban 视频编排工具](zh/optional-skills/creative/kanban-video-orchestrator/SKILL.md)
       - [References]()
         - [实际案例解析](zh/optional-skills/creative/kanban-video-orchestrator/references/examples.md)
         - [信息收集——需求探索问题库](zh/optional-skills/creative/kanban-video-orchestrator/references/intake.md)
