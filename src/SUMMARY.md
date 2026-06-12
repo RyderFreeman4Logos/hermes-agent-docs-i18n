@@ -1577,6 +1577,8 @@
         - [运行应用](zh/optional-skills/devops/cli/references/running-apps.md)
     - [Docker Management]()
       - [Docker 管理](zh/optional-skills/devops/docker-management/SKILL.md)
+    - [Hermes S6 Container Supervision]()
+      - [Hermes s6-overlay 容器监控功能](zh/optional-skills/devops/hermes-s6-container-supervision/SKILL.md)
     - [Watchers]()
       - [监视器](zh/optional-skills/devops/watchers/SKILL.md)
   - [Dogfood]()
