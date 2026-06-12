@@ -2211,6 +2211,7 @@
             - [架构图](zh/website/docs/user-guide/skills/bundled/creative/creative-architecture-diagram.md)
             - [DESIGN.md 模型](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
+            - [热门网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
           - [Data Science]()
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Dogfood]()
