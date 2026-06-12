@@ -1615,6 +1615,7 @@
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
         - [提供商配置](zh/optional-skills/mlops/instructor/references/providers.md)
     - [Llava]()
+      - [LLaVA - 大语言与视觉助手](zh/optional-skills/mlops/llava/SKILL.md)
       - [References]()
         - [LLaVA训练指南](zh/optional-skills/mlops/llava/references/training.md)
     - [Nemo Curator]()
