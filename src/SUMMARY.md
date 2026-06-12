@@ -1664,6 +1664,7 @@
         - [Unsloth 技能](zh/optional-skills/mlops/training/unsloth/SKILL.md)
         - [References](zh/optional-skills/mlops/training/unsloth/references/index.md)
     - [Whisper]()
+      - [Whisper – 高性能语音识别技术](zh/optional-skills/mlops/whisper/SKILL.md)
       - [References]()
         - [Whisper 语言支持指南](zh/optional-skills/mlops/whisper/references/languages.md)
   - [Productivity]()
