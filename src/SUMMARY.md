@@ -2133,6 +2133,8 @@
   - [Software Development]()
     - [Hermes Agent Skill Authoring]()
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
+    - [Node Inspect Debugger]()
+      - [Node.js 检查调试器](zh/skills/software-development/node-inspect-debugger/SKILL.md)
     - [Plan]()
       - [计划模式](zh/skills/software-development/plan/SKILL.md)
     - [Requesting Code Review]()
