@@ -2219,6 +2219,7 @@
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
+      - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
       - [Features]()
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
         - [批量处理](zh/website/docs/user-guide/features/batch-processing.md)
