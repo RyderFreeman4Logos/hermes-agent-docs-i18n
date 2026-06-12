@@ -1985,6 +1985,7 @@
       - [References]()
         - [输出模板说明](zh/skills/github/github-code-review/references/review-output-template.md)
     - [Github Issues]()
+      - [GitHub 问题管理](zh/skills/github/github-issues/SKILL.md)
       - [Templates]()
         - [Bug Report](zh/skills/github/github-issues/templates/bug-report.md)
         - [Example usage](zh/skills/github/github-issues/templates/feature-request.md)
