@@ -1939,7 +1939,7 @@
       - [References]()
         - [Polymarket API 接口参考文档](zh/skills/research/polymarket/references/api-endpoints.md)
     - [Research Paper Writing]()
-      - [Templates]()
+      - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
   - [Smart Home]()
