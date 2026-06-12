@@ -1938,6 +1938,8 @@
     - [Ocr And Documents]()
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
       - [PDF与文档提取功能](zh/skills/productivity/ocr-and-documents/SKILL.md)
+    - [Powerpoint]()
+      - [编辑演示文稿](zh/skills/productivity/powerpoint/editing.md)
     - [Teams Meeting Pipeline]()
       - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
   - [Research]()
