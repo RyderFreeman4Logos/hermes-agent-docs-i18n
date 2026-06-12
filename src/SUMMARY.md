@@ -1830,6 +1830,8 @@
         - [故障排除](zh/skills/creative/manim-video/references/troubleshooting.md)
         - [视觉设计原则](zh/skills/creative/manim-video/references/visual-design.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
+      - [References]()
+        - [字体设置](zh/skills/creative/p5js/references/typography.md)
     - [Popular Web Designs]()
       - [Templates]()
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
