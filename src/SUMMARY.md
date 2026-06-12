@@ -1969,6 +1969,7 @@
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
+        - [Google Workspace 功能模块](zh/website/docs/user-guide/skills/google-workspace.md)
         - [Bundled]()
           - [Apple]()
             - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
