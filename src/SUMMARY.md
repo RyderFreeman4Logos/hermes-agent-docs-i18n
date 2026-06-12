@@ -1796,6 +1796,7 @@
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
       - [References]()
+        - [信息图内容分析框架](zh/skills/creative/baoyu-infographic/references/analysis-framework.md)
         - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
         - [结构化内容模板](zh/skills/creative/baoyu-infographic/references/structured-content-template.md)
         - [Layouts]()
