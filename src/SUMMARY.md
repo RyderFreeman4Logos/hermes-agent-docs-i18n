@@ -1573,6 +1573,8 @@
         - [认证与设置](zh/optional-skills/devops/cli/references/authentication.md)
         - [CLI 参考手册](zh/optional-skills/devops/cli/references/cli-reference.md)
         - [运行应用](zh/optional-skills/devops/cli/references/running-apps.md)
+    - [Docker Management]()
+      - [Docker 管理](zh/optional-skills/devops/docker-management/SKILL.md)
     - [Watchers]()
       - [监视器](zh/optional-skills/devops/watchers/SKILL.md)
   - [Dogfood]()
