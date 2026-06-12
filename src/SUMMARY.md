@@ -1631,6 +1631,8 @@
   - [Mlops]()
     - [Accelerate]()
       - [HuggingFace Accelerate——统一的分布式训练解决方案](zh/optional-skills/mlops/accelerate/SKILL.md)
+      - [References]()
+        - [Megatron 与 Accelerate 的集成](zh/optional-skills/mlops/accelerate/references/megatron-integration.md)
     - [Chroma]()
       - [Chroma - 开源嵌入数据库](zh/optional-skills/mlops/chroma/SKILL.md)
       - [References]()
