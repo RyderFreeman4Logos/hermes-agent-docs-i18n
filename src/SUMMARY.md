@@ -2294,3 +2294,5 @@
           - [Security]()
             - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
             - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
+          - [Web Development]()
+            - [Page Agent](zh/website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md)
