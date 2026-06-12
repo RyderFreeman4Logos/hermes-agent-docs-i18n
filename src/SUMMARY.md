@@ -1862,6 +1862,7 @@
       - [架构图生成功能](zh/skills/creative/architecture-diagram/SKILL.md)
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
+      - [信息图生成器](zh/skills/creative/baoyu-infographic/SKILL.md)
       - [References]()
         - [信息图内容分析框架](zh/skills/creative/baoyu-infographic/references/analysis-framework.md)
         - [Base Prompt](zh/skills/creative/baoyu-infographic/references/base-prompt.md)
