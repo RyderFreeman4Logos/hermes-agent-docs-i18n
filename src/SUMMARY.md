@@ -2341,6 +2341,7 @@
             - [Chroma](zh/website/docs/user-guide/skills/optional/mlops/mlops-chroma.md)
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
+            - [优化注意力机制：Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
             - [Modal Serverless GPU](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
             - [Nemo Curator](zh/website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md)
