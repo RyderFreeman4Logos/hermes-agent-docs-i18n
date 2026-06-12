@@ -1895,6 +1895,7 @@
         - [渲染参考文档](zh/skills/creative/manim-video/references/rendering.md)
         - [场景规划参考指南](zh/skills/creative/manim-video/references/scene-planning.md)
         - [故障排除](zh/skills/creative/manim-video/references/troubleshooting.md)
+        - [更新器与值追踪器](zh/skills/creative/manim-video/references/updaters-and-trackers.md)
         - [视觉设计原则](zh/skills/creative/manim-video/references/visual-design.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
       - [References]()
