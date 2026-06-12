@@ -2098,6 +2098,7 @@
             - [Antigravity CLI](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli.md)
             - [Blackbox](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-blackbox.md)
           - [Blockchain]()
+            - [Hyperliquid](zh/website/docs/user-guide/skills/optional/blockchain/blockchain-hyperliquid.md)
             - [Solana](zh/website/docs/user-guide/skills/optional/blockchain/blockchain-solana.md)
           - [Communication]()
             - [1-3-1 规则](zh/website/docs/user-guide/skills/optional/communication/communication-one-three-one-rule.md)
