@@ -1690,6 +1690,8 @@
     - [Canvas]()
       - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)
   - [Research]()
+    - [Darwinian Evolver]()
+      - [达尔文进化器](zh/optional-skills/research/darwinian-evolver/SKILL.md)
     - [Domain Intel]()
       - [域名情报——被动式开源情报收集](zh/optional-skills/research/domain-intel/SKILL.md)
     - [Drug Discovery]()
