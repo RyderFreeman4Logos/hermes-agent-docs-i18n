@@ -1999,6 +1999,7 @@
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
         - [SMS 设置（Twilio）](zh/website/docs/user-guide/messaging/sms.md)
+        - [WeCom 回调（自建应用）](zh/website/docs/user-guide/messaging/wecom-callback.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
       - [Skills]()
         - [Google Workspace 功能模块](zh/website/docs/user-guide/skills/google-workspace.md)
