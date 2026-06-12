@@ -1431,6 +1431,8 @@
     - [Openhands]()
       - [OpenHands CLI](zh/optional-skills/autonomous-ai-agents/openhands/SKILL.md)
   - [Blockchain]()
+    - [Evm]()
+      - [EVM区块链技能](zh/optional-skills/blockchain/evm/SKILL.md)
     - [Hyperliquid]()
       - [Hyperliquid 技能](zh/optional-skills/blockchain/hyperliquid/SKILL.md)
     - [Solana]()
