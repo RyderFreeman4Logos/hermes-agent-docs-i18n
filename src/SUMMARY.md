@@ -1864,6 +1864,8 @@
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Architecture Diagram]()
       - [架构图生成功能](zh/skills/creative/architecture-diagram/SKILL.md)
+    - [Ascii Art]()
+      - [ASCII艺术生成技能](zh/skills/creative/ascii-art/SKILL.md)
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
       - [信息图生成器](zh/skills/creative/baoyu-infographic/SKILL.md)
