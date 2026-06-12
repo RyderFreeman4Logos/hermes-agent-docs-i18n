@@ -2247,6 +2247,7 @@
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
             - [热门网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
             - [Sketch](zh/website/docs/user-guide/skills/bundled/creative/creative-sketch.md)
+            - [歌曲创作与 AI 音乐](zh/website/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music.md)
           - [Data Science]()
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Dogfood]()
