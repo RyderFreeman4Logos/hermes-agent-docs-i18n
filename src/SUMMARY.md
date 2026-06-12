@@ -1923,6 +1923,8 @@
     - [Google Workspace]()
       - [References]()
         - [Gmail 搜索语法](zh/skills/productivity/google-workspace/references/gmail-search-syntax.md)
+    - [Maps]()
+      - [地图技能](zh/skills/productivity/maps/SKILL.md)
     - [Nano Pdf]()
       - [nano-pdf](zh/skills/productivity/nano-pdf/SKILL.md)
     - [Notion]()
