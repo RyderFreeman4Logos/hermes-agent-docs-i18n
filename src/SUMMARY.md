@@ -2171,6 +2171,7 @@
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [教程：构建每日简报机器人](zh/website/docs/guides/daily-briefing-bot.md)
       - [教程：构建 GitHub PR 审核智能代理](zh/website/docs/guides/github-pr-review-agent.md)
+      - [Google Gemini](zh/website/docs/guides/google-gemini.md)
       - [在 Mac 上运行本地大语言模型](zh/website/docs/guides/local-llm-on-mac.md)
       - [使用 Ollama 在本地运行 Hermes —— 零 API 费用](zh/website/docs/guides/local-ollama-setup.md)
       - [注册 Microsoft Graph 应用程序](zh/website/docs/guides/microsoft-graph-app-registration.md)
