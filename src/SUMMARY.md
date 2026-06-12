@@ -1580,6 +1580,8 @@
         - [SEC 文件数据提取参考指南](zh/optional-skills/finance/3-statement-model/references/sec-filings.md)
     - [Dcf Model]()
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
+    - [Excel Author]()
+      - [excel-author](zh/optional-skills/finance/excel-author/SKILL.md)
     - [Merger Model]()
       - [合并模型](zh/optional-skills/finance/merger-model/SKILL.md)
     - [Pptx Author]()
