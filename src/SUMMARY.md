@@ -2284,6 +2284,7 @@
             - [PowerPoint](zh/website/docs/user-guide/skills/bundled/productivity/productivity-powerpoint.md)
             - [Teams 会议处理流程](zh/website/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline.md)
           - [Research]()
+            - [Arxiv](zh/website/docs/user-guide/skills/bundled/research/research-arxiv.md)
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
             - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
           - [Smart Home]()
