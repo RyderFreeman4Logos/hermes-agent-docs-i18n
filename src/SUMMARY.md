@@ -1526,6 +1526,7 @@
         - [公寓平面图：3室到4室的改造方案](zh/optional-skills/creative/concept-diagrams/examples/apartment-floor-plan-conversion.md)
         - [香蕉的旅程：从树上到冰沙](zh/optional-skills/creative/concept-diagrams/examples/banana-journey-tree-to-smoothie.md)
         - [商用飞机结构](zh/optional-skills/creative/concept-diagrams/examples/commercial-aircraft-structure.md)
+        - [乱序CPU核心微架构](zh/optional-skills/creative/concept-diagrams/examples/cpu-ooo-microarchitecture.md)
         - [电力网：从发电到消费](zh/optional-skills/creative/concept-diagrams/examples/electricity-grid-flow.md)
         - [电影制作流程](zh/optional-skills/creative/concept-diagrams/examples/feature-film-production-pipeline.md)
         - [医院急诊科流程图](zh/optional-skills/creative/concept-diagrams/examples/hospital-emergency-department-flow.md)
