@@ -2030,6 +2030,7 @@
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
     - [Getting Started]()
+      - [安装](zh/website/docs/getting-started/installation.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
