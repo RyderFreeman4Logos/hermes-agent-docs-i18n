@@ -1897,6 +1897,7 @@
     - [Manim Video](zh/skills/creative/manim-video/README.md)
       - [References]()
         - [动画设计思维](zh/skills/creative/manim-video/references/animation-design-thinking.md)
+        - [动画参考](zh/skills/creative/manim-video/references/animations.md)
         - [相机与 3D 参考资料](zh/skills/creative/manim-video/references/camera-and-3d.md)
         - [装饰元素与视觉美化](zh/skills/creative/manim-video/references/decorations.md)
         - [方程式与 LaTeX 参考手册](zh/skills/creative/manim-video/references/equations.md)
