@@ -1726,6 +1726,7 @@
 - [Plugins]()
   - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
   - [Google Meet](zh/plugins/google_meet/README.md)
+    - [google_meet](zh/plugins/google_meet/SKILL.md)
   - [Hermes Achievements](zh/plugins/hermes-achievements/README.md)
     - [Docs]()
       - [Hermes 成就功能性能提升实施计划](zh/plugins/hermes-achievements/docs/achievements-performance-implementation-plan.md)
