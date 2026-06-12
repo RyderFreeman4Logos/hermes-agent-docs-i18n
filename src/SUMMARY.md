@@ -2158,6 +2158,7 @@
         - [计算机操作（macOS）](zh/website/docs/user-guide/features/computer-use.md)
         - [上下文文件](zh/website/docs/user-guide/features/context-files.md)
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
+        - [凭证池](zh/website/docs/user-guide/features/credential-pools.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
         - [语言服务器协议（LSP）](zh/website/docs/user-guide/features/lsp.md)
