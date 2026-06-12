@@ -2043,6 +2043,8 @@
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
     - [Requesting Code Review]()
       - [提交前代码验证](zh/skills/software-development/requesting-code-review/SKILL.md)
+    - [Simplify Code]()
+      - [简化代码——并行审查与优化](zh/skills/software-development/simplify-code/SKILL.md)
   - [Yuanbao]()
     - [元宝群组交互功能](zh/skills/yuanbao/SKILL.md)
 - [Tests]()
