@@ -1594,6 +1594,7 @@
   - [Mcp]()
     - [MCP](zh/optional-skills/mcp/DESCRIPTION.md)
     - [Fastmcp]()
+      - [FastMCP](zh/optional-skills/mcp/fastmcp/SKILL.md)
       - [References]()
         - [FastMCP CLI 参考手册](zh/optional-skills/mcp/fastmcp/references/fastmcp-cli.md)
     - [Mcporter]()
