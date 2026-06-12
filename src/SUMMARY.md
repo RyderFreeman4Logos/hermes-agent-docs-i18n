@@ -1691,6 +1691,7 @@
     - [Web Pentest]()
       - [References]()
         - [绕过技巧](zh/optional-skills/security/web-pentest/references/bypass-techniques.md)
+        - [利用技术](zh/optional-skills/security/web-pentest/references/exploitation-techniques.md)
         - [范围管控机制](zh/optional-skills/security/web-pentest/references/scope-enforcement.md)
         - [漏洞分类体系](zh/optional-skills/security/web-pentest/references/vuln-taxonomy.md)
       - [Templates]()
