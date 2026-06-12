@@ -1714,6 +1714,7 @@
     - [Domain Intel]()
       - [域名情报——被动式开源情报收集](zh/optional-skills/research/domain-intel/SKILL.md)
     - [Drug Discovery]()
+      - [药物发现与制药研究](zh/optional-skills/research/drug-discovery/SKILL.md)
       - [References]()
         - [ADMET参考指南](zh/optional-skills/research/drug-discovery/references/ADMET_REFERENCE.md)
     - [Duckduckgo Search]()
