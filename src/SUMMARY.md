@@ -1873,6 +1873,8 @@
     - [Description](zh/skills/media/DESCRIPTION.md)
     - [Gif Search]()
       - [GIF搜索（Tenor API）](zh/skills/media/gif-search/SKILL.md)
+    - [Heartmula]()
+      - [HeartMuLa - 开源音乐生成工具](zh/skills/media/heartmula/SKILL.md)
     - [Songsee]()
       - [songsee](zh/skills/media/songsee/SKILL.md)
     - [Youtube Content]()
