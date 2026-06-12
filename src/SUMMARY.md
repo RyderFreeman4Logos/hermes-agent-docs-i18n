@@ -2076,6 +2076,7 @@
             - [Codex](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex.md)
           - [Creative]()
             - [架构图](zh/website/docs/user-guide/skills/bundled/creative/creative-architecture-diagram.md)
+            - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
           - [Data Science]()
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Dogfood]()
