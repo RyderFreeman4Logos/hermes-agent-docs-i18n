@@ -149,12 +149,12 @@ hermes webhook subscribe pr-review \
   --deliver github_comment
 ```
 
-完整自动化模板库：[hermes-agent.nousresearch.com/docs/guides/automation-templates](https://hermes-agent.nousresearch.com/docs/guides/automation-templates)
+完整自动化蓝图库：[hermes-agent.nousresearch.com/docs/reference/automation-blueprints-catalog](https://hermes-agent.nousresearch.com/docs/reference/automation-blueprints-catalog)
 
-技术文档：[hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
+文档说明：[hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
 
-GitHub仓库：[github.com/NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)
+GitHub 仓库：[github.com/NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)
 
 ---
 
-*Hermes Agent由[Nous Research](https://nousresearch.com)开发。它采用开源架构，不受模型限制，可在您的基础设施上运行。*
+*Hermes Agent 由 [Nous Research](https://nousresearch.com) 开发。它采用开源架构，不受模型限制，可在您的基础设施上运行。*
