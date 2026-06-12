@@ -2160,6 +2160,7 @@
       - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
+      - [教程：构建每日简报机器人](zh/website/docs/guides/daily-briefing-bot.md)
       - [教程：构建 GitHub PR 审核智能代理](zh/website/docs/guides/github-pr-review-agent.md)
       - [在 Mac 上运行本地大语言模型](zh/website/docs/guides/local-llm-on-mac.md)
       - [注册 Microsoft Graph 应用程序](zh/website/docs/guides/microsoft-graph-app-registration.md)
