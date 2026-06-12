@@ -2257,6 +2257,7 @@
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
+            - [Modal Serverless GPU](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
