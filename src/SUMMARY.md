@@ -2074,6 +2074,8 @@
       - [References]()
         - [Polymarket API 接口参考文档](zh/skills/research/polymarket/references/api-endpoints.md)
     - [Research Paper Writing]()
+      - [References]()
+        - [参考文献列表](zh/skills/research/research-paper-writing/references/sources.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
