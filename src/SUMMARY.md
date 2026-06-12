@@ -1755,6 +1755,7 @@
       - [Hermes 成就系统性能规范（黑客松后版本）](zh/plugins/hermes-achievements/docs/achievements-performance-spec.md)
   - [Memory]()
     - [Byterover](zh/plugins/memory/byterover/README.md)
+    - [Hindsight](zh/plugins/memory/hindsight/README.md)
     - [Holographic](zh/plugins/memory/holographic/README.md)
     - [Mem0](zh/plugins/memory/mem0/README.md)
     - [Openviking](zh/plugins/memory/openviking/README.md)
