@@ -1850,6 +1850,7 @@
         - [视觉设计原则](zh/skills/creative/manim-video/references/visual-design.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
       - [References]()
+        - [形状与几何结构](zh/skills/creative/p5js/references/shapes-and-geometry.md)
         - [字体设置](zh/skills/creative/p5js/references/typography.md)
     - [Popular Web Designs]()
       - [Templates]()
