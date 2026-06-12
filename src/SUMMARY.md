@@ -2210,6 +2210,7 @@
         - [Nous 工具网关](zh/website/docs/user-guide/features/tool-gateway.md)
         - [工具搜索功能](zh/website/docs/user-guide/features/tool-search.md)
         - [工具与工具集](zh/website/docs/user-guide/features/tools.md)
+        - [视觉功能与图片粘贴](zh/website/docs/user-guide/features/vision.md)
         - [X（Twitter）搜索功能](zh/website/docs/user-guide/features/x-search.md)
       - [Messaging]()
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
