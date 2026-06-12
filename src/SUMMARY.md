@@ -1671,6 +1671,7 @@
         - [多 GPU 部署指南](zh/optional-skills/mlops/tensorrt-llm/references/multi-gpu.md)
         - [TensorRT-LLM 优化指南](zh/optional-skills/mlops/tensorrt-llm/references/optimization.md)
     - [Torchtitan]()
+      - [TorchTitan——PyTorch原生分布式大语言模型预训练框架](zh/optional-skills/mlops/torchtitan/SKILL.md)
       - [References]()
         - [TorchTitan中的检查点机制](zh/optional-skills/mlops/torchtitan/references/checkpoint.md)
         - [向 TorchTitan 添加自定义模型](zh/optional-skills/mlops/torchtitan/references/custom-models.md)
