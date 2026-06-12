@@ -1,0 +1,185 @@
+---
+title: "Darwinian Evolver — Evolve prompts/regex/SQL/code with Imbue's evolution loop"
+sidebar_label: "Darwinian Evolver"
+description: "Evolve prompts/regex/SQL/code with Imbue's evolution loop"
+---
+
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+
+# Darwinian Evolver
+
+利用 Imbue 的进化循环功能，对提示词、正则表达式、SQL 语句或代码片段进行优化。
+
+## 技能元数据
+
+| | |
+|---|---|
+| 来源 | 可选 — 通过 `hermes skills install official/research/darwinian-evolver` 安装 |
+| 路径 | `optional-skills/research/darwinian-evolver` |
+| 版本 | `0.1.0` |
+| 开发者 | Bihruze (Asahi0x)，Hermes Agent |
+| 许可协议 | MIT |
+| 支持平台 | linux、macos |
+| 标签 | `进化`、`优化`、`提示词工程`、`研究` |
+| 相关技能 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv)、[`jupyter-live-kernel`](/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel) |
+
+## 参考：完整 SKILL.md 内容
+
+:::info
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能运行时，智能体看到的指令即为此内容。
+:::
+
+# Darwinian Evolver
+
+运行 Imbue 的 [darwinian_evolver](https://github.com/imbue-ai/darwinian_evolver) — 一种由大语言模型驱动的进化搜索算法 — 根据适应度函数对**提示词、正则表达式、SQL 查询或小型代码片段**进行优化。
+
+功能说明：该技能实际上是对上游工具的简单封装。它负责安装该工具，引导智能体编写 `Problem` 定义（包括目标对象、评估机制及变异规则），并通过上游 CLI 或自定义的 Python 驱动程序来控制进化循环的运行。
+
+**许可协议：** 上游工具采用 **AGPL-3.0** 许可协议。该技能仅通过上游 CLI 或 `subprocess`/`uv run` 命令调用该工具（属于简单整合），严禁将上游工具的类直接导入到 Hermes 内部。
+
+## 适用场景
+
+- 用户提出“优化这个提示词”、“为 X 设计更优的正则表达式”、“自动改进这段代码/SQL 语句”或“寻找更好的指令”等需求。
+- 您已拥有评估指标（如完全匹配度、正则匹配率、单元测试结果、大语言模型评分或运行时指标），同时也有初始候选方案。若没有评估指标，请先定义一个——这是最关键的部分。
+- 成本可接受：通常一次运行需要 50–500 次大语言模型调用。在 gpt-4o-mini 上成本仅为几美分；而在 Claude Sonnet 上则可能达到几美元。
+
+**不推荐使用的情况：**
+- 优化目标具有可微分性（此时应使用梯度下降法/DSPy 工具）。
+- 只需要尝试 2–3 种方案——可直接手动编写即可。
+- 适应度信号完全依赖主观判断，且没有可量化的评估标准。
+
+## 先决条件
+
+- Python ≥3.11
+- `git`、`uv`（或 `pip`）
+- 下列任意一个 API 密钥：`OPENROUTER_API_KEY`、`ANTHROPIC_API_KEY` 或 `OPENAI_API_KEY`
+
+该技能附带了一个名为 `parrot_openrouter.py` 的小型驱动程序，它通过 OpenAI SDK 使用 `OPENROUTER_API_KEY`，因此任何在 OpenRouter 上的模型均可使用。而上游 CLI 本身则默认集成 Anthropic 平台，需要 `ANTHROPIC_API_KEY`。
+
+## 安装（一次性操作）
+
+通过 `terminal` 工具运行即可：
+
+```bash
+mkdir -p ~/.hermes/cache/darwinian-evolver && cd ~/.hermes/cache/darwinian-evolver
+[ -d darwinian_evolver ] || git clone --depth 1 https://github.com/imbue-ai/darwinian_evolver.git
+cd darwinian_evolver && uv sync
+```
+
+验证：
+
+```bash
+cd ~/.hermes/cache/darwinian-evolver/darwinian_evolver \
+  && uv run darwinian_evolver --help | head -5
+```
+
+## 快速入门——内置的 Parrot 示例
+
+简易功能测试（需要 `ANTHROPIC_API_KEY`）：
+
+```bash
+cd ~/.hermes/cache/darwinian-evolver/darwinian_evolver
+uv run darwinian_evolver parrot \
+  --num_iterations 2 \
+  --num_parents_per_iteration 2 \
+  --mutator_concurrency 2 --evaluator_concurrency 2 \
+  --output_dir /tmp/parrot_demo
+```
+
+输出内容：
+- `/tmp/parrot_demo/snapshots/iteration_N.pkl` — 每次迭代后的种群数据（已序列化）
+- `/tmp/parrot_demo/<jsonl>` — 每次迭代的 JSON 日志文件（路径会在执行结束时显示）
+
+请在浏览器中打开 `~/.hermes/cache/darwinian-evolver/darwinian_evolver/darwinian_evolver/lineage_visualizer.html`，并加载该 JSON 日志以查看进化树。
+
+## 快速入门 — OpenRouter 驱动（无需 Anthropic 密钥）
+
+该技能附带了 `scripts/parrot_openrouter.py` 脚本——问题设定与原 Parrot 任务相同，但 LLM 调用会通过 OpenRouter 进行，因此任何提供商均可使用。
+
+```bash
+# From wherever the skill is installed:
+SKILL_DIR=~/.hermes/skills/research/darwinian-evolver
+DE_DIR=~/.hermes/cache/darwinian-evolver/darwinian_evolver
+
+cd "$DE_DIR" && \
+  EVOLVER_MODEL='openai/gpt-4o-mini' \
+  uv run --with openai python "$SKILL_DIR/scripts/parrot_openrouter.py" \
+    --num_iterations 3 --num_parents_per_iteration 2 \
+    --output_dir /tmp/parrot_or
+```
+
+使用 `scripts/show_snapshot.py` 查看结果：
+
+```bash
+uv run --with openai python "$SKILL_DIR/scripts/show_snapshot.py" \
+  /tmp/parrot_or/snapshots/iteration_3.pkl
+```
+
+预期输出：按得分排序的7个经过优化的提示模板，其中最优版本的得分应在0.6–0.8之间（初始种子`Say {{ phrase }}`的得分为0.000）。
+
+## 定义自定义问题
+
+该技能提供了`templates/custom_problem_template.py`文件——可直接复制、编辑后运行。需要定义以下三个要素：
+
+1. **`Organism`**——一个基于Pydantic的`BaseModel`子类，用于存储需要优化的内容（如`prompt_template: str`、`regex_pattern: str`、`sql_query: str`、`code_block: str`等）。需为其添加一个`run(*args)`方法以执行相关操作。
+
+2. **`Evaluator`**——具备`.evaluate(organism) -> EvaluationResult(score=..., trainable_failure_cases=[...], holdout_failure_cases=[...], is_viable=True)`方法。
+   - **`score`**的取值范围为[0, 1]，数值越高表示效果越好。
+   - **`trainable_failure_cases`**——即变异器所接收的输入内容。需包含足够的上下文（包括输入、预期结果和实际输出），以便大型语言模型进行诊断。
+   - **`holdout_failure_cases`**——不会被变异器访问。可用于检测过拟合现象。
+   - 除非该`Organism`完全无法使用（出现异常、返回None等），否则默认设置`is_viable=True`。得分为0但仍可使用的`Organism`也是可行的，只是会在父代选择中被降低权重。
+
+3. **`Mutator`**——具备`.mutate(organism, failure_cases, learning_log_entries) -> list[Organism]`方法。
+   通常的做法是：构建一个包含当前`Organism`、对应失败案例以及修复建议请求的大型语言模型提示语；解析模型返回的响应；然后生成一个新的`Organism`。如果解析失败，则返回`[]`，由循环机制处理该情况。
+
+随后需要编写一个驱动脚本，将`Problem(initial_organism, evaluator, [mutators])`与`EvolveProblemLoop`相结合，并通过`loop.run(num_iterations=N)`进行迭代——官方提供的`scripts/parrot_openrouter.py`可作为参考。
+
+## 真正重要的超参数
+
+| 参数 | 默认值 | 何时调整 |
+|---|---|---|
+| `--num_iterations` | 5 | 当对评估器有足够信心后，可提升至10–20次 |
+| `--num_parents_per_iteration` | 4 | 若仅需初步探索，可降低至2个 |
+| `--mutator_concurrency` | 10 | 为避免遇到速率限制，可降低至2–4个 |
+| `--evaluator_concurrency` | 10 | 与上述参数相同，因为评估器也会调用大型语言模型 |
+| `--batch_size` | 1 | 当变异器能够同时处理多个失败案例时，可提升至3–5 |
+| `--verify_mutations` | 关闭 | 当变异器效率低下（根据Imbue指标，后续运行中的成本节省幅度低于10倍）时，可开启此选项 |
+| `--midpoint_score` | `p75` | 除非各得分集中分布，否则无需调整 |
+| `--sharpness` | 10 | 无需调整 |
+
+## 常见问题与注意事项
+
+1. **“初始`Organism`必须可用”**——即使初始种子的得分为0，也应在`EvaluationResult`中设置`is_viable=True`。因为如果`Organism`不可用，意味着循环没有可优化的对象。
+
+2. **提供商的内容过滤机制会导致运行失败**。基于Azure的OpenRouter模型会对类似“忽略之前的指令”这样的短语返回HTTP 400错误。建议在调用大型语言模型时使用`try/except`结构，并在出错时返回`f"<LLM_ERROR: {e}>"`——这样优化器会将该`Organism`的得分设为0并继续处理下一个。
+
+3. **`loop.run()`是一个生成器函数**——只有在迭代时才会执行相关操作。应使用`for snap in loop.run(num_iterations=N):`的语法来遍历结果。
+
+4. **快照为嵌套的pickle格式文件**。`iteration_N.pkl`文件中包含一个字典，该字典又包含`population_snapshot`字段（即更多经过序列化的字节数据）。若要反序列化这些数据，必须确保在相同的路径下可以导入`Organism`类。
+
+5. **默认的并发级别较高**。设置为10/10会在大多数提供商处触发速率限制。建议从2/2开始逐步调整。
+
+6. **命令行工具默认针对Anthropic平台设计**。执行`uv run darwinian_evolver <problem>`时会自动使用`ANTHROPIC_API_KEY`并调用Claude Sonnet模型。若要使用其他提供商，需编写类似`parrot_openrouter.py`的驱动脚本。
+
+7. **受AGPL许可证约束**。严禁在Hermes核心代码中直接`from darwinian_evolver import ...`。而放在`~/.hermes/skills/...`目录下的自定义驱动脚本属于用户端代码，是允许的。
+
+8. **没有PyPI版本的包**。执行`pip install darwinian-evolver`会安装错误的版本。务必从GitHub仓库直接下载安装。
+
+## 验证方法
+
+完成安装并运行一次parrot测试后，只要程序返回退出码0即表示一切正常。
+
+```bash
+DE_DIR=~/.hermes/cache/darwinian-evolver/darwinian_evolver
+ls "$DE_DIR/darwinian_evolver/lineage_visualizer.html" >/dev/null && \
+cd "$DE_DIR" && uv run darwinian_evolver --help >/dev/null && \
+echo "darwinian-evolver: OK"
+```
+
+## 参考资料
+
+- [Imbue研究文章](https://imbue.com/research/2026-02-27-darwinian-evolver/)
+- [ARC-AGI-2实验结果](https://imbue.com/research/2026-02-27-arc-agi-2-evolution/)
+- [imbue-ai/darwinian_evolver项目](https://github.com/imbue-ai/darwinian_evolver)（AGPL-3.0许可证）
+- [达尔文哥德尔机器](https://arxiv.org/abs/2505.22954)
+- [PromptBreeder工具](https://arxiv.org/abs/2309.16797)
