@@ -2084,6 +2084,7 @@
             - [macOS 电脑操作](zh/website/docs/user-guide/skills/bundled/apple/apple-macos-computer-use.md)
           - [Autonomous Ai Agents]()
             - [Codex](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex.md)
+            - [Opencode](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode.md)
           - [Creative]()
             - [架构图](zh/website/docs/user-guide/skills/bundled/creative/creative-architecture-diagram.md)
             - [DESIGN.md 模型](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
