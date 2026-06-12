@@ -2067,6 +2067,7 @@
       - [Llama Cpp]()
         - [llama.cpp + GGUF](zh/skills/mlops/inference/llama-cpp/SKILL.md)
         - [References]()
+          - [GGUF高级使用指南](zh/skills/mlops/inference/llama-cpp/references/advanced-usage.md)
           - [llama.cpp 的 Hugging Face URL 工作流](zh/skills/mlops/inference/llama-cpp/references/hub-discovery.md)
           - [性能优化指南](zh/skills/mlops/inference/llama-cpp/references/optimization.md)
           - [GGUF量化指南](zh/skills/mlops/inference/llama-cpp/references/quantization.md)
