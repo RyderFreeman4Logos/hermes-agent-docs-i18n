@@ -1708,6 +1708,8 @@
       - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)
     - [Here Now]()
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
+    - [Siyuan]()
+      - [SiYuan Note API](zh/optional-skills/productivity/siyuan/SKILL.md)
   - [Research]()
     - [Darwinian Evolver]()
       - [达尔文进化器](zh/optional-skills/research/darwinian-evolver/SKILL.md)
