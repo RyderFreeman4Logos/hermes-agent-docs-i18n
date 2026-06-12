@@ -2041,7 +2041,7 @@
   - [Stress](zh/tests/stress/README.md)
 - [Web](zh/web/README.md)
 - [Website](zh/website/README.md)
-  - [Docs]()
+  - [Docs](zh/website/docs/index.md)
     - [User Stories](zh/website/docs/user-stories.md)
     - [Developer Guide]()
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
