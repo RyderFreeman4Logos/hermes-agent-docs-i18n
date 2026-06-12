@@ -2062,6 +2062,7 @@
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
+      - [操作 Teams 会议处理流程](zh/website/docs/guides/operate-teams-meeting-pipeline.md)
       - [将脚本输出发送至消息平台](zh/website/docs/guides/pipe-script-output.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
