@@ -2099,6 +2099,8 @@
       - [Obsidian Vault](zh/skills/note-taking/obsidian/SKILL.md)
   - [Productivity]()
     - [Description](zh/skills/productivity/DESCRIPTION.md)
+    - [Airtable]()
+      - [Airtable — 基础库、表格与记录](zh/skills/productivity/airtable/SKILL.md)
     - [Google Workspace]()
       - [References]()
         - [Gmail 搜索语法](zh/skills/productivity/google-workspace/references/gmail-search-syntax.md)
