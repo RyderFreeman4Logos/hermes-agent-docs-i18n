@@ -1560,6 +1560,8 @@
       - [股票功能](zh/optional-skills/finance/stocks/SKILL.md)
   - [Gaming]()
     - [Description](zh/optional-skills/gaming/DESCRIPTION.md)
+    - [Minecraft Modpack Server]()
+      - [Minecraft模组服务器搭建指南](zh/optional-skills/gaming/minecraft-modpack-server/SKILL.md)
   - [Health]()
     - [Description](zh/optional-skills/health/DESCRIPTION.md)
     - [Fitness Nutrition]()
