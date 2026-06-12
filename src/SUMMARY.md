@@ -2214,6 +2214,7 @@
           - [Github]()
             - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
             - [GitHub 认证](zh/website/docs/user-guide/skills/bundled/github/github-github-auth.md)
+            - [GitHub 问题管理](zh/website/docs/user-guide/skills/bundled/github/github-github-issues.md)
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
             - [Heartmula](zh/website/docs/user-guide/skills/bundled/media/media-heartmula.md)
