@@ -1800,6 +1800,7 @@
         - [入门指南](zh/optional-skills/software-development/code-wiki/templates/getting-started.md)
         - [模块：`{{MODULE_NAME}}`](zh/optional-skills/software-development/code-wiki/templates/module.md)
     - [Subagent Driven Development]()
+      - [子代理驱动开发](zh/optional-skills/software-development/subagent-driven-development/SKILL.md)
       - [References]()
         - [上下文预算管理机制](zh/optional-skills/software-development/subagent-driven-development/references/context-budget-discipline.md)
         - [门控分类体系](zh/optional-skills/software-development/subagent-driven-development/references/gates-taxonomy.md)
