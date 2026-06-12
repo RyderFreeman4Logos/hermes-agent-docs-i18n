@@ -1602,6 +1602,7 @@
     - [Flash Attention]()
       - [References]()
         - [性能基准测试](zh/optional-skills/mlops/flash-attention/references/benchmarks.md)
+        - [HuggingFace Transformers 集成指南](zh/optional-skills/mlops/flash-attention/references/transformers-integration.md)
     - [Instructor]()
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
