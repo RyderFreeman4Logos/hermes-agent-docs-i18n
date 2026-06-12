@@ -2044,3 +2044,4 @@
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
           - [Security]()
             - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
+            - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
