@@ -2285,6 +2285,7 @@
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
             - [DuckDuckGo 搜索](zh/website/docs/user-guide/skills/optional/research/research-duckduckgo-search.md)
             - [GitNexus Explorer](zh/website/docs/user-guide/skills/optional/research/research-gitnexus-explorer.md)
+            - [网页抓取](zh/website/docs/user-guide/skills/optional/research/research-scrapling.md)
             - [SearXNG 搜索](zh/website/docs/user-guide/skills/optional/research/research-searxng-search.md)
           - [Security]()
             - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
