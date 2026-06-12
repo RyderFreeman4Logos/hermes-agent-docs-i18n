@@ -1587,6 +1587,7 @@
       - [References]()
         - [Chroma 集成指南](zh/optional-skills/mlops/chroma/references/integration.md)
     - [Clip]()
+      - [CLIP——对比学习语言-图像预训练模型](zh/optional-skills/mlops/clip/SKILL.md)
       - [References]()
         - [CLIP应用指南](zh/optional-skills/mlops/clip/references/applications.md)
     - [Faiss]()
