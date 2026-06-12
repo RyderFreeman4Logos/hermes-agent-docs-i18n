@@ -1524,6 +1524,7 @@
         - [双坐标轴的机器学习基准分组柱状图](zh/optional-skills/creative/concept-diagrams/examples/ml-benchmark-grouped-bar-chart.md)
         - [智慧城市基础设施](zh/optional-skills/creative/concept-diagrams/examples/smart-city-infrastructure.md)
         - [智能手机结构解析图](zh/optional-skills/creative/concept-diagrams/examples/smartphone-layer-anatomy.md)
+        - [SN2反应机理](zh/optional-skills/creative/concept-diagrams/examples/sn2-reaction-mechanism.md)
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
         - [基础设施设计模式](zh/optional-skills/creative/concept-diagrams/references/infrastructure-patterns.md)
