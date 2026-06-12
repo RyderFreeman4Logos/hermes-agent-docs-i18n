@@ -1657,6 +1657,8 @@
         - [Pinecone 部署指南](zh/optional-skills/mlops/pinecone/references/deployment.md)
     - [Pytorch Fsdp]()
       - [References](zh/optional-skills/mlops/pytorch-fsdp/references/index.md)
+    - [Pytorch Lightning]()
+      - [PyTorch Lightning——高级训练框架](zh/optional-skills/mlops/pytorch-lightning/SKILL.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
     - [Saelens]()
