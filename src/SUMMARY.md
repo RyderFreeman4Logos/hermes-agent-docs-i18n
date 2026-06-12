@@ -1428,6 +1428,8 @@
         - [Antigravity CLI文档精简版](zh/optional-skills/autonomous-ai-agents/antigravity-cli/references/cli-docs.md)
     - [Blackbox]()
       - [Blackbox CLI](zh/optional-skills/autonomous-ai-agents/blackbox/SKILL.md)
+    - [Openhands]()
+      - [OpenHands CLI](zh/optional-skills/autonomous-ai-agents/openhands/SKILL.md)
   - [Blockchain]()
     - [Hyperliquid]()
       - [Hyperliquid 技能](zh/optional-skills/blockchain/hyperliquid/SKILL.md)
