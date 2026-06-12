@@ -1763,6 +1763,8 @@
           - [维基百科 + 维基数据](zh/optional-skills/research/osint-investigation/references/sources/wikipedia.md)
       - [Templates]()
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
+    - [Parallel Cli]()
+      - [Parallel CLI](zh/optional-skills/research/parallel-cli/SKILL.md)
     - [Scrapling]()
       - [爬虫功能](zh/optional-skills/research/scrapling/SKILL.md)
     - [Searxng Search]()
