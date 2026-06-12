@@ -1656,6 +1656,8 @@
         - [LLaVA训练指南](zh/optional-skills/mlops/llava/references/training.md)
     - [Modal]()
       - [Modal Serverless GPU](zh/optional-skills/mlops/modal/SKILL.md)
+      - [References]()
+        - [模态界面故障排查指南](zh/optional-skills/mlops/modal/references/troubleshooting.md)
     - [Nemo Curator]()
       - [NeMo Curator - 基于 GPU 的数据筛选工具](zh/optional-skills/mlops/nemo-curator/SKILL.md)
       - [References]()
