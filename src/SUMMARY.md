@@ -1603,6 +1603,7 @@
   - [Health]()
     - [Description](zh/optional-skills/health/DESCRIPTION.md)
     - [Fitness Nutrition]()
+      - [健身与营养](zh/optional-skills/health/fitness-nutrition/SKILL.md)
       - [References]()
         - [公式参考](zh/optional-skills/health/fitness-nutrition/references/FORMULAS.md)
     - [Neuroskill Bci]()
