@@ -1619,6 +1619,7 @@
     - [Accelerate]()
       - [HuggingFace Accelerate——统一的分布式训练解决方案](zh/optional-skills/mlops/accelerate/SKILL.md)
     - [Chroma]()
+      - [Chroma - 开源嵌入数据库](zh/optional-skills/mlops/chroma/SKILL.md)
       - [References]()
         - [Chroma 集成指南](zh/optional-skills/mlops/chroma/references/integration.md)
     - [Clip]()
