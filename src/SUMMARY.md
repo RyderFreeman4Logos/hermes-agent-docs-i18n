@@ -2217,6 +2217,7 @@
           - [Autonomous Ai Agents]()
             - [Antigravity CLI](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli.md)
             - [Blackbox](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-blackbox.md)
+            - [Openhands](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-openhands.md)
           - [Blockchain]()
             - [Evm](zh/website/docs/user-guide/skills/optional/blockchain/blockchain-evm.md)
             - [Hyperliquid](zh/website/docs/user-guide/skills/optional/blockchain/blockchain-hyperliquid.md)
