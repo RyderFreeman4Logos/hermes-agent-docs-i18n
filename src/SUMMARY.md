@@ -2097,6 +2097,8 @@
       - [简化代码——并行审查与优化](zh/skills/software-development/simplify-code/SKILL.md)
     - [Spike]()
       - [临时探索任务（Spike）](zh/skills/software-development/spike/SKILL.md)
+    - [Test Driven Development]()
+      - [测试驱动开发（TDD）](zh/skills/software-development/test-driven-development/SKILL.md)
   - [Yuanbao]()
     - [元宝群组交互功能](zh/skills/yuanbao/SKILL.md)
 - [Tests]()
