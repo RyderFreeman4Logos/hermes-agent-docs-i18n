@@ -1408,6 +1408,7 @@
 - [Hermes Agent 自三月起已支持“Routines”功能](zh/hermes-already-has-routines.md)
 - [Apps]()
   - [Desktop](zh/apps/desktop/README.md)
+    - [桌面设计系统](zh/apps/desktop/DESIGN.md)
 - [Docker]()
   - [Hermes Agent 人格设定](zh/docker/SOUL.md)
 - [Docs]()
