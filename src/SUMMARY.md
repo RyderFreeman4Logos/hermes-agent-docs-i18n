@@ -2110,6 +2110,7 @@
       - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
       - [贡献指南](zh/website/docs/developer-guide/contributing.md)
+      - [Cron 内部机制](zh/website/docs/developer-guide/cron-internals.md)
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
       - [提供商运行时解析机制](zh/website/docs/developer-guide/provider-runtime.md)
