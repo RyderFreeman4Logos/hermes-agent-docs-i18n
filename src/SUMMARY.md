@@ -2131,6 +2131,7 @@
       - [构建内存提供者插件](zh/website/docs/developer-guide/memory-provider-plugin.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
       - [提供商运行时解析机制](zh/website/docs/developer-guide/provider-runtime.md)
+      - [工具运行时](zh/website/docs/developer-guide/tools-runtime.md)
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
       - [构建视频生成提供者插件](zh/website/docs/developer-guide/video-gen-provider-plugin.md)
     - [Getting Started]()
