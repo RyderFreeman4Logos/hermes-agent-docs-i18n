@@ -1607,6 +1607,7 @@
     - [Neuroskill Bci]()
       - [References]()
         - [NeuroSkill WebSocket与HTTP API参考文档](zh/optional-skills/health/neuroskill-bci/references/api.md)
+        - [NeuroSkill指标定义与解读指南](zh/optional-skills/health/neuroskill-bci/references/metrics.md)
   - [Mcp]()
     - [MCP](zh/optional-skills/mcp/DESCRIPTION.md)
     - [Fastmcp]()
