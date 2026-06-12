@@ -2239,6 +2239,7 @@
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
           - [Research]()
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
+            - [DuckDuckGo 搜索](zh/website/docs/user-guide/skills/optional/research/research-duckduckgo-search.md)
             - [GitNexus Explorer](zh/website/docs/user-guide/skills/optional/research/research-gitnexus-explorer.md)
             - [SearXNG 搜索](zh/website/docs/user-guide/skills/optional/research/research-searxng-search.md)
           - [Security]()
