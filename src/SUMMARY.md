@@ -2004,6 +2004,7 @@
           - [性能优化指南](zh/skills/mlops/inference/llama-cpp/references/optimization.md)
           - [GGUF量化指南](zh/skills/mlops/inference/llama-cpp/references/quantization.md)
           - [服务器部署指南](zh/skills/mlops/inference/llama-cpp/references/server.md)
+          - [GGUF故障排查指南](zh/skills/mlops/inference/llama-cpp/references/troubleshooting.md)
       - [Vllm]()
         - [References]()
           - [性能优化](zh/skills/mlops/inference/vllm/references/optimization.md)
