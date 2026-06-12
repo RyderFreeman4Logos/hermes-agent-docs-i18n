@@ -1914,6 +1914,7 @@
         - [交互操作](zh/skills/creative/p5js/references/interaction.md)
         - [形状与几何结构](zh/skills/creative/p5js/references/shapes-and-geometry.md)
         - [字体设置](zh/skills/creative/p5js/references/typography.md)
+        - [WebGL与3D功能](zh/skills/creative/p5js/references/webgl-and-3d.md)
     - [Popular Web Designs]()
       - [Templates]()
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
