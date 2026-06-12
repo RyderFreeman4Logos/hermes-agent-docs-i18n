@@ -2026,6 +2026,7 @@
       - [Features]()
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
+        - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
         - [订阅代理](zh/website/docs/user-guide/features/subscription-proxy.md)
