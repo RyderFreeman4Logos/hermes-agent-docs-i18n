@@ -2241,6 +2241,7 @@
             - [Fastmcp](zh/website/docs/user-guide/skills/optional/mcp/mcp-fastmcp.md)
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
           - [Mlops]()
+            - [Huggingface Accelerate](zh/website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md)
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
