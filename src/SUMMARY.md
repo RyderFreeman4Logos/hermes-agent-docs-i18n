@@ -1415,6 +1415,8 @@
     - [配置文件构建器 —— 原生仪表板式、功能完备的配置创建工具](zh/docs/design/profile-builder.md)
   - [Kanban]()
     - [多网关部署](zh/docs/kanban/multi-gateway.md)
+  - [Security]()
+    - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Optional Skills]()
   - [可选技能](zh/optional-skills/DESCRIPTION.md)
   - [Autonomous Ai Agents]()
