@@ -2045,6 +2045,7 @@
       - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
+    - [Integrations](zh/website/docs/integrations/index.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
