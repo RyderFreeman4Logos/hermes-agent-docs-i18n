@@ -1916,6 +1916,8 @@
     - [Description](zh/skills/github/DESCRIPTION.md)
     - [Codebase Inspection]()
       - [使用 pygount 进行代码库分析](zh/skills/github/codebase-inspection/SKILL.md)
+    - [Github Auth]()
+      - [GitHub身份验证设置](zh/skills/github/github-auth/SKILL.md)
     - [Github Code Review]()
       - [References]()
         - [输出模板说明](zh/skills/github/github-code-review/references/review-output-template.md)
