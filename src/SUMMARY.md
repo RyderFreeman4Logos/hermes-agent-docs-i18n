@@ -1911,6 +1911,7 @@
       - [Vllm]()
         - [References]()
           - [性能优化](zh/skills/mlops/inference/vllm/references/optimization.md)
+          - [量化指南](zh/skills/mlops/inference/vllm/references/quantization.md)
           - [服务器部署模式](zh/skills/mlops/inference/vllm/references/server-deployment.md)
     - [Models]()
       - [Description](zh/skills/mlops/models/DESCRIPTION.md)
