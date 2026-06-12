@@ -2048,6 +2048,7 @@
     - [User Guide]()
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [Features]()
+        - [计算机操作（macOS）](zh/website/docs/user-guide/features/computer-use.md)
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
