@@ -1618,6 +1618,7 @@
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
     - [Saelens]()
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
+        - [SAELens API 参考手册](zh/optional-skills/mlops/saelens/references/api.md)
     - [Simpo]()
       - [SimPO——简易偏好优化算法](zh/optional-skills/mlops/simpo/SKILL.md)
     - [Tensorrt Llm]()
