@@ -1424,6 +1424,8 @@
     - [Blackbox]()
       - [Blackbox CLI](zh/optional-skills/autonomous-ai-agents/blackbox/SKILL.md)
   - [Blockchain]()
+    - [Hyperliquid]()
+      - [Hyperliquid 技能](zh/optional-skills/blockchain/hyperliquid/SKILL.md)
     - [Solana]()
       - [Solana 区块链技能](zh/optional-skills/blockchain/solana/SKILL.md)
   - [Communication]()
