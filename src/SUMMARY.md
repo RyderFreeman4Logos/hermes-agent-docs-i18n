@@ -2263,6 +2263,7 @@
             - [Opencode](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode.md)
           - [Creative]()
             - [架构图](zh/website/docs/user-guide/skills/bundled/creative/creative-architecture-diagram.md)
+            - [宝玉信息图生成器](zh/website/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic.md)
             - [DESIGN.md 模型](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
             - [热门网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
