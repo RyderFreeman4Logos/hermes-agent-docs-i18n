@@ -1939,6 +1939,7 @@
         - [字体设置](zh/skills/creative/p5js/references/typography.md)
         - [WebGL与3D功能](zh/skills/creative/p5js/references/webgl-and-3d.md)
     - [Popular Web Designs]()
+      - [流行网页设计模板](zh/skills/creative/popular-web-designs/SKILL.md)
       - [Templates]()
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
         - [设计系统：Coinbase](zh/skills/creative/popular-web-designs/templates/coinbase.md)
