@@ -1959,6 +1959,7 @@
     - [User Stories](zh/website/docs/user-stories.md)
     - [Developer Guide]()
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
+      - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
     - [Getting Started]()
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
