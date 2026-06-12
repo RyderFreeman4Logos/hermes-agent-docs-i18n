@@ -2215,6 +2215,7 @@
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
           - [Software Development]()
             - [Hermes Agent 技能编写指南](zh/website/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring.md)
+            - [简化代码](zh/website/docs/user-guide/skills/bundled/software-development/software-development-simplify-code.md)
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
