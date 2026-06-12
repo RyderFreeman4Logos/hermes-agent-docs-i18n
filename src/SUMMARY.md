@@ -1779,6 +1779,8 @@
     - [Hermes Agent]()
       - [References]()
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
+    - [Opencode]()
+      - [OpenCode CLI](zh/skills/autonomous-ai-agents/opencode/SKILL.md)
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Architecture Diagram]()
