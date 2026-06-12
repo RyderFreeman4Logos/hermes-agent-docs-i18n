@@ -2151,6 +2151,7 @@
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
       - [模型目录](zh/website/docs/reference/model-catalog.md)
     - [User Guide]()
+      - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [Features]()
