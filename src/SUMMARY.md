@@ -1729,6 +1729,8 @@
           - [维基百科 + 维基数据](zh/optional-skills/research/osint-investigation/references/sources/wikipedia.md)
       - [Templates]()
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
+    - [Scrapling]()
+      - [爬虫功能](zh/optional-skills/research/scrapling/SKILL.md)
     - [Searxng Search]()
       - [SearXNG 搜索功能](zh/optional-skills/research/searxng-search/SKILL.md)
   - [Security]()
