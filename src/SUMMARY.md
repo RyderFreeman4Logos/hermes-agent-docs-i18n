@@ -2077,6 +2077,7 @@
             - [Apple 提醒事项](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
             - [Findmy](zh/website/docs/user-guide/skills/bundled/apple/apple-findmy.md)
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
+            - [macOS 电脑操作](zh/website/docs/user-guide/skills/bundled/apple/apple-macos-computer-use.md)
           - [Autonomous Ai Agents]()
             - [Codex](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex.md)
           - [Creative]()
