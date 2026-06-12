@@ -2267,6 +2267,7 @@
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
+            - [Excel Author](zh/website/docs/user-guide/skills/optional/finance/finance-excel-author.md)
             - [合并模型](zh/website/docs/user-guide/skills/optional/finance/finance-merger-model.md)
             - [Pptx Author](zh/website/docs/user-guide/skills/optional/finance/finance-pptx-author.md)
             - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
