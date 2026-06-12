@@ -2075,6 +2075,8 @@
       - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
+    - [Arxiv]()
+      - [arXiv研究功能](zh/skills/research/arxiv/SKILL.md)
     - [Blogwatcher]()
       - [Blogwatcher](zh/skills/research/blogwatcher/SKILL.md)
     - [Polymarket]()
