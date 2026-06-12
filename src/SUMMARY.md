@@ -1695,6 +1695,8 @@
     - [Drug Discovery]()
       - [References]()
         - [ADMET参考指南](zh/optional-skills/research/drug-discovery/references/ADMET_REFERENCE.md)
+    - [Duckduckgo Search]()
+      - [DuckDuckGo 搜索功能](zh/optional-skills/research/duckduckgo-search/SKILL.md)
     - [Gitnexus Explorer]()
       - [GitNexus Explorer](zh/optional-skills/research/gitnexus-explorer/SKILL.md)
     - [Osint Investigation]()
