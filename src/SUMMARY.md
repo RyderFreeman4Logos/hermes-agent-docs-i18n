@@ -1589,6 +1589,8 @@
     - [Description](zh/optional-skills/gaming/DESCRIPTION.md)
     - [Minecraft Modpack Server]()
       - [Minecraft模组服务器搭建指南](zh/optional-skills/gaming/minecraft-modpack-server/SKILL.md)
+    - [Pokemon Player]()
+      - [宝可梦游戏模拟器](zh/optional-skills/gaming/pokemon-player/SKILL.md)
   - [Health]()
     - [Description](zh/optional-skills/health/DESCRIPTION.md)
     - [Fitness Nutrition]()
