@@ -1772,6 +1772,8 @@
       - [查找我的（Apple）](zh/skills/apple/findmy/SKILL.md)
     - [Imessage]()
       - [iMessage](zh/skills/apple/imessage/SKILL.md)
+    - [Macos Computer Use]()
+      - [macOS电脑操作（通用，支持所有型号）](zh/skills/apple/macos-computer-use/SKILL.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/skills/autonomous-ai-agents/DESCRIPTION.md)
     - [Codex]()
