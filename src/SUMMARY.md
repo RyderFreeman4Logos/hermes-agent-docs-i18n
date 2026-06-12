@@ -1903,6 +1903,7 @@
         - [MIDI / OSC 参考手册](zh/skills/creative/touchdesigner-mcp/references/midi-osc.md)
         - [操作员指南](zh/skills/creative/touchdesigner-mcp/references/operator-tips.md)
         - [后处理特效参考](zh/skills/creative/touchdesigner-mcp/references/postfx.md)
+        - [投影映射参考指南](zh/skills/creative/touchdesigner-mcp/references/projection-mapping.md)
         - [TouchDesigner 故障排除（twozero MCP）](zh/skills/creative/touchdesigner-mcp/references/troubleshooting.md)
   - [Data Science]()
     - [Description](zh/skills/data-science/DESCRIPTION.md)
