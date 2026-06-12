@@ -2014,6 +2014,7 @@
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
+            - [合并模型](zh/website/docs/user-guide/skills/optional/finance/finance-merger-model.md)
             - [股票信息](zh/website/docs/user-guide/skills/optional/finance/finance-stocks.md)
           - [Mcp]()
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
