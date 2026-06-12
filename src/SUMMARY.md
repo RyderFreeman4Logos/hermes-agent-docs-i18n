@@ -1979,6 +1979,7 @@
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
+      - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [模型目录](zh/website/docs/reference/model-catalog.md)
