@@ -2171,6 +2171,7 @@
       - [Messaging]()
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
+        - [与 Home Assistant 的集成](zh/website/docs/user-guide/messaging/homeassistant.md)
         - [LINE 设置](zh/website/docs/user-guide/messaging/line.md)
         - [Microsoft Graph Webhook 监听器](zh/website/docs/user-guide/messaging/msgraph-webhook.md)
         - [ntfy](zh/website/docs/user-guide/messaging/ntfy.md)
