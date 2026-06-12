@@ -1935,6 +1935,7 @@
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
+        - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
     - [Touchdesigner Mcp]()
       - [References]()
         - [动画参考](zh/skills/creative/touchdesigner-mcp/references/animation.md)
