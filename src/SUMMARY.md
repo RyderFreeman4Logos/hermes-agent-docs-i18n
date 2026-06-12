@@ -1962,6 +1962,7 @@
       - [歌曲创作与AI音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
     - [Touchdesigner Mcp]()
       - [References]()
+        - [3D场景参考](zh/skills/creative/touchdesigner-mcp/references/3d-scene.md)
         - [动画参考](zh/skills/creative/touchdesigner-mcp/references/animation.md)
         - [基于音频的响应式参考方案](zh/skills/creative/touchdesigner-mcp/references/audio-reactive.md)
         - [外部数据引用](zh/skills/creative/touchdesigner-mcp/references/external-data.md)
