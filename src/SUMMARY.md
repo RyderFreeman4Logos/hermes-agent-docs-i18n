@@ -1685,6 +1685,8 @@
           - [维基百科 + 维基数据](zh/optional-skills/research/osint-investigation/references/sources/wikipedia.md)
       - [Templates]()
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
+    - [Searxng Search]()
+      - [SearXNG 搜索功能](zh/optional-skills/research/searxng-search/SKILL.md)
   - [Security]()
     - [安全性](zh/optional-skills/security/DESCRIPTION.md)
     - [1Password]()
