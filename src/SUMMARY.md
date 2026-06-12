@@ -1690,6 +1690,7 @@
     - [Simpo]()
       - [SimPO——简易偏好优化算法](zh/optional-skills/mlops/simpo/SKILL.md)
       - [References]()
+        - [数据集](zh/optional-skills/mlops/simpo/references/datasets.md)
         - [超参数](zh/optional-skills/mlops/simpo/references/hyperparameters.md)
         - [损失函数](zh/optional-skills/mlops/simpo/references/loss-functions.md)
     - [Slime]()
