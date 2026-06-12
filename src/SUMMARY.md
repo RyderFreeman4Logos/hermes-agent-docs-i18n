@@ -2059,6 +2059,7 @@
           - [Note Taking]()
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
+            - [地图功能](zh/website/docs/user-guide/skills/bundled/productivity/productivity-maps.md)
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
             - [OCR与文档处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-ocr-and-documents.md)
           - [Research]()
