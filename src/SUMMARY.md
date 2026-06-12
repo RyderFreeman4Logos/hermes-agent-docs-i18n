@@ -2056,6 +2056,8 @@
   - [Software Development]()
     - [Hermes Agent Skill Authoring]()
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
+    - [Plan]()
+      - [计划模式](zh/skills/software-development/plan/SKILL.md)
     - [Requesting Code Review]()
       - [提交前代码验证](zh/skills/software-development/requesting-code-review/SKILL.md)
     - [Simplify Code]()
