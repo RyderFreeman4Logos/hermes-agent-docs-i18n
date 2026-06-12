@@ -2220,6 +2220,7 @@
             - [YouTube 内容处理](zh/website/docs/user-guide/skills/bundled/media/media-youtube-content.md)
           - [Mlops]()
             - [Huggingface Hub](zh/website/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub.md)
+            - [Llama Cpp](zh/website/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp.md)
           - [Note Taking]()
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
