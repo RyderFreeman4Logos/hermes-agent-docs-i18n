@@ -2073,6 +2073,7 @@
       - [Messaging]()
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
+        - [Microsoft Graph Webhook 监听器](zh/website/docs/user-guide/messaging/msgraph-webhook.md)
         - [ntfy](zh/website/docs/user-guide/messaging/ntfy.md)
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
