@@ -2232,6 +2232,7 @@
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
           - [Software Development]()
             - [Hermes Agent 技能编写指南](zh/website/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring.md)
+            - [规划](zh/website/docs/user-guide/skills/bundled/software-development/software-development-plan.md)
             - [请求代码审查](zh/website/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review.md)
             - [简化代码](zh/website/docs/user-guide/skills/bundled/software-development/software-development-simplify-code.md)
             - [Spike](zh/website/docs/user-guide/skills/bundled/software-development/software-development-spike.md)
