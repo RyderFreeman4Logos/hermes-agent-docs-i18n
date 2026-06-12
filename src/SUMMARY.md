@@ -1879,6 +1879,7 @@
     - [Comfyui]()
       - [References]()
         - [comfy-cli 命令参考手册](zh/skills/creative/comfyui/references/official-cli.md)
+        - [ComfyUI 工作流模板完整性规范](zh/skills/creative/comfyui/references/template-integrity.md)
         - [ComfyUI 工作流 JSON 格式](zh/skills/creative/comfyui/references/workflow-format.md)
       - [Tests](zh/skills/creative/comfyui/tests/README.md)
       - [Workflows](zh/skills/creative/comfyui/workflows/README.md)
