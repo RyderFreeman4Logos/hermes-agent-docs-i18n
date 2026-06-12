@@ -2171,6 +2171,7 @@
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [凭证池](zh/website/docs/user-guide/features/credential-pools.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
+        - [持久目标（`/goal`）](zh/website/docs/user-guide/features/goals.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
         - [语言服务器协议（LSP）](zh/website/docs/user-guide/features/lsp.md)
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
