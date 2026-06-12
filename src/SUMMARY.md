@@ -2325,6 +2325,7 @@
             - [请求代码审查](zh/website/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review.md)
             - [简化代码](zh/website/docs/user-guide/skills/bundled/software-development/software-development-simplify-code.md)
             - [Spike](zh/website/docs/user-guide/skills/bundled/software-development/software-development-spike.md)
+            - [系统化调试](zh/website/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging.md)
             - [测试驱动开发](zh/website/docs/user-guide/skills/bundled/software-development/software-development-test-driven-development.md)
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
