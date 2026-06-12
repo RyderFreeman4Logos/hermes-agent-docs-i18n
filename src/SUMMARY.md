@@ -1635,6 +1635,7 @@
       - [References]()
         - [FAISS 索引类型指南](zh/optional-skills/mlops/faiss/references/index_types.md)
     - [Flash Attention]()
+      - [Flash Attention——高效快速的注意力机制](zh/optional-skills/mlops/flash-attention/SKILL.md)
       - [References]()
         - [性能基准测试](zh/optional-skills/mlops/flash-attention/references/benchmarks.md)
         - [HuggingFace Transformers 集成指南](zh/optional-skills/mlops/flash-attention/references/transformers-integration.md)
