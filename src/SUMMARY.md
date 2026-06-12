@@ -1816,7 +1816,7 @@
   - [Observability]()
     - [Langfuse](zh/plugins/observability/langfuse/README.md)
   - [Platforms]()
-    - [Photon]()
+    - [Photon](zh/plugins/platforms/photon/README.md)
       - [Sidecar](zh/plugins/platforms/photon/sidecar/README.md)
   - [Security Guidance](zh/plugins/security-guidance/README.md)
 - [Providers](zh/providers/README.md)
