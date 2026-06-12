@@ -2137,6 +2137,7 @@
       - [将脚本输出发送至消息平台](zh/website/docs/guides/pipe-script-output.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
+      - [在 Hermes 中使用语音模式](zh/website/docs/guides/use-voice-mode-with-hermes.md)
       - [使用技能](zh/website/docs/guides/work-with-skills.md)
     - [Integrations](zh/website/docs/integrations/index.md)
     - [Reference]()
