@@ -2297,6 +2297,7 @@
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
             - [Modal Serverless GPU](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
+            - [Nemo Curator](zh/website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md)
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
             - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)

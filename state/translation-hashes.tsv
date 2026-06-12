@@ -599,6 +599,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-clip.md	273d1a8b4198722a2d6b
 website/docs/user-guide/skills/optional/mlops/mlops-faiss.md	c8a726b900fb63556bc0d1caac75a776401a8e068efe5537fbbb1a32aecf3a1b
 website/docs/user-guide/skills/optional/mlops/mlops-llava.md	dbfaf195fe4b08980510ce3b3359e2dae87e69efbd2047af961a80390b656a6d
 website/docs/user-guide/skills/optional/mlops/mlops-modal.md	a7c939b83d137e5148528625a36e00f8a5cc2c8a59c8d5c0b81fdb99062fe8af
+website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md	216e7309d9719df713c9ed0b5ca826e92838a0164c342dcf78967e08929f1148
 website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md	9c6e76efb653c466201f6ce6d4d7f01fe7800acc5392e6192e6d4f9f5c443a50
 website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md	ef41b45da12e0571e06594ba01ade66265494699d7f962b1433dd960c36a31ef
 website/docs/user-guide/skills/optional/mlops/mlops-simpo.md	163c96193a31a0a08a9ea00074f9b00ac8700c46a240b115e3f782e081da496c
