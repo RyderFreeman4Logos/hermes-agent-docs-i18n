@@ -2039,6 +2039,7 @@
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
+      - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
     - [Reference]()
