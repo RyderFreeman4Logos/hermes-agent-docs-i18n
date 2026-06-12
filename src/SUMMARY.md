@@ -2073,6 +2073,7 @@
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
+      - [贡献指南](zh/website/docs/developer-guide/contributing.md)
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
       - [提供商运行时解析机制](zh/website/docs/developer-guide/provider-runtime.md)
