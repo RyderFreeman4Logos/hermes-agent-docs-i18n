@@ -1522,6 +1522,7 @@
       - [Blender MCP](zh/optional-skills/creative/blender-mcp/SKILL.md)
     - [Concept Diagrams]()
       - [Examples]()
+        - [公寓平面图：3室到4室的改造方案](zh/optional-skills/creative/concept-diagrams/examples/apartment-floor-plan-conversion.md)
         - [香蕉的旅程：从树上到冰沙](zh/optional-skills/creative/concept-diagrams/examples/banana-journey-tree-to-smoothie.md)
         - [商用飞机结构](zh/optional-skills/creative/concept-diagrams/examples/commercial-aircraft-structure.md)
         - [电力网：从发电到消费](zh/optional-skills/creative/concept-diagrams/examples/electricity-grid-flow.md)
