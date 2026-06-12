@@ -2089,6 +2089,7 @@
     - [Developer Guide]()
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
+      - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
       - [贡献指南](zh/website/docs/developer-guide/contributing.md)
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
