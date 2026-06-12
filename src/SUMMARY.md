@@ -2002,6 +2002,7 @@
         - [Bug Report](zh/skills/github/github-issues/templates/bug-report.md)
         - [Example usage](zh/skills/github/github-issues/templates/feature-request.md)
     - [Github Pr Workflow]()
+      - [GitHub Pull Request 工作流程](zh/skills/github/github-pr-workflow/SKILL.md)
       - [References]()
         - [CI故障排查快速参考指南](zh/skills/github/github-pr-workflow/references/ci-troubleshooting.md)
         - [Conventional Commits 快速参考](zh/skills/github/github-pr-workflow/references/conventional-commits.md)
