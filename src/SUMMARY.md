@@ -1632,6 +1632,8 @@
       - [LLaVA - 大语言与视觉助手](zh/optional-skills/mlops/llava/SKILL.md)
       - [References]()
         - [LLaVA训练指南](zh/optional-skills/mlops/llava/references/training.md)
+    - [Modal]()
+      - [Modal Serverless GPU](zh/optional-skills/mlops/modal/SKILL.md)
     - [Nemo Curator]()
       - [References]()
         - [重复内容去重指南](zh/optional-skills/mlops/nemo-curator/references/deduplication.md)
