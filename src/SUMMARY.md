@@ -2260,6 +2260,8 @@
           - [Devops]()
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-cli.md)
             - [监视器](zh/website/docs/user-guide/skills/optional/devops/devops-watchers.md)
+          - [Dogfood]()
+            - [对抗性用户体验测试](zh/website/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test.md)
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
