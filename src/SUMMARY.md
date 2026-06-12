@@ -1626,6 +1626,7 @@
         - [OBLITERATUS分析模块 — 参考指南](zh/optional-skills/mlops/obliteratus/references/analysis-modules.md)
         - [OBLITERATUS 方法——详细指南](zh/optional-skills/mlops/obliteratus/references/methods-guide.md)
     - [Pinecone]()
+      - [Pinecone —— 托管向量数据库](zh/optional-skills/mlops/pinecone/SKILL.md)
       - [References]()
         - [Pinecone 部署指南](zh/optional-skills/mlops/pinecone/references/deployment.md)
     - [Pytorch Fsdp]()
