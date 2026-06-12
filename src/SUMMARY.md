@@ -1990,6 +1990,7 @@
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
+      - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
     - [Getting Started]()
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
