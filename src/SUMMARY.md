@@ -1957,6 +1957,8 @@
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
     - [Sketch]()
       - [草图绘制](zh/skills/creative/sketch/SKILL.md)
+    - [Songwriting And Ai Music]()
+      - [歌曲创作与AI音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
     - [Touchdesigner Mcp]()
       - [References]()
         - [动画参考](zh/skills/creative/touchdesigner-mcp/references/animation.md)
