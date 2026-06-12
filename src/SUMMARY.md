@@ -2029,6 +2029,7 @@
         - [工具搜索功能](zh/website/docs/user-guide/features/tool-search.md)
       - [Messaging]()
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
+        - [ntfy](zh/website/docs/user-guide/messaging/ntfy.md)
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
         - [SMS 设置（Twilio）](zh/website/docs/user-guide/messaging/sms.md)
