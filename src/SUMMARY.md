@@ -2087,6 +2087,7 @@
             - [元宝](zh/website/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao.md)
         - [Optional]()
           - [Autonomous Ai Agents]()
+            - [Antigravity CLI](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli.md)
             - [Blackbox](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-blackbox.md)
           - [Blockchain]()
             - [Solana](zh/website/docs/user-guide/skills/optional/blockchain/blockchain-solana.md)
