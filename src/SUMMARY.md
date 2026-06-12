@@ -1647,6 +1647,7 @@
     - [Modal]()
       - [Modal Serverless GPU](zh/optional-skills/mlops/modal/SKILL.md)
     - [Nemo Curator]()
+      - [NeMo Curator - 基于 GPU 的数据筛选工具](zh/optional-skills/mlops/nemo-curator/SKILL.md)
       - [References]()
         - [重复内容去重指南](zh/optional-skills/mlops/nemo-curator/references/deduplication.md)
         - [质量过滤指南](zh/optional-skills/mlops/nemo-curator/references/filtering.md)
