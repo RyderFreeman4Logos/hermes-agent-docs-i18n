@@ -2153,6 +2153,7 @@
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
             - [Axolotl](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md)
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
+            - [Whisper](zh/website/docs/user-guide/skills/optional/mlops/mlops-whisper.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
           - [Research]()
