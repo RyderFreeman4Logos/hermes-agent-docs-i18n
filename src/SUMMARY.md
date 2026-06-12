@@ -2050,6 +2050,7 @@
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
         - [订阅代理](zh/website/docs/user-guide/features/subscription-proxy.md)
         - [工具搜索功能](zh/website/docs/user-guide/features/tool-search.md)
+        - [工具与工具集](zh/website/docs/user-guide/features/tools.md)
       - [Messaging]()
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [ntfy](zh/website/docs/user-guide/messaging/ntfy.md)
