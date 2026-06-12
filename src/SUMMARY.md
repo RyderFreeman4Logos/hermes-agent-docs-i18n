@@ -1846,6 +1846,8 @@
           - [技术示意图](zh/skills/creative/baoyu-infographic/references/styles/technical-schematic.md)
           - [UI线框图](zh/skills/creative/baoyu-infographic/references/styles/ui-wireframe.md)
     - [Comfyui]()
+      - [References]()
+        - [comfy-cli 命令参考手册](zh/skills/creative/comfyui/references/official-cli.md)
       - [Tests](zh/skills/creative/comfyui/tests/README.md)
       - [Workflows](zh/skills/creative/comfyui/workflows/README.md)
     - [Design Md]()
