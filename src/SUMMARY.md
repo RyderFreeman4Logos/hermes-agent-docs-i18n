@@ -2055,6 +2055,8 @@
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Dogfood]()
             - [Dogfood](zh/website/docs/user-guide/skills/bundled/dogfood/dogfood-dogfood.md)
+          - [Email]()
+            - [Himalaya](zh/website/docs/user-guide/skills/bundled/email/email-himalaya.md)
           - [Github]()
             - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
           - [Media]()
