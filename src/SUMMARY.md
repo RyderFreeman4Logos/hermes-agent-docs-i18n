@@ -1552,6 +1552,7 @@
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
     - [Kanban Video Orchestrator]()
       - [References]()
+        - [实际案例解析](zh/optional-skills/creative/kanban-video-orchestrator/references/examples.md)
         - [信息收集——需求探索问题库](zh/optional-skills/creative/kanban-video-orchestrator/references/intake.md)
         - [监控——实时观察流水线并及时干预](zh/optional-skills/creative/kanban-video-orchestrator/references/monitoring.md)
     - [Meme Generation]()
