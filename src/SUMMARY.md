@@ -2331,6 +2331,7 @@
             - [像素艺术](zh/website/docs/user-guide/skills/optional/creative/creative-pixel-art.md)
           - [Devops]()
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-cli.md)
+            - [Docker 管理](zh/website/docs/user-guide/skills/optional/devops/devops-docker-management.md)
             - [监视器](zh/website/docs/user-guide/skills/optional/devops/devops-watchers.md)
           - [Dogfood]()
             - [对抗性用户体验测试](zh/website/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test.md)
