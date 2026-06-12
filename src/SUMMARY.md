@@ -2277,6 +2277,7 @@
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
             - [Here.Now](zh/website/docs/user-guide/skills/optional/productivity/productivity-here-now.md)
+            - [SiYuan](zh/website/docs/user-guide/skills/optional/productivity/productivity-siyuan.md)
           - [Research]()
             - [Darwinian Evolver](zh/website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md)
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
