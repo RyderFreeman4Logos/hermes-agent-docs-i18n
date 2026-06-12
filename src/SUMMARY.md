@@ -2150,6 +2150,7 @@
       - [学习路径](zh/website/docs/getting-started/learning-path.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
+      - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [教程：构建 GitHub PR 审核智能代理](zh/website/docs/guides/github-pr-review-agent.md)
