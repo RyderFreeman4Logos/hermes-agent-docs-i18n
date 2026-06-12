@@ -2011,6 +2011,7 @@
           - [服务器部署指南](zh/skills/mlops/inference/llama-cpp/references/server.md)
           - [GGUF故障排查指南](zh/skills/mlops/inference/llama-cpp/references/troubleshooting.md)
       - [Vllm]()
+        - [vLLM —— 高性能大语言模型服务框架](zh/skills/mlops/inference/vllm/SKILL.md)
         - [References]()
           - [性能优化](zh/skills/mlops/inference/vllm/references/optimization.md)
           - [量化指南](zh/skills/mlops/inference/vllm/references/quantization.md)
