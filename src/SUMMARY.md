@@ -2064,6 +2064,7 @@
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
     - [Getting Started]()
       - [安装](zh/website/docs/getting-started/installation.md)
+      - [学习路径](zh/website/docs/getting-started/learning-path.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
