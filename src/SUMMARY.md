@@ -2107,6 +2107,7 @@
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
     - [Guides]()
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
+      - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [注册 Microsoft Graph 应用程序](zh/website/docs/guides/microsoft-graph-app-registration.md)
       - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
       - [操作 Teams 会议处理流程](zh/website/docs/guides/operate-teams-meeting-pipeline.md)
