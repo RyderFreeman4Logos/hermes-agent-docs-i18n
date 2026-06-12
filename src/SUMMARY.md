@@ -1618,6 +1618,7 @@
     - [Tensorrt Llm]()
       - [TensorRT-LLM](zh/optional-skills/mlops/tensorrt-llm/SKILL.md)
       - [References]()
+        - [多 GPU 部署指南](zh/optional-skills/mlops/tensorrt-llm/references/multi-gpu.md)
         - [TensorRT-LLM 优化指南](zh/optional-skills/mlops/tensorrt-llm/references/optimization.md)
     - [Torchtitan]()
       - [References]()
