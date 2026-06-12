@@ -1679,6 +1679,8 @@
       - [References](zh/optional-skills/mlops/pytorch-fsdp/references/index.md)
     - [Pytorch Lightning]()
       - [PyTorch Lightning——高级训练框架](zh/optional-skills/mlops/pytorch-lightning/SKILL.md)
+      - [References]()
+        - [PyTorch Lightning 分布式训练](zh/optional-skills/mlops/pytorch-lightning/references/distributed.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
     - [Saelens]()
