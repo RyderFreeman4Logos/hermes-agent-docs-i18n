@@ -1543,6 +1543,7 @@
       - [模因生成](zh/optional-skills/creative/meme-generation/SKILL.md)
     - [Pixel Art]()
       - [出处说明](zh/optional-skills/creative/pixel-art/ATTRIBUTION.md)
+      - [像素艺术](zh/optional-skills/creative/pixel-art/SKILL.md)
       - [References]()
         - [命名调色板](zh/optional-skills/creative/pixel-art/references/palettes.md)
   - [Devops]()
