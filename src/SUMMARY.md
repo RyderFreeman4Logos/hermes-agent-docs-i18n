@@ -2090,6 +2090,7 @@
     - [Github Auth]()
       - [GitHub身份验证设置](zh/skills/github/github-auth/SKILL.md)
     - [Github Code Review]()
+      - [GitHub代码审查](zh/skills/github/github-code-review/SKILL.md)
       - [References]()
         - [输出模板说明](zh/skills/github/github-code-review/references/review-output-template.md)
     - [Github Issues]()
