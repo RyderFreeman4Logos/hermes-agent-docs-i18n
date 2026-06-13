@@ -1664,6 +1664,8 @@
     - [Guidance]()
       - [References]()
         - [后端配置指南](zh/optional-skills/mlops/guidance/references/backends.md)
+    - [Huggingface Tokenizers]()
+      - [HuggingFace Tokenizers——高效的自然语言处理分词工具](zh/optional-skills/mlops/huggingface-tokenizers/SKILL.md)
     - [Instructor]()
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
