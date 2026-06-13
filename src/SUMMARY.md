@@ -2510,6 +2510,7 @@
             - [Huggingface Hub](zh/website/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub.md)
             - [Llama Cpp](zh/website/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp.md)
             - [提供 Llms vLLM 服务](zh/website/docs/user-guide/skills/bundled/mlops/mlops-inference-vllm.md)
+            - [Audiocraft 音频生成功能](zh/website/docs/user-guide/skills/bundled/mlops/mlops-models-audiocraft.md)
             - [Segment Anything 模型](zh/website/docs/user-guide/skills/bundled/mlops/mlops-models-segment-anything.md)
           - [Note Taking]()
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
