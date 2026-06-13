@@ -1662,6 +1662,7 @@
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
         - [提供商配置](zh/optional-skills/mlops/instructor/references/providers.md)
     - [Lambda Labs]()
+      - [Lambda Labs GPU 云平台](zh/optional-skills/mlops/lambda-labs/SKILL.md)
       - [References]()
         - [Lambda Labs 故障排除指南](zh/optional-skills/mlops/lambda-labs/references/troubleshooting.md)
     - [Llava]()
