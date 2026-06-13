@@ -2538,6 +2538,7 @@
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [优化注意力机制：Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
+            - [Guidance](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
             - [Huggingface Tokenizers](zh/website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md)
             - [Lambda Labs GPU 云服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
