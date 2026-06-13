@@ -1730,6 +1730,7 @@
         - [slime API 参考手册](zh/optional-skills/mlops/slime/references/api-reference.md)
         - [slime 故障排除指南](zh/optional-skills/mlops/slime/references/troubleshooting.md)
     - [Stable Diffusion]()
+      - [Stable Diffusion 图像生成](zh/optional-skills/mlops/stable-diffusion/SKILL.md)
       - [References]()
         - [Stable Diffusion 故障排除指南](zh/optional-skills/mlops/stable-diffusion/references/troubleshooting.md)
     - [Tensorrt Llm]()
