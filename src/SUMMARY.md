@@ -2467,6 +2467,7 @@
         - [工具搜索功能](zh/website/docs/user-guide/features/tool-search.md)
         - [工具与工具集](zh/website/docs/user-guide/features/tools.md)
         - [视觉功能与图片粘贴](zh/website/docs/user-guide/features/vision.md)
+        - [语音模式](zh/website/docs/user-guide/features/voice-mode.md)
         - [网页搜索与内容提取](zh/website/docs/user-guide/features/web-search.md)
         - [X（Twitter）搜索功能](zh/website/docs/user-guide/features/x-search.md)
       - [Messaging]()
