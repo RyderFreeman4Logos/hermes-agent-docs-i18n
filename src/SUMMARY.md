@@ -2404,6 +2404,7 @@
           - [Github]()
             - [代码库检测](zh/website/docs/user-guide/skills/bundled/github/github-codebase-inspection.md)
             - [GitHub 认证](zh/website/docs/user-guide/skills/bundled/github/github-github-auth.md)
+            - [GitHub代码审查](zh/website/docs/user-guide/skills/bundled/github/github-github-code-review.md)
             - [GitHub 问题管理](zh/website/docs/user-guide/skills/bundled/github/github-github-issues.md)
             - [GitHub Pull Request 工作流](zh/website/docs/user-guide/skills/bundled/github/github-github-pr-workflow.md)
           - [Media]()
