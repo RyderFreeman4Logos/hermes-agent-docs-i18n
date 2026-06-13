@@ -2460,6 +2460,7 @@
             - [药物发现](zh/website/docs/user-guide/skills/optional/research/research-drug-discovery.md)
             - [DuckDuckGo 搜索](zh/website/docs/user-guide/skills/optional/research/research-duckduckgo-search.md)
             - [GitNexus Explorer](zh/website/docs/user-guide/skills/optional/research/research-gitnexus-explorer.md)
+            - [开源情报调查](zh/website/docs/user-guide/skills/optional/research/research-osint-investigation.md)
             - [Parallel Cli](zh/website/docs/user-guide/skills/optional/research/research-parallel-cli.md)
             - [网页抓取](zh/website/docs/user-guide/skills/optional/research/research-scrapling.md)
             - [SearXNG 搜索](zh/website/docs/user-guide/skills/optional/research/research-searxng-search.md)
