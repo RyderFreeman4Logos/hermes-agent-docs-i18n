@@ -1972,7 +1972,7 @@
       - [架构图生成功能](zh/skills/creative/architecture-diagram/SKILL.md)
     - [Ascii Art]()
       - [ASCII艺术生成技能](zh/skills/creative/ascii-art/SKILL.md)
-    - [Ascii Video]()
+    - [Ascii Video](zh/skills/creative/ascii-video/README.md)
       - [ASCII视频制作流程](zh/skills/creative/ascii-video/SKILL.md)
       - [References]()
         - [故障排查参考](zh/skills/creative/ascii-video/references/troubleshooting.md)
