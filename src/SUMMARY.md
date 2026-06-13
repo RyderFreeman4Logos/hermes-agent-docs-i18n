@@ -1789,6 +1789,8 @@
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
     - [Memento Flashcards]()
       - [Memento抽认卡 —— 基于间隔重复法的抽认卡功能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
+    - [Shop App]()
+      - [Shop.app — 个人购物助手](zh/optional-skills/productivity/shop-app/SKILL.md)
     - [Siyuan]()
       - [SiYuan Note API](zh/optional-skills/productivity/siyuan/SKILL.md)
     - [Telephony]()
