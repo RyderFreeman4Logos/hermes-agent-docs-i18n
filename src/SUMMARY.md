@@ -2209,6 +2209,7 @@
     - [Nano Pdf]()
       - [nano-pdf](zh/skills/productivity/nano-pdf/SKILL.md)
     - [Notion]()
+      - [Notion](zh/skills/productivity/notion/SKILL.md)
       - [References]()
         - [Notion 块类型](zh/skills/productivity/notion/references/block-types.md)
     - [Ocr And Documents]()
