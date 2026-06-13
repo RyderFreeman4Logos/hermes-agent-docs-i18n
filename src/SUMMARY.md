@@ -1688,6 +1688,7 @@
         - [训练自定义分词器](zh/optional-skills/mlops/huggingface-tokenizers/references/training.md)
     - [Inference]()
       - [Outlines]()
+        - [概要：结构化文本生成](zh/optional-skills/mlops/inference/outlines/SKILL.md)
         - [References]()
           - [后端配置指南](zh/optional-skills/mlops/inference/outlines/references/backends.md)
           - [全面 JSON 生成指南](zh/optional-skills/mlops/inference/outlines/references/json_generation.md)
