@@ -1727,6 +1727,7 @@
         - [Axolotl 技能](zh/optional-skills/mlops/training/axolotl/SKILL.md)
         - [References](zh/optional-skills/mlops/training/axolotl/references/index.md)
       - [Trl Fine Tuning]()
+        - [TRL – Transformer强化学习](zh/optional-skills/mlops/training/trl-fine-tuning/SKILL.md)
         - [References]()
           - [DPO 变体](zh/optional-skills/mlops/training/trl-fine-tuning/references/dpo-variants.md)
           - [在线强化学习方法](zh/optional-skills/mlops/training/trl-fine-tuning/references/online-rl.md)
