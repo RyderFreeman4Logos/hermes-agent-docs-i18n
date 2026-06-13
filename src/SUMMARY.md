@@ -2585,6 +2585,7 @@
             - [宝可梦游戏玩家技能](zh/website/docs/user-guide/skills/optional/gaming/gaming-pokemon-player.md)
           - [Health]()
             - [健身营养](zh/website/docs/user-guide/skills/optional/health/health-fitness-nutrition.md)
+            - [Neuroskill BCI](zh/website/docs/user-guide/skills/optional/health/health-neuroskill-bci.md)
           - [Mcp]()
             - [Fastmcp](zh/website/docs/user-guide/skills/optional/mcp/mcp-fastmcp.md)
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
