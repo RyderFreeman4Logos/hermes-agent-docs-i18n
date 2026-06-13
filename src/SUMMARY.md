@@ -2359,6 +2359,7 @@
       - [构建图像生成提供者插件](zh/website/docs/developer-guide/image-gen-provider-plugin.md)
       - [构建内存提供者插件](zh/website/docs/developer-guide/memory-provider-plugin.md)
       - [构建模型提供者插件](zh/website/docs/developer-guide/model-provider-plugin.md)
+      - [插件调用大型语言模型](zh/website/docs/developer-guide/plugin-llm-access.md)
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
       - [提示词组装](zh/website/docs/developer-guide/prompt-assembly.md)
       - [提供商运行时解析机制](zh/website/docs/developer-guide/provider-runtime.md)
