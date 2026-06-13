@@ -1769,6 +1769,8 @@
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
     - [Siyuan]()
       - [SiYuan Note API](zh/optional-skills/productivity/siyuan/SKILL.md)
+    - [Telephony]()
+      - [电话功能——无需修改核心工具即可实现号码、通话与短信功能](zh/optional-skills/productivity/telephony/SKILL.md)
   - [Research]()
     - [Darwinian Evolver]()
       - [达尔文进化器](zh/optional-skills/research/darwinian-evolver/SKILL.md)
