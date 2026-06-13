@@ -2082,6 +2082,7 @@
         - [布局合成器参考手册](zh/skills/creative/touchdesigner-mcp/references/layout-compositor.md)
         - [MIDI / OSC 参考手册](zh/skills/creative/touchdesigner-mcp/references/midi-osc.md)
         - [操作员指南](zh/skills/creative/touchdesigner-mcp/references/operator-tips.md)
+        - [TouchDesigner 操作符参考手册](zh/skills/creative/touchdesigner-mcp/references/operators.md)
         - [面板与用户界面参考](zh/skills/creative/touchdesigner-mcp/references/panel-ui.md)
         - [粒子参考手册](zh/skills/creative/touchdesigner-mcp/references/particles.md)
         - [后处理特效参考](zh/skills/creative/touchdesigner-mcp/references/postfx.md)
