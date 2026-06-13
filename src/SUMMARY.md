@@ -2042,6 +2042,8 @@
           - [subway-map](zh/skills/creative/baoyu-infographic/references/styles/subway-map.md)
           - [技术示意图](zh/skills/creative/baoyu-infographic/references/styles/technical-schematic.md)
           - [UI线框图](zh/skills/creative/baoyu-infographic/references/styles/ui-wireframe.md)
+    - [Claude Design]()
+      - [面向 CLI/API 智能体的 Claude Design 技能](zh/skills/creative/claude-design/SKILL.md)
     - [Comfyui]()
       - [References]()
         - [comfy-cli 命令参考手册](zh/skills/creative/comfyui/references/official-cli.md)
