@@ -1707,6 +1707,7 @@
     - [Slime]()
       - [slime：用于强化学习规模扩展的LLM训练后框架](zh/optional-skills/mlops/slime/SKILL.md)
       - [References]()
+        - [slime API 参考手册](zh/optional-skills/mlops/slime/references/api-reference.md)
         - [slime 故障排除指南](zh/optional-skills/mlops/slime/references/troubleshooting.md)
     - [Tensorrt Llm]()
       - [TensorRT-LLM](zh/optional-skills/mlops/tensorrt-llm/SKILL.md)
