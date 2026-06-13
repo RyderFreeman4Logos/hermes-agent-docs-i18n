@@ -1693,6 +1693,7 @@
     - [Lambda Labs]()
       - [Lambda Labs GPU 云平台](zh/optional-skills/mlops/lambda-labs/SKILL.md)
       - [References]()
+        - [Lambda Labs 高级使用指南](zh/optional-skills/mlops/lambda-labs/references/advanced-usage.md)
         - [Lambda Labs 故障排除指南](zh/optional-skills/mlops/lambda-labs/references/troubleshooting.md)
     - [Llava]()
       - [LLaVA - 大语言与视觉助手](zh/optional-skills/mlops/llava/SKILL.md)
