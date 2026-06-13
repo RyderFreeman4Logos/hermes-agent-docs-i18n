@@ -2300,6 +2300,7 @@
         - [参考文献列表](zh/skills/research/research-paper-writing/references/sources.md)
         - [机器学习论文写作理念与最佳实践](zh/skills/research/research-paper-writing/references/writing-guide.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
+        - [Aaai2026](zh/skills/research/research-paper-writing/templates/aaai2026/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
           - [《ACL会议论文集》投稿指南](zh/skills/research/research-paper-writing/templates/acl/formatting.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
