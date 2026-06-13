@@ -2087,6 +2087,7 @@
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：MiniMax](zh/skills/creative/popular-web-designs/templates/minimax.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
+        - [设计系统：Mistral AI](zh/skills/creative/popular-web-designs/templates/mistral.ai.md)
         - [设计系统：MongoDB](zh/skills/creative/popular-web-designs/templates/mongodb.md)
         - [设计系统：Ollama](zh/skills/creative/popular-web-designs/templates/ollama.md)
         - [设计系统：OpenCode](zh/skills/creative/popular-web-designs/templates/opencode.ai.md)
