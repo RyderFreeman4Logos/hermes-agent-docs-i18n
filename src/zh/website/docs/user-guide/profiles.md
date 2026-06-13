@@ -58,9 +58,9 @@ hermes profile create work --clone
 hermes profile create backup --clone-all
 ```
 
-会复制**所有内容**——配置文件、API密钥、角色设定、所有记忆记录、完整的会话历史、技能信息、定时任务以及插件。相当于生成一份完整的快照，非常适合用于备份，或是克隆已拥有特定上下文的智能体。 
+会复制**所有内容**——配置文件、API密钥、角色设定、所有记忆数据、技能、定时任务以及插件，相当于一个完整可用的快照。但各个人物档案的独立历史记录将被排除在外（如会话历史、`state.db`、`backups/`、`state-snapshots/`、`checkpoints/`），因为这些属于原始人物档案，其大小可能高达数十GB。若需包含历史记录的完整备份，请使用 `hermes profile export` 或 `hermes backup` 命令。 
 
-### 从指定配置文件进行克隆
+### 从特定人物档案克隆
 
 ```bash
 hermes profile create work --clone --clone-from coder
