@@ -2203,6 +2203,7 @@
       - [安装](zh/website/docs/getting-started/installation.md)
       - [学习路径](zh/website/docs/getting-started/learning-path.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
+      - [更新与卸载](zh/website/docs/getting-started/updating.md)
     - [Guides]()
       - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
