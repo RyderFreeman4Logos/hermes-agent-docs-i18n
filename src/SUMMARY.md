@@ -2337,6 +2337,7 @@
       - [在 Hermes 中使用 MCP](zh/website/docs/guides/use-mcp-with-hermes.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
       - [在 Hermes 中使用语音模式](zh/website/docs/guides/use-voice-mode-with-hermes.md)
+      - [利用 Webhook 自动在 GitHub PR 中添加评论](zh/website/docs/guides/webhook-github-pr-review.md)
       - [使用技能](zh/website/docs/guides/work-with-skills.md)
       - [xAI Grok OAuth（SuperGrok / X Premium+）](zh/website/docs/guides/xai-grok-oauth.md)
     - [Integrations](zh/website/docs/integrations/index.md)
