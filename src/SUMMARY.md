@@ -1715,6 +1715,7 @@
         - [重复内容去重指南](zh/optional-skills/mlops/nemo-curator/references/deduplication.md)
         - [质量过滤指南](zh/optional-skills/mlops/nemo-curator/references/filtering.md)
     - [Obliteratus]()
+      - [OBLITERATUS 技能](zh/optional-skills/mlops/obliteratus/SKILL.md)
       - [References]()
         - [OBLITERATUS分析模块 — 参考指南](zh/optional-skills/mlops/obliteratus/references/analysis-modules.md)
         - [OBLITERATUS 方法——详细指南](zh/optional-skills/mlops/obliteratus/references/methods-guide.md)
