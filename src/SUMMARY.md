@@ -2069,6 +2069,7 @@
         - [设计系统：Replicate](zh/skills/creative/popular-web-designs/templates/replicate.md)
         - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
         - [设计系统：SpaceX](zh/skills/creative/popular-web-designs/templates/spacex.md)
+        - [设计系统：Together AI](zh/skills/creative/popular-web-designs/templates/together.ai.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
     - [Pretext]()
