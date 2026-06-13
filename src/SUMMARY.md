@@ -2376,6 +2376,7 @@
           - [Communication]()
             - [1-3-1 规则](zh/website/docs/user-guide/skills/optional/communication/communication-one-three-one-rule.md)
           - [Creative]()
+            - [宝玉文章插画师](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-article-illustrator.md)
             - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
             - [创意构思](zh/website/docs/user-guide/skills/optional/creative/creative-creative-ideation.md)
             - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
