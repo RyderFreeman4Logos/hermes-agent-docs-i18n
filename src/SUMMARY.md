@@ -2208,6 +2208,8 @@
       - [Node.js 检查调试器](zh/skills/software-development/node-inspect-debugger/SKILL.md)
     - [Plan]()
       - [计划模式](zh/skills/software-development/plan/SKILL.md)
+    - [Python Debugpy]()
+      - [Python调试器（pdb + debugpy）](zh/skills/software-development/python-debugpy/SKILL.md)
     - [Requesting Code Review]()
       - [提交前代码验证](zh/skills/software-development/requesting-code-review/SKILL.md)
     - [Simplify Code]()
