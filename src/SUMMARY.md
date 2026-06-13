@@ -2334,6 +2334,7 @@
             - [宝玉信息图生成器](zh/website/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic.md)
             - [DESIGN.md 模型](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
+            - [Manim 视频生成](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
             - [热门网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
             - [Sketch](zh/website/docs/user-guide/skills/bundled/creative/creative-sketch.md)
             - [歌曲创作与 AI 音乐](zh/website/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music.md)
