@@ -2078,6 +2078,7 @@
         - [设计系统：Airbnb](zh/skills/creative/popular-web-designs/templates/airbnb.md)
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
         - [设计系统：宝马](zh/skills/creative/popular-web-designs/templates/bmw.md)
+        - [设计系统：ClickHouse](zh/skills/creative/popular-web-designs/templates/clickhouse.md)
         - [设计系统：Cohere](zh/skills/creative/popular-web-designs/templates/cohere.md)
         - [设计系统：Coinbase](zh/skills/creative/popular-web-designs/templates/coinbase.md)
         - [设计系统：Figma](zh/skills/creative/popular-web-designs/templates/figma.md)
