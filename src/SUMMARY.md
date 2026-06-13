@@ -2315,6 +2315,7 @@
       - [使用技能](zh/website/docs/guides/work-with-skills.md)
       - [xAI Grok OAuth（SuperGrok / X Premium+）](zh/website/docs/guides/xai-grok-oauth.md)
     - [Integrations](zh/website/docs/integrations/index.md)
+      - [Nous Portal](zh/website/docs/integrations/nous-portal.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
