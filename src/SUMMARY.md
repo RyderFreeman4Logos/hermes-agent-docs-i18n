@@ -2168,6 +2168,7 @@
     - [Airtable]()
       - [Airtable — 基础库、表格与记录](zh/skills/productivity/airtable/SKILL.md)
     - [Google Workspace]()
+      - [Google Workspace](zh/skills/productivity/google-workspace/SKILL.md)
       - [References]()
         - [Gmail 搜索语法](zh/skills/productivity/google-workspace/references/gmail-search-syntax.md)
     - [Maps]()
