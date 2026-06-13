@@ -2581,6 +2581,8 @@
           - [Mcp]()
             - [Fastmcp](zh/website/docs/user-guide/skills/optional/mcp/mcp-fastmcp.md)
             - [Mcporter](zh/website/docs/user-guide/skills/optional/mcp/mcp-mcporter.md)
+          - [Migration]()
+            - [OpenClaw 迁移](zh/website/docs/user-guide/skills/optional/migration/migration-openclaw-migration.md)
           - [Mlops]()
             - [Huggingface Accelerate](zh/website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md)
             - [Chroma](zh/website/docs/user-guide/skills/optional/mlops/mlops-chroma.md)
