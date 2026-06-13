@@ -1785,6 +1785,8 @@
     - [Telephony]()
       - [电话功能——无需修改核心工具即可实现号码、通话与短信功能](zh/optional-skills/productivity/telephony/SKILL.md)
   - [Research]()
+    - [Bioinformatics]()
+      - [生物信息学技能门户](zh/optional-skills/research/bioinformatics/SKILL.md)
     - [Darwinian Evolver]()
       - [达尔文进化器](zh/optional-skills/research/darwinian-evolver/SKILL.md)
     - [Domain Intel]()
