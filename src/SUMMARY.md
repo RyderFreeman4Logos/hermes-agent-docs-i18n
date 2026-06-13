@@ -1939,6 +1939,7 @@
     - [Byterover](zh/plugins/memory/byterover/README.md)
     - [Hindsight](zh/plugins/memory/hindsight/README.md)
     - [Holographic](zh/plugins/memory/holographic/README.md)
+    - [Honcho](zh/plugins/memory/honcho/README.md)
     - [Mem0](zh/plugins/memory/mem0/README.md)
     - [Openviking](zh/plugins/memory/openviking/README.md)
     - [Retaindb](zh/plugins/memory/retaindb/README.md)
