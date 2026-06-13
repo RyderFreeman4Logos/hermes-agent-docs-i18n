@@ -1680,6 +1680,7 @@
     - [Huggingface Tokenizers]()
       - [HuggingFace Tokenizers——高效的自然语言处理分词工具](zh/optional-skills/mlops/huggingface-tokenizers/SKILL.md)
       - [References]()
+        - [分词算法深度解析](zh/optional-skills/mlops/huggingface-tokenizers/references/algorithms.md)
         - [训练自定义分词器](zh/optional-skills/mlops/huggingface-tokenizers/references/training.md)
     - [Inference]()
       - [Outlines]()
