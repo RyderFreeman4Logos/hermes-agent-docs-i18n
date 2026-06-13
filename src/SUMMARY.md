@@ -1712,6 +1712,7 @@
         - [References]()
           - [DSPy 模块](zh/optional-skills/mlops/research/dspy/references/modules.md)
     - [Saelens]()
+      - [SAELens：用于实现机制可解释性的稀疏自编码器](zh/optional-skills/mlops/saelens/SKILL.md)
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
         - [SAELens API 参考手册](zh/optional-skills/mlops/saelens/references/api.md)
         - [SAELens 教程](zh/optional-skills/mlops/saelens/references/tutorials.md)
