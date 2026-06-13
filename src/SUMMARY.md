@@ -2124,6 +2124,8 @@
     - [Jupyter Live Kernel]()
       - [Jupyter 实时内核（hamelnb）](zh/skills/data-science/jupyter-live-kernel/SKILL.md)
   - [Devops]()
+    - [Kanban Orchestrator]()
+      - [看板编排器 —— 分解任务指南](zh/skills/devops/kanban-orchestrator/SKILL.md)
     - [Kanban Worker]()
       - [Kanban Worker — 常见问题与示例](zh/skills/devops/kanban-worker/SKILL.md)
   - [Dogfood]()
