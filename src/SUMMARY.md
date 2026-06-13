@@ -1730,6 +1730,7 @@
     - [Qdrant]()
       - [Qdrant - 向量相似度搜索引擎](zh/optional-skills/mlops/qdrant/SKILL.md)
       - [References]()
+        - [Qdrant 高级使用指南](zh/optional-skills/mlops/qdrant/references/advanced-usage.md)
         - [Qdrant 故障排查指南](zh/optional-skills/mlops/qdrant/references/troubleshooting.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
