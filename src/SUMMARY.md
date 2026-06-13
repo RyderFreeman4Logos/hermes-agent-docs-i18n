@@ -1443,6 +1443,8 @@
       - [Blackbox CLI](zh/optional-skills/autonomous-ai-agents/blackbox/SKILL.md)
     - [Grok]()
       - [Grok Build CLI — Hermes编排指南](zh/optional-skills/autonomous-ai-agents/grok/SKILL.md)
+    - [Honcho]()
+      - [Hermes 的 Honcho Memory 功能](zh/optional-skills/autonomous-ai-agents/honcho/SKILL.md)
     - [Openhands]()
       - [OpenHands CLI](zh/optional-skills/autonomous-ai-agents/openhands/SKILL.md)
   - [Blockchain]()
