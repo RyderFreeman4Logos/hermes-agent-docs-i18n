@@ -1887,6 +1887,7 @@
         - [GODMODE CLASSIC — 越狱系统提示词模板](zh/optional-skills/security/godmode/references/jailbreak-templates.md)
         - [拒绝检测与响应评分机制](zh/optional-skills/security/godmode/references/refusal-detection.md)
     - [Oss Forensics]()
+      - [OSS安全取证技能](zh/optional-skills/security/oss-forensics/SKILL.md)
       - [References]()
         - [证据类型参考](zh/optional-skills/security/oss-forensics/references/evidence-types.md)
         - [GitHub 存档查询指南（BigQuery）](zh/optional-skills/security/oss-forensics/references/github-archive-guide.md)
