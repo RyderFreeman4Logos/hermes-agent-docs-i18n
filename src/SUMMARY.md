@@ -2294,6 +2294,8 @@
             - [歌曲创作与 AI 音乐](zh/website/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music.md)
           - [Data Science]()
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
+          - [Devops]()
+            - [Kanban Worker](zh/website/docs/user-guide/skills/bundled/devops/devops-kanban-worker.md)
           - [Dogfood]()
             - [Dogfood](zh/website/docs/user-guide/skills/bundled/dogfood/dogfood-dogfood.md)
           - [Email]()
