@@ -2627,6 +2627,7 @@
             - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
             - [网络渗透测试](zh/website/docs/user-guide/skills/optional/security/security-web-pentest.md)
           - [Software Development]()
+            - [Code Wiki](zh/website/docs/user-guide/skills/optional/software-development/software-development-code-wiki.md)
             - [子代理驱动开发](zh/website/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development.md)
           - [Web Development]()
             - [Page Agent](zh/website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md)
