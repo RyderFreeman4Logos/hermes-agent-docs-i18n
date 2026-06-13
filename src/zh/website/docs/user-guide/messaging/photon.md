@@ -113,7 +113,7 @@ gateway:
 ## 启动网关
 
 ```bash
-hermes gateway start --platform photon
+hermes gateway start
 ```
 
 您将会看到类似如下的内容：
