@@ -2323,6 +2323,7 @@
     - [User Stories](zh/website/docs/user-stories.md)
     - [Developer Guide]()
       - [ACP 内部实现](zh/website/docs/developer-guide/acp-internals.md)
+      - [添加 Provider](zh/website/docs/developer-guide/adding-providers.md)
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
       - [Agent循环内部机制](zh/website/docs/developer-guide/agent-loop.md)
       - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
