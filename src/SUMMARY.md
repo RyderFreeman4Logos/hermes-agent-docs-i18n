@@ -1539,6 +1539,7 @@
     - [Blender Mcp]()
       - [Blender MCP](zh/optional-skills/creative/blender-mcp/SKILL.md)
     - [Concept Diagrams]()
+      - [概念图绘制](zh/optional-skills/creative/concept-diagrams/SKILL.md)
       - [Examples]()
         - [公寓平面图：3室到4室的改造方案](zh/optional-skills/creative/concept-diagrams/examples/apartment-floor-plan-conversion.md)
         - [自动化密码重置流程](zh/optional-skills/creative/concept-diagrams/examples/automated-password-reset-flow.md)
