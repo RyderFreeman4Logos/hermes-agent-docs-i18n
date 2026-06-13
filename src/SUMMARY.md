@@ -2239,6 +2239,7 @@
       - [将 Hermes 作为 Python 库使用](zh/website/docs/guides/python-library.md)
       - [在 Nous Portal 上运行 Hermes Agent](zh/website/docs/guides/run-hermes-with-nous-portal.md)
       - [在 Hermes Agent 中免费运行 Nemotron 3 Ultra](zh/website/docs/guides/run-nemotron-3-ultra-free.md)
+      - [提示与最佳实践](zh/website/docs/guides/tips.md)
       - [在 Hermes 中使用 MCP](zh/website/docs/guides/use-mcp-with-hermes.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
       - [在 Hermes 中使用语音模式](zh/website/docs/guides/use-voice-mode-with-hermes.md)
