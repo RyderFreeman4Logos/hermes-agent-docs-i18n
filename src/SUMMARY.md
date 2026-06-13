@@ -1837,6 +1837,7 @@
     - [Sherlock]()
       - [Sherlock OSINT用户名查询功能](zh/optional-skills/security/sherlock/SKILL.md)
     - [Web Pentest]()
+      - [Web应用程序渗透测试](zh/optional-skills/security/web-pentest/SKILL.md)
       - [References]()
         - [绕过技巧](zh/optional-skills/security/web-pentest/references/bypass-techniques.md)
         - [利用技术](zh/optional-skills/security/web-pentest/references/exploitation-techniques.md)
