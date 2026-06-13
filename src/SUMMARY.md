@@ -1459,6 +1459,7 @@
       - [Prompts]()
         - [System](zh/optional-skills/creative/baoyu-article-illustrator/prompts/system.md)
       - [References]()
+        - [提示词构建](zh/optional-skills/creative/baoyu-article-illustrator/references/prompt-construction.md)
         - [样式预设](zh/optional-skills/creative/baoyu-article-illustrator/references/style-presets.md)
         - [样式参考](zh/optional-skills/creative/baoyu-article-illustrator/references/styles.md)
         - [使用方式](zh/optional-skills/creative/baoyu-article-illustrator/references/usage.md)
