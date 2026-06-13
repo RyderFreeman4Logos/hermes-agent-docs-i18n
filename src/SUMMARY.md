@@ -1568,6 +1568,7 @@
         - [看板设置 — 项目初始化与配置](zh/optional-skills/creative/kanban-video-orchestrator/references/kanban-setup.md)
         - [监控——实时观察流水线并及时干预](zh/optional-skills/creative/kanban-video-orchestrator/references/monitoring.md)
         - [角色原型](zh/optional-skills/creative/kanban-video-orchestrator/references/role-archetypes.md)
+        - [工具矩阵——各角色的技能与工具集](zh/optional-skills/creative/kanban-video-orchestrator/references/tool-matrix.md)
     - [Meme Generation]()
       - [模因生成示例](zh/optional-skills/creative/meme-generation/EXAMPLES.md)
       - [模因生成](zh/optional-skills/creative/meme-generation/SKILL.md)
