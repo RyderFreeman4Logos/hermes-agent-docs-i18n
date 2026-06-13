@@ -2362,6 +2362,7 @@
         - [上下文文件](zh/website/docs/user-guide/features/context-files.md)
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [凭证池](zh/website/docs/user-guide/features/credential-pools.md)
+        - [子代理委派](zh/website/docs/user-guide/features/delegation.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [持久目标（`/goal`）](zh/website/docs/user-guide/features/goals.md)
         - [Honcho 内存系统](zh/website/docs/user-guide/features/honcho.md)
