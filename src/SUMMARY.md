@@ -1683,6 +1683,7 @@
       - [Outlines]()
         - [References]()
           - [后端配置指南](zh/optional-skills/mlops/inference/outlines/references/backends.md)
+          - [全面 JSON 生成指南](zh/optional-skills/mlops/inference/outlines/references/json_generation.md)
     - [Instructor]()
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
