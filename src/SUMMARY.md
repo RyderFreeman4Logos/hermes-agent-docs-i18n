@@ -1700,6 +1700,7 @@
         - [超参数](zh/optional-skills/mlops/simpo/references/hyperparameters.md)
         - [损失函数](zh/optional-skills/mlops/simpo/references/loss-functions.md)
     - [Slime]()
+      - [slime：用于强化学习规模扩展的LLM训练后框架](zh/optional-skills/mlops/slime/SKILL.md)
       - [References]()
         - [slime 故障排除指南](zh/optional-skills/mlops/slime/references/troubleshooting.md)
     - [Tensorrt Llm]()
