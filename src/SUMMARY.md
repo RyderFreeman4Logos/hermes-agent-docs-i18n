@@ -1556,6 +1556,7 @@
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
     - [Hyperframes]()
+      - [HyperFrames](zh/optional-skills/creative/hyperframes/SKILL.md)
       - [References]()
         - [HyperFrames CLI](zh/optional-skills/creative/hyperframes/references/cli.md)
         - [组合内容创作](zh/optional-skills/creative/hyperframes/references/composition.md)
