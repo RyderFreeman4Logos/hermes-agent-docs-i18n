@@ -2089,6 +2089,7 @@
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
         - [设计系统：MongoDB](zh/skills/creative/popular-web-designs/templates/mongodb.md)
         - [设计系统：Ollama](zh/skills/creative/popular-web-designs/templates/ollama.md)
+        - [设计系统：OpenCode](zh/skills/creative/popular-web-designs/templates/opencode.ai.md)
         - [设计系统：Pinterest](zh/skills/creative/popular-web-designs/templates/pinterest.md)
         - [设计系统：Replicate](zh/skills/creative/popular-web-designs/templates/replicate.md)
         - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
