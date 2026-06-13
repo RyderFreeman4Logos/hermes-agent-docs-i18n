@@ -1684,6 +1684,7 @@
         - [OBLITERATUS分析模块 — 参考指南](zh/optional-skills/mlops/obliteratus/references/analysis-modules.md)
         - [OBLITERATUS 方法——详细指南](zh/optional-skills/mlops/obliteratus/references/methods-guide.md)
     - [Peft]()
+      - [PEFT（参数高效微调）](zh/optional-skills/mlops/peft/SKILL.md)
       - [References]()
         - [PEFT故障排查指南](zh/optional-skills/mlops/peft/references/troubleshooting.md)
     - [Pinecone]()
