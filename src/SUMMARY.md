@@ -1652,6 +1652,8 @@
       - [mcporter](zh/optional-skills/mcp/mcporter/SKILL.md)
   - [Migration]()
     - [Description](zh/optional-skills/migration/DESCRIPTION.md)
+    - [Openclaw Migration]()
+      - [OpenClaw → Hermes 迁移](zh/optional-skills/migration/openclaw-migration/SKILL.md)
   - [Mlops]()
     - [Accelerate]()
       - [HuggingFace Accelerate——统一的分布式训练解决方案](zh/optional-skills/mlops/accelerate/SKILL.md)
