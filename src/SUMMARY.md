@@ -2382,6 +2382,7 @@
       - [更新与卸载](zh/website/docs/getting-started/updating.md)
     - [Guides]()
       - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
+      - [自动化蓝图](zh/website/docs/guides/automation-blueprints.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [仅脚本型的定时任务](zh/website/docs/guides/cron-script-only.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
