@@ -1680,6 +1680,7 @@
       - [指导功能：受限型大语言模型生成](zh/optional-skills/mlops/guidance/SKILL.md)
       - [References]()
         - [后端配置指南](zh/optional-skills/mlops/guidance/references/backends.md)
+        - [全面约束模式指南](zh/optional-skills/mlops/guidance/references/constraints.md)
     - [Huggingface Tokenizers]()
       - [HuggingFace Tokenizers——高效的自然语言处理分词工具](zh/optional-skills/mlops/huggingface-tokenizers/SKILL.md)
       - [References]()
