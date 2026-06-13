@@ -1621,6 +1621,8 @@
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
     - [Excel Author]()
       - [excel-author](zh/optional-skills/finance/excel-author/SKILL.md)
+    - [Lbo Model]()
+      - [Skill](zh/optional-skills/finance/lbo-model/SKILL.md)
     - [Merger Model]()
       - [合并模型](zh/optional-skills/finance/merger-model/SKILL.md)
     - [Pptx Author]()
