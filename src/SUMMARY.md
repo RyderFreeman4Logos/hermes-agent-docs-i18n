@@ -1506,6 +1506,7 @@
         - [Ohmsha漫画风格指南](zh/optional-skills/creative/baoyu-comic/references/ohmsha-guide.md)
         - [部分工作流](zh/optional-skills/creative/baoyu-comic/references/partial-workflows.md)
         - [分镜模板](zh/optional-skills/creative/baoyu-comic/references/storyboard-template.md)
+        - [完整工作流程](zh/optional-skills/creative/baoyu-comic/references/workflow.md)
         - [Art Styles]()
           - [粉笔画风格](zh/optional-skills/creative/baoyu-comic/references/art-styles/chalk.md)
           - [ink-brush](zh/optional-skills/creative/baoyu-comic/references/art-styles/ink-brush.md)
