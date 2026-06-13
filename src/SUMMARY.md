@@ -1858,6 +1858,7 @@
         - [渗透测试报告](zh/optional-skills/security/web-pentest/templates/pentest-report.md)
   - [Software Development]()
     - [Code Wiki]()
+      - [Code Wiki 技能](zh/optional-skills/software-development/code-wiki/SKILL.md)
       - [Templates](zh/optional-skills/software-development/code-wiki/templates/README.md)
         - [架构](zh/optional-skills/software-development/code-wiki/templates/architecture.md)
         - [入门指南](zh/optional-skills/software-development/code-wiki/templates/getting-started.md)
