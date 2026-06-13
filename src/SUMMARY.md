@@ -2356,6 +2356,7 @@
         - [凭证池](zh/website/docs/user-guide/features/credential-pools.md)
         - [输出文件模式](zh/website/docs/user-guide/features/deliverable-mode.md)
         - [持久目标（`/goal`）](zh/website/docs/user-guide/features/goals.md)
+        - [Honcho 内存系统](zh/website/docs/user-guide/features/honcho.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
         - [看板工作通道](zh/website/docs/user-guide/features/kanban-worker-lanes.md)
         - [语言服务器协议（LSP）](zh/website/docs/user-guide/features/lsp.md)
