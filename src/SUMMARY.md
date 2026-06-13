@@ -2108,6 +2108,7 @@
         - [设计系统：Ollama](zh/skills/creative/popular-web-designs/templates/ollama.md)
         - [设计系统：OpenCode](zh/skills/creative/popular-web-designs/templates/opencode.ai.md)
         - [设计系统：Pinterest](zh/skills/creative/popular-web-designs/templates/pinterest.md)
+        - [设计系统：PostHog](zh/skills/creative/popular-web-designs/templates/posthog.md)
         - [设计系统：Raycast](zh/skills/creative/popular-web-designs/templates/raycast.md)
         - [设计系统：Replicate](zh/skills/creative/popular-web-designs/templates/replicate.md)
         - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
