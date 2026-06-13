@@ -1706,6 +1706,7 @@
         - [PyTorch Lightning 分布式训练](zh/optional-skills/mlops/pytorch-lightning/references/distributed.md)
         - [使用 PyTorch Lightning 进行超参数调优](zh/optional-skills/mlops/pytorch-lightning/references/hyperparameter-tuning.md)
     - [Qdrant]()
+      - [Qdrant - 向量相似度搜索引擎](zh/optional-skills/mlops/qdrant/SKILL.md)
       - [References]()
         - [Qdrant 故障排查指南](zh/optional-skills/mlops/qdrant/references/troubleshooting.md)
     - [Research]()
