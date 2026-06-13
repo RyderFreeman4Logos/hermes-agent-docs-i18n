@@ -1556,6 +1556,7 @@
       - [References]()
         - [HyperFrames CLI](zh/optional-skills/creative/hyperframes/references/cli.md)
         - [组合内容创作](zh/optional-skills/creative/hyperframes/references/composition.md)
+        - [HyperFrames 功能参考手册](zh/optional-skills/creative/hyperframes/references/features.md)
         - [HyperFrames 的 GSAP 功能](zh/optional-skills/creative/hyperframes/references/gsap.md)
         - [故障排除](zh/optional-skills/creative/hyperframes/references/troubleshooting.md)
         - [网站转视频](zh/optional-skills/creative/hyperframes/references/website-to-video.md)
