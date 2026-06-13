@@ -697,6 +697,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md	216e7309d971
 website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md	9c6e76efb653c466201f6ce6d4d7f01fe7800acc5392e6192e6d4f9f5c443a50
 website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md	ef41b45da12e0571e06594ba01ade66265494699d7f962b1433dd960c36a31ef
 website/docs/user-guide/skills/optional/mlops/mlops-simpo.md	163c96193a31a0a08a9ea00074f9b00ac8700c46a240b115e3f782e081da496c
+website/docs/user-guide/skills/optional/mlops/mlops-slime.md	1fffaf95c283e351cce70ad4b13fc05c04baae23db93a5fe7db96bd665c3fd01
 website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md	d866ea4b186314fb200c54d35e3adc67c9d687ff1d7b823a6b881dcc76a04ec5
 website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md	d6ffb3a615cbc169dad82d55d8992408561d66a682aa3ebe60fc685e8112150c
 website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md	48e37acc77dbc1de93fec429079d6bc7c86e03fa8fa11218ddddd78b32e1f9bc

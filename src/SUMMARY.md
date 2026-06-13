@@ -2429,6 +2429,7 @@
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
             - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
+            - [Slime Rl Training](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
             - [TorchTitan：基于 PyTorch 的分布式大语言模型预训练工具](zh/website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md)
             - [Axolotl](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md)
