@@ -2280,6 +2280,7 @@
         - [超出实证机器学习的论文类型](zh/skills/research/research-paper-writing/references/paper-types.md)
         - [审稿人指南与评估标准](zh/skills/research/research-paper-writing/references/reviewer-guidelines.md)
         - [参考文献列表](zh/skills/research/research-paper-writing/references/sources.md)
+        - [机器学习论文写作理念与最佳实践](zh/skills/research/research-paper-writing/references/writing-guide.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
