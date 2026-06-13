@@ -1691,6 +1691,7 @@
       - [References]()
         - [分词算法深度解析](zh/optional-skills/mlops/huggingface-tokenizers/references/algorithms.md)
         - [Transformers集成指南](zh/optional-skills/mlops/huggingface-tokenizers/references/integration.md)
+        - [分词流程组件](zh/optional-skills/mlops/huggingface-tokenizers/references/pipeline.md)
         - [训练自定义分词器](zh/optional-skills/mlops/huggingface-tokenizers/references/training.md)
     - [Inference]()
       - [Outlines]()
