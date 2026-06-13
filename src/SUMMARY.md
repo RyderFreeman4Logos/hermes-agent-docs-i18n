@@ -1694,6 +1694,7 @@
     - [Pytorch Lightning]()
       - [PyTorch Lightning——高级训练框架](zh/optional-skills/mlops/pytorch-lightning/SKILL.md)
       - [References]()
+        - [PyTorch Lightning 回调函数](zh/optional-skills/mlops/pytorch-lightning/references/callbacks.md)
         - [PyTorch Lightning 分布式训练](zh/optional-skills/mlops/pytorch-lightning/references/distributed.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
