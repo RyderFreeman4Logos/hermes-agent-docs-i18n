@@ -2205,6 +2205,7 @@
         - [Polymarket API 接口参考文档](zh/skills/research/polymarket/references/api-endpoints.md)
     - [Research Paper Writing]()
       - [References]()
+        - [会议论文检查清单](zh/skills/research/research-paper-writing/references/checklists.md)
         - [参考文献列表](zh/skills/research/research-paper-writing/references/sources.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
