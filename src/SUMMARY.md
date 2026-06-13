@@ -2046,6 +2046,7 @@
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
     - [Pretext]()
+      - [Pretext创意演示](zh/skills/creative/pretext/SKILL.md)
       - [References]()
         - [前提模式](zh/skills/creative/pretext/references/patterns.md)
     - [Sketch]()
