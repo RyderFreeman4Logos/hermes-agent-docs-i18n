@@ -653,6 +653,7 @@ website/docs/user-guide/skills/bundled/media/media-gif-search.md	e997ce2cb8ee5b3
 website/docs/user-guide/skills/bundled/media/media-heartmula.md	b456d02e5bb90ca1aa7f54615971a2d3c5f080f81bc4ae2bf3b3b2eb418428ab
 website/docs/user-guide/skills/bundled/media/media-songsee.md	25086cb0d70fdffda455f00f73be366574eb252e3a99dd6c661d3d79221099c7
 website/docs/user-guide/skills/bundled/media/media-youtube-content.md	be9399801c7072fc391e67258c3722b7311f26f173451aa0d6440fb3f4042562
+website/docs/user-guide/skills/bundled/mlops/mlops-evaluation-lm-evaluation-harness.md	c684c0c40601a13471f26edb86d0cdde49bb132adc574b372b1a11bae3b87331
 website/docs/user-guide/skills/bundled/mlops/mlops-evaluation-weights-and-biases.md	6df5e27c7d7892d7992c0338654caba567363245c6a998cfe72452e0228c89e8
 website/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub.md	facdef2409ed66ab55cf9af6fe036084c5de05fcd85f87808165b1b80b400175
 website/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp.md	5c61ac81d351daf3e16f94bd61c7c25c35c8cb9759d1a572a3fa973fa76fa068
