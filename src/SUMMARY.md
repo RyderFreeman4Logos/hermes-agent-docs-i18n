@@ -2349,6 +2349,7 @@
       - [在 Mac 上运行本地大语言模型](zh/website/docs/guides/local-llm-on-mac.md)
       - [使用 Ollama 在本地运行 Hermes —— 零 API 费用](zh/website/docs/guides/local-ollama-setup.md)
       - [注册 Microsoft Graph 应用程序](zh/website/docs/guides/microsoft-graph-app-registration.md)
+      - [从 OpenClaw 迁移](zh/website/docs/guides/migrate-from-openclaw.md)
       - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
       - [通过 SSH/远程主机实现 OAuth 认证](zh/website/docs/guides/oauth-over-ssh.md)
       - [操作 Teams 会议处理流程](zh/website/docs/guides/operate-teams-meeting-pipeline.md)
