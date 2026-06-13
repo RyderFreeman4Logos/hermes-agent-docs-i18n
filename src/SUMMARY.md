@@ -2340,6 +2340,7 @@
         - [性格与 SOUL.md](zh/website/docs/user-guide/features/personality.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
         - [外观皮肤与主题](zh/website/docs/user-guide/features/skins.md)
+        - [Spotify](zh/website/docs/user-guide/features/spotify.md)
         - [订阅代理](zh/website/docs/user-guide/features/subscription-proxy.md)
         - [Nous 工具网关](zh/website/docs/user-guide/features/tool-gateway.md)
         - [工具搜索功能](zh/website/docs/user-guide/features/tool-search.md)
