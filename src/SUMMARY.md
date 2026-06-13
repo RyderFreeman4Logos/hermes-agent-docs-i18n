@@ -2063,6 +2063,7 @@
         - [设计系统：Figma](zh/skills/creative/popular-web-designs/templates/figma.md)
         - [设计系统：Intercom](zh/skills/creative/popular-web-designs/templates/intercom.md)
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
+        - [设计系统：MiniMax](zh/skills/creative/popular-web-designs/templates/minimax.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
         - [设计系统：Pinterest](zh/skills/creative/popular-web-designs/templates/pinterest.md)
         - [设计系统：Replicate](zh/skills/creative/popular-web-designs/templates/replicate.md)
