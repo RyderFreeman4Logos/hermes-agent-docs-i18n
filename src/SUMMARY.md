@@ -2220,6 +2220,7 @@
       - [Segment Anything]()
         - [Segment Anything Model（SAM）](zh/skills/mlops/models/segment-anything/SKILL.md)
         - [References]()
+          - [Segment Anything 高级使用指南](zh/skills/mlops/models/segment-anything/references/advanced-usage.md)
           - [Segment Anything 故障排除指南](zh/skills/mlops/models/segment-anything/references/troubleshooting.md)
   - [Note Taking]()
     - [Description](zh/skills/note-taking/DESCRIPTION.md)
