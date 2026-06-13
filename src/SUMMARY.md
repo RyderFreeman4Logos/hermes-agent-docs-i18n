@@ -2538,6 +2538,7 @@
             - [SiYuan](zh/website/docs/user-guide/skills/optional/productivity/productivity-siyuan.md)
             - [电话功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-telephony.md)
           - [Research]()
+            - [生物信息学](zh/website/docs/user-guide/skills/optional/research/research-bioinformatics.md)
             - [Darwinian Evolver](zh/website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md)
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
             - [药物发现](zh/website/docs/user-guide/skills/optional/research/research-drug-discovery.md)
