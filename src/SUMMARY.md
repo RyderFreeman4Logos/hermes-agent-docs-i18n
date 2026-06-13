@@ -2478,6 +2478,7 @@
           - [Data Science]()
             - [Jupyter 实时内核](zh/website/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel.md)
           - [Devops]()
+            - [Kanban编排器](zh/website/docs/user-guide/skills/bundled/devops/devops-kanban-orchestrator.md)
             - [Kanban Worker](zh/website/docs/user-guide/skills/bundled/devops/devops-kanban-worker.md)
           - [Dogfood]()
             - [Dogfood](zh/website/docs/user-guide/skills/bundled/dogfood/dogfood-dogfood.md)
