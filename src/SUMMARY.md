@@ -1803,6 +1803,8 @@
       - [Memento抽认卡 —— 基于间隔重复法的抽认卡功能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
     - [Shop App]()
       - [Shop.app — 个人购物助手](zh/optional-skills/productivity/shop-app/SKILL.md)
+    - [Shopify]()
+      - [Shopify — 管理后台与店铺前端 GraphQL API](zh/optional-skills/productivity/shopify/SKILL.md)
     - [Siyuan]()
       - [SiYuan Note API](zh/optional-skills/productivity/siyuan/SKILL.md)
     - [Telephony]()
