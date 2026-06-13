@@ -2338,6 +2338,7 @@
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
         - [与 Home Assistant 的集成](zh/website/docs/user-guide/messaging/homeassistant.md)
         - [LINE 设置](zh/website/docs/user-guide/messaging/line.md)
+        - [Mattermost 集成设置](zh/website/docs/user-guide/messaging/mattermost.md)
         - [Microsoft Graph Webhook 监听器](zh/website/docs/user-guide/messaging/msgraph-webhook.md)
         - [ntfy](zh/website/docs/user-guide/messaging/ntfy.md)
         - [Photon iMessage](zh/website/docs/user-guide/messaging/photon.md)
