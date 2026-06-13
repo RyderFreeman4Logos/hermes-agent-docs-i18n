@@ -2301,6 +2301,7 @@
         - [机器学习论文写作理念与最佳实践](zh/skills/research/research-paper-writing/references/writing-guide.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/skills/research/research-paper-writing/templates/acl/README.md)
+          - [《ACL会议论文集》投稿指南](zh/skills/research/research-paper-writing/templates/acl/formatting.md)
         - [Colm2025](zh/skills/research/research-paper-writing/templates/colm2025/README.md)
   - [Smart Home]()
     - [Description](zh/skills/smart-home/DESCRIPTION.md)
