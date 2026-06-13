@@ -2372,6 +2372,7 @@
             - [Songsee](zh/website/docs/user-guide/skills/bundled/media/media-songsee.md)
             - [YouTube 内容处理](zh/website/docs/user-guide/skills/bundled/media/media-youtube-content.md)
           - [Mlops]()
+            - [Weights And Biases](zh/website/docs/user-guide/skills/bundled/mlops/mlops-evaluation-weights-and-biases.md)
             - [Huggingface Hub](zh/website/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub.md)
             - [Llama Cpp](zh/website/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp.md)
             - [提供 Llms vLLM 服务](zh/website/docs/user-guide/skills/bundled/mlops/mlops-inference-vllm.md)
