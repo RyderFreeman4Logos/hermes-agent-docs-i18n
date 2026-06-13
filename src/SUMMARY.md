@@ -2221,6 +2221,7 @@
       - [程序化集成](zh/website/docs/developer-guide/programmatic-integration.md)
       - [提示词组装](zh/website/docs/developer-guide/prompt-assembly.md)
       - [提供商运行时解析机制](zh/website/docs/developer-guide/provider-runtime.md)
+      - [会话存储](zh/website/docs/developer-guide/session-storage.md)
       - [工具运行时](zh/website/docs/developer-guide/tools-runtime.md)
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
       - [构建视频生成提供者插件](zh/website/docs/developer-guide/video-gen-provider-plugin.md)
