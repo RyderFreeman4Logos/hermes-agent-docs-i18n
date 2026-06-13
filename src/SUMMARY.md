@@ -2202,6 +2202,7 @@
         - [Weights & Biases：机器学习实验追踪与MLOps工具](zh/skills/mlops/evaluation/weights-and-biases/SKILL.md)
         - [References]()
           - [工件与模型注册表指南](zh/skills/mlops/evaluation/weights-and-biases/references/artifacts.md)
+          - [框架集成指南](zh/skills/mlops/evaluation/weights-and-biases/references/integrations.md)
     - [Huggingface Hub]()
       - [Hugging Face CLI (`hf`) 参考指南](zh/skills/mlops/huggingface-hub/SKILL.md)
     - [Inference]()
