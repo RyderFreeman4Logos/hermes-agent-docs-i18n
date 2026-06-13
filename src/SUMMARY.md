@@ -2425,6 +2425,7 @@
       - [Features]()
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
         - [批量处理](zh/website/docs/user-guide/features/batch-processing.md)
+        - [内置插件](zh/website/docs/user-guide/features/built-in-plugins.md)
         - [代码执行（程序化工具调用）](zh/website/docs/user-guide/features/code-execution.md)
         - [计算机操作（macOS）](zh/website/docs/user-guide/features/computer-use.md)
         - [上下文文件](zh/website/docs/user-guide/features/context-files.md)
