@@ -1699,6 +1699,7 @@
       - [References]()
         - [PyTorch Lightning 回调函数](zh/optional-skills/mlops/pytorch-lightning/references/callbacks.md)
         - [PyTorch Lightning 分布式训练](zh/optional-skills/mlops/pytorch-lightning/references/distributed.md)
+        - [使用 PyTorch Lightning 进行超参数调优](zh/optional-skills/mlops/pytorch-lightning/references/hyperparameter-tuning.md)
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
       - [Dspy]()
