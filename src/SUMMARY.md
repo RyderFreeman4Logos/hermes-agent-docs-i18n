@@ -1761,6 +1761,7 @@
       - [Dspy]()
         - [DSPy：声明式语言模型编程](zh/optional-skills/mlops/research/dspy/SKILL.md)
         - [References]()
+          - [DSPy 实际应用案例](zh/optional-skills/mlops/research/dspy/references/examples.md)
           - [DSPy 模块](zh/optional-skills/mlops/research/dspy/references/modules.md)
           - [DSPy优化器（提示词辅助工具）](zh/optional-skills/mlops/research/dspy/references/optimizers.md)
     - [Saelens]()
