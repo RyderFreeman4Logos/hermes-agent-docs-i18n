@@ -1765,6 +1765,7 @@
     - [Gitnexus Explorer]()
       - [GitNexus Explorer](zh/optional-skills/research/gitnexus-explorer/SKILL.md)
     - [Osint Investigation]()
+      - [OSINT调查——公共记录交叉验证](zh/optional-skills/research/osint-investigation/SKILL.md)
       - [References]()
         - [Sources]()
           - [CourtListener — 免费法律项目](zh/optional-skills/research/osint-investigation/references/sources/courtlistener.md)
