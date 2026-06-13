@@ -1413,6 +1413,8 @@
 - [Apps]()
   - [Desktop](zh/apps/desktop/README.md)
     - [桌面设计系统](zh/apps/desktop/DESIGN.md)
+    - [Scripts]()
+      - [分析渲染器输入延迟问题](zh/apps/desktop/scripts/profile-typing-lag.md)
 - [Docker]()
   - [Hermes Agent 人格设定](zh/docker/SOUL.md)
 - [Docs]()
