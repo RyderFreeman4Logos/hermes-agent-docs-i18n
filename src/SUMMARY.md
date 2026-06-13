@@ -2104,6 +2104,7 @@
         - [设计系统：Together AI](zh/skills/creative/popular-web-designs/templates/together.ai.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
+        - [设计系统：xAI](zh/skills/creative/popular-web-designs/templates/x.ai.md)
     - [Pretext]()
       - [Pretext创意演示](zh/skills/creative/pretext/SKILL.md)
       - [References]()
