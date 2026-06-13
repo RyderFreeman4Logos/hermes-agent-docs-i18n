@@ -2369,6 +2369,7 @@
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [钉钉集成设置](zh/website/docs/user-guide/messaging/dingtalk.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
+        - [Google Chat 集成设置](zh/website/docs/user-guide/messaging/google_chat.md)
         - [与 Home Assistant 的集成](zh/website/docs/user-guide/messaging/homeassistant.md)
         - [LINE 设置](zh/website/docs/user-guide/messaging/line.md)
         - [Mattermost 集成设置](zh/website/docs/user-guide/messaging/mattermost.md)
