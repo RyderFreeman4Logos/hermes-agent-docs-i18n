@@ -2605,6 +2605,7 @@
             - [Guidance](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
             - [Huggingface Tokenizers](zh/website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md)
             - [Outlines](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md)
+            - [Instructor](zh/website/docs/user-guide/skills/optional/mlops/mlops-instructor.md)
             - [Lambda Labs GPU 云服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
             - [Modal Serverless GPU](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
