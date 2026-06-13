@@ -1884,6 +1884,7 @@
         - [op CLI 示例](zh/optional-skills/security/1password/references/cli-examples.md)
         - [1Password CLI 入门指南（概要）](zh/optional-skills/security/1password/references/get-started.md)
     - [Godmode]()
+      - [G0DM0D3 越狱技能](zh/optional-skills/security/godmode/SKILL.md)
       - [References]()
         - [GODMODE CLASSIC — 越狱系统提示词模板](zh/optional-skills/security/godmode/references/jailbreak-templates.md)
         - [拒绝检测与响应评分机制](zh/optional-skills/security/godmode/references/refusal-detection.md)
