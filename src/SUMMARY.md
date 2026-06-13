@@ -1638,6 +1638,7 @@
       - [References]()
         - [用于 Accelerate 的自定义插件](zh/optional-skills/mlops/accelerate/references/custom-plugins.md)
         - [Megatron 与 Accelerate 的集成](zh/optional-skills/mlops/accelerate/references/megatron-integration.md)
+        - [加速性能调优](zh/optional-skills/mlops/accelerate/references/performance.md)
     - [Chroma]()
       - [Chroma - 开源嵌入数据库](zh/optional-skills/mlops/chroma/SKILL.md)
       - [References]()
