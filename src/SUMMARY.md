@@ -1959,6 +1959,7 @@
         - [Excalidraw 颜色方案](zh/skills/creative/excalidraw/references/colors.md)
         - [Excalidraw 深色模式图表](zh/skills/creative/excalidraw/references/dark-mode.md)
     - [Manim Video](zh/skills/creative/manim-video/README.md)
+      - [Manim视频制作流程](zh/skills/creative/manim-video/SKILL.md)
       - [References]()
         - [动画设计思维](zh/skills/creative/manim-video/references/animation-design-thinking.md)
         - [动画参考](zh/skills/creative/manim-video/references/animations.md)
