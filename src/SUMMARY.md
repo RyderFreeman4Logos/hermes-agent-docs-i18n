@@ -2571,6 +2571,7 @@
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
             - [Qdrant 向量搜索引擎](zh/website/docs/user-guide/skills/optional/mlops/mlops-qdrant.md)
+            - [Dspy](zh/website/docs/user-guide/skills/optional/mlops/mlops-research-dspy.md)
             - [稀疏自编码器训练](zh/website/docs/user-guide/skills/optional/mlops/mlops-saelens.md)
             - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
             - [Slime Rl Training](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
