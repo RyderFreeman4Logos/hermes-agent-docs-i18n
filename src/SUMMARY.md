@@ -1406,6 +1406,7 @@
 # 中文
 
 - [Hermes Agent 自三月起已支持“Routines”功能](zh/hermes-already-has-routines.md)
+- [Hermes Agent ☤](zh/README.md)
 - [.Plans]()
   - [Hermes Agent 的 OpenAI 兼容 API 服务器](zh/.plans/openai-api-server.md)
 - [Apps]()
