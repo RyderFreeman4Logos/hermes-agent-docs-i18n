@@ -2217,6 +2217,7 @@
         - [References]()
           - [工件与模型注册表指南](zh/skills/mlops/evaluation/weights-and-biases/references/artifacts.md)
           - [框架集成指南](zh/skills/mlops/evaluation/weights-and-biases/references/integrations.md)
+          - [全面超参数扫描指南](zh/skills/mlops/evaluation/weights-and-biases/references/sweeps.md)
     - [Huggingface Hub]()
       - [Hugging Face CLI (`hf`) 参考指南](zh/skills/mlops/huggingface-hub/SKILL.md)
     - [Inference]()
