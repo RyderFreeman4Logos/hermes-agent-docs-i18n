@@ -1692,6 +1692,7 @@
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
         - [提供商配置](zh/optional-skills/mlops/instructor/references/providers.md)
+        - [高级验证模式](zh/optional-skills/mlops/instructor/references/validation.md)
     - [Lambda Labs]()
       - [Lambda Labs GPU 云平台](zh/optional-skills/mlops/lambda-labs/SKILL.md)
       - [References]()
