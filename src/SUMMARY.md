@@ -2062,6 +2062,7 @@
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
         - [设计系统：Pinterest](zh/skills/creative/popular-web-designs/templates/pinterest.md)
+        - [设计系统：Replicate](zh/skills/creative/popular-web-designs/templates/replicate.md)
         - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
         - [设计系统：SpaceX](zh/skills/creative/popular-web-designs/templates/spacex.md)
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
