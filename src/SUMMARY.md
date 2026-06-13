@@ -2035,6 +2035,7 @@
         - [粒子参考手册](zh/skills/creative/touchdesigner-mcp/references/particles.md)
         - [后处理特效参考](zh/skills/creative/touchdesigner-mcp/references/postfx.md)
         - [投影映射参考指南](zh/skills/creative/touchdesigner-mcp/references/projection-mapping.md)
+        - [TouchDesigner Python API 参考手册](zh/skills/creative/touchdesigner-mcp/references/python-api.md)
         - [Replicator COMP 参考文档](zh/skills/creative/touchdesigner-mcp/references/replicator.md)
         - [TouchDesigner 故障排除（twozero MCP）](zh/skills/creative/touchdesigner-mcp/references/troubleshooting.md)
   - [Data Science]()
