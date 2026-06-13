@@ -2224,6 +2224,7 @@
     - [Models]()
       - [Description](zh/skills/mlops/models/DESCRIPTION.md)
       - [Audiocraft]()
+        - [AudioCraft：音频生成](zh/skills/mlops/models/audiocraft/SKILL.md)
         - [References]()
           - [AudioCraft 故障排除指南](zh/skills/mlops/models/audiocraft/references/troubleshooting.md)
       - [Segment Anything]()
