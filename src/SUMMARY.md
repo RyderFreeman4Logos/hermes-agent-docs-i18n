@@ -2418,6 +2418,7 @@
             - [GitHub代码审查](zh/website/docs/user-guide/skills/bundled/github/github-github-code-review.md)
             - [GitHub 问题管理](zh/website/docs/user-guide/skills/bundled/github/github-github-issues.md)
             - [GitHub Pull Request 工作流](zh/website/docs/user-guide/skills/bundled/github/github-github-pr-workflow.md)
+            - [GitHub 仓库管理](zh/website/docs/user-guide/skills/bundled/github/github-github-repo-management.md)
           - [Media]()
             - [GIF 搜索](zh/website/docs/user-guide/skills/bundled/media/media-gif-search.md)
             - [Heartmula](zh/website/docs/user-guide/skills/bundled/media/media-heartmula.md)
