@@ -2235,6 +2235,7 @@
       - [Audiocraft]()
         - [AudioCraft：音频生成](zh/skills/mlops/models/audiocraft/SKILL.md)
         - [References]()
+          - [AudioCraft 高级使用指南](zh/skills/mlops/models/audiocraft/references/advanced-usage.md)
           - [AudioCraft 故障排除指南](zh/skills/mlops/models/audiocraft/references/troubleshooting.md)
       - [Segment Anything]()
         - [Segment Anything Model（SAM）](zh/skills/mlops/models/segment-anything/SKILL.md)
