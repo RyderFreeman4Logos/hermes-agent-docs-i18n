@@ -1950,6 +1950,7 @@
   - [Model Providers](zh/plugins/model-providers/README.md)
   - [Observability]()
     - [Langfuse](zh/plugins/observability/langfuse/README.md)
+    - [Nemo Relay](zh/plugins/observability/nemo_relay/README.md)
   - [Platforms]()
     - [Photon](zh/plugins/platforms/photon/README.md)
       - [Sidecar](zh/plugins/platforms/photon/sidecar/README.md)
