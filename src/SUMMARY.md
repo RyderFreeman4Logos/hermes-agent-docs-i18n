@@ -2434,6 +2434,7 @@
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
       - [TUI](zh/website/docs/user-guide/tui.md)
+      - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
       - [Features]()
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
         - [批量处理](zh/website/docs/user-guide/features/batch-processing.md)
