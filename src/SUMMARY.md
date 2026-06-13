@@ -1670,6 +1670,7 @@
         - [性能基准测试](zh/optional-skills/mlops/flash-attention/references/benchmarks.md)
         - [HuggingFace Transformers 集成指南](zh/optional-skills/mlops/flash-attention/references/transformers-integration.md)
     - [Guidance]()
+      - [指导功能：受限型大语言模型生成](zh/optional-skills/mlops/guidance/SKILL.md)
       - [References]()
         - [后端配置指南](zh/optional-skills/mlops/guidance/references/backends.md)
     - [Huggingface Tokenizers]()
