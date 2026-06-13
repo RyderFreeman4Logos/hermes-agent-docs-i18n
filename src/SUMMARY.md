@@ -2003,6 +2003,7 @@
       - [References]()
         - [Excalidraw 颜色方案](zh/skills/creative/excalidraw/references/colors.md)
         - [Excalidraw 深色模式图表](zh/skills/creative/excalidraw/references/dark-mode.md)
+        - [Excalidraw 图表示例](zh/skills/creative/excalidraw/references/examples.md)
     - [Manim Video](zh/skills/creative/manim-video/README.md)
       - [Manim视频制作流程](zh/skills/creative/manim-video/SKILL.md)
       - [References]()
