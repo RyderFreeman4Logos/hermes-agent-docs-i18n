@@ -2461,6 +2461,7 @@
         - [Microsoft Teams 配置](zh/website/docs/user-guide/messaging/teams.md)
         - [WeCom 回调（自建应用）](zh/website/docs/user-guide/messaging/wecom-callback.md)
         - [WeCom（企业微信）](zh/website/docs/user-guide/messaging/wecom.md)
+        - [微信](zh/website/docs/user-guide/messaging/weixin.md)
         - [WhatsApp 设置指南](zh/website/docs/user-guide/messaging/whatsapp.md)
         - [Yuanbao](zh/website/docs/user-guide/messaging/yuanbao.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
