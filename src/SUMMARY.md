@@ -2487,6 +2487,7 @@
             - [PEFT 微调技术](zh/website/docs/user-guide/skills/optional/mlops/mlops-peft.md)
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
+            - [稀疏自编码器训练](zh/website/docs/user-guide/skills/optional/mlops/mlops-saelens.md)
             - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
             - [Slime Rl Training](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
