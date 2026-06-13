@@ -1420,6 +1420,8 @@
     - [多网关部署](zh/docs/kanban/multi-gateway.md)
   - [Middleware](zh/docs/middleware/README.md)
   - [Observability](zh/docs/observability/README.md)
+  - [Plans]()
+    - [修复：防止 Telegram 流式回复在首个溢出数据块后中断](zh/docs/plans/2026-06-09-003-fix-telegram-stream-overflow-continuations-plan.md)
   - [Security]()
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Optional Skills]()
