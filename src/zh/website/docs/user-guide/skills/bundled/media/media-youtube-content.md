@@ -8,7 +8,7 @@ description: "YouTube transcripts to summaries, threads, blogs"
 
 # YouTube 内容处理
 
-将 YouTube 视频的文字记录转换为摘要、主题帖或博客文章。
+将 YouTube 视频的字幕转换为摘要、主题串或博客文章。
 
 ## 技能元数据
 
@@ -18,7 +18,7 @@ description: "YouTube transcripts to summaries, threads, blogs"
 | 路径 | `skills/media/youtube-content` |
 | 支持平台 | linux、macos、windows |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 文件
 
 :::info
 以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
@@ -28,14 +28,16 @@ description: "YouTube transcripts to summaries, threads, blogs"
 
 ## 适用场景
 
-当用户分享 YouTube 链接或视频地址、要求对视频进行总结、获取文字记录，或希望从任意 YouTube 视频中提取并重新格式化内容时，可使用此工具。它能将文字记录转换为结构化内容（如章节、摘要、主题帖或博客文章）。
+当用户分享 YouTube 链接或视频地址、要求对视频进行总结、获取字幕，或是希望从任意 YouTube 视频中提取并重新格式化内容时，可使用此工具。它能将字幕转换为结构化内容（如章节、摘要、主题串或博客文章）。
 
-可从 YouTube 视频中提取文字记录，并将其转换为用户可用的格式。
+可从 YouTube 视频中提取字幕，并将其转换为实用格式。
 
-## 设置指南
+## 设置方式
+
+请使用 `uv` 命令将相关依赖项安装到与运行辅助脚本相同的 Hermes 管理环境中：
 
 ```bash
-pip install youtube-transcript-api
+uv pip install youtube-transcript-api
 ```
 
 ## 辅助脚本
@@ -44,16 +46,16 @@ pip install youtube-transcript-api
 
 ```bash
 # JSON output with metadata
-python3 SKILL_DIR/scripts/fetch_transcript.py "https://youtube.com/watch?v=VIDEO_ID"
+uv run python3 SKILL_DIR/scripts/fetch_transcript.py "https://youtube.com/watch?v=VIDEO_ID"
 
 # Plain text (good for piping into further processing)
-python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --text-only
+uv run python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --text-only
 
 # With timestamps
-python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --timestamps
+uv run python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --timestamps
 
 # Specific language with fallback chain
-python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --language tr,en
+uv run python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --language tr,en
 ```
 
 ## 输出格式
@@ -79,15 +81,15 @@ python3 SKILL_DIR/scripts/fetch_transcript.py "URL" --language tr,en
 
 ## 工作流程
 
-1. 使用辅助脚本，通过 `--text-only --timestamps` 参数**获取**文字记录。
-2. **验证**：确认输出内容非空且为预期语言。若为空，则不指定 `--language` 参数重新尝试，以获取任何可用的文字记录。如果仍为空，则告知用户该视频可能已禁用字幕功能。
-3. **按需分块**：如果文字记录长度超过约50K字符，将其拆分为重叠的片段（每个片段约40K字符，片段间重叠2K字符），并对每个片段进行摘要处理后再合并。
-4. **转换**为用户要求的输出格式。若用户未指定格式，则默认生成摘要。
-5. **校验**：在展示结果之前，重新阅读转换后的内容，检查其连贯性、时间戳是否正确以及内容是否完整。
+1. 通过 `uv run python3` 运行辅助脚本，使用 `--text-only --timestamps` 参数获取文字记录。
+2. **验证**：确认输出内容非空且为预期语言。若为空，则尝试不指定 `--language` 参数重新获取可用的文字记录。如果仍然为空，则告知用户该视频可能已关闭字幕功能。
+3. **按需分块**：如果文字记录长度超过约50K字符，将其拆分为重叠的片段（每个片段约40K字符，重叠部分为2K字符），并对每个片段进行总结后再合并。
+4. **转换格式**：将处理后的内容转换为用户要求的输出格式。若用户未指定格式，则默认生成摘要。
+5. **最终校验**：在展示结果之前，重新阅读转换后的内容，检查其逻辑连贯性、时间戳准确性以及完整性。
 
 ## 错误处理
 
-- **字幕功能已禁用**：告知用户，并建议其查看视频页面上是否有字幕选项。
-- **视频为私密/无法访问**：转达该错误信息，并请用户核实URL地址。
-- **未找到匹配的语言**：不指定 `--language` 参数重新尝试获取任何可用的文字记录，然后向用户说明实际使用的语言。
-- **缺少依赖项**：运行 `pip install youtube-transcript-api` 后再试。
+- **字幕功能已关闭**：告知用户，并建议其查看视频页面上是否有字幕选项。
+- **视频为私密或无法访问**：转达错误信息，并请用户确认URL是否正确。
+- **未找到匹配语言**：尝试不指定 `--language` 参数重新获取可用的文字记录，随后将实际识别到的语言告知用户。
+- **缺少依赖项**：运行 `uv pip install youtube-transcript-api` 安装所需依赖后再次尝试。
