@@ -1770,6 +1770,8 @@
       - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)
     - [Here Now]()
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
+    - [Memento Flashcards]()
+      - [Memento抽认卡 —— 基于间隔重复法的抽认卡功能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
     - [Siyuan]()
       - [SiYuan Note API](zh/optional-skills/productivity/siyuan/SKILL.md)
     - [Telephony]()
