@@ -2276,6 +2276,7 @@
       - [References]()
         - [会议论文检查清单](zh/skills/research/research-paper-writing/references/checklists.md)
         - [引用管理与幻觉防范](zh/skills/research/research-paper-writing/references/citation-workflow.md)
+        - [超出实证机器学习的论文类型](zh/skills/research/research-paper-writing/references/paper-types.md)
         - [审稿人指南与评估标准](zh/skills/research/research-paper-writing/references/reviewer-guidelines.md)
         - [参考文献列表](zh/skills/research/research-paper-writing/references/sources.md)
       - [Templates](zh/skills/research/research-paper-writing/templates/README.md)
