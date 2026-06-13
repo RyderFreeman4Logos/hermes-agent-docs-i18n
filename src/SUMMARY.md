@@ -1432,6 +1432,8 @@
         - [Antigravity CLI文档精简版](zh/optional-skills/autonomous-ai-agents/antigravity-cli/references/cli-docs.md)
     - [Blackbox]()
       - [Blackbox CLI](zh/optional-skills/autonomous-ai-agents/blackbox/SKILL.md)
+    - [Grok]()
+      - [Grok Build CLI — Hermes编排指南](zh/optional-skills/autonomous-ai-agents/grok/SKILL.md)
     - [Openhands]()
       - [OpenHands CLI](zh/optional-skills/autonomous-ai-agents/openhands/SKILL.md)
   - [Blockchain]()
