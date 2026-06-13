@@ -32,7 +32,7 @@
 hermes photon setup --phone +15551234567
 
 # Start the gateway
-hermes gateway start --platform photon
+hermes gateway start
 ```
 
 `hermes photon setup` 会按以下步骤执行操作：
