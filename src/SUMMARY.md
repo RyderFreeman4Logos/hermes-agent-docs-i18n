@@ -2422,6 +2422,7 @@
       - [工具集参考](zh/website/docs/reference/toolsets-reference.md)
     - [User Guide]()
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
+      - [CLI 接口](zh/website/docs/user-guide/cli.md)
       - [模型配置](zh/website/docs/user-guide/configuring-models.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
