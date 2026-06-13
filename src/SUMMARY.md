@@ -1457,6 +1457,7 @@
         - [样式预设](zh/optional-skills/creative/baoyu-article-illustrator/references/style-presets.md)
         - [样式参考](zh/optional-skills/creative/baoyu-article-illustrator/references/styles.md)
         - [使用方式](zh/optional-skills/creative/baoyu-article-illustrator/references/usage.md)
+        - [详细工作流程说明](zh/optional-skills/creative/baoyu-article-illustrator/references/workflow.md)
         - [Palettes]()
           - [马卡龙风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/macaron.md)
           - [单色墨水风格](zh/optional-skills/creative/baoyu-article-illustrator/references/palettes/mono-ink.md)
