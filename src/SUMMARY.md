@@ -2119,6 +2119,7 @@
         - [设计系统：Runway](zh/skills/creative/popular-web-designs/templates/runwayml.md)
         - [设计系统：SpaceX](zh/skills/creative/popular-web-designs/templates/spacex.md)
         - [设计系统：Supabase](zh/skills/creative/popular-web-designs/templates/supabase.md)
+        - [设计系统：Superhuman](zh/skills/creative/popular-web-designs/templates/superhuman.md)
         - [设计系统：Together AI](zh/skills/creative/popular-web-designs/templates/together.ai.md)
         - [设计系统：Uber](zh/skills/creative/popular-web-designs/templates/uber.md)
         - [设计系统：Warp](zh/skills/creative/popular-web-designs/templates/warp.md)
