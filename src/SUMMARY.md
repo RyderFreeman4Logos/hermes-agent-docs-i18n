@@ -2270,6 +2270,8 @@
       - [OpenHue CLI](zh/skills/smart-home/openhue/SKILL.md)
   - [Social Media]()
     - [Description](zh/skills/social-media/DESCRIPTION.md)
+    - [Xurl]()
+      - [xurl — 通过官方 CLI 访问 X（Twitter）API](zh/skills/social-media/xurl/SKILL.md)
   - [Software Development]()
     - [Hermes Agent Skill Authoring]()
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
