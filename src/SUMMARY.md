@@ -2552,6 +2552,7 @@
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
             - [Here.Now](zh/website/docs/user-guide/skills/optional/productivity/productivity-here-now.md)
             - [Memento 记忆卡片](zh/website/docs/user-guide/skills/optional/productivity/productivity-memento-flashcards.md)
+            - [Shop App](zh/website/docs/user-guide/skills/optional/productivity/productivity-shop-app.md)
             - [SiYuan](zh/website/docs/user-guide/skills/optional/productivity/productivity-siyuan.md)
             - [电话功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-telephony.md)
           - [Research]()
