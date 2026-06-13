@@ -1739,6 +1739,7 @@
     - [Research]()
       - [Description](zh/optional-skills/mlops/research/DESCRIPTION.md)
       - [Dspy]()
+        - [DSPy：声明式语言模型编程](zh/optional-skills/mlops/research/dspy/SKILL.md)
         - [References]()
           - [DSPy 模块](zh/optional-skills/mlops/research/dspy/references/modules.md)
           - [DSPy优化器（提示词辅助工具）](zh/optional-skills/mlops/research/dspy/references/optimizers.md)
