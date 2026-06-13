@@ -1736,6 +1736,7 @@
       - [Dspy]()
         - [References]()
           - [DSPy 模块](zh/optional-skills/mlops/research/dspy/references/modules.md)
+          - [DSPy优化器（提示词辅助工具）](zh/optional-skills/mlops/research/dspy/references/optimizers.md)
     - [Saelens]()
       - [SAELens：用于实现机制可解释性的稀疏自编码器](zh/optional-skills/mlops/saelens/SKILL.md)
       - [References](zh/optional-skills/mlops/saelens/references/README.md)
