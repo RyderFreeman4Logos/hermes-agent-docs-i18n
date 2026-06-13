@@ -2061,6 +2061,7 @@
         - [动画功能](zh/skills/creative/p5js/references/animation.md)
         - [颜色系统](zh/skills/creative/p5js/references/color-systems.md)
         - [核心 API 参考手册](zh/skills/creative/p5js/references/core-api.md)
+        - [导出流程](zh/skills/creative/p5js/references/export-pipeline.md)
         - [交互操作](zh/skills/creative/p5js/references/interaction.md)
         - [形状与几何结构](zh/skills/creative/p5js/references/shapes-and-geometry.md)
         - [故障排除](zh/skills/creative/p5js/references/troubleshooting.md)
