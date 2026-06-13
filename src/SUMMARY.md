@@ -2326,6 +2326,7 @@
       - [添加 Provider](zh/website/docs/developer-guide/adding-providers.md)
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
       - [Agent循环内部机制](zh/website/docs/developer-guide/agent-loop.md)
+      - [架构](zh/website/docs/developer-guide/architecture.md)
       - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
       - [上下文压缩与缓存机制](zh/website/docs/developer-guide/context-compression-and-caching.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
