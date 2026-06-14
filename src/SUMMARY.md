@@ -2510,7 +2510,7 @@
         - [语音模式](zh/website/docs/user-guide/features/voice-mode.md)
         - [网页搜索与内容提取](zh/website/docs/user-guide/features/web-search.md)
         - [X（Twitter）搜索功能](zh/website/docs/user-guide/features/x-search.md)
-      - [Messaging]()
+      - [Messaging](zh/website/docs/user-guide/messaging/index.md)
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [钉钉集成设置](zh/website/docs/user-guide/messaging/dingtalk.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
