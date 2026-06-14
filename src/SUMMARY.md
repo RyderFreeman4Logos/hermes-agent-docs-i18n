@@ -2447,6 +2447,7 @@
       - [模型目录](zh/website/docs/reference/model-catalog.md)
       - [配置文件命令参考](zh/website/docs/reference/profile-commands.md)
       - [内置技能目录](zh/website/docs/reference/skills-catalog.md)
+      - [内置工具参考](zh/website/docs/reference/tools-reference.md)
       - [工具集参考](zh/website/docs/reference/toolsets-reference.md)
     - [User Guide]()
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
