@@ -2409,6 +2409,7 @@
       - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
       - [自动化蓝图](zh/website/docs/guides/automation-blueprints.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
+      - [Microsoft Foundry](zh/website/docs/guides/azure-foundry.md)
       - [仅脚本型的定时任务](zh/website/docs/guides/cron-script-only.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [教程：构建每日简报机器人](zh/website/docs/guides/daily-briefing-bot.md)
