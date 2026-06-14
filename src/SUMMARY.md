@@ -2483,6 +2483,7 @@
         - [持久内存](zh/website/docs/user-guide/features/memory.md)
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
         - [性格与 SOUL.md](zh/website/docs/user-guide/features/personality.md)
+        - [插件](zh/website/docs/user-guide/features/plugins.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
         - [外观皮肤与主题](zh/website/docs/user-guide/features/skins.md)
         - [Spotify](zh/website/docs/user-guide/features/spotify.md)
