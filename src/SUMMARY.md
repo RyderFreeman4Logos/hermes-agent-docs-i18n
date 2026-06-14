@@ -2110,6 +2110,7 @@
         - [设计系统：Figma](zh/skills/creative/popular-web-designs/templates/figma.md)
         - [设计系统：Framer](zh/skills/creative/popular-web-designs/templates/framer.md)
         - [设计系统：HashiCorp](zh/skills/creative/popular-web-designs/templates/hashicorp.md)
+        - [设计系统：IBM](zh/skills/creative/popular-web-designs/templates/ibm.md)
         - [设计系统：Intercom](zh/skills/creative/popular-web-designs/templates/intercom.md)
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
         - [设计系统：MiniMax](zh/skills/creative/popular-web-designs/templates/minimax.md)
