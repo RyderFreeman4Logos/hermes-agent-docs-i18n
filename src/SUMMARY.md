@@ -1817,6 +1817,7 @@
         - [References](zh/optional-skills/mlops/training/axolotl/references/index.md)
           - [Axolotl - API](zh/optional-skills/mlops/training/axolotl/references/api.md)
           - [Axolotl - 数据集格式](zh/optional-skills/mlops/training/axolotl/references/dataset-formats.md)
+          - [Axolotl - 其他内容](zh/optional-skills/mlops/training/axolotl/references/other.md)
       - [Trl Fine Tuning]()
         - [TRL – Transformer强化学习](zh/optional-skills/mlops/training/trl-fine-tuning/SKILL.md)
         - [References]()
