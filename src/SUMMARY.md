@@ -1631,6 +1631,7 @@
     - [Comps Analysis]()
       - [可比公司分析](zh/optional-skills/finance/comps-analysis/SKILL.md)
     - [Dcf Model]()
+      - [DCF 模型构建器](zh/optional-skills/finance/dcf-model/SKILL.md)
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
     - [Excel Author]()
       - [excel-author](zh/optional-skills/finance/excel-author/SKILL.md)
