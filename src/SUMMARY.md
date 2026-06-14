@@ -2674,6 +2674,7 @@
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
             - [三表模型](zh/website/docs/user-guide/skills/optional/finance/finance-3-statement-model.md)
+            - [可比公司分析](zh/website/docs/user-guide/skills/optional/finance/finance-comps-analysis.md)
             - [Excel Author](zh/website/docs/user-guide/skills/optional/finance/finance-excel-author.md)
             - [LBO模型构建](zh/website/docs/user-guide/skills/optional/finance/finance-lbo-model.md)
             - [合并模型](zh/website/docs/user-guide/skills/optional/finance/finance-merger-model.md)
