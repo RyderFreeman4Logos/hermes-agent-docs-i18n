@@ -2480,6 +2480,7 @@
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
         - [API服务器](zh/website/docs/user-guide/features/api-server.md)
         - [批量处理](zh/website/docs/user-guide/features/batch-processing.md)
+        - [浏览器自动化](zh/website/docs/user-guide/features/browser.md)
         - [内置插件](zh/website/docs/user-guide/features/built-in-plugins.md)
         - [代码执行（程序化工具调用）](zh/website/docs/user-guide/features/code-execution.md)
         - [Codex 应用服务器运行时](zh/website/docs/user-guide/features/codex-app-server-runtime.md)
