@@ -2537,6 +2537,7 @@
         - [语音与文本转语音功能](zh/website/docs/user-guide/features/tts.md)
         - [视觉功能与图片粘贴](zh/website/docs/user-guide/features/vision.md)
         - [语音模式](zh/website/docs/user-guide/features/voice-mode.md)
+        - [Web控制面板](zh/website/docs/user-guide/features/web-dashboard.md)
         - [网页搜索与内容提取](zh/website/docs/user-guide/features/web-search.md)
         - [X（Twitter）搜索功能](zh/website/docs/user-guide/features/x-search.md)
       - [Messaging](zh/website/docs/user-guide/messaging/index.md)
