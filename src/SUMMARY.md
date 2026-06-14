@@ -1709,6 +1709,7 @@
         - [概要：结构化文本生成](zh/optional-skills/mlops/inference/outlines/SKILL.md)
         - [References]()
           - [后端配置指南](zh/optional-skills/mlops/inference/outlines/references/backends.md)
+          - [可直接用于生产环境的示例](zh/optional-skills/mlops/inference/outlines/references/examples.md)
           - [全面 JSON 生成指南](zh/optional-skills/mlops/inference/outlines/references/json_generation.md)
     - [Instructor]()
       - [Instructor：结构化大语言模型输出功能](zh/optional-skills/mlops/instructor/SKILL.md)
