@@ -1998,6 +1998,7 @@
     - [Ascii Video](zh/skills/creative/ascii-video/README.md)
       - [ASCII视频制作流程](zh/skills/creative/ascii-video/SKILL.md)
       - [References]()
+        - [优化参考指南](zh/skills/creative/ascii-video/references/optimization.md)
         - [故障排查参考](zh/skills/creative/ascii-video/references/troubleshooting.md)
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
