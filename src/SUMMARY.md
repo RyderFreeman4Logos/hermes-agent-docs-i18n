@@ -2310,6 +2310,8 @@
       - [arXiv研究功能](zh/skills/research/arxiv/SKILL.md)
     - [Blogwatcher]()
       - [Blogwatcher](zh/skills/research/blogwatcher/SKILL.md)
+    - [Llm Wiki]()
+      - [Karpathy的LLM维基](zh/skills/research/llm-wiki/SKILL.md)
     - [Polymarket]()
       - [Polymarket — 预测市场数据](zh/skills/research/polymarket/SKILL.md)
       - [References]()
