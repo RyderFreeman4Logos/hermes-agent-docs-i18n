@@ -2469,6 +2469,7 @@
       - [xAI Grok OAuth（SuperGrok / X Premium+）](zh/website/docs/guides/xai-grok-oauth.md)
     - [Integrations](zh/website/docs/integrations/index.md)
       - [Nous Portal](zh/website/docs/integrations/nous-portal.md)
+      - [AI 提供商](zh/website/docs/integrations/providers.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [常见问题与故障排除](zh/website/docs/reference/faq.md)
