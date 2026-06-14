@@ -2479,6 +2479,7 @@
       - [CLI 接口](zh/website/docs/user-guide/cli.md)
       - [模型配置](zh/website/docs/user-guide/configuring-models.md)
       - [桌面应用](zh/website/docs/user-guide/desktop.md)
+      - [Hermes Agent — Docker](zh/website/docs/user-guide/docker.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [配置分发：共享完整代理](zh/website/docs/user-guide/profile-distributions.md)
