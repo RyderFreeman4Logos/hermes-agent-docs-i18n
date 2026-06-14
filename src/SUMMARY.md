@@ -2515,6 +2515,7 @@
         - [备用提供者机制](zh/website/docs/user-guide/features/fallback-providers.md)
         - [持久目标（`/goal`）](zh/website/docs/user-guide/features/goals.md)
         - [Honcho 内存系统](zh/website/docs/user-guide/features/honcho.md)
+        - [事件钩子](zh/website/docs/user-guide/features/hooks.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
         - [看板功能教程](zh/website/docs/user-guide/features/kanban-tutorial.md)
         - [看板工作通道](zh/website/docs/user-guide/features/kanban-worker-lanes.md)
