@@ -1991,6 +1991,7 @@
     - [Codex]()
       - [Codex CLI](zh/skills/autonomous-ai-agents/codex/SKILL.md)
     - [Hermes Agent]()
+      - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
