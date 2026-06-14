@@ -2012,6 +2012,7 @@
         - [输入源](zh/skills/creative/ascii-video/references/inputs.md)
         - [优化参考指南](zh/skills/creative/ascii-video/references/optimization.md)
         - [场景系统与创意构图](zh/skills/creative/ascii-video/references/scenes.md)
+        - [着色器管线与可组合效果](zh/skills/creative/ascii-video/references/shaders.md)
         - [故障排查参考](zh/skills/creative/ascii-video/references/troubleshooting.md)
     - [Baoyu Infographic]()
       - [端口说明 — baoyu-infographic](zh/skills/creative/baoyu-infographic/PORT_NOTES.md)
