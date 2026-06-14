@@ -2488,6 +2488,7 @@
     - [User Guide]()
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
       - [CLI 接口](zh/website/docs/user-guide/cli.md)
+      - [配置](zh/website/docs/user-guide/configuration.md)
       - [模型配置](zh/website/docs/user-guide/configuring-models.md)
       - [桌面应用](zh/website/docs/user-guide/desktop.md)
       - [Hermes Agent — Docker](zh/website/docs/user-guide/docker.md)
