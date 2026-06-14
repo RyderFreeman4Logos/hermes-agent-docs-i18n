@@ -1759,6 +1759,7 @@
     - [Pytorch Fsdp]()
       - [Pytorch-Fsdp 技能](zh/optional-skills/mlops/pytorch-fsdp/SKILL.md)
       - [References](zh/optional-skills/mlops/pytorch-fsdp/references/index.md)
+        - [Pytorch-Fsdp - 其他内容](zh/optional-skills/mlops/pytorch-fsdp/references/other.md)
     - [Pytorch Lightning]()
       - [PyTorch Lightning——高级训练框架](zh/optional-skills/mlops/pytorch-lightning/SKILL.md)
       - [References]()
