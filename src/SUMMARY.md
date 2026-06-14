@@ -1984,6 +1984,8 @@
       - [macOS电脑操作（通用，支持所有型号）](zh/skills/apple/macos-computer-use/SKILL.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/skills/autonomous-ai-agents/DESCRIPTION.md)
+    - [Claude Code]()
+      - [Claude Code — Hermes编排指南](zh/skills/autonomous-ai-agents/claude-code/SKILL.md)
     - [Codex]()
       - [Codex CLI](zh/skills/autonomous-ai-agents/codex/SKILL.md)
     - [Hermes Agent]()
