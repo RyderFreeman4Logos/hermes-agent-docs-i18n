@@ -1411,6 +1411,7 @@
 - [Hermes Agent 安全策略](zh/SECURITY.md)
 - [.Plans]()
   - [Hermes Agent 的 OpenAI 兼容 API 服务器](zh/.plans/openai-api-server.md)
+  - [Hermes Agent 的 LLM 响应流式输出支持](zh/.plans/streaming-support.md)
 - [Apps]()
   - [Desktop](zh/apps/desktop/README.md)
     - [桌面设计系统](zh/apps/desktop/DESIGN.md)
