@@ -2486,6 +2486,7 @@
         - [看板功能教程](zh/website/docs/user-guide/features/kanban-tutorial.md)
         - [看板工作通道](zh/website/docs/user-guide/features/kanban-worker-lanes.md)
         - [语言服务器协议（LSP）](zh/website/docs/user-guide/features/lsp.md)
+        - [内存提供器](zh/website/docs/user-guide/features/memory-providers.md)
         - [持久内存](zh/website/docs/user-guide/features/memory.md)
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
         - [性格与 SOUL.md](zh/website/docs/user-guide/features/personality.md)
