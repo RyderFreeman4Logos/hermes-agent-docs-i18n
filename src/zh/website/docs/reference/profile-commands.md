@@ -79,15 +79,15 @@ hermes profile create <name> [options]
 
 | 参数/选项 | 描述 |
 |----------|------|
-| `<name>` | 新配置文件的名称。必须为有效的目录名（包含字母、数字、连字符和下划线）。 |
-| `--clone` | 从当前配置文件复制 `config.yaml`、`.env` 和 `SOUL.md` 文件。 |
-| `--clone-all` | 从当前配置文件复制所有内容（包括配置、记忆、技能、定时任务及插件），但不包括针对该配置文件的特定历史记录：会话记录、`state.db`、备份文件、状态快照及检查点。 |
-| `--clone-from <profile>` | 而非从当前配置文件，从指定配置文件进行克隆。需与 `--clone` 或 `--clone-all` 一起使用。 |
-| `--no-alias` | 跳过生成封装脚本的步骤。 |
-| `--description "<text>"` | 用一两句话描述该配置文件的用途。Kanban 编排器会利用此描述根据角色而非仅凭配置文件名称来分配任务。可跳过此选项，稍后通过 `hermes profile describe` 添加描述。该描述会保存在 `<profile_dir>/profile.yaml` 中。 |
-| `--no-skills` | 创建一个**空**配置文件，不启用任何预置技能。会在配置文件中添加 `.no-bundled-skills` 标记，以防止后续的 `hermes update` 操作重新加载预置技能集。同时该选项不允许与 `--clone` / `--clone-all` 一起使用（因为这些选项会强制复制技能）。适用于功能较为单一的编排器配置文件或不应继承完整技能库的沙箱配置文件。若需在已创建的配置文件（包括默认的 `~/.hermes`）上启用此功能，可使用 `hermes skills opt-out` / `hermes skills opt-in` 命令。 |
+| `<name>` | 新配置文件的名称。必须是有效的目录名（由字母、数字、连字符和下划线组成）。 |
+| `--clone` | 复制当前配置文件中的 `config.yaml`、`.env`、`SOUL.md` 以及技能。 |
+| `--clone-all` | 复制当前配置文件中的所有内容（配置、记忆、技能、定时任务、插件），但不包括与特定配置文件相关的历史记录：会话记录、`state.db`、备份文件、状态快照和检查点。 |
+| `--clone-from <profile>` | 从指定配置文件而非当前配置文件复制配置、技能和 SOUL 文件。除非与 `--clone-all` 一起使用，否则默认会同时应用 `--clone` 功能。 |
+| `--no-alias` | 跳过创建封装脚本的步骤。 |
+| `--description "<text>"` | 用一两句话描述该配置文件的功能特点。Kanban 编排器可依据此描述按角色而非仅凭配置文件名称来分配任务。可跳过此选项，稍后通过 `hermes profile describe` 命令添加描述。该描述会保存在 `<profile_dir>/profile.yaml` 文件中。 |
+| `--no-skills` | 创建一个**空**配置文件，不包含任何预装的技能。会在配置文件中添加 `.no-bundled-skills` 标记，以确保后续的 `hermes update` 操作不会重新加载预装技能集。此外，该选项不允许与 `--clone`、`--clone-from` 或 `--clone-all` 一起使用（因为这些选项会强制复制技能）。适用于功能较为单一的编排器配置文件或不应继承完整技能库的沙箱配置文件。若需为已创建的配置文件（包括默认的 `~/.hermes`）启用此功能，可使用 `hermes skills opt-out` / `hermes skills opt-in` 命令。 |
 
-创建配置文件并不会将该配置文件所在的目录设置为终端命令的默认项目/工作目录。若希望某个配置文件针对特定项目运行，请在该配置文件的 `config.yaml` 中设置 `terminal.cwd`。
+创建配置文件并不会将该配置文件所在的目录设置为终端命令的默认项目/工作目录。如果希望某个配置文件针对特定项目运行，请在该配置文件的 `config.yaml` 中设置 `terminal.cwd`。
 
 **示例：**
 
@@ -102,7 +102,10 @@ hermes profile create work --clone
 hermes profile create backup --clone-all
 
 # Clone config from a specific profile
-hermes profile create work2 --clone --clone-from work
+hermes profile create work2 --clone-from work
+
+# Clone everything from a specific profile
+hermes profile create work2-backup --clone-from work --clone-all
 ```
 
 ## `hermes profile describe` 命令说明
