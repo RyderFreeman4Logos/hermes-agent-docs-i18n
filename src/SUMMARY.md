@@ -1627,6 +1627,8 @@
         - [格式标准参考](zh/optional-skills/finance/3-statement-model/references/formatting.md)
         - [公式参考手册](zh/optional-skills/finance/3-statement-model/references/formulas.md)
         - [SEC 文件数据提取参考指南](zh/optional-skills/finance/3-statement-model/references/sec-filings.md)
+    - [Comps Analysis]()
+      - [可比公司分析](zh/optional-skills/finance/comps-analysis/SKILL.md)
     - [Dcf Model]()
       - [DCF模型故障排查指南](zh/optional-skills/finance/dcf-model/TROUBLESHOOTING.md)
     - [Excel Author]()
