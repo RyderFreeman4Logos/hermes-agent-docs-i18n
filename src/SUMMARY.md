@@ -2441,6 +2441,7 @@
       - [自动化蓝图](zh/website/docs/guides/automation-blueprints.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
       - [Microsoft Foundry](zh/website/docs/guides/azure-foundry.md)
+      - [构建 Hermes 插件](zh/website/docs/guides/build-a-hermes-plugin.md)
       - [仅脚本型的定时任务](zh/website/docs/guides/cron-script-only.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [教程：构建每日简报机器人](zh/website/docs/guides/daily-briefing-bot.md)
