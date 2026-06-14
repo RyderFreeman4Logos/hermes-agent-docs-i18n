@@ -2177,6 +2177,7 @@
         - [布局合成器参考手册](zh/skills/creative/touchdesigner-mcp/references/layout-compositor.md)
         - [twozero MCP 工具参考手册](zh/skills/creative/touchdesigner-mcp/references/mcp-tools.md)
         - [MIDI / OSC 参考手册](zh/skills/creative/touchdesigner-mcp/references/midi-osc.md)
+        - [TouchDesigner 网络模式](zh/skills/creative/touchdesigner-mcp/references/network-patterns.md)
         - [操作员指南](zh/skills/creative/touchdesigner-mcp/references/operator-tips.md)
         - [TouchDesigner 操作符参考手册](zh/skills/creative/touchdesigner-mcp/references/operators.md)
         - [面板与用户界面参考](zh/skills/creative/touchdesigner-mcp/references/panel-ui.md)
