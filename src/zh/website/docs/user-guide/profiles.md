@@ -50,7 +50,7 @@ hermes profile create researcher --description "Reads source code and external d
 hermes profile create work --clone
 ```
 
-将当前配置文件中的 `config.yaml`、`.env` 以及 `SOUL.md` 复制到新配置文件中。API 密钥和模型保持不变，但会生成全新的会话状态与内存环境。如需更换 API 密钥，请编辑 `~/.hermes/profiles/work/.env` 文件；如需调整智能体性格，则需修改 `~/.hermes/profiles/work/SOUL.md` 文件。
+将当前配置文件中的 `config.yaml`、`.env`、`SOUL.md` 以及技能复制到新配置文件中。虽然 API 密钥、模型及功能保持不变，但会生成全新的会话状态和内存记录。如需使用不同的 API 密钥，请编辑 `~/.hermes/profiles/work/.env` 文件；如需改变智能体性格，则可修改 `~/.hermes/profiles/work/SOUL.md` 文件。
 
 ### 全量克隆（`--clone-all`）
 
@@ -63,17 +63,23 @@ hermes profile create backup --clone-all
 ### 从特定人物档案克隆
 
 ```bash
-hermes profile create work --clone --clone-from coder
+hermes profile create work --clone-from coder
 ```
 
-:::提示 Honcho 内存管理与配置文件功能  
-当启用 Honcho 后，`--clone` 选项会自动为新配置文件创建一个专用的 AI 对等体，同时共享相同的用户工作空间。每个配置文件都会独立构建自身的观察结果与身份标识。详情请参阅 [Honcho -- 多智能体/配置文件功能](./features/memory-providers.md#honcho)。  
+`--clone-from <source>` 用于直接选择源配置文件，同时会同步克隆其配置、技能及 SOUL 数据。若需完整复制该源配置文件的内容，可将其与 `--clone-all` 选项一起使用：
+
+```bash
+hermes profile create work-backup --clone-from coder --clone-all
+```
+
+:::提示 Honcho 内存管理与配置文件
+启用 Honcho 后，克隆操作会自动为新配置文件创建一个专用的 AI 对等体，同时共享相同的用户工作空间。每个配置文件都会独立构建自身的观测数据与身份标识。详情请参阅 [Honcho -- 多智能体/配置文件](./features/memory-providers.md#honcho)。
 :::
 
-## 配置文件的使用方法
+## 使用配置文件
 
-### 命令别名  
-每个配置文件都会在 `~/.local/bin/<名称>` 路径下自动生成一个命令别名：
+### 命令别名
+每个配置文件都会在 `~/.local/bin/<name>` 目录下自动生成一个命令别名：
 
 ```bash
 coder chat                    # chat with the coder agent
@@ -250,19 +256,30 @@ eval "$(hermes completion bash)"
 eval "$(hermes completion zsh)"
 ```
 
-为实现持久化补全功能，请将该行添加到您的 `~/.bashrc` 或 `~/.zshrc` 文件中。该功能可自动补全 `-p` 后的配置文件名、配置文件下的子命令以及顶级命令。
+为实现持久化补全功能，请将该行添加到您的 `~/.bashrc` 或 `~/.zshrc` 文件中。该配置可自动补全 `-p` 后的配置文件名、配置文件下的子命令以及顶级命令。
 
 ## 工作原理
 
-配置文件会使用 `HERMES_HOME` 环境变量。当您运行 `coder chat` 时，封装脚本会在启动 hermes 之前将 `HERMES_HOME` 设置为 `~/.hermes/profiles/coder`。由于代码库中的 119 个以上文件均通过 `get_hermes_home()` 函数来确定路径，因此 Hermes 的状态会自动限定在该配置文件的目录内——包括配置、会话、内存、技能、状态数据库、网关进程 ID、日志以及定时任务。
+配置文件会使用 `HERMES_HOME` 环境变量。当您运行 `coder chat` 时，封装脚本会在启动 hermes 之前将 `HERMES_HOME` 设置为 `~/.hermes/profiles/coder`。由于代码库中的 119 个以上文件都通过 `get_hermes_home()` 函数来确定路径，因此 hermes 的状态会自动限定在该配置文件的目录内——包括配置、会话、内存、技能、状态数据库、网关进程 ID、日志以及定时任务等。
 
-需要注意的是，这与终端的工作目录是分开的。工具的执行是从 `terminal.cwd`（或在本地后端中设置 `cwd: "."` 时的启动目录）开始的，而非自动从 `HERMES_HOME` 开始。
+需要注意的是，这与终端工作目录是分开的。工具的执行起点为 `terminal.cwd`（在本地后端中则为主程序启动目录），而非自动从 `HERMES_HOME` 开始。
 
-默认的配置文件即为 `~/.hermes` 本身。无需进行任何迁移操作——现有安装方式将保持完全一致。
+在主机安装模式下，工具的子进程默认会保留您真实的操作系统用户 `HOME` 目录，因此 `~` 目录下的现有 CLI 凭据可在不同配置文件之间正常使用。配置文件数据是通过 `HERMES_HOME` 进行隔离的，而非通过修改 `HOME`。对于容器后端，仍会使用 `{HERMES_HOME}/home` 作为工具状态的持久化存储位置；而那些需要严格按配置文件区分工具设置的主机用户，则可通过设置 `terminal.home_mode: profile` 来实现这一需求。
 
-## 以分发包的形式共享配置文件
+这引出了两个容易混淆的概念：
 
-您在一台机器上构建的配置文件可以打包为 **git 仓库**，然后通过一条命令即可在另一台机器上安装——无论是您自己的工作站、同事的笔记本电脑，还是社区用户的环境。该共享包中包含了 SOUL、配置、技能、定时任务以及 MCP 连接信息。而凭证、记忆内容及会话数据则仍保留在每台机器上。
+- `HERMES_HOME` 是配置文件的边界。它负责管理 hermes 的配置、`.env` 文件、内存、会话、技能、日志、定时任务、网关状态以及其他相关数据。
+- `HOME` 则是外部 CLI 工具所期望的操作系统/用户主目录。在主机安装模式下，hermes 默认会保留其作为真实用户的主目录，这样像 `git`、`ssh`、`gh`、`az`、`npm`、Claude Code 和 Codex 这样的工具就能使用与普通终端中相同的凭据。
+
+相应的权衡是：默认情况下，主机上的不同配置文件会共享普通用户级别的 CLI 状态。如果您需要为每个配置文件设置独立的 CLI 身份，可在该配置文件的 `config.yaml` 中设置 `terminal.home_mode: profile`。在这种模式下，hermes 会以 `HOME={HERMES_HOME}/home` 的参数启动工具子进程；此时您就需要在该配置文件对应的 `~/.ssh`、`~/.gitconfig`、`~/.config/gh`、云服务 CLI 认证信息、Claude/Codex 认证信息、npm 状态等文件中初始化或关联相应的配置。
+
+此外，hermes 还会向子进程暴露 `HERMES_REAL_HOME` 变量，这样即使在 `home_mode: profile` 模式下，脚本仍能找到真实的用户主目录。
+
+默认的配置文件即为 `~/.hermes` 本身。无需进行任何迁移操作，现有安装方式将保持不变。
+
+## 以分发形式共享配置文件
+
+在某台机器上构建的配置文件可以打包为 **git 仓库**，然后通过一条命令即可在另一台机器上安装——无论是您自己的工作站、同事的笔记本电脑，还是社区用户的环境。这个共享包中包含了 SOUL、配置文件、技能、定时任务以及 MCP 连接信息。而凭据、内存数据及会话信息则仍保留在每台机器上。
 
 ```bash
 # Install a whole agent from a git repo
