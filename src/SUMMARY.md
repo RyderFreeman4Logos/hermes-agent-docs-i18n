@@ -2134,6 +2134,7 @@
         - [设计系统：Webflow](zh/skills/creative/popular-web-designs/templates/webflow.md)
         - [设计系统：Wise](zh/skills/creative/popular-web-designs/templates/wise.md)
         - [设计系统：xAI](zh/skills/creative/popular-web-designs/templates/x.ai.md)
+        - [设计系统：Zapier](zh/skills/creative/popular-web-designs/templates/zapier.md)
     - [Pretext]()
       - [Pretext创意演示](zh/skills/creative/pretext/SKILL.md)
       - [References]()
