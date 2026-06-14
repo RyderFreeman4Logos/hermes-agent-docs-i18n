@@ -2459,6 +2459,7 @@
       - [Nous Portal](zh/website/docs/integrations/nous-portal.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
+      - [常见问题与故障排除](zh/website/docs/reference/faq.md)
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
       - [模型目录](zh/website/docs/reference/model-catalog.md)
       - [可选技能目录](zh/website/docs/reference/optional-skills-catalog.md)
