@@ -2476,6 +2476,7 @@
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [配置分发：共享完整代理](zh/website/docs/user-guide/profile-distributions.md)
       - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
+      - [安全性](zh/website/docs/user-guide/security.md)
       - [会话](zh/website/docs/user-guide/sessions.md)
       - [TUI](zh/website/docs/user-guide/tui.md)
       - [Windows（原生版）使用指南](zh/website/docs/user-guide/windows-native.md)
