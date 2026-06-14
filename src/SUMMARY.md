@@ -2566,6 +2566,7 @@
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
             - [macOS 电脑操作](zh/website/docs/user-guide/skills/bundled/apple/apple-macos-computer-use.md)
           - [Autonomous Ai Agents]()
+            - [Claude Code](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code.md)
             - [Codex](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex.md)
             - [Kanban Codex 工作流](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-kanban-codex-lane.md)
             - [Opencode](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode.md)
