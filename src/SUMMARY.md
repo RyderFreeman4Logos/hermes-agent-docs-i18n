@@ -2054,6 +2054,7 @@
     - [Claude Design]()
       - [面向 CLI/API 智能体的 Claude Design 技能](zh/skills/creative/claude-design/SKILL.md)
     - [Comfyui]()
+      - [ComfyUI](zh/skills/creative/comfyui/SKILL.md)
       - [References]()
         - [comfy-cli 命令参考手册](zh/skills/creative/comfyui/references/official-cli.md)
         - [ComfyUI REST + WebSocket API 参考手册](zh/skills/creative/comfyui/references/rest-api.md)
