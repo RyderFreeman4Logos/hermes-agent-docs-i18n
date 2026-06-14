@@ -2461,6 +2461,7 @@
       - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
       - [会话](zh/website/docs/user-guide/sessions.md)
       - [TUI](zh/website/docs/user-guide/tui.md)
+      - [Windows（原生版）使用指南](zh/website/docs/user-guide/windows-native.md)
       - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
       - [Features]()
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
