@@ -2550,6 +2550,7 @@
             - [ASCII 视频](zh/website/docs/user-guide/skills/bundled/creative/creative-ascii-video.md)
             - [宝玉信息图生成器](zh/website/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic.md)
             - [Claude Design](zh/website/docs/user-guide/skills/bundled/creative/creative-claude-design.md)
+            - [ComfyUI](zh/website/docs/user-guide/skills/bundled/creative/creative-comfyui.md)
             - [DESIGN.md 模型](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
             - [Manim 视频生成](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
