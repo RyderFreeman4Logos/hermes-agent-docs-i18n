@@ -2377,6 +2377,7 @@
       - [上下文压缩与缓存机制](zh/website/docs/developer-guide/context-compression-and-caching.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
       - [贡献指南](zh/website/docs/developer-guide/contributing.md)
+      - [创建技能](zh/website/docs/developer-guide/creating-skills.md)
       - [Cron 内部机制](zh/website/docs/developer-guide/cron-internals.md)
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [网关内部结构](zh/website/docs/developer-guide/gateway-internals.md)
