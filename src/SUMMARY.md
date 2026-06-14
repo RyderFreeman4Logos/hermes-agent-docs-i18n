@@ -2453,6 +2453,7 @@
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
       - [模型目录](zh/website/docs/reference/model-catalog.md)
+      - [可选技能目录](zh/website/docs/reference/optional-skills-catalog.md)
       - [配置文件命令参考](zh/website/docs/reference/profile-commands.md)
       - [内置技能目录](zh/website/docs/reference/skills-catalog.md)
       - [斜杠命令参考](zh/website/docs/reference/slash-commands.md)
