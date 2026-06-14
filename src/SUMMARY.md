@@ -2698,6 +2698,7 @@
             - [SearXNG 搜索](zh/website/docs/user-guide/skills/optional/research/research-searxng-search.md)
           - [Security]()
             - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
+            - [Godmode](zh/website/docs/user-guide/skills/optional/security/security-godmode.md)
             - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
             - [网络渗透测试](zh/website/docs/user-guide/skills/optional/security/security-web-pentest.md)
           - [Software Development]()
