@@ -2517,6 +2517,7 @@
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
         - [Signal 设置](zh/website/docs/user-guide/messaging/signal.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
+        - [Slack 设置](zh/website/docs/user-guide/messaging/slack.md)
         - [SMS 设置（Twilio）](zh/website/docs/user-guide/messaging/sms.md)
         - [Microsoft Teams 会议功能](zh/website/docs/user-guide/messaging/teams-meetings.md)
         - [Microsoft Teams 配置](zh/website/docs/user-guide/messaging/teams.md)
