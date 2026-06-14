@@ -1621,6 +1621,7 @@
       - [AgentMail — 智能体专属邮箱收件箱](zh/optional-skills/email/agentmail/SKILL.md)
   - [Finance]()
     - [3 Statement Model]()
+      - [三表财务模型模板填充指南](zh/optional-skills/finance/3-statement-model/SKILL.md)
       - [References]()
         - [格式标准参考](zh/optional-skills/finance/3-statement-model/references/formatting.md)
         - [公式参考手册](zh/optional-skills/finance/3-statement-model/references/formulas.md)
