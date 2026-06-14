@@ -2472,6 +2472,7 @@
       - [AI 提供商](zh/website/docs/integrations/providers.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
+      - [环境变量参考](zh/website/docs/reference/environment-variables.md)
       - [常见问题与故障排除](zh/website/docs/reference/faq.md)
       - [MCP 配置参考手册](zh/website/docs/reference/mcp-config-reference.md)
       - [模型目录](zh/website/docs/reference/model-catalog.md)
