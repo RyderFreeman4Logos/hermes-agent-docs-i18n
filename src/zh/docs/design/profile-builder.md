@@ -63,6 +63,8 @@ _spawn_hermes_action(["-p", profile, "skills", "install", identifier], "skills-i
 ```python
 class ProfileCreate(BaseModel):
     name: str
+    clone_from: Optional[str] = None
+    # Backward compatibility for older dashboard/desktop clients.
     clone_from_default: bool = False
     clone_all: bool = False
     no_skills: bool = False
