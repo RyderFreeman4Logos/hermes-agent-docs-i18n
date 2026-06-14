@@ -2092,6 +2092,7 @@
         - [更新器与值追踪器](zh/skills/creative/manim-video/references/updaters-and-trackers.md)
         - [视觉设计原则](zh/skills/creative/manim-video/references/visual-design.md)
     - [P5Js](zh/skills/creative/p5js/README.md)
+      - [p5.js 生产级处理流程](zh/skills/creative/p5js/SKILL.md)
       - [References]()
         - [动画功能](zh/skills/creative/p5js/references/animation.md)
         - [颜色系统](zh/skills/creative/p5js/references/color-systems.md)
