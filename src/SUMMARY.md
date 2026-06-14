@@ -2656,6 +2656,7 @@
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
             - [Llm Wiki](zh/website/docs/user-guide/skills/bundled/research/research-llm-wiki.md)
             - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
+            - [研究论文撰写](zh/website/docs/user-guide/skills/bundled/research/research-research-paper-writing.md)
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
           - [Social Media]()
