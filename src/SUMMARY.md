@@ -2097,6 +2097,7 @@
         - [形状与几何结构](zh/skills/creative/p5js/references/shapes-and-geometry.md)
         - [故障排除](zh/skills/creative/p5js/references/troubleshooting.md)
         - [字体设置](zh/skills/creative/p5js/references/typography.md)
+        - [视觉特效](zh/skills/creative/p5js/references/visual-effects.md)
         - [WebGL与3D功能](zh/skills/creative/p5js/references/webgl-and-3d.md)
     - [Popular Web Designs]()
       - [流行网页设计模板](zh/skills/creative/popular-web-designs/SKILL.md)
