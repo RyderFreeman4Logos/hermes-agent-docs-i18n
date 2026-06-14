@@ -2580,6 +2580,7 @@
           - [Research]()
             - [Arxiv](zh/website/docs/user-guide/skills/bundled/research/research-arxiv.md)
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
+            - [Llm Wiki](zh/website/docs/user-guide/skills/bundled/research/research-llm-wiki.md)
             - [Polymarket](zh/website/docs/user-guide/skills/bundled/research/research-polymarket.md)
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/bundled/smart-home/smart-home-openhue.md)
