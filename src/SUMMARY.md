@@ -2009,6 +2009,7 @@
       - [References]()
         - [架构参考](zh/skills/creative/ascii-video/references/architecture.md)
         - [组合模式与亮度参考](zh/skills/creative/ascii-video/references/composition.md)
+        - [效果目录](zh/skills/creative/ascii-video/references/effects.md)
         - [输入源](zh/skills/creative/ascii-video/references/inputs.md)
         - [优化参考指南](zh/skills/creative/ascii-video/references/optimization.md)
         - [场景系统与创意构图](zh/skills/creative/ascii-video/references/scenes.md)
