@@ -2109,6 +2109,7 @@
         - [设计系统：ClickHouse](zh/skills/creative/popular-web-designs/templates/clickhouse.md)
         - [设计系统：Cohere](zh/skills/creative/popular-web-designs/templates/cohere.md)
         - [设计系统：Coinbase](zh/skills/creative/popular-web-designs/templates/coinbase.md)
+        - [设计系统：Composio](zh/skills/creative/popular-web-designs/templates/composio.md)
         - [设计系统：Expo](zh/skills/creative/popular-web-designs/templates/expo.md)
         - [设计系统：Figma](zh/skills/creative/popular-web-designs/templates/figma.md)
         - [设计系统：Framer](zh/skills/creative/popular-web-designs/templates/framer.md)
