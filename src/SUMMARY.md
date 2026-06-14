@@ -2350,6 +2350,7 @@
       - [References]()
         - [Polymarket API 接口参考文档](zh/skills/research/polymarket/references/api-endpoints.md)
     - [Research Paper Writing]()
+      - [研究论文撰写流程](zh/skills/research/research-paper-writing/SKILL.md)
       - [References]()
         - [Autoreason：迭代优化方法论](zh/skills/research/research-paper-writing/references/autoreason-methodology.md)
         - [会议论文检查清单](zh/skills/research/research-paper-writing/references/checklists.md)
