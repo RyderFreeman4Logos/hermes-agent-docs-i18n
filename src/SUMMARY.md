@@ -2536,6 +2536,7 @@
       - [Messaging](zh/website/docs/user-guide/messaging/index.md)
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [钉钉集成设置](zh/website/docs/user-guide/messaging/dingtalk.md)
+        - [Discord 设置](zh/website/docs/user-guide/messaging/discord.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
         - [飞书 / 钉钉集成设置](zh/website/docs/user-guide/messaging/feishu.md)
         - [Google Chat 集成设置](zh/website/docs/user-guide/messaging/google_chat.md)
