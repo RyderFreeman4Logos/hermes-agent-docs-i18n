@@ -2101,6 +2101,7 @@
       - [Templates]()
         - [设计系统：Airbnb](zh/skills/creative/popular-web-designs/templates/airbnb.md)
         - [设计系统：Airtable](zh/skills/creative/popular-web-designs/templates/airtable.md)
+        - [设计系统：Apple](zh/skills/creative/popular-web-designs/templates/apple.md)
         - [设计系统：宝马](zh/skills/creative/popular-web-designs/templates/bmw.md)
         - [设计系统：Cal.com](zh/skills/creative/popular-web-designs/templates/cal.md)
         - [设计系统：Claude（Anthropic）](zh/skills/creative/popular-web-designs/templates/claude.md)
