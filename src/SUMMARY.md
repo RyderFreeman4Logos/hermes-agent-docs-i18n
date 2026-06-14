@@ -2001,6 +2001,7 @@
     - [Ascii Video](zh/skills/creative/ascii-video/README.md)
       - [ASCII视频制作流程](zh/skills/creative/ascii-video/SKILL.md)
       - [References]()
+        - [架构参考](zh/skills/creative/ascii-video/references/architecture.md)
         - [输入源](zh/skills/creative/ascii-video/references/inputs.md)
         - [优化参考指南](zh/skills/creative/ascii-video/references/optimization.md)
         - [故障排查参考](zh/skills/creative/ascii-video/references/troubleshooting.md)
