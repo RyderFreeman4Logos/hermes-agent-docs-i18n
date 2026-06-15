@@ -2144,6 +2144,7 @@
         - [设计系统：IBM](zh/skills/creative/popular-web-designs/templates/ibm.md)
         - [设计系统：Intercom](zh/skills/creative/popular-web-designs/templates/intercom.md)
         - [设计系统：Kraken](zh/skills/creative/popular-web-designs/templates/kraken.md)
+        - [设计系统：Linear](zh/skills/creative/popular-web-designs/templates/linear.app.md)
         - [设计系统：MiniMax](zh/skills/creative/popular-web-designs/templates/minimax.md)
         - [设计系统：Mintlify](zh/skills/creative/popular-web-designs/templates/mintlify.md)
         - [设计系统：Miro](zh/skills/creative/popular-web-designs/templates/miro.md)
