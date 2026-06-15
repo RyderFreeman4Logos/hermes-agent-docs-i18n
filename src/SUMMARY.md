@@ -2749,6 +2749,7 @@
             - [Obliteratus](zh/website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md)
             - [PEFT 微调技术](zh/website/docs/user-guide/skills/optional/mlops/mlops-peft.md)
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
+            - [Pytorch Fsdp](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-fsdp.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
             - [Qdrant 向量搜索引擎](zh/website/docs/user-guide/skills/optional/mlops/mlops-qdrant.md)
             - [Dspy](zh/website/docs/user-guide/skills/optional/mlops/mlops-research-dspy.md)
