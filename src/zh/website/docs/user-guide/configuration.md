@@ -1452,19 +1452,19 @@ streaming:
   edit_interval: 0.3      # Seconds between message edits
   buffer_threshold: 40    # Characters before forcing an edit flush
   cursor: " ▉"            # Cursor shown during streaming
-  fresh_final_after_seconds: 60   # Send fresh final (Telegram) when preview is this old; 0 = always edit in place
+  fresh_final_after_seconds: 0    # Opt in to fresh final (Telegram) when preview is this old
 ```
 
-启用该功能后，机器人会在收到第一个令牌时发送消息，随后随着更多令牌的到达逐步修改该消息。对于不支持消息编辑的平台（如 Signal、Email、Home Assistant），系统会在首次尝试时自动识别，并为该会话优雅地关闭流式发送功能，从而避免消息泛滥。
+启用该功能后，机器人会在接收到第一个令牌时发送消息，随后随着更多令牌的到达逐步对消息进行编辑。对于不支持消息编辑的平台（如 Signal、Email、Home Assistant），系统会在首次尝试时自动识别，并优雅地禁用该会话的流式传输，从而避免消息大量涌入。
 
-若希望在不进行逐步令牌编辑的情况下单独发送中间阶段的助手更新，可设置 `display.interim_assistant_messages: true`。
+若希望在不进行逐令牌编辑的情况下单独发送中间阶段的助手更新，可设置 `display.interim_assistant_messages: true`。
 
-**溢出处理：** 如果流式发送的文本超过平台的消息长度限制（约 4096 字符），当前消息将会被定稿，系统会自动开始发送新消息。
+**溢出处理：** 如果流式传输的文本超过了平台规定的消息长度限制（约 4096 字符），当前消息将会被最终确定，系统会自动开始发送新消息。
 
-**Telegram 的全新定稿功能：** Telegram 的 `editMessageText` 功能会保留原始消息的时间戳，因此长时间运行的流式回复在完成后仍会显示最初发送的时间戳。当设置 `fresh_final_after_seconds > 0`（默认值为 60）时，已完成回复会作为一条全新的消息发送（系统会尽力删除过时的预览内容），从而使 Telegram 上显示的时间戳反映实际完成时间。简短的预览内容则仍会在原位置定稿。将此值设置为 `0` 可始终在原位置进行编辑。
+**Telegram 的“全新最终消息”功能：** Telegram 的 `editMessageText` 功能会保留原始消息的时间戳，因此即使流式回复已结束，其首个令牌对应的时间戳仍会保留。若希望将旧预览内容作为全新的最终消息发送，并尽力删除旧预览，可设置 `fresh_final_after_seconds > 0`。默认值为 `0`，此时流式回复会直接被最终确定，从而避免在同时显示两种操作的客户端出现短暂的重复消息或删除序列。
 
-:::注意：各平台的流式发送默认设置
-全局的 `streaming.enabled` 开关默认值为 `false`——在将其切换为开启状态之前，不会进行任何流式发送。一旦启用，流式发送功能会**根据不同平台分别设置**：Telegram 的默认值为 `display.platforms.telegram.streaming: true`（支持流式发送），而 Discord 的默认值为 `display.platforms.discord.streaming: false`（不支持）。因此，在启用流式发送后，Telegram 会直接支持流式发送，而 Discord 则会保持完整消息回复模式，直到你更改其开关设置。你可以通过控制面板的 **Channels** 开关或直接在 `~/.hermes/config.yaml` 文件中调整这些针对不同平台的开关设置。
+:::note 各平台的流式传输默认设置
+全局的 `streaming.enabled` 开关默认值为 `false`——在将其设置为 `true` 之前，不会进行任何流式传输。一旦启用，流式传输功能会**按平台分别配置**：Telegram 的默认值为 `display.platforms.telegram.streaming: true`（支持流式传输），而 Discord 的默认值为 `display.platforms.discord.streaming: false`（不支持）。因此，在启用流式传输后，Telegram 会立即开始流式发送消息，而 Discord 则仍会以完整消息的形式回复，直到您更改其开关设置。您可以通过控制面板的 **Channels** 开关或直接在 `~/.hermes/config.yaml` 文件中调整这些按平台划分的开关设置。
 :::
 
 ## 群聊会话隔离
