@@ -10,10 +10,10 @@ description: "Install Hermes Agent on Linux, macOS, WSL2, native Windows, or And
 
 ## 快速安装
 ### 使用 macOS 或 Windows 系统上的 Hermes Desktop 安装程序（推荐）
-如需轻松安装命令行工具及桌面应用程序，请从我们的网站[下载 Hermes Desktop 安装程序](https://hermes-agent.nousresearch.com/desktop)，然后运行该程序。
+如需轻松安装命令行工具及桌面应用程序，请从我们的网站[下载 Hermes Desktop 安装程序](https://hermes-agent.nousresearch.com/)并运行它。
 
 ### 不使用 Hermes Desktop：
-如仅需安装命令行版本而不需要桌面应用，可执行以下操作：
+如仅需安装命令行工具而不需要桌面应用程序，可执行以下操作：
 
 #### Linux / macOS / WSL2 / Android (Termux)
 ```bash
