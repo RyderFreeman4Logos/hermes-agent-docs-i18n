@@ -6,17 +6,17 @@ description: "Your first conversation with Hermes Agent — from install to chat
 
 # 快速入门
 
-本指南将指导您从零开始搭建一个能够稳定运行的Hermes环境，满足实际使用需求。您将学习如何安装、选择服务提供商、验证聊天功能是否正常，以及遇到问题时该如何处理。
+本指南将指导您从零开始搭建一个能够稳定运行的Hermes环境。您将学会如何进行安装、选择服务提供商、验证聊天功能，以及了解出现问题时该如何处理。
 
 ## 更喜欢观看视频？
 
-**Onchain AI Garage**制作了一期关于安装、配置及基本命令的专题教程——如果您更倾向于通过视频学习，这将是本页面的绝佳补充。更多内容请查看完整的[Hermes Agent教程与应用案例](https://www.youtube.com/playlist?list=PLmpUb_PWAkDxewld5ZYyKifuHxgIbiq2d)播放列表。
+**Onchain AI Garage**制作了一期关于安装、配置及基本命令的完整教程视频——如果您更喜欢通过视频学习，这将是本页面的绝佳补充。更多内容请查看完整的[Hermes Agent教程与应用案例](https://www.youtube.com/playlist?list=PLmpUb_PWAkDxewld5ZYyKifuHxgIbiq2d)播放列表。
 
 <div style={{position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', maxWidth: '100%', marginBottom: '1.5rem'}}>
   <iframe
     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
     src="https://www.youtube-nocookie.com/embed/R3YOGfTBcQg"
-    title="Hermes Agent专题教程：安装、配置与基本命令"
+    title="Hermes Agent大师课：安装、配置与基本命令"
     frameBorder="0"
     allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowFullScreen
@@ -30,25 +30,25 @@ description: "Your first conversation with Hermes Agent — from install to chat
 - 为团队、机器人或持续运行的工作流搭建Hermes环境
 - 遇到“已安装但仍然无法使用”的问题
 
-## 最快捷路径
+## 最快捷的路径
 
-根据您的目标选择对应步骤：
+根据您的目标选择对应的步骤：
 
-| 目标 | 首先执行 | 接着执行 |
+| 目标 | 第一步操作 | 后续操作 |
 |---|---|---|
-| 只想在本地机器上让Hermes运行 | `hermes setup` | 进行实际聊天并验证其响应功能 |
-| 已确定使用的服务提供商 | `hermes model` | 保存配置后开始聊天 |
-| 想搭建机器人或持续运行系统 | 在CLI功能正常后执行 `hermes gateway setup` | 连接Telegram、Discord、Slack或其他平台 |
-| 想使用本地或自托管模型 | `hermes model` → 自定义端点 | 验证端点地址、模型名称及上下文长度 |
-| 希望实现多服务提供商备份机制 | 先执行 `hermes model` | 在基础聊天功能正常后添加路由和备用方案 |
+| 只想在本地机器上让Hermes运行 | 执行 `hermes setup` | 进行实际聊天并验证其响应功能 |
+| 已经确定要使用的服务提供商 | 执行 `hermes model` | 保存配置后开始聊天 |
+| 希望建立机器人或持续运行的系统 | 在CLI功能正常后执行 `hermes gateway setup` | 连接Telegram、Discord、Slack或其他平台 |
+| 希望使用本地或自托管模型 | 执行 `hermes model` → 设置自定义端点 | 验证端点地址、模型名称及上下文长度 |
+| 希望实现多服务提供商备用机制 | 先执行 `hermes model` | 在基础聊天功能正常后再添加路由与备用方案 |
 
-**经验法则：** 如果Hermes无法完成常规聊天，切勿急于添加更多功能。先确保能进行一次正常的对话，之后再逐步添加网关、定时任务、技能、语音功能或路由机制。
+**经验法则：** 如果Hermes无法完成常规聊天，暂不要添加更多功能。先确保能进行一次正常的对话，之后再逐步添加网关、定时任务、技能、语音功能或路由机制。
 
 ---
 
 ## 1. 安装Hermes Agent
 ### 使用macOS或Windows上的Hermes Desktop安装程序（推荐）
-如需轻松安装命令行工具和桌面应用，请从我们的网站[下载Hermes Desktop安装程序](https://hermes-agent.nousresearch.com/desktop)，然后运行它。
+如需轻松安装命令行工具和桌面应用，请从我们的网站[下载Hermes Desktop安装程序](https://hermes-agent.nousresearch.com/)并运行它。
 
 ### 不使用Hermes Desktop：
 如需仅安装命令行工具而不使用Hermes Desktop，请执行以下操作：
