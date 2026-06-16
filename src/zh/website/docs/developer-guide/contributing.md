@@ -6,7 +6,7 @@ description: "How to contribute to Hermes Agent — dev setup, code style, PR pr
 
 # 贡献指南
 
-感谢您为 Hermes Agent 做出贡献！本指南将指导您如何搭建开发环境、理解代码库以及顺利合并您的 Pull Request。
+感谢您为 Hermes Agent 做出贡献！本指南将为您介绍如何搭建开发环境、理解代码库以及如何让您的 Pull Request 被合并。
 
 ## 贡献优先级
 
@@ -14,31 +14,55 @@ description: "How to contribute to Hermes Agent — dev setup, code style, PR pr
 
 1. **错误修复** — 程序崩溃、异常行为、数据丢失问题
 2. **跨平台兼容性** — macOS、不同 Linux 发行版及 WSL2 环境
-3. **安全性强化** — 防止 shell 注入、命令注入及路径遍历攻击
-4. **性能与稳定性优化** — 重试机制、错误处理以及优雅降级功能
+3. **安全性强化** — 命令注入、提示符注入、路径遍历漏洞防护
+4. **性能与稳定性** — 重试逻辑、错误处理机制以及优雅降级功能
 5. **新技能开发** — 具有广泛实用价值的技能（详见 [创建技能](creating-skills.md)）
 6. **新工具开发** — 这类需求较为少见，大多数功能应通过技能实现
-7. **文档完善** — 修正错误、澄清内容以及补充新示例
+7. **文档完善** — 错误修正、内容澄清以及新增示例
 
-## 常见的贡献方式
+## 常见的贡献路径
 
-- 若希望构建自定义或本地工具且无需修改 Hermes 核心代码？请从 [构建 Hermes 插件](../guides/build-a-hermes-plugin.md) 开始
-- 若希望为 Hermes 本身开发新的内置核心工具？请从 [添加工具](./adding-tools.md) 开始
-- 若希望开发新技能？请从 [创建技能](./creating-skills.md) 开始
-- 若希望开发新的推理提供者？请从 [添加提供者](./adding-providers.md) 开始
+- 若想构建自定义或本地工具且无需修改 Hermes 核心代码？请从 [构建 Hermes 插件](../guides/build-a-hermes-plugin.md) 开始
+- 若想为 Hermes 本身开发新的内置核心工具？请从 [添加工具](./adding-tools.md) 开始
+- 若想开发新技能？请从 [创建技能](./creating-skills.md) 开始
+- 若想开发新的推理提供程序？请从 [添加提供程序](./adding-providers.md) 开始
 
 ## 开发环境搭建
 
 ### 先决条件
 
-| 要求 | 备注 |
-|------|------|
+| 要求项 | 备注 |
+|---------|------|
 | **Git** | 需安装 `git-lfs` 扩展 |
 | **Python 3.11+** | 若未安装，uv 工具会自动帮您安装 |
 | **uv** | 快速的 Python 包管理工具（[安装指南](https://docs.astral.sh/uv/)） |
-| **Node.js 20+** | 非必需 — 仅用于浏览器工具及 WhatsApp 桥接功能（需与根目录下的 `package.json` 中指定的引擎版本一致） |
+| **Node.js 20+** | 非必需——仅用于浏览器工具和 WhatsApp 桥接功能（需与根目录下的 `package.json` 中指定的版本匹配） |
 
-### 克隆与安装
+### 使用标准安装程序进行安装
+
+对于大多数贡献者而言，最便捷的开发环境搭建方式与普通用户相同：运行标准安装程序，然后在克隆的代码仓库中进行开发。该安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令入口，标记 `hermes update` 的安装方式，并将完整的 Git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录中（通常为 `~/.hermes/hermes-agent`）。这样就能确保您的开发环境结构与 CLI 工具、更新程序、懒加载依赖安装器、网关以及文档所预设的格式保持一致。
+
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+cd "${HERMES_HOME:-$HOME/.hermes}/hermes-agent"
+
+# Add dev/test extras on top of the standard install.
+uv pip install -e ".[all,dev]"
+
+# Optional: browser tools / docs site dependencies.
+npm install
+```
+
+之后，创建分支，并在该分支上运行测试：
+
+```bash
+git checkout -b fix/description
+scripts/run_tests.sh
+```
+
+### 手动克隆回退方案
+
+仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方法（例如在容器或 CI 任务中使用的临时克隆项目）。若选择这种方式进行安装，请务必从该虚拟环境内运行 `hermes` 入口程序；否则，直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入无关的系统 Python 包。
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
@@ -69,19 +93,22 @@ echo 'OPENROUTER_API_KEY=sk-or-v1-your-key' >> ~/.hermes/.env
 ### 运行
 
 ```bash
-# Symlink for global access
-mkdir -p ~/.local/bin
-ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
-
-# Verify
+# The standard installer already put `hermes` on PATH.
 hermes doctor
 hermes chat -q "Hello"
+```
+
+如果您使用了手动克隆的备用方案，请从代码检出目录运行 `./hermes`，或明确地创建该克隆版本的虚拟环境链接：
+
+```bash
+mkdir -p ~/.local/bin
+ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
 ```
 
 ### 运行测试
 
 ```bash
-pytest tests/ -v
+scripts/run_tests.sh
 ```
 
 ## 代码风格
