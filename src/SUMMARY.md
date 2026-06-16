@@ -1848,6 +1848,8 @@
       - [References]()
         - [Whisper 语言支持指南](zh/optional-skills/mlops/whisper/references/languages.md)
   - [Payments]()
+    - [Mpp Agent]()
+      - [MPP Agent 技能](zh/optional-skills/payments/mpp-agent/SKILL.md)
     - [Stripe Projects]()
       - [Stripe Projects 技能](zh/optional-skills/payments/stripe-projects/SKILL.md)
   - [Productivity]()
