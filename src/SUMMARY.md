@@ -2779,6 +2779,8 @@
             - [使用 TRL 进行微调](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md)
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
             - [Whisper](zh/website/docs/user-guide/skills/optional/mlops/mlops-whisper.md)
+          - [Payments]()
+            - [Stripe Projects](zh/website/docs/user-guide/skills/optional/payments/payments-stripe-projects.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
             - [Here.Now](zh/website/docs/user-guide/skills/optional/productivity/productivity-here-now.md)
