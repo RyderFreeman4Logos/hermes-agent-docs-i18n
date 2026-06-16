@@ -11,7 +11,7 @@ import Link from "@docusaurus/Link";
 
 # Hermes Agent
 
-由[Nous Research](https://nousresearch.com)打造的自我进化型AI智能体。它是唯一具备内置学习循环的智能体——能够从使用经验中生成技能，在使用过程中不断优化这些技能，促使自身持续保留知识，并在多次会话之间逐步构建对你更深入的了解。
+由[Nous Research](https://nousresearch.com)打造的自我进化型AI智能体。它是唯一具备内置学习循环的智能体——能够从使用经验中生成技能、在运行过程中不断优化这些技能、促使自己持续保留知识，并在多次会话之间逐步构建对用户特征的深入理解。
 
 <div
   style={{
@@ -36,7 +36,7 @@ import Link from "@docusaurus/Link";
     开始使用 →
   </Link>
   <a
-    href="https://hermes-agent.nousresearch.com/desktop"
+    href="https://hermes-agent.nousresearch.com/"
     style={{
       display: "inline-block",
       padding: "0.6rem 1.2rem",
@@ -65,9 +65,9 @@ import Link from "@docusaurus/Link";
 
 ### Windows或macOS系统
 
-如需轻松安装命令行工具及桌面应用，请从我们的网站[下载Hermes桌面版安装程序](https://hermes-agent.nousresearch.com/desktop)，然后运行该程序。
+如需轻松安装命令行工具及桌面应用，请从我们的网站[下载Hermes Desktop安装程序](https://hermes-agent.nousresearch.com/)，然后运行该程序即可。
 
-### 不使用Hermes桌面版的情况
+### 无需Hermes Desktop的情况
 
 若仅需安装命令行版本而无需桌面版，可执行以下操作：
 
