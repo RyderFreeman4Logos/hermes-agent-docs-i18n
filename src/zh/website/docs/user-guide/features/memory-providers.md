@@ -64,9 +64,9 @@ memory:
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（目前它会重定向到 `hermes memory setup`），但仅在选择 Honcho 作为当前内存提供方之后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（目前它会重定向到 `hermes memory setup`），但仅在将 Honcho 设定为激活的内存提供者之后才会被注册。
 
-**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置文件的加载优先级为：`$
+**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置加载顺序为：`$
 
 ```json
 {
@@ -150,24 +150,36 @@ hermes honcho sync
 }
 ```
 
-**观测开关（每个对等节点一组）：**
+**观察模式切换（每个对等节点对应一组设置）：**
 
-| 开关 | 效果 |
-|------|------|
-| `observeMe` | Honcho 会根据该节点发送的消息构建其模型表示 |
-| `observeOthers` | 该节点会观测另一节点发送的消息（从而实现跨节点推理） |
+| 切换项 | 效果 |
+|--------|------|
+| `observeMe` | Honcho 会根据该节点发送的消息构建其对应的表示模型 |
+| `observeOthers` | 该节点会监听另一节点发送的消息（从而实现跨节点推理） |
 
-通过 `observationMode` 设置的预设模式：
+通过 `observationMode` 可预设以下模式：
 
-- **`"directional"`**（默认值）——所有四个开关均处于开启状态。实现完全的相互观测，支持跨节点辩证推理。
-- **`"unified"`**——用户开启 `observeMe: true`，AI 开启 `observeOthers: true`，其余开关关闭。采用单一观测者模式；AI 仅对用户进行建模而不建模自身，用户节点仅对自己进行建模。
+- **`"directional"`**（默认值）——四个开关均处于开启状态。实现完全的相互观察，支持跨节点对话式推理。
+- **`"unified"`**——用户设置 `observeMe: true`，AI 设置 `observeOthers: true`，其余开关关闭。采用单一观察者机制；AI 仅能模拟用户行为而无法模拟自身，用户则仅能模拟自身行为。
 
-通过 [Honcho 控制面板](https://app.honcho.dev) 设置的服务器端开关会覆盖本地默认设置，并在会话启动时同步回本地。
+通过 [Honcho 控制面板](https://app.honcho.dev) 设置的服务器端参数会覆盖本地默认设置，并在会话启动时同步回本地。
 
-如需完整的观测功能参考，请参阅 [Honcho 页面](./honcho.md#observation-directional-vs-unified)。
+如需了解完整的观察模式参考信息，请参阅 [Honcho 文档页](./honcho.md#observation-directional-vs-unified)。
+
+### 网关身份映射
+
+上述对等节点模型适用于 CLI、TUI 以及桌面端会话，在这些场景中，每次对话最终都会对应到 `peerName`。而 [网关](../../developer-guide/gateway-internals.md) 则引入了第二个维度：用户会携带平台原生运行时 ID（如 Telegram UID、Discord snowflake、Slack 用户 ID），随后通过三个键来确定每个 ID 对应哪个对等节点。
+
+| 键值 | 效果 |
+|-----|------|
+| `pinUserPeer: true` | 所有非智能代理类型的网关用户都会被统一映射为 `peerName`。此设置会优先生效，因此可覆盖所有其他别名——仅当无需为某个用户身份单独创建对等节点时才启用该选项 |
+| `userPeerAliases` | 用于将特定的运行时 ID 映射到对应对等节点（例如 `{"7654321": "alice"}`）。该配置是处理不同身份标识的依据，包括那些拥有独立对等节点的智能代理 |
+| `runtimePeerPrefix` | 为所有未映射的运行时 ID 添加前缀（如 `telegram_7654321`），以避免具有相同结构 ID 的不同平台之间发生冲突 |
+
+在网关外部，这些键值不会产生任何影响。`hermes memory setup` 功能仅在检测到已连接的网关平台时才会提示用户输入这些参数。关于具体的解析规则及配置流程，请参阅 [Honcho 文档页](./honcho.md#gateway-identity-mapping)。
 
 <details>
-<summary>完整的 honcho.json 示例（多配置文件）</summary>
+<summary>完整的 honcho.json 示例（多配置文件场景）</summary>
 
 ```json
 {
