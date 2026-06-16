@@ -4,13 +4,13 @@ title: "Microsoft Teams"
 description: "Set up Hermes Agent as a Microsoft Teams bot"
 ---
 
-# Microsoft Teams 配置
+# Microsoft Teams 设置
 
-将 Hermes Agent 作为机器人连接到 Microsoft Teams。与 Slack 的 Socket 模式不同，Teams 通过调用**公共 HTTPS webhook**来传递消息，因此您的实例需要一个可公开访问的端点——可以是开发环境隧道（本地调试），也可以是真实域名（生产环境）。
+需将 Hermes Agent 作为机器人连接到 Microsoft Teams。与 Slack 的 Socket 模式不同，Teams 通过调用**公共 HTTPS webhook**来传递消息，因此您的实例需要一个可公开访问的端点——可以是开发环境隧道（本地调试），也可以是真实域名（生产环境）。
 
-如果需要从 Microsoft Graph 事件中获取会议摘要，而非普通机器人对话内容，请使用专用配置页面：[Teams 会议](/user-guide/messaging/teams-meetings)。
+如果需要从 Microsoft Graph 事件中获取会议摘要而非普通机器人对话内容，请使用专用设置页面：[Teams 会议](/user-guide/messaging/teams-meetings)。
 
-> 运行 `hermes gateway setup` 并选择 **Microsoft Teams**，即可获得引导式配置步骤。
+> 运行 `hermes gateway setup` 并选择 **Microsoft Teams**，即可获得引导式设置流程。
 
 ## 机器人的响应方式
 
@@ -20,13 +20,21 @@ description: "Set up Hermes Agent as a Microsoft Teams bot"
 | **群组聊天** | 仅当被 @提及时，机器人才会回复。 |
 | **频道聊天** | 仅当被 @提及时，机器人才会回复。 |
 
-Teams 会将 @提及以带有 `<at>BotName</at>` 标签的普通消息形式发送，Hermes 会在处理消息前自动移除这些标签。
+Teams 会将 @提及以带有 `<at>BotName</at>` 标签的普通消息形式发送，Hermes 会在处理之前自动移除这些标签。
 
 ---
 
-## 第 1 步：安装 Teams CLI
+对于源码安装或本地安装版本，需包含 Teams 相关组件，以便捆绑的适配器能够导入 Microsoft Teams SDK：
 
-`@microsoft/teams.cli` 可自动化完成机器人注册流程——无需使用 Azure 门户。
+```bash
+uv sync --extra teams
+# or, for editable installs:
+uv pip install -e ".[teams]"
+```
+
+## 第1步：安装Teams CLI
+
+`@microsoft/teams.cli`可自动完成机器人注册流程——无需使用Azure门户。
 
 ```bash
 npm install -g @microsoft/teams.cli@preview
