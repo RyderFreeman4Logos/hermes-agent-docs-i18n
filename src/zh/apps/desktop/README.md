@@ -30,17 +30,17 @@
 hermes desktop
 ```
 
-它会在您现有的安装基础上构建并启动 GUI，配置、密钥、会话以及技能均保持不变。首次启动时，Hermes 会引导您选择提供商和模型，无需再进行其他配置。
+它会在您现有的安装基础上构建并启动 GUI——配置、密钥、会话以及技能均保持不变。首次启动时，Hermes 会引导您选择提供商和模型，无需再进行其他配置。
 
 ### 预制安装程序
 
-预制安装程序是通过 [Hermes Desktop 网站](https://hermes-agent.nousresearch.com/desktop) 构建并分发的。
+预制安装程序是通过 [Hermes Desktop 网站](https://hermes-agent.nousresearch.com/) 构建并分发的。
 
 ---
 
 ## 更新
 
-该应用会在后台检查更新情况，一旦有可用更新便会提供一键更新功能。您也可以随时通过 CLI 进行更新：
+该应用会在后台检查更新，一旦有新版本可用便会提供一键更新功能。您也可以随时通过 CLI 进行更新：
 
 ```bash
 hermes update
