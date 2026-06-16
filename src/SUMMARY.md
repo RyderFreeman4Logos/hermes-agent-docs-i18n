@@ -2780,6 +2780,7 @@
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
             - [Whisper](zh/website/docs/user-guide/skills/optional/mlops/mlops-whisper.md)
           - [Payments]()
+            - [Mpp Agent](zh/website/docs/user-guide/skills/optional/payments/payments-mpp-agent.md)
             - [Stripe Projects](zh/website/docs/user-guide/skills/optional/payments/payments-stripe-projects.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
