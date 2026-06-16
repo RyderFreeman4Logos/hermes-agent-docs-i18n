@@ -6,29 +6,29 @@ description: "Try NVIDIA Nemotron 3 Ultra on Nous Portal — free June 4–18 �
 
 # 在 Hermes Agent 中免费运行 Nemotron 3 Ultra
 
-Nous Research 已正式加入由顶尖 AI 实验室组成的 **Nemotron 联盟**，该联盟与 **NVIDIA** 携手共同推进开源基础模型的发展。为庆祝这一里程碑，我们与 **Nebius** 合作，在 [Nous Portal](https://portal.nousresearch.com) 上提供 **Nemotron 3 Ultra** 的免费试用服务，时长为两周（**6月4日 – 6月18日**）。请按照以下步骤立即在您的 Hermes Agent 中体验该模型。
+Nous Research 已加入由多家顶尖 AI 实验室组成的 **Nemotron 联盟**，该联盟与 **NVIDIA** 携手致力于推进开源基础模型的发展。为庆祝这一成就，我们与 **Nebius** 合作，在 [Nous Portal](https://portal.nousresearch.com) 上提供 **Nemotron 3 Ultra** 的免费试用服务，时长为两周（**6月4日 – 6月18日**）。请按照以下步骤立即在您的 Hermes Agent 中体验该模型。
 
 :::info 限时优惠
-`nvidia/nemotron-3-ultra:free` 版本仅在 **6月4日至6月18日**期间提供。正是 `:free` 标签让它属于免费计划——请务必选择此版本。
+`nvidia/nemotron-3-ultra:free` 版本仅在 **6月4日至6月18日**期间提供。正是 `:free` 标签让它属于免费套餐——请务必选择此版本。
 :::
 
 根据您的需求选择合适的安装方式。**桌面应用**最为简单——无需终端即可使用。如果您习惯使用终端，下方也提供了**命令行**安装选项。
 
 ## 方案 A — 桌面应用（推荐）
 
-这是最简单的途径：只需一键安装，通过引导式点击操作即可完成设置，完全不需要终端。
+这是最简单的途径：只需一键安装，随后通过引导式操作完成设置，完全不需要终端。
 
 ### 1. 下载并安装
 
-从此处下载适用于 macOS 或 Windows 的 **Hermes Desktop 安装程序**：[https://hermes-agent.nousresearch.com/desktop]，然后打开它。首次启动时它会自动完成设置（通常只需不到一分钟）。
+从此处下载适用于 macOS 或 Windows 的 **Hermes Desktop 安装程序**：[https://hermes-agent.nousresearch.com/](https://hermes-agent.nousresearch.com/)，然后打开它。首次启动时，系统会自动完成设置（通常不到一分钟）。
 
 ### 2. 连接 Nous Portal
 
-应用启动后，您会看到“开始设置”界面。点击标有 **推荐** 字样的 **Nous Portal**。您的浏览器将会打开——请创建一个 [Nous Portal](https://portal.nousresearch.com) 账户（或登录现有账户），选择 **免费** 套餐，并授权 Hermes。应用随后会自动完成连接。
+打开应用后，您会看到“让我们帮您完成设置”的界面。点击标有 **推荐** 字样的 **Nous Portal**。您的浏览器将会打开——请创建一个 [Nous Portal](https://portal.nousresearch.com) 账户（或登录现有账户），选择 **免费** 套餐，并授权 Hermes。应用会自动建立连接。
 
 ### 3. 选择免费的 Nemotron 3 Ultra 模型
 
-连接成功后，应用会显示一张 **默认模型** 卡片。点击 **更改**，搜索 **nemotron 3 ultra**，然后选择标记为 **免费套餐** 的版本即可：
+连接成功后，应用会显示一张 **默认模型** 卡片。点击 **更改**，搜索 **nemotron 3 ultra**，然后选择标记有 **免费套餐** 的版本即可：
 
 ```
 nvidia/nemotron-3-ultra:free
