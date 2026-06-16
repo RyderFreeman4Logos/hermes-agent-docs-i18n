@@ -128,51 +128,59 @@ hermes skills uninstall <skill-name>
 | [**openclaw-migration**](/docs/user-guide/skills/optional/migration/migration-openclaw-migration) | 可将用户的 OpenClaw 定制配置迁移至 Hermes Agent 中。该工具能够从 ~/.openclaw 文件中导入与 Hermes 兼容的记忆数据、SOUL.md 配置文件、命令允许列表、用户技能以及选定的工作区资产，随后会明确列出所有无法迁移的内容... |
 
 ## mlops| 技能 | 描述 |
-|-------|-------------|
+|------|------|
 | [**huggingface-accelerate**](/docs/user-guide/skills/optional/mlops/mlops-accelerate) | 最简单的分布式训练API。仅需4行代码即可为任何PyTorch脚本添加分布式支持，同时兼容DeepSpeed/FSDP/Megatron/DDP等多种框架。具备自动设备分配、混合精度计算（FP16/BF16/FP8）功能，支持交互式配置，可通过单次启动完成训练…… |
-| [**axolotl**](/docs/user-guide/skills/optional/mlops/mlops-training-axolotl) | Axolotl：基于YAML的LLM微调工具，支持LoRA、DPO、GRPO等多种微调方法。 |
-| [**chroma**](/docs/user-guide/skills/optional/mlops/mlops-chroma) | 专为AI应用设计的开源嵌入数据库。可存储嵌入向量及元数据，支持向量和全文搜索，还能根据元数据进行过滤。拥有简洁的4功能API，可从笔记本环境扩展到生产级集群，适用于语义搜索、RAG等场景…… |
-| [**clip**](/docs/user-guide/skills/optional/mlops/mlops-clip) | OpenAI开发的连接视觉与语言的模型，可实现零样本图像分类、图像文本匹配以及跨模态检索功能。该模型基于4亿对图像文本数据训练而成，可用于图像搜索、内容审核或视觉语言相关任务…… |
-| [**dspy**](/docs/user-guide/skills/optional/mlops/mlops-research-dspy) | DSPy：声明式LM编程工具，可自动优化提示词，并支持RAG功能。 |
-| [**faiss**](/docs/user-guide/skills/optional/mlops/mlops-faiss) | Facebook开发的用于高效处理密集向量相似性搜索与聚类的库，可支持数十亿级向量数据，具备GPU加速功能，还提供Flat、IVF、HNSW等多种索引类型。适用于快速k-NN搜索、大规模向量检索等场景…… |
-| [**optimizing-attention-flash**](/docs/user-guide/skills/optional/mlops/mlops-flash-attention) | 通过Flash Attention技术优化Transformer模型的注意力机制，可实现2-4倍的加速效果，同时降低10-20倍的内存占用。适用于训练/运行包含长序列（>512个标记）的Transformer模型、遇到注意力机制相关的GPU内存问题，或需要更快推理速度的场景…… |
-| [**guidance**](/docs/user-guide/skills/optional/mlops/mlops-guidance) | 基于Microsoft Research开发的约束生成框架Guidance，可通过正则表达式和语法控制LLM的输出，确保生成的JSON/XML/代码格式合法，强制遵循结构化格式，还可构建多步骤工作流…… |
-| [**huggingface-tokenizers**](/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers) | 专为研究和生产环境优化的快速分词器，基于Rust实现，可在20秒内完成1GB文本的分词任务。支持BPE、WordPiece和Unigram等多种分词算法，可训练自定义词汇表，跟踪序列对齐情况，处理填充与截断操作，还具备集成功能…… |
-| [**instructor**](/docs/user-guide/skills/optional/mlops/mlops-instructor) | 经过实战检验的结构化输出库Instructor，可通过Pydantic验证从LLM响应中提取结构化数据，自动重试失败的提取操作，以类型安全的方式解析复杂的JSON数据，还能按需流式返回部分结果…… |
-| [**lambda-labs-gpu-cloud**](/docs/user-guide/skills/optional/mlops/mlops-lambda-labs) | 专为机器学习训练和推理提供的预留型及按需型GPU云实例，当您需要具备简单SSH访问功能的专用GPU实例、持久化文件系统，或用于大规模训练的高性能多节点集群时，可选用此服务…… |
-| [**llava**](/docs/user-guide/skills/optional/mlops/mlops-llava) | 大语言与视觉助手，支持视觉指令微调及基于图像的对话功能。该模型将CLIP视觉编码器与Vicuna/LLaMA语言模型相结合，可支持多轮图像聊天、视觉问答以及指令遵循等任务…… |
-| [**modal-serverless-gpu**](/docs/user-guide/skills/optional/mlops/mlops-modal) | 用于运行机器学习工作负载的无服务器GPU云平台，当您需要无需管理基础设施即可按需使用GPU资源、将机器学习模型作为API部署，或运行具备自动扩展功能的批处理作业时，可选用此服务…… |
-| [**nemo-curator**](/docs/user-guide/skills/optional/mlops/mlops-nemo-curator) | 专为LLM训练设计的GPU加速数据筛选工具，支持处理文本、图像、视频、音频等多种类型的数据。具备模糊去重功能（速度提升16倍）、质量过滤功能（基于30多种规则）、语义去重功能、个人信息掩蔽功能以及不适宜内容检测功能，可跨多台GPU扩展使用…… |
+| [**axolotl**](/docs/user-guide/skills/optional/mlops/mlops-training-axolotl) | Axolotl：基于YAML的LLM微调工具，支持LoRA、DPO、GRPO等多种微调算法。 |
+| [**chroma**](/docs/user-guide/skills/optional/mlops/mlops-chroma) | 专为AI应用设计的开源嵌入数据库，可用于存储嵌入向量及元数据，支持向量搜索与全文检索，并能根据元数据进行过滤。拥有简洁的4功能API，可从笔记本环境扩展至生产级集群，适用于语义搜索、RAG等场景…… |
+| [**clip**](/docs/user-guide/skills/optional/mlops/mlops-clip) | OpenAI开发的连接视觉与语言的模型，可实现零样本图像分类、图像文本匹配以及跨模态检索功能，已基于4亿组图像文本对进行训练。可用于图像搜索、内容审核或视觉语言相关任务…… |
+| [**dspy**](/docs/user-guide/skills/optional/mlops/mlops-research-dspy) | DSPy：一种声明式LLM编程工具，可自动优化提示词，并支持RAG功能。 |
+| [**faiss**](/docs/user-guide/skills/optional/mlops/mlops-faiss) | Facebook开发的用于高效处理密集向量相似性搜索与聚类的库，可支持数十亿级向量操作，具备GPU加速能力，还支持多种索引类型（Flat、IVF、HNSW）。可用于快速k-NN搜索、大规模向量检索等场景…… |
+| [**optimizing-attention-flash**](/docs/user-guide/skills/optional/mlops/mlops-flash-attention) | 通过Flash Attention技术优化Transformer模型的注意力机制，可使训练速度提升2-4倍，同时减少10-20倍的内存占用。适用于处理长度超过512个token的Transformer模型、存在注意力相关GPU内存问题的场景，或需要更快推理速度的情况…… |
+| [**guidance**](/docs/user-guide/skills/optional/mlops/mlops-guidance) | 基于微软研究院开发的约束生成框架Guidance，可通过正则表达式与语法控制LLM的输出，确保生成的JSON/XML/代码格式正确，强制要求输出结构化数据，还可构建多步骤工作流…… |
+| [**huggingface-tokenizers**](/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers) | 专为研究与生产环境优化的快速分词器，基于Rust实现，可在20秒内完成1GB文本的分词操作。支持BPE、WordPiece、Unigram等多种分词算法，可自定义词汇表，跟踪文本对齐情况，处理填充与截断操作，并具备良好的集成性…… |
+| [**instructor**](/docs/user-guide/skills/optional/mlops/mlops-instructor) | 基于经过实战检验的结构化输出库Instructor，可通过Pydantic验证从LLM响应中提取结构化数据，自动重试失败的提取操作，以类型安全的方式解析复杂JSON，还能按需流式返回部分处理结果…… |
+| [**lambda-labs-gpu-cloud**](/docs/user-guide/skills/optional/mlops/mlops-lambda-labs) | 专为机器学习训练与推理提供的预留型及按需型GPU云实例，适用于需要具备简单SSH访问权限的专用GPU实例、持久化文件系统，或用于大规模训练的高性能多节点集群的场景…… |
+| [**llava**](/docs/user-guide/skills/optional/mlops/mlops-llava) | 大语言与视觉助手模型，支持基于视觉的指令微调以及图像驱动的对话功能。它将CLIP视觉编码器与Vicuna/LLaMA语言模型相结合，支持多轮图像聊天、视觉问答等任务…… |
+| [**modal-serverless-gpu**](/docs/user-guide/skills/optional/mlops/mlops-modal) | 用于运行机器学习工作负载的无服务器GPU云平台，适用于无需自行管理基础设施即可按需使用GPU、将机器学习模型作为API部署，或运行具备自动扩展功能的批处理作业的场景…… |
+| [**nemo-curator**](/docs/user-guide/skills/optional/mlops/mlops-nemo-curator) | 专为LLM训练设计的GPU加速数据筛选工具，支持处理文本、图像、视频、音频等多种类型的数据。具备模糊去重功能（速度提升16倍）、质量过滤功能（基于30多种规则）、语义去重功能、个人身份信息遮蔽功能以及不适宜内容检测功能，可跨多台GPU扩展使用…… |
 | [**obliteratus**](/docs/user-guide/skills/optional/mlops/mlops-obliteratus) | OBLITERATUS：通过差分均值技术消除LLM的拒绝响应问题。 |
 | [**outlines**](/docs/user-guide/skills/optional/mlops/mlops-inference-outlines) | Outlines：支持生成结构化的JSON/正则表达式/Pydantic格式的LLM输出内容。 |
-| [**peft-fine-tuning**](/docs/user-guide/skills/optional/mlops/mlops-peft) | 基于LoRA、QLoRA及25种以上方法实现的参数高效型LLM微调技术，适用于在GPU内存有限的条件下微调7B-70B规模的大型模型，可在几乎不损失精度的前提下仅训练不到1%的模型参数，也支持多适配器微调场景…… |
-| [**pinecone**](/docs/user-guide/skills/optional/mlops/mlops-pinecone) | 专为生产级AI应用设计的托管型向量数据库，具备完全托管、自动扩展功能，支持密集向量与稀疏向量的混合搜索、元数据过滤以及命名空间管理功能，查询延迟低于100ms（p95值）。适用于生产环境中的RAG系统、推荐系统等场景…… |
-| [**pytorch-fsdp**](/docs/user-guide/skills/optional/mlops/mlops-pytorch-fsdp) | 提供关于使用PyTorch FSDP进行全分片数据并行训练的专家级指导，涵盖参数分片、混合精度计算、CPU卸载以及FSDP2等相关技术内容。 |
-| [**pytorch-lightning**](/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning) | 基于PyTorch开发的高级框架，拥有Trainer类，可自动实现DDP/FSDP/DeepSpeed等分布式训练功能，还具备回调系统以及极简的代码结构。使用相同代码即可在从笔记本电脑到超级计算机的不同硬件上实现模型训练，适用于需要简洁训练循环的场景…… |
-| [**qdrant-vector-search**](/docs/user-guide/skills/optional/mlops/mlops-qdrant) | 高性能向量相似性搜索引擎，专为RAG和语义搜索场景设计。当您需要构建要求快速最近邻搜索、支持带过滤功能的混合搜索，或需要具备可扩展性的向量存储方案时，可选用此工具，其底层基于Rust语言实现…… |
-| [**sparse-autoencoder-training**](/docs/user-guide/skills/optional/mlops/mlops-saelens) | 提供基于SAELens工具的稀疏自编码器（SAE）训练与分析指导，该工具可通过分解神经网络激活值来获取可解释的特征。适用于发现可解释的特征、分析特征叠加效应，或开展相关研究场景…… |
-| [**simpo-training**](/docs/user-guide/skills/optional/mlops/mlops-simpo) | 用于LLM对齐的简单偏好优化方法，是无需参考模型的DPO替代方案，性能更优（在AlpacaEval 2.0测试中得分高出6.4分），无需参考模型，效率也高于DPO，适用于需要简化对齐流程的场景…… |
-| [**slime-rl-training**](/docs/user-guide/skills/optional/mlops/mlops-slime) | 基于Megatron+SGLang框架的slime工具，为LLM训练后的强化学习阶段提供指导。适用于训练GLM模型、实现自定义数据生成工作流，或需要深度集成Megatron-LM以实现强化学习任务高效扩展的场景…… |
-| [**stable-diffusion-image-generation**](/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion) | 通过HuggingFace Diffusers库实现的先进文本到图像生成技术，基于Stable Diffusion模型。适用于根据文本提示生成图像、实现图像到图像的转换、图像修复，或构建自定义的扩散模型流程…… |
-| [**tensorrt-llm**](/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm) | 利用NVIDIA TensorRT优化LLM推理过程，可实现最高的处理吞吐量与最低的延迟。适用于在NVIDIA GPU（A100/H100）上开展生产环境部署，当您需要比使用PyTorch快10-100倍的推理速度，或需要对模型进行量化处理以实现高效服务时，可选用此工具…… |
-| [**distributed-llm-pretraining-torchtitan**](/docs/user-guide/skills/optional/mlops/mlops-torchtitan) | 提供基于PyTorch的原生分布式LLM预训练功能，可通过torchtitan实现4D并行训练（包括FSDP2、TP、PP、CP四种并行模式），适用于大规模预训练Llama 3.1、DeepSeek V3或自定义模型，支持使用Float8精度、torch.compile优化技术以及dist函数实现分布式训练…… |
-| [**fine-tuning-with-trl**](/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning) | TRL：为LLM的强化学习对齐任务提供SFT、DPO、PPO、GRPO以及奖励建模等相关功能。 |
-| [**unsloth**](/docs/user-guide/skills/optional/mlops/mlops-training-unsloth) | Unsloth：可让LoRA/QLoRA微调速度提升2-5倍，同时降低VRAM占用量。 |
-| [**whisper**](/docs/user-guide/skills/optional/mlops/mlops-whisper) | OpenAI开发的通用语音识别模型，支持99种语言的语音识别、转录功能，可将识别结果翻译为英文，同时还具备语言识别能力。该模型提供从小型（3900万参数）到大型（15.5亿参数）共六种不同规模版本，适用于语音转文本、播客处理等场景…… |
+| [**peft-fine-tuning**](/docs/user-guide/skills/optional/mlops/mlops-peft) | 基于LoRA、QLoRA以及25种以上方法实现的参数高效型LLM微调技术，适用于在GPU内存有限的条件下微调70亿参数规模的大型模型，或在保证精度损失极小的前提下仅训练不到1%的模型参数，同时也支持多适配器微调场景…… |
+| [**pinecone**](/docs/user-guide/skills/optional/mlops/mlops-pinecone) | 专为生产级AI应用设计的托管型向量数据库，具备完全托管、自动扩展功能，支持密集向量与稀疏向量的混合搜索、元数据过滤以及命名空间管理功能，查询延迟低于100毫秒（p95值）。可用于生产环境中的RAG系统、推荐系统等场景…… |
+| [**pytorch-fsdp**](/docs/user-guide/skills/optional/mlops/mlops-pytorch-fsdp) | 为使用PyTorch FSDP进行全分片数据并行训练提供专业指导，涵盖参数分片、混合精度计算、CPU卸载以及FSDP2等相关技术内容。 |
+| [**pytorch-lightning**](/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning) | 基于PyTorch开发的高级框架，拥有Trainer类、自动分布式训练功能（支持DDP/FSDP/DeepSpeed）、回调系统，且代码量极少。使用同一套代码即可在从笔记本电脑到超级计算机的不同硬件环境中进行训练，适用于需要简洁训练逻辑的场景…… |
+| [**qdrant-vector-search**](/docs/user-guide/skills/optional/mlops/mlops-qdrant) | 高性能向量相似性搜索引擎，专为RAG与语义搜索场景设计。适用于构建需要快速最近邻搜索、支持带过滤条件的混合搜索功能，或需要具备可扩展性的向量存储系统的生产级RAG系统，该引擎基于Rust语言开发…… |
+| [**sparse-autoencoder-training**](/docs/user-guide/skills/optional/mlops/mlops-saelens) | 提供基于SAELens工具的稀疏自编码器（SAE）训练与分析指导，该工具可将神经网络激活值分解为可解释的特征。适用于发现可解释的特征、分析特征叠加效应，或开展相关研究工作…… |
+| [**simpo-training**](/docs/user-guide/skills/optional/mlops/mlops-simpo) | 一种用于LLM对齐的简单偏好优化方法，是无需参考模型的DPO替代方案，性能更优（在AlpacaEval 2.0测试中得分高出6.4分），无需参考模型，效率也高于DPO，适用于需要简化对齐流程的场景…… |
+| [**slime-rl-training**](/docs/user-guide/skills/optional/mlops/mlops-slime) | 基于Megatron+SGLang框架的slime工具，为LLM训练后的强化学习阶段提供指导。适用于训练GLM模型、实现自定义数据生成工作流，或需要深度整合Megatron-LM框架以实现强化学习性能提升的场景…… |
+| [**stable-diffusion-image-generation**](/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion) | 基于HuggingFace Diffusers库的先进文本到图像生成技术，可通过文本提示词生成图像，实现图像到图像的转换、图像修复功能，还可用于构建自定义的扩散模型工作流…… |
+| [**tensorrt-llm**](/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm) | 利用NVIDIA TensorRT技术优化LLM推理性能，以实现最高的处理吞吐量与最低的延迟。适用于在NVIDIA GPU（A100/H100）上开展生产环境部署，或在需要比PyTorch快10-100倍推理速度的场景下使用，也可用于对模型进行量化处理后进行服务部署…… |
+| [**distributed-llm-pretraining-torchtitan**](/docs/user-guide/skills/optional/mlops/mlops-torchtitan) | 提供基于PyTorch的原生分布式LLM预训练功能，采用torchtitan框架以及4D并行技术（包括FSDP2、TP、PP、CP），可支持在8到512台及以上GPU上，使用Float8格式、torch.compile以及dist函数对Llama 3.1、DeepSeek V3或自定义模型进行大规模预训练…… |
+| [**fine-tuning-with-trl**](/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning) | TRL系列技术：包括SFT、DPO、PPO、GRPO以及用于LLM强化学习对齐的奖励建模方法。 |
+| [**unsloth**](/docs/user-guide/skills/optional/mlops/mlops-training-unsloth) | Unsloth：可让LoRA/QLoRA微调速度提升2-5倍，同时减少所需的VRAM内存占用。 |
+| [**whisper**](/docs/user-guide/skills/optional/mlops/mlops-whisper) | OpenAI开发的通用语音识别模型，支持99种语言的识别功能，可完成文本转写、内容翻译为英文以及语言识别任务，提供从小型模型（3900万参数）到大型模型（15.5亿参数）共六种不同规格的模型版本，适用于语音转文本、播客处理等场景…… |
 
-## 生产力提升
+## 支付相关
 
 | 技能 | 描述 |
-|-------|-------------|
-| [**canvas**](/docs/user-guide/skills/optional/productivity/productivity-canvas) | Canvas学习管理系统集成功能——可通过API令牌认证获取已注册的课程及作业信息。 |
-| [**here.now**](/docs/user-guide/skills/optional/productivity/productivity-here-now) | 可将静态网站发布到&#123;slug&#125;.here.now平台，同时可将私有文件存储在云盘服务中，便于不同代理之间传递数据。 |
-| [**memento-flashcards**](/docs/user-guide/skills/optional/productivity/productivity-memento-flashcards) | 基于间隔重复算法的闪卡系统，允许用户从事实或文本中创建闪卡，可通过自由文本回答与闪卡进行互动，系统会由代理对回答进行评分，还能从YouTube视频字幕中生成测验题，具备自适应调度功能的到期卡片提醒功能，同时支持闪卡的导入与导出…… |
-| [**shop-app**](/docs/user-guide/skills/optional/productivity/productivity-shop-app) | Shop.app：提供产品搜索、订单追踪、退货处理以及重新下单等功能。 |
-| [**shopify**](/docs/user-guide/skills/optional/productivity/productivity-shopify) | 通过curl命令调用Shopify的管理后台及前端店铺的GraphQL API，可获取产品、订单、客户、库存以及元字段等相关数据。 |
-| [**siyuan**](/docs/user-guide/skills/optional/productivity/productivity-siyuan) | SiYuan Note API，允许用户通过curl命令搜索、阅读、创建及管理自托管知识库中的块状内容与文档。 |
-| [**telephony**](/docs/user-guide/skills/optional/productivity/productivity-telephony) | 无需对核心工具进行修改即可为Hermes添加电话功能，可配置并保留Twilio号码，支持发送和接收短信/MMS消息，能够直接拨打电话，还可通过Bland.ai或Vapi平台发起由人工智能驱动的呼出电话…… |
+|------|------|
+| [**mpp-agent**](/docs/user-guide/skills/optional/payments/payments-mpp-agent) | 通过机器支付协议（MPP）向返回HTTP 402状态码的API发起支付请求。 |
+| [**stripe-link-cli**](/docs/user-guide/skills/optional/payments/payments-stripe-link-cli) | 通过Stripe Link实现代理支付功能，支持信用卡支付、SPT支付以及审批流程管理。 |
+| [**stripe-projects**](/docs/user-guide/skills/optional/payments/payments-stripe-projects) | 通过Stripe Projects功能配置SaaS服务，并同步相关认证信息。 |
 
-## 研究领域| 技能 | 描述 |
+## 生产力提升工具
+
+| 技能 | 描述 |
+|------|------|
+| [**canvas**](/docs/user-guide/skills/optional/productivity/productivity-canvas) | Canvas学习管理系统集成工具，可通过API令牌认证获取已注册的课程与作业信息。 |
+| [**here.now**](/docs/user-guide/skills/optional/productivity/productivity-here-now) | 可将静态网站发布到&#123;slug&#125;.here.now地址，同时可将私有文件存储在云端Drives中，便于在不同代理之间传递文件。 |
+| [**memento-flashcards**](/docs/user-guide/skills/optional/productivity/productivity-memento-flashcards) | 基于间隔重复算法的闪卡系统，用户可基于事实或文本创建闪卡，通过自由文本回答与代理进行互动交流，系统会根据回答质量给出评分，还可从YouTube视频字幕中生成测验题，具备自适应调度功能，可安排到期需复习的闪卡，同时支持闪卡的导入与导出操作…… |
+| [**shop-app**](/docs/user-guide/skills/optional/productivity/productivity-shop-app) | Shop.app：提供产品搜索、订单追踪、退货处理以及重新订购等功能。 |
+| [**shopify**](/docs/user-guide/skills/optional/productivity/productivity-shopify) | 通过curl命令调用Shopify的管理端及前端API，可获取产品、订单、客户、库存以及元字段等相关数据。 |
+| [**siyuan**](/docs/user-guide/skills/optional/productivity/productivity-siyuan) | SiYuan笔记API，支持通过curl命令对自托管知识库中的块状内容与文档进行搜索、读取、创建及管理操作。 |
+| [**telephony**](/docs/user-guide/skills/optional/productivity/productivity-telephony) | 无需对核心工具进行修改即可为Hermes添加电话功能，可配置并持久保存Twilio号码，支持发送和接收短信/MMS消息，可直接拨打电话，还可通过Bland.ai或Vapi平台发起基于人工智能的呼出通话…… |
+
+## 研究应用| 技能 | 描述 |
 |-------|-------------|
 | [**生物信息学**](/docs/user-guide/skills/optional/research/research-bioinformatics) | 提供来自 bioSkills 与 ClawBio 的 400 多种生物信息学技能的访问入口。涵盖基因组学、转录组学、单细胞分析、变异检测、药物基因组学、宏基因组学、结构生物学等领域，还能获取相关领域的专用参考资料…… |
 | [**达尔文进化器**](/docs/user-guide/skills/optional/research/research-darwinian-evolver) | 利用 Imbue 的进化循环功能，对提示词、正则表达式、SQL 代码等进行优化演化。 |
