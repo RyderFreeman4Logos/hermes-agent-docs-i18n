@@ -1,6 +1,6 @@
 # 为 Hermes Agent 做贡献
 
-感谢您为 Hermes Agent 做出贡献！本指南涵盖了您所需的一切内容：搭建开发环境、了解架构设计、确定要开发的功能，以及如何让您的 Pull Request 被合并。
+感谢您为 Hermes Agent 做出贡献！本指南涵盖了您所需的一切内容：设置开发环境、了解架构设计、确定要开发的功能，以及如何让您的 Pull Request 被合并。
 
 ---
 
@@ -8,77 +8,101 @@
 
 我们按照以下顺序重视各类贡献：
 
-1. **错误修复** —— 程序崩溃、异常行为、数据丢失。始终是最高优先级。
+1. **错误修复** —— 程序崩溃、异常行为、数据丢失。始终为最高优先级。
 2. **跨平台兼容性** —— macOS、不同 Linux 发行版以及 Windows 上的 WSL2。我们希望 Hermes 能在所有平台上正常运行。
-3. **安全性强化** —— 命令注入、提示符注入、路径遍历、权限提升等问题。详情请参阅[安全注意事项](#security-considerations)。
+3. **安全性强化** —— 命令注入、提示符注入、路径遍历、权限提升等问题。详情请参阅 [安全考虑事项](#security-considerations)。
 4. **性能与稳定性** —— 重试逻辑、错误处理机制以及优雅降级功能。
-5. **新技能** —— 但仅限具有广泛实用价值的技能。详情请参阅[应该是技能还是工具？](#should-it-be-a-skill-or-a-tool)。
-6. **新工具** —— 几乎不需要。大多数功能都应以技能的形式实现。详见下文。
+5. **新技能** —— 但仅限具有广泛实用价值的技能。详情请参阅 [应该是技能还是工具？](#should-it-be-a-skill-or-a-tool)。
+6. **新工具** —— 很少需要。大多数功能都应以技能的形式实现。详见下文。
 7. **文档完善** —— 修正错误、澄清内容、补充新示例。
 
 ---
 
-## 应该是技能还是工具？
+## 应该将其设计为技能还是工具？
 
-这是新贡献者最常遇到的问题。答案几乎总是**技能**。
+这是新贡献者最常遇到的问题。答案几乎总是 **技能**。
 
-### 以下情况应将其设为技能：
+### 以下情况适合设计为技能：
 
-- 该功能可通过指令 + Shell 命令 + 现有工具来实现；
-- 它封装了外部 CLI 或 API，Agent 可通过 `terminal` 或 `web_extract` 调用它们；
-- 不需要将自定义的 Python 集成或 API 密钥管理直接嵌入 Agent 中。
+- 该功能可通过指令 + shell 命令 + 现有工具来实现；
+- 它封装了外部 CLI 或 API，Agent 可通过 `terminal` 或 `web_extract` 调用这些接口；
+- 无需在 Agent 中内置自定义的 Python 集成或 API 密钥管理功能。
 - **示例**：arXiv 搜索、git 工作流、Docker 管理、PDF 处理、通过 CLI 工具发送邮件。
 
-### 以下情况应将其设为工具：
+### 以下情况适合设计为工具：
 
 - 它需要与 API 密钥、认证流程或由 Agent 管理的多组件配置进行端到端集成；
-- 需要每次都精确执行的自定义处理逻辑（而非依赖 LLM 的“尽力而为”解读）；
-- 需要处理二进制数据、流式数据或无法通过终端传输的实时事件。
+- 它需要精确执行的自定义处理逻辑（而非依赖 LLM 的“尽力而为”式解读）；
+- 它需要处理二进制数据、流式数据或无法通过终端传输的实时事件。
 - **示例**：浏览器自动化（Browserbase 会话管理）、文本转语音（音频编码 + 平台播放）、视觉分析（base64 图像处理）。
 
-### 技能是否需要打包？
+### 技能是否应该被打包？
 
-打包在 `skills/` 目录中的技能会随每个 Hermes 安装包一同提供。它们应当**对大多数用户都具有广泛实用性**：
+打包在 `skills/` 目录中的技能会随每个 Hermes 安装包一同提供。它们应当**对大多数用户都具有广泛实用性**，例如：
 
-- 文档处理、网络调研、常见的开发工作流、系统管理；
+- 文档处理、网络调研、常见的开发工作流、系统管理功能；
 - 被大量用户频繁使用。
 
-如果您的技能是官方提供的且很有用，但并非所有人都需要（例如某种付费服务集成或依赖较大的功能），请将其放入**`optional-skills/`**目录——它虽会随仓库一起提供，但默认不会被激活。用户可以通过 `hermes skills browse` 查找它（标记为“official”），并使用 `hermes skills install` 安装（无需第三方警告，具备内置信任度）。
+如果您的技能是官方提供的且很有用，但并非所有人都需要（例如某种付费服务集成或依赖庞大的第三方库），请将其放入 **`optional-skills/`** 目录——该目录中的内容会随仓库一起提供，但默认不会被激活。用户可以通过 `hermes skills browse` 查看这些“官方”技能，并使用 `hermes skills install` 进行安装（无需担心第三方依赖问题，因为其安全性已得到保障）。
 
-如果您的技能是专业化的、由社区贡献的或针对特定场景设计的，那么将其放在**Skills Hub**中更为合适——上传到技能注册表后，可在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可以通过 `hermes skills install` 安装它。
+如果您的技能属于专业领域、由社区贡献或适用范围较窄，那么将其发布到 **Skills Hub** 更为合适——您可以将它上传到技能注册表，并在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可以通过 `hermes skills install` 安装此类技能。
 
 ---
 
 ## 内存提供器：作为独立插件发布
 
-**我们不再接受新的内存提供器加入此仓库。** `plugins/memory/` 目录下已有的内置提供器（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）已不再接受新增。如果您想添加新的内存后端，请将其作为**独立的插件仓库**发布，用户可将其安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。
+**我们不再接受新的内存提供器加入此仓库。** `plugins/memory/` 目录下已有的内置提供器（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）列表已固定不变。如果您想添加新的内存后端，应将其作为**独立插件仓库**发布，供用户安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。
 
 独立内存插件需满足以下要求：
 
-- 实现相同的 `MemoryProvider` ABC 接口（位于 `agent/memory_provider.py` 文件中），包括 `sync_turn`、`prefetch`、`shutdown` 方法，以及可选的 `post_setup(hermes_home, config)` 方法以支持设置向导集成；
-- 使用相同的发现系统——`discover_memory_providers()` 函数会从用户/项目插件目录及 pip 安装路径中自动识别这些插件；
+- 实现相同的 `MemoryProvider` ABC 接口（位于 `agent/memory_provider.py` 文件中），包括 `sync_turn`、`prefetch`、`shutdown` 方法，以及可选的 `post_setup(hermes_home, config)` 方法用于与设置向导集成；
+- 使用相同的发现系统——`discover_memory_providers()` 函数会从用户/项目插件目录及 pip 安装路径中识别这些插件；
 - 通过 `post_setup()` 方法与 `hermes memory setup` 功能集成，无需修改核心代码；
 - 可以在 `cli.py` 文件中使用 `register_cli(subparser)` 方法注册自己的 CLI 子命令；
 - 可以获得与内置提供器相同的生命周期钩子和配置管理功能。
 
-对于那些试图在 `plugins/memory/` 目录下新增子目录的 Pull Request，我们将予以驳回，并指引用户将相关提供器作为独立仓库发布。现有的内置提供器将继续保留，对其的错误修复依然受到欢迎。
+对于那些试图在 `plugins/memory/` 目录下新建子目录的 Pull Request，我们将予以拒绝，并提示用户将相关提供器作为独立仓库发布。现有的内置提供器将继续保留，对其的错误修复仍然受到欢迎。
 
-这并非质量标准，而是出于耦合度和维护性考虑做出的决策。内存提供器是最常见的插件类型，不应全部集中放在这个目录下。
+这并非质量标准，而是出于耦合度和维护性考虑做出的决策。由于内存提供器是最常见的插件类型，因此不应全部集中在这个目录下。
 
 ---
 
-## 开发环境搭建
+## 开发环境设置
 
 ### 先决条件
 
-| 要求 | 备注 |
-|------|------|
+| 需求项 | 说明 |
+|--------|------|
 | **Git** | 需安装 `git-lfs` 扩展 |
-| **Python 3.11+** | 若缺失，uv 工具会自动帮您安装 |
+| **Python 3.11+** | 若未安装，uv 工具会自动帮您安装 |
 | **uv** | 快速的 Python 包管理工具（[安装指南](https://docs.astral.sh/uv/)） |
-| **Node.js 20+** | 可选——用于浏览器工具和 WhatsApp 桥接功能（需与根目录 `package.json` 中指定的引擎版本一致） |
+| **Node.js 20+** | 可选——用于浏览器工具和 WhatsApp 桥接功能（需与项目根目录下的 `package.json` 中指定的引擎版本一致） |
 
-### 克隆并安装
+### 使用标准安装程序进行安装
+
+对于大多数贡献者而言，最便捷的开发环境搭建方式就是让用户按照常规流程操作：运行标准安装程序，然后在克隆的仓库中进行开发。安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令入口，设定 `hermes update` 的更新机制，并将完整的 git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录中（通常为 `~/.hermes/hermes-agent`）。这样一来，您的开发环境布局就会与 CLI 工具、更新程序、懒加载依赖安装器、网关以及文档中所假设的布局保持一致。
+
+```bash
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+cd "${HERMES_HOME:-$HOME/.hermes}/hermes-agent"
+
+# Add dev/test extras on top of the standard install.
+uv pip install -e ".[all,dev]"
+
+# Optional: browser tools / docs site dependencies.
+npm install
+```
+
+之后，创建分支，并在该分支上运行测试：
+
+```bash
+git checkout -b fix/description
+scripts/run_tests.sh
+```
+
+### 手动克隆回退方案
+
+仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方法（例如在容器或 CI 任务中使用的临时克隆项目）。若选择这种方式进行安装，请务必从该虚拟环境内运行 `hermes` 入口程序；否则，直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入无关的系统 Python 包。
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
@@ -109,13 +133,16 @@ echo "OPENROUTER_API_KEY=***" >> ~/.hermes/.env
 ### 运行
 
 ```bash
-# Symlink for global access
-mkdir -p ~/.local/bin
-ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
-
-# Verify
+# The standard installer already put `hermes` on PATH.
 hermes doctor
 hermes chat -q "Hello"
+```
+
+如果您使用了手动克隆的备用方案，请从代码检出目录运行 `./hermes`，或明确地创建该克隆版本的虚拟环境链接：
+
+```bash
+mkdir -p ~/.local/bin
+ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
 ```
 
 ### 运行测试
