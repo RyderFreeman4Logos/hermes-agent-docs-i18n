@@ -1850,6 +1850,8 @@
   - [Payments]()
     - [Mpp Agent]()
       - [MPP Agent 技能](zh/optional-skills/payments/mpp-agent/SKILL.md)
+    - [Stripe Link Cli]()
+      - [Stripe Link CLI 技能](zh/optional-skills/payments/stripe-link-cli/SKILL.md)
     - [Stripe Projects]()
       - [Stripe Projects 技能](zh/optional-skills/payments/stripe-projects/SKILL.md)
   - [Productivity]()
