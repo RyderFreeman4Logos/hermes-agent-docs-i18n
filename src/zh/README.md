@@ -160,35 +160,35 @@ hermes claw migrate --preset user-data   # Migrate without secrets
 hermes claw migrate --overwrite  # Overwrite existing conflicts
 ```
 
-将被导入的内容包括：
+**会被导入的内容：**
 
 - **SOUL.md** — 人物设定文件  
 - **Memories** — MEMORY.md 与 USER.md 中的记录  
 - **Skills** — 用户自定义的技能 → `~/.hermes/skills/openclaw-imports/`  
-- **命令白名单** — 审批规则配置  
-- **消息设置** — 平台配置、允许通信的用户列表及工作目录  
-- **API密钥** — 已列入白名单的密钥（Telegram、OpenRouter、OpenAI、Anthropic、ElevenLabs）  
-- **TTS资源** — 工作空间内的音频文件  
-- **工作空间说明** — AGENTS.md 文件（需使用 `--workspace-target` 参数）  
+- **命令允许列表** — 审批规则配置  
+- **消息设置** — 平台配置、允许的消息发送对象以及工作目录  
+- **API 密钥** — 已列入允许列表的密钥（适用于 Telegram、OpenRouter、OpenAI、Anthropic、ElevenLabs）  
+- **TTS 资源** — 工作区的音频文件  
+- **工作区说明** — AGENTS.md 文件（需使用 `--workspace-target` 参数）  
 
-如需查看所有选项，请参阅 `hermes claw migrate --help`；若希望通过交互式引导完成迁移并预览效果，可使用 `openclaw-migration` 技能。
+如需查看所有选项，请参阅 `hermes claw migrate --help`；若希望通过交互式引导完成迁移并预览效果，可使用 `openclaw-migration` 技能。  
 
 ---
 
 ## 贡献指南
 
-我们欢迎大家贡献代码！请参阅[贡献指南](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing)，了解开发环境配置、代码风格规范及提交请求流程。  
+我们欢迎大家贡献代码！有关开发环境配置、代码风格规范以及 Pull Request 提交流程的详细说明，请参阅 [贡献指南](https://hermes-agent.nousresearch.com/docs/developer-guide/contributing)。  
 
-对于希望快速入门的贡献者，可直接克隆项目并运行 `setup-hermes.sh` 进行初始化：
+对于希望快速开始贡献的开发者：请先使用标准安装程序，随后在安装程序生成的完整 git 代码库中进行开发，该代码库通常存储在 `$HERMES_HOME/hermes-agent` 目录下（即 `~/.hermes/hermes-agent`）。这样的目录结构与 `hermes update`、托管虚拟环境、延迟加载依赖项、网关以及文档工具所使用的结构保持一致。
 
 ```bash
-git clone https://github.com/NousResearch/hermes-agent.git
-cd hermes-agent
-./setup-hermes.sh     # installs uv, creates venv, installs .[all], symlinks ~/.local/bin/hermes
-./hermes              # auto-detects the venv, no need to `source` first
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+cd "${HERMES_HOME:-$HOME/.hermes}/hermes-agent"
+uv pip install -e ".[all,dev]"
+scripts/run_tests.sh
 ```
 
-手动路径（与上述路径功能相同）：
+手动克隆备用方案（适用于一次性克隆场景或 CI 环境，即在那些您明确不希望采用托管安装结构的情形下）：
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
