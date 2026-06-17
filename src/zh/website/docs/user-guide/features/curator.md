@@ -6,39 +6,43 @@ description: "Background maintenance for agent-created skills — usage tracking
 
 # 管理器
 
-管理器是专为**由智能体创建的技能**设计的后台维护工具。它负责记录每个技能的查看、使用及修复频率，将长期未被使用的技能逐步从“活跃”状态转为“过时”状态，最终归档；同时会定期运行简短的辅助模型检查，提出合并或修复偏差的建议。
+管理器是用于**智能体生成的技能**的后台维护工具。它会记录每个技能的查看、使用及修复频率，将长期未使用的技能依次转移到 `active → stale → archived` 状态，并定期运行简短的辅助模型检查，提出合并或修复异常的建议。
 
-其存在目的是避免通过[自我改进循环](/user-guide/features/skills#agent-managed-skills-skill_manage-tool)创建的技能无限堆积。每当智能体解决新问题并保存一个技能时，该技能就会被存放在`~/.hermes/skills/`目录中。若不进行维护，最终会出现大量几乎重复的技能，不仅污染技能库，还会浪费计算资源。
+其存在目的是防止通过[自我改进循环](/user-guide/features/skills#agent-managed-skills-skill_manage-tool)生成的技能无限堆积。每当智能体解决新问题并保存一个技能时，该技能就会被存放在 `~/.hermes/skills/` 目录中。若不进行维护，最终会出现数十个几乎相同的狭窄领域技能，既污染技能库又会浪费计算资源。
 
-默认情况下（`prune_builtins: true`），管理器会在**`archive_after_days`天**未使用时，将**未使用的预置内置技能**（随代码仓库一同提供的技能）与它主要管理的智能体创建技能一并归档。而通过[agentskills.io](https://agentskills.io)安装的Hub技能则始终不在其处理范围内。若要将行为恢复为仅管理智能体创建技能的旧模式，可设置`curator.prune_builtins: false`，此时预置技能将不会被触碰。此外，管理器**绝不会自动删除**技能——最糟糕的结果也只是将其归档到`~/.hermes/skills/.archive/`目录中，该目录中的内容仍可恢复。
+默认情况下（`prune_builtins: true`），管理器会在**`archive_after_days` 天**未使用时，将**未使用的预装内置技能**（随仓库一同提供的技能）与它主要管理的智能体生成技能一起归档。而通过 [agentskills.io](https://agentskills.io) 安装的 Hub 技能则始终不在其处理范围内。若要将行为恢复为仅管理智能体生成技能的旧模式，可设置 `curator.prune_builtins: false`，此时预装技能将永远不会被触碰。此外，管理器**绝不会自动删除**技能——最糟糕的结果也只是将其归档到 `~/.hermes/skills/.archive/` 目录中，该目录中的内容仍可恢复。
 
-该功能关联[问题 #7816](https://github.com/NousResearch/hermes-agent/issues/7816)。
+该功能关联 [问题 #7816](https://github.com/NousResearch/hermes-agent/issues/7816)。
 
 ## 运行机制
 
-管理器的触发基于空闲状态检测，而非cron守护进程。在CLI会话启动时，以及网关的cron定时器线程中定期触发时，Hermes会检查以下条件：
+管理器是由闲置状态检测触发的，而非由 cron 守护进程启动。在 CLI 会话开始时，以及网关的 cron-ticker 线程中定期触发时，Hermes 会检查以下条件：
 
-1. 自上次运行管理器以来已过去足够的时间（`interval_hours`，默认为**7天**）；
-2. 智能体已处于空闲状态足够长时间（`min_idle_hours`，默认为**2小时**）。
+1. 自上次运行管理器以来已过去足够的时间（`interval_hours`，默认为**7 天**）；
+2. 智能体已处于闲置状态足够长的时间（`min_idle_hours`，默认为**2 小时**）。
 
-若两个条件均满足，系统会启动一个`AIAgent`的后台副本——这与内存/技能自我改进功能所采用的机制相同。该副本拥有独立的提示词缓存，且不会干扰当前正在进行的对话。
+若两个条件均满足，它就会启动一个 `AIAgent` 的后台副本——这与内存/技能自我改进功能所采用的机制相同。该副本拥有独立的提示词缓存，且不会干扰当前正在进行的对话。
 
 :::info 首次运行行为
-在全新安装环境中（或执行`hermes update`后首次触发预管理器模式时），管理器**不会立即运行**。系统会首先将`last_run_at`的初始值设置为“当前时间”，并将首次实际处理时间推迟整整一个`interval_hours`间隔。这样您就有足够的时间来审查技能库，标记重要技能，或选择完全不参与管理。
+在全新安装后（或执行 `hermes update` 后首次触发预管理器模式时），管理器**不会立即运行**。首次运行会将 `last_run_at` 的值设为“当前时间”，并将首次实际处理时间推迟一个完整的 `interval_hours` 时间间隔。这样，在管理器真正开始处理之前，你有足够的时间来审查技能库、标记重要技能或选择完全不参与处理。
 
-如果您想在实际运行前查看管理器会执行哪些操作，可运行`hermes curator run --dry-run`命令——该命令会生成相同的检查报告，而不会对技能库进行任何修改。
+如果你想在实际运行前查看管理器会执行哪些操作，可以运行 `hermes curator run --dry-run` 命令——它会产生相同的检查报告，而不会修改技能库内容。
 :::
 
 一次运行包含两个阶段：
 
-1. **自动转换**（确定性处理，无需LLM参与）。超过`stale_after_days`（30天）未使用的技能会被标记为“过时”状态；超过`archive_after_days`（90天）未使用的技能则会被移至`~/.hermes/skills/.archive/`目录。
-2. **LLM检查**（使用单个辅助模型进行8次迭代处理）。该副本智能体会逐一检查所有智能体创建的技能，可通过`skill_view`功能读取这些技能的内容，然后针对每个技能决定是保留、通过`skill_manage`工具进行修复、合并重复的技能，还是通过终端工具将其归档。在合并操作中，一个技能被视为一个完整的包：如果该技能包含`references/`、`templates/`、`scripts/`、`assets/`这些目录，或包含指向这些路径的相对链接，管理器必须要么将其作为独立技能保留，要么重新定位所需的支持文件并修改路径，要么完整保留整个包——而不会仅将`SKILL.md`文件的内容合并到另一个技能的`references/`文件中。
+1. **自动转换**（确定性操作，无需使用大语言模型）。未使用 `stale_after_days` 天（30天）的技能会被标记为 `stale` 状态；未使用 `archive_after_days` 天（90天）的技能则会被移至 `~/.hermes/skills/.archive/` 目录。这是始终处于激活状态的剪枝功能——只要管理器处于启用状态，就会持续运行，且不会产生辅助模型成本。
+2. **大语言模型整合**（使用单个辅助模型进行一次处理，`max_iterations=8`）——**默认关闭**。当设置 `curator.consolidate: true` 时，副本智能体会遍历所有智能体生成的技能，可通过 `skill_view` 功能读取任意技能的内容，然后针对每个技能决定是保留、通过 `skill_manage` 工具进行修复、将重叠的技能整合为类级“伞形技能”，还是通过终端工具将其归档。整合操作会将一个技能视为一个完整的包：如果该技能包含 `references/`、`templates/`、`scripts/`、`assets/` 目录，或这些路径的相对链接，管理器必须要么将其作为独立技能保留，要么重新整理所需的支持文件并修改路径，要么将整个包原封不动地归档——而不会仅将 `SKILL.md` 文件的内容合并到另一个技能的 `references/` 文件中。
 
-被标记为“固定”的技能既不受管理器自动转换操作的影响，也不受智能体自身的`skill_manage`工具的操作影响。详情请参见下文[固定技能](#pinning-a-skill)部分。
+:::info 整合功能为可选
+默认情况下，管理器仅执行**剪枝操作**——即通过确定性闲置检测将技能标记为过时状态，并归档长期未使用的技能。而基于大语言模型的**整合操作**（构建“伞形技能”、合并重叠技能）默认是关闭的，因为每次运行都会消耗辅助模型令牌，还会对你的技能库进行大规模的结构调整。如需启用该功能，可设置 `curator.consolidate: true`，或通过 `hermes curator run --consolidate` 命令按需运行一次。
+:::
 
-## 配置
+被标记为“固定”的技能既不会受到管理器自动转换操作的影响，也不会被智能体自身的 `skill_manage` 工具修改。详情请参见下文[固定技能](#pinning-a-skill)部分。
 
-所有相关设置均位于`config.yaml`文件中的`curator:`部分（而非`.env`文件——这些并非敏感信息）。默认值为：
+## 配置选项
+
+所有相关设置均位于 `config.yaml` 文件的 `curator:` 部分（而非 `.env` 文件——这些并非敏感信息）。默认值如下：
 
 ```yaml
 curator:
@@ -47,16 +51,17 @@ curator:
   min_idle_hours: 2
   stale_after_days: 30
   archive_after_days: 90
+  consolidate: false           # LLM umbrella-building pass — opt-in (prune-only by default)
   prune_builtins: true         # archive unused bundled built-in skills too (hub skills always exempt)
 ```
 
-如需完全禁用该功能，可将 `curator.enabled` 设置为 `false`。
+如需完全禁用该功能，请将 `curator.enabled` 设置为 `false`。若希望保持持续剪枝功能，同时启用大语言模型整合功能，则应将 `curator.consolidate` 设置为 `true`。
 
-### 在成本更低的辅助模型上运行审核
+### 在成本更低的辅助模型上运行审查任务
 
-Curator 的 LLM 审核任务属于常规的辅助任务类型——即 `auxiliary.curator`，与视觉处理、压缩、会话搜索等功能处于同一类别。“自动”选项表示“使用我的主聊天模型”；如需指定特定的提供商和模型来执行审核任务，则可覆盖该设置。
+Curator 的大语言模型审查功能属于常规的辅助任务类型——即 `auxiliary.curator`，与视觉处理、压缩、会话搜索等功能处于同一类别。“自动”选项表示“使用我的主聊天模型”；如需指定特定的提供商和模型来执行审查任务，可自行覆盖该设置。
 
-**最简单的方法——使用 `hermes model`：**
+**最简单的方式——使用 `hermes model`：**
 
 ```bash
 hermes model                   # → "Auxiliary models — side-task routing"
@@ -85,8 +90,9 @@ auxiliary:
 
 ```bash
 hermes curator status         # last run, counts, pinned list, LRU top 5
-hermes curator run            # trigger a review now (blocks until the LLM pass finishes)
-hermes curator run --background  # fire-and-forget: start the LLM pass in a background thread
+hermes curator run            # trigger a run now (blocks until done). Prune-only unless curator.consolidate: true
+hermes curator run --consolidate # force the LLM consolidation pass on for this run, overriding the config default
+hermes curator run --background  # fire-and-forget: start the run in a background thread
 hermes curator run --dry-run  # preview only — report without any mutations
 hermes curator backup         # take a manual snapshot of ~/.hermes/skills/
 hermes curator rollback       # restore from the newest snapshot
