@@ -1869,6 +1869,7 @@
     - [Shop]()
       - [References]()
         - [法律条款](zh/optional-skills/productivity/shop/references/legal.md)
+        - [安全、保密与法律合规](zh/optional-skills/productivity/shop/references/safety.md)
     - [Shopify]()
       - [Shopify — 管理后台与店铺前端 GraphQL API](zh/optional-skills/productivity/shopify/SKILL.md)
     - [Siyuan]()
