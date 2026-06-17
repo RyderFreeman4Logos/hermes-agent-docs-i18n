@@ -126,7 +126,7 @@ def load_soul_md() -> Optional[str]:
         return None
     content = soul_path.read_text(encoding="utf-8").strip()
     content = _scan_context_content(content, "SOUL.md")  # Security scan
-    content = _truncate_content(content, "SOUL.md")       # Cap at 20k chars
+    content = _truncate_content(content, "SOUL.md")       # Cap defaults to 20k chars, configurable
     return content
 ```
 
@@ -186,78 +186,78 @@ def build_context_files_prompt(cwd=None, skip_soul=False):
 
 | 优先级 | 文件名 | 搜索范围 | 备注 |
 |--------|--------|----------|------|
-| 1 | `.hermes.md`、`HERMES.md` | 从当前工作目录一直搜索到 Git 根目录 | Hermes 原生项目配置文件 |
+| 1 | `.hermes.md`、`HERMES.md` | 从当前工作目录直至 git 根目录 | Hermes 原生项目配置文件 |
 | 2 | `AGENTS.md` | 仅限当前工作目录 | 通用智能体指令文件 |
-| 3 | `CLAUDE.md` | 仅限当前工作目录 | 兼容 Claude Code |
+| 3 | `CLAUDE.md` | 仅限当前工作目录 | 兼容 Claude Code 使用 |
 | 4 | `.cursorrules`、`.cursor/rules/*.mdc` | 仅限当前工作目录 | 兼容 Cursor 工具 |
 
 所有上下文文件都会经过以下处理：
-- **安全扫描** —— 检查是否存在提示注入模式，如不可见 Unicode 字符、“忽略之前的指令”以及凭证窃取企图
-- **内容截断** —— 使用 70/20 的首尾保留比例，将内容限制在 20,000 个字符以内，并添加截断标记
-- **移除 YAML 前置信息** —— 会删除 `.hermes.md` 中的前置信息（该字段预留用于未来的配置覆盖）
+- **安全扫描** — 检测提示注入模式，如隐藏的 Unicode 字符、“忽略之前的指令”以及凭证窃取企图
+- **截断处理** — 内容长度会被限制在 `context_file_max_chars` 字符以内（默认为 20,000 字符），采用 70/20 的头部/尾部保留比例，并添加截断标记
+- **去除 YAML 前置信息** — 会移除 `.hermes.md` 中的前置信息（该字段预留用于未来的配置覆盖）
 
 ## 仅在 API 调用时存在的层
 
-以下内容有意不会被保存为缓存系统提示的一部分：
+以下内容有意不作为缓存系统提示的一部分被保存：
 - `ephemeral_system_prompt`
 - 预填充消息
 - 由网关生成的会话上下文叠加内容
-- 在当前轮次中注入到用户消息中的后续轮次的 Honcho/外部检索内容
+- 在当前轮次中注入到用户消息中的后续轮次的 Honcho/外部检索结果
 
-`pre_llm_call` 插件提供的上下文也会被纳入这一仅在 API 调用时存在的路径：它会被附加到当前轮次的**用户消息**中，而不会写入缓存的系统提示中。当多个插件返回上下文时，Hermes 会将这些上下文块拼接在一起（详见[Hooks → `pre_llm_call`](../user-guide/features/hooks.md#pre_llm_call)）。
+`pre_llm_call` 插件提供的上下文也属于这一类，它会被附加到当前轮次的**用户消息**中，而不会写入缓存的系统提示中。当多个插件返回上下文时，Hermes 会将这些上下文块拼接在一起（详见[Hooks → `pre_llm_call`](../user-guide/features/hooks.md#pre_llm_call)）。
 
 这种分离方式有助于保持稳定的提示前缀，从而实现高效缓存。
 
 ## 内存快照
 
-本地内存和用户配置数据会被存储在系统提示的**易变层**中。会话进行中的写入操作虽然会更新磁盘状态，但除非触发重新构建流程（如开始新会话，或通过压缩等方式显式触发无效化/重新构建），否则不会修改已缓存的系统提示内容。
+本地内存和用户配置数据会被存储在系统提示的**易变层**中。会话过程中的写入操作虽然会更新磁盘状态，但除非触发重新构建流程（如开始新会话，或通过压缩等方式显式触发无效化/重新构建），否则不会修改已缓存的系统提示。
 
 ## 上下文文件
 
-`agent/prompt_builder.py` 会使用**优先级机制**来扫描并处理项目中的上下文文件——只加载其中一种类型的文件（首次匹配到的获胜）：
-1. `.hermes.md` / `HERMES.md`（从当前工作目录一直搜索到 Git 根目录）
-2. `AGENTS.md`（启动时仅检查当前工作目录；在会话过程中，会通过 `agent/subdirectory_hints.py` 逐步发现子目录中的文件）
+`agent/prompt_builder.py` 会通过**优先级机制**来扫描并处理项目中的上下文文件——仅加载其中一种类型（优先匹配到的那个生效）：
+1. `.hermes.md` / `HERMES.md`（会搜索至 git 根目录）
+2. `AGENTS.md`（启动时从当前工作目录读取；在会话过程中会通过 `agent/subdirectory_hints.py` 逐步发现子目录中的文件）
 3. `CLAUDE.md`（仅限当前工作目录）
 4. `.cursorrules` / `.cursor/rules/*.mdc`（仅限当前工作目录）
 
-用于身份信息的 `SOUL.md` 会通过 `load_soul_md()` 函数单独加载。一旦成功加载，`build_context_files_prompt(skip_soul=True)` 函数就会确保该文件不会重复出现。
+用于身份配置的 `SOUL.md` 会通过 `load_soul_md()` 函数单独加载。一旦成功加载，`build_context_files_prompt(skip_soul=True)` 函数会确保该文件不会重复出现。
 
 长度过长的文件在注入系统提示之前会被截断。
 
 ## 技能索引
 
-当具备技能相关工具时，技能系统会为提示内容生成一个紧凑的技能索引。
+当具备相关工具支持时，技能系统会为提示内容生成一个简洁的技能索引。
 
 ## 支持的提示自定义方式
 
-大多数用户应将 `agent/prompt_builder.py` 视为实现代码，而非可直接配置的界面。可行的自定义方式是修改 Hermes 已经加载的提示输入内容，而非直接编辑 Python 模板文件。
+大多数用户应将 `agent/prompt_builder.py` 视为实现代码，而非可直接配置的界面。推荐的定制方式是修改 Hermes 已经加载的提示输入内容，而非直接编辑 Python 模板文件。
 
 ### 首先尝试使用这些方式
 
-- `~/.hermes/SOUL.md` —— 用您自定义的智能体角色和行为规范替换内置的默认身份块
-- `~/.hermes/MEMORY.md` 和 `~/.hermes/USER.md` —— 提供应在新会话中继续使用的持久性跨会话事实及用户配置数据
-- 项目上下文文件，如 `.hermes.md`、`HERMES.md`、`AGENTS.md`、`CLAUDE.md` 或 `.cursorrules` —— 注入特定于该项目的操作规则
-- 技能模块 —— 无需编辑核心提示代码，即可封装可复用的工作流程和参考信息
-- 可选的系统提示配置/API 覆盖选项 —— 无需 fork Hermes，即可添加针对特定部署环境的指令文本
-- 临时性叠加内容，如 `HERMES_EPHEMERAL_SYSTEM_PROMPT` 或预填充消息 —— 添加仅适用于当前轮次的指导内容，避免其成为缓存提示前缀的一部分
+- `~/.hermes/SOUL.md` — 用您自定义的智能体角色和行为规范替换内置的默认身份模块
+- `~/.hermes/MEMORY.md` 和 `~/.hermes/USER.md` — 提供需要在新会话中继续使用的持久性事实信息和用户配置数据
+- 项目级上下文文件，如 `.hermes.md`、`HERMES.md`、`AGENTS.md`、`CLAUDE.md` 或 `.cursorrules` — 注入特定项目的工作规则
+- 技能模块 — 无需编辑核心提示代码即可封装可复用的工作流程和参考信息
+- 可选的系统提示配置/API 覆盖选项 — 可添加针对特定部署环境的指令文本，而无需 fork Hermes 源码
+- 临时性叠加内容，如 `HERMES_EPHEMERAL_SYSTEM_PROMPT` 或预填充消息 — 添加仅适用于当前轮次的指导信息，这类内容不会成为缓存提示前缀的一部分
 
 ### 何时需要直接编辑代码
 
-只有当您有意维护某个分支版本或为上游项目贡献功能修改时，才需要编辑 `agent/prompt_builder.py`。该文件负责为每个会话构建提示结构、定义缓存边界以及确定内容注入顺序。直接在该文件中进行编辑属于全局产品层面的修改，而非针对单个用户的提示自定义。
+只有当您有意维护某个分支版本或向上游提交功能修改时，才需要编辑 `agent/prompt_builder.py`。该文件负责为每个会话构建提示结构、定义缓存边界以及确定内容注入顺序。直接在该文件中进行修改属于全局产品层面的改动，而非针对单个用户的提示定制。
 
 简而言之：
-- 如果您希望更改智能体身份，编辑 `SOUL.md`
-- 如果您希望更改项目规则，编辑项目上下文文件
-- 如果您希望创建可复用的操作流程，添加或修改技能模块
-- 如果您希望改变 Hermes 为所有用户生成提示的方式，需修改 Python 代码，并将其视为对项目的贡献
+- 若希望更改智能体身份，编辑 `SOUL.md`
+- 若希望调整项目规则，编辑项目级上下文文件
+- 若希望创建可复用的操作流程，添加或修改技能模块
+- 若希望改变 Hermes 为所有用户生成提示的方式，则需要修改 Python 代码，并将其视为代码贡献
 
 ## 为何采用这种提示构建方式
 
 这种架构设计旨在实现以下目标：
-- 保留供应商端的提示缓存功能
+- 保留供应商侧提供的提示缓存功能
 - 避免不必要的历史记录修改
 - 保持内存操作逻辑的清晰性
-- 允许网关/ACP/CLI 添加上下文内容，而不会影响已缓存的提示状态
+- 允许网关/ACP/CLI 添加上下文信息，而不会污染已缓存的提示状态
 
 ## 相关文档
 
