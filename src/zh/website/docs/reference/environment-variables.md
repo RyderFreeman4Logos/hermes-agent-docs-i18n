@@ -493,28 +493,28 @@ compression:
   protect_last_n: 20         # minimum recent messages to keep uncompressed
 ```
 
-:::info 旧版本迁移
-包含 `compression.summary_model`、`compression.summary_provider` 以及 `compression.summary_base_url` 的旧配置，在首次加载时会被自动迁移为 `auxiliary.compression.*` 格式。
+:::info 旧配置迁移
+包含 `compression.summary_model`、`compression.summary_provider` 以及 `compression.summary_base_url` 的旧版配置，在首次加载时会被自动迁移为 `auxiliary.compression.*` 格式。
 :::
 
 ## 辅助任务覆盖参数
 
 | 参数名 | 描述 |
 |--------|------|
-| `AUXILIARY_VISION_PROVIDER` | 用于覆盖视觉任务的提供方 |
-| `AUXILIARY_VISION_MODEL` | 用于覆盖视觉任务的模型 |
+| `AUXILIARY_VISION_PROVIDER` | 用于视觉任务的提供商覆盖参数 |
+| `AUXILIARY_VISION_MODEL` | 用于视觉任务的模型覆盖参数 |
 | `AUXILIARY_VISION_BASE_URL` | 用于视觉任务的直接 OpenAI 兼容接口地址 |
 | `AUXILIARY_VISION_API_KEY` | 与 `AUXILIARY_VISION_BASE_URL` 配对的 API 密钥 |
-| `AUXILIARY_WEB_EXTRACT_PROVIDER` | 用于覆盖网页提取/摘要任务的提供方 |
-| `AUXILIARY_WEB_EXTRACT_MODEL` | 用于覆盖网页提取/摘要任务的模型 |
+| `AUXILIARY_WEB_EXTRACT_PROVIDER` | 用于网页提取/摘要任务的提供商覆盖参数 |
+| `AUXILIARY_WEB_EXTRACT_MODEL` | 用于网页提取/摘要任务的模型覆盖参数 |
 | `AUXILIARY_WEB_EXTRACT_BASE_URL` | 用于网页提取/摘要任务的直接 OpenAI 兼容接口地址 |
 | `AUXILIARY_WEB_EXTRACT_API_KEY` | 与 `AUXILIARY_WEB_EXTRACT_BASE_URL` 配对的 API 密钥 |
 
 对于特定任务所需的直接接口，Hermes 会使用该任务配置的 API 密钥或 `OPENAI_API_KEY`，而不会重复使用 `OPENROUTER_API_KEY`。
 
-## 备用提供方（仅适用于 config.yaml）
+## 备用提供商（仅适用于 config.yaml）
 
-主模型的备用方案是通过 `config.yaml` 独立配置的——不存在相应的环境变量。只需在文件的最顶层添加一个包含 `provider` 和 `model` 键的 `fallback_providers` 列表，即可在主模型出现故障时实现自动切换。
+主模型的备用链配置完全通过 `config.yaml` 完成——不存在相应的环境变量。只需在文件顶部添加一个包含 `provider` 和 `model` 键的 `fallback_providers` 列表，即可在主模型出现故障时实现自动切换。那些提供商设置为 `auto` 的辅助任务，在触发 Hermes 内置的辅助任务发现机制之前，也会先查询此备用链。
 
 ```yaml
 fallback_providers:
@@ -522,23 +522,23 @@ fallback_providers:
     model: anthropic/claude-sonnet-4
 ```
 
-为保持向后兼容性，系统仍会读取旧版的单提供者格式的 `fallback_model` 设置，但新配置应使用 `fallback_providers`。
+为保持向后兼容性，系统仍会读取旧版的单提供者格式的 `fallback_model` 设置，但新配置应使用 `fallback_providers`。对于特定任务的辅助策略，请在 `config.yaml` 中使用 `auxiliary.<task>.fallback_chain` 选项；目前暂无对应的环境变量。
 
 详情请参阅 [Fallback Providers](/user-guide/features/fallback-providers) 文档。
 
-## 提供者路由配置（仅适用于 config.yaml）
+## 提供者路由设置（仅适用于 config.yaml）
 
-这些配置需添加到 `~/.hermes/config.yaml` 文件的 `provider_routing` 部分中：
+这些设置需放在 `~/.hermes/config.yaml` 文件的 `provider_routing` 部分中：
 
 | 键值 | 描述 |
 |-----|-------------|
-| `sort` | 提供者排序方式：`"price"`（默认）、`"throughput"` 或 `"latency"` |
-| `only` | 允许使用的提供者标识符列表（例如：`["anthropic", "google"]`） |
-| `ignore` | 应跳过的提供者标识符列表 |
-| `order` | 按指定顺序尝试的提供者标识符列表 |
-| `require_parameters` | 仅使用支持所有请求参数的提供者（`true`/`false`） |
-| `data_collection` | 设置为 `"allow"`（默认）或 `"deny"`，用于排除具有数据存储功能的提供者 |
+| `sort` | 提供者排序规则：`"price"`（默认）、`"throughput"` 或 `"latency"` |
+| `only` | 允许使用的提供者标识列表（例如：`["anthropic", "google"]`） |
+| `ignore` | 应跳过的提供者标识列表 |
+| `order` | 按指定顺序尝试的提供者标识列表 |
+| `require_parameters` | 仅使用能支持所有请求参数的提供者（`true`/`false`） |
+| `data_collection` | 设置为 `"allow"`（默认）或 `"deny"`，用于排除会存储数据的提供者 |
 
 :::tip
-建议使用 `hermes config set` 命令来设置环境变量——该命令会自动将它们保存到相应的文件中（敏感信息存储在 `.env` 文件中，其他配置则保存在 `config.yaml` 中）。
+建议使用 `hermes config set` 命令来设置环境变量——该命令会自动将它们保存到相应的文件中（敏感信息存入 `.env` 文件，其他内容则存入 `config.yaml`）。
 :::
