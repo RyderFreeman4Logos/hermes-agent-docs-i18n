@@ -165,52 +165,59 @@ fallback_providers:
 |---------|--------------|
 | CLI 会话 | ✔ |
 | 消息通道（Telegram、Discord 等） | ✔ |
-| 子代理委派 | ✔（子代理会继承父代理的回退链） |
-| Cron 任务 | ✔（Cron 代理会继承已配置的回退提供者） |
-| 辅助任务（图像分析、压缩等） | ✘（这些任务拥有独立的提供者链——详见下文） |
+| 子代理委托 | ✔（子代理会继承父代理的回退链） |
+| Cron 任务 | ✔（Cron 代理会继承已配置的回退提供方） |
+| `provider: auto` 模式下的辅助任务 | ✔（先尝试针对该任务的独立回退机制，若失败则使用主回退链，之后才会触发内置的辅助任务发现机制） |
 
 :::tip
-主回退链没有对应的环境变量——必须通过 `config.yaml` 或 `hermes fallback` 进行配置。这是有意为之：回退配置属于人为决策，不应被过时的 shell 导出值覆盖。
+主回退链没有对应的环境变量——必须通过 `config.yaml` 或 `hermes fallback` 进行配置。这是有意为之：回退配置属于关键设置，不应被过时的 shell 导出值覆盖。
 :::
 
 ---
 
-## 辅助任务的回退机制
+## 辅助任务回退机制
 
-Hermes 为各类辅助任务配备了独立的轻量级模型。每个任务都拥有自己的提供者解析链，该链即作为内置的回退系统。
+Hermes 为各类辅助任务配备了独立的轻量级模型。每个任务都拥有专属的提供方解析链，该链即作为内置的回退系统。
 
-### 具有独立提供者解析功能的任务
+### 具有独立提供方解析能力的任务
 
 | 任务类型 | 功能描述 | 配置键 |
-|----------|----------|-------|
-| 图像分析 | 图像处理、浏览器截图 | `auxiliary.vision` |
-| 网页提取 | 网页内容摘要生成 | `auxiliary.web_extract` |
-| 数据压缩 | 上下文信息压缩总结 | `auxiliary.compression` |
-| 技能中心 | 技能搜索与发现 | `auxiliary.skills_hub` |
-| MCP | MCP 辅助操作 | `auxiliary.mcp` |
-| 审批功能 | 智能命令审批分类 | `auxiliary.approval` |
-| 标题生成 | 会话标题摘要生成 | `auxiliary.title_generation` |
-| 任务细化工具 | `hermes kanban specify` / 仪表板✨按钮——可将简短的分类任务转化为完整的任务规范 | `auxiliary.triage_specifier` |
+|----------|----------|--------|
+| Vision | 图像分析、浏览器截图处理 | `auxiliary.vision` |
+| Web Extract | 网页内容摘要生成 | `auxiliary.web_extract` |
+| Compression | 上下文压缩摘要生成 | `auxiliary.compression` |
+| Skills Hub | 技能搜索与发现 | `auxiliary.skills_hub` |
+| MCP | MCP 辅助操作处理 | `auxiliary.mcp` |
+| Approval | 智能命令审批分类 | `auxiliary.approval` |
+| Title Generation | 会话标题摘要生成 | `auxiliary.title_generation` |
+| Triage Specifier | `hermes kanban specify` / 仪表板✨按钮——可将简短的分类任务扩展为完整的任务规范 | `auxiliary.triage_specifier` |
 
 ### 自动检测回退链
 
-当任务的提供者被设置为 `"auto"`（默认值）时，Hermes 会按顺序尝试不同的提供者，直到找到可用的那个为止：
+当任务的提供方被设置为 `"auto"`（默认值）时，Hermes 首先会尝试使用该辅助任务的主提供方及主模型。如果该路径不可用或随后出现资源不足类的错误，Hermes 会优先采用用户配置的回退策略，而非使用内置的发现链：
 
-**对于文本处理类任务（压缩、网页提取等）：**
+```text
+Main provider + main model → auxiliary.<task>.fallback_chain →
+fallback_providers / fallback_model → built-in auxiliary discovery chain
+```
+
+当存在任务专用链时，其精度最高且表现最优。顶层的 `fallback_providers` 链与主智能体所使用的策略相同，因此针对 `auto` 模式下的辅助任务，同样适用仅免费资源或同提供商的回退规则。
+
+**内置文本提取链（压缩处理、网页提取、标题生成等功能）：**
 
 ```text
 OpenRouter → Nous Portal → Custom endpoint → Codex OAuth →
 API-key providers (z.ai, Kimi, MiniMax, Xiaomi MiMo, Hugging Face, Anthropic) → give up
 ```
 
-**针对视觉任务：**
+**内置视觉检测链：**
 
 ```text
 Main provider (if vision-capable) → OpenRouter → Nous Portal →
 Codex OAuth → Anthropic → Custom endpoint → give up
 ```
 
-如果最终确定的提供者在调用时出现故障，Hermes 还会进行内部重试：若该提供者并非 OpenRouter 且未设置明确的 `base_url`，系统会将其作为最后手段尝试使用 OpenRouter 作为备用。
+对于那些尚未定义特定任务或主备用策略的用户而言，这些内置的链便是一种便捷的备用方案。
 
 ### 配置辅助提供者
 
@@ -231,6 +238,9 @@ auxiliary:
   compression:
     provider: "auto"
     model: ""
+    fallback_chain:              # optional, task-specific fallback policy
+      - provider: openrouter
+        model: inclusionai/ring-2.6-1t:free
 
   skills_hub:
     provider: "auto"
@@ -241,7 +251,9 @@ auxiliary:
     model: ""
 ```
 
-上述所有任务均遵循相同的 **provider / model / base_url** 结构。上下文压缩功能则通过 `auxiliary.compression` 参数进行配置：
+上述所有任务均遵循相同的 **provider / model / base_url** 结构模式。每个任务还可以自行定义 `fallback_chain`；若未指定，则 `provider: auto` 会优先使用顶层的 `fallback_providers` 链，然后再调用 Hermes 内置的辅助发现链。
+
+上下文压缩功能则通过 `auxiliary.compression` 参数进行配置：
 
 ```yaml
 auxiliary:
