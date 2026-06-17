@@ -320,9 +320,26 @@ display:
 display:
   tool_progress: all    # off | new | all | verbose
   tool_progress_command: false  # set to true to enable /verbose in messaging
+  # How progress is grouped on platforms that support message editing:
+  #   accumulate (default) — edit one bubble in place as tools run
+  #   separate             — send one message per tool (pre-v0.9 style; noisier)
+  # Only applies where tool_progress is already enabled.
+  tool_progress_grouping: accumulate   # accumulate | separate
 ```
 
-启用该功能后，机器人会在运行过程中发送状态消息：
+### 模型上下文中的消息时间戳
+
+默认为关闭状态。启用该功能后，Hermes 会在模型上下文中的每条**用户**消息前添加一个易于阅读的时间戳（例如 `[Tue 2026-04-28 13:40:53 CEST]`），以便智能体知晓消息的发送时间——这有助于进行时间推理（如“你是今天早上问的……”或识别出较长的时间间隔）。该功能**不会**添加到助手回复的消息或系统提示中。
+
+```yaml
+gateway:
+  message_timestamps:
+    enabled: false   # set true to show send-times to the model
+```
+
+无论是否启用该功能，已保存的转录内容始终保持整洁——时间戳作为消息元数据被存储下来，因此即便之后再开启该功能，过往消息的发送时间也会一并显示；此外，重放功能也不会产生重复的前缀内容。
+
+启用该功能后，机器人会在执行任务的同时发送状态消息：
 
 ```text
 💻 `ls -la`...
