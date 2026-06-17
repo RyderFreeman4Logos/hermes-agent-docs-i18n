@@ -582,11 +582,25 @@ memory:
   write_approval: false     # true = require approval before any memory write
 ```
 
-当启用 `memory.write_approval: true` 后，所有内存写入操作在生效前都必须经过用户确认：交互式 CLI 会直接在提示语中显示相关选项；而消息交流环节及后台自我优化阶段则会将写入请求暂存为 `/memory pending` 状态，随后提交至 `/memory approve <id>` 或 `/memory reject <id>` 进行最终审核。用户可通过 `/memory approval on|off` 命令在运行时切换此功能。更多详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。
+当设置 `memory.write_approval: true` 时，所有内存写入操作在生效前都需要经过您的确认：交互式 CLI 会直接在提示语中显示相关选项；而对于消息交流会话及后台自我优化阶段，则会将写入内容暂存为 `/memory pending`，随后进入 `/memory approve <id>` / `/memory reject <id>` 的审核流程。您可以在运行时通过 `/memory approval on|off` 来切换此功能。详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。
+
+## 上下文文件截断设置
+
+该选项用于控制 Hermes 在对上下文文件进行开头/结尾截断处理之前，会加载多少内容。这一设置适用于注入系统提示语中的各类文件，例如 `SOUL.md`、`.hermes.md`、`AGENTS.md`、`CLAUDE.md` 以及 `.cursorrules`。需要注意的是，它**不会**影响 `read_file` 工具的功能。
+
+```yaml
+context_file_max_chars: 20000  # default
+```
+
+当您有意保留较大的身份信息或项目上下文文件，并使用具有足够上下文窗口的模型来处理这些数据时，应设置该参数。
+
+```yaml
+context_file_max_chars: 25000
+```
 
 ## 文件读取安全性
 
-该功能可限制单次 `read_file` 调用返回的内容量。超出限制的读取请求将会被拒绝，并给出错误提示，建议用户使用 `offset` 和 `limit` 参数指定更小的读取范围。这样即可避免一次性读取压缩后的 JS 包或大型数据文件导致上下文窗口被过度占用。
+该机制用于控制单次 `read_file` 调用可返回的内容量。超出限制的读取请求将会被拒绝，并给出错误提示，建议智能体使用 `offset` 和 `limit` 参数来指定更小的读取范围。这样即可避免一次性读取压缩后的 JS 包或大型数据文件导致上下文窗口被过度占用。
 
 ```yaml
 file_read_max_chars: 100000  # default — ~25-35K tokens
@@ -1786,19 +1800,19 @@ Hermes 支持两种不同的上下文作用域：
 
 | 文件 | 用途 | 作用域 |
 |------|------|-------|
-| `SOUL.md` | **代理的主要身份标识**——定义代理的身份（系统提示词中的第1个字段） | `~/.hermes/SOUL.md` 或 `$HERMES_HOME/SOUL.md` |
-| `.hermes.md` / `HERMES.md` | 项目特定指令（优先级最高） | 从项目根目录开始查找 |
-| `AGENTS.md` | 项目特定指令及编码规范 | 递归遍历目录结构 |
+| `SOUL.md` | **代理的主要身份标识**——用于定义代理的身份（系统提示词中的第1个字段） | `~/.hermes/SOUL.md` 或 `$HERMES_HOME/SOUL.md` |
+| `.hermes.md` / `HERMES.md` | 项目特定的指令（优先级最高） | 从项目根目录开始查找 |
+| `AGENTS.md` | 项目特定的指令及编码规范 | 递归扫描目录结构 |
 | `CLAUDE.md` | Claude Code 的上下文文件（也会被识别） | 仅限当前工作目录 |
 | `.cursorrules` | Cursor IDE 规则文件（也会被识别） | 仅限当前工作目录 |
 | `.cursor/rules/*.mdc` | Cursor 规则文件（也会被识别） | 仅限当前工作目录 |
 
 - **SOUL.md** 是代理的核心身份标识，它占据系统提示词中的第1个字段，会完全替代内置的默认身份。通过编辑该文件可完全自定义代理的身份。
 - 如果不存在、内容为空或无法加载 `SOUL.md`，Hermes 会回退到内置的默认身份。
-- **项目上下文文件采用优先级机制**——只会加载其中一种类型（第一个匹配到的生效）：`.hermes.md` → `AGENTS.md` → `CLAUDE.md` → `.cursorrules`。而 `SOUL.md` 始终会独立加载。
-- **AGENTS.md` 具有层级结构**：如果子目录中也存在 `AGENTS.md`，则所有内容会合并在一起。
-- 如果没有默认的 `SOUL.md`，Hermes 会自动创建一个。
-- 所有被加载的上下文文件的长度上限为 20,000 个字符，超出部分会自动智能截断。
+- **项目上下文文件采用优先级机制**——仅会加载其中一种类型（第一个匹配到的生效）：`.hermes.md` → `AGENTS.md` → `CLAUDE.md` → `.cursorrules`。而 `SOUL.md` 始终会独立加载。
+- **AGENTS.md` 具有层级结构**：如果子目录中也存在 `AGENTS.md`，则所有内容会合并处理。
+- 如果尚未创建默认的 `SOUL.md`，Hermes 会自动生成一个。
+- 所有已加载的上下文文件的长度都受 `context_file_max_chars` 参数限制（默认为20,000字符），系统会自动进行智能截断处理。
 
 相关文档：
 - [个性设置与 SOUL.md](/user-guide/features/personality)
@@ -1808,9 +1822,9 @@ Hermes 支持两种不同的上下文作用域：
 
 | 上下文类型 | 默认值 |
 |----------|--------|
-| **CLI（`hermes` 命令）** | 运行命令时的当前目录 |
-| **消息传递网关** | `~/.hermes/config.yaml` 文件中的 `terminal.cwd`；若未设置，则为用户主目录 `~` |
-| **Docker / Singularity / Modal / SSH 环境** | 容器或远程机器中的用户主目录 |
+| **CLI（`hermes`命令）** | 运行命令时的当前目录 |
+| **消息传递网关** | `~/.hermes/config.yaml` 文件中的 `terminal.cwd` 设置；若未设置，则为用户的主目录 `~` |
+| **Docker / Singularity / Modal / SSH 环境** | 容器或远程机器内的用户主目录 |
 
 如需更改工作目录，可进行相应配置：
 ```yaml
