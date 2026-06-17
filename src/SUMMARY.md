@@ -1867,6 +1867,7 @@
     - [Memento Flashcards]()
       - [Memento抽认卡 —— 基于间隔重复法的抽认卡功能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
     - [Shop]()
+      - [Shop CLI 技能](zh/optional-skills/productivity/shop/SKILL.md)
       - [References]()
         - [直接全局目录 MCP](zh/optional-skills/productivity/shop/references/catalog-mcp.md)
         - [直接认证、结账及订单 API](zh/optional-skills/productivity/shop/references/direct-api.md)
