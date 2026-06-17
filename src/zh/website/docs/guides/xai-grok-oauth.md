@@ -6,13 +6,13 @@ description: "Sign in with your SuperGrok or X Premium+ subscription to use Grok
 
 # xAI Grok OAuth（SuperGrok / X Premium+）
 
-Hermes Agent 支持通过基于浏览器的 OAuth 登录流程接入 [accounts.x.ai](https://accounts.x.ai) 的 xAI Grok 服务，该流程适用于 **SuperGrok 订阅用户**（[grok.com](https://x.ai/grok)）或拥有 **X Premium+ 订阅**的账户（关联的 X 账户）。无需设置 `XAI_API_KEY`——只需登录一次，Hermes 就会自动在后台刷新您的会话。
+Hermes Agent 支持通过基于浏览器的 OAuth 登录流程接入 [accounts.x.ai](https://accounts.x.ai) 的 xAI Grok 服务，该流程适用于 **SuperGrok 订阅用户**（[grok.com](https://x.ai/grok)）或拥有 **X Premium+ 订阅**的账号（关联的 X 账号）。无需设置 `XAI_API_KEY`——只需登录一次，Hermes 就会自动在后台刷新您的会话。
 
-当您使用拥有 Premium+ 订阅的 X 账户登录时，xAI 会自动将订阅状态与您的 xAI 会话关联起来，因此其 OAuth 登录流程与直接使用 SuperGrok 订阅的用户完全相同。
+当您使用拥有 Premium+ 订阅的 X 账号登录时，xAI 会自动将订阅状态与您的 xAI 会话关联起来，因此其 OAuth 登录流程与直接使用 SuperGrok 订阅的用户完全相同。
 
-该传输层复用了 `codex_responses` 适配器（xAI 提供了类似 Responses 风格的接口），因此推理、工具调用、流式处理以及提示词缓存等功能均无需修改适配器即可正常工作。
+该传输层复用了 `codex_responses` 适配器（xAI 提供了类似 Responses 风格的接口），因此推理、工具调用、流式处理以及提示词缓存等功能均无需进行任何适配器调整即可正常工作。
 
-Hermes 中所有直接与 xAI 对接的功能——包括文本转语音、图像生成、视频生成以及文字转录——也都复用同一个 OAuth 承载令牌，因此只需登录一次即可同时使用这四项功能。
+Hermes 中所有直接对接 xAI 的功能——文本转语音、图像生成、视频生成以及文字转录——也都复用相同的 OAuth 承载令牌，因此只需登录一次即可同时使用这四项功能。
 
 ## 概览
 
@@ -22,21 +22,22 @@ Hermes 中所有直接与 xAI 对接的功能——包括文本转语音、图�
 | 显示名称 | xAI Grok OAuth（SuperGrok / X Premium+） |
 | 认证类型 | 浏览器 OAuth 2.0 PKCE（回环回调） |
 | 传输层 | xAI Responses API（`codex_responses`） |
-| 默认模型 | `grok-4.3` |
+| 默认模型 | `grok-build-0.1` |
 | 接口地址 | `https://api.x.ai/v1` |
 | 认证服务器 | `https://accounts.x.ai` |
 | 是否需要环境变量 | 否（此提供商**不**使用 `XAI_API_KEY`） |
 | 订阅要求 | [SuperGrok](https://x.ai/grok) 或 [X Premium+](https://x.com/i/premium_sign_up)——详见下方说明 |
 
-## 先决条件
+## 前提条件
 
 - Python 3.9 及以上版本
 - 已安装 Hermes Agent
-- 您的 xAI 账户拥有有效的 **SuperGrok** 订阅，**或**您用于登录的 X 账户拥有 **X Premium+** 订阅（xAI 会自动关联订阅信息）
-- 本地机器上需安装浏览器（如需远程会话，可使用 `--no-browser` 参数）
+- 您的 xAI 账号下拥有有效的 **SuperGrok** 订阅，**或**您用于登录的 X 账号拥有 **X Premium+** 订阅（xAI 会自动关联订阅信息）
+- 本地机器上需安装浏览器（如需远程会话，则可使用 `--no-browser` 参数）
 
-:::warning xAI 可能会根据用户等级限制 OAuth API 的访问权限
-xAI 的后端会对 OAuth API 设置自身的允许列表，即便应用内的订阅处于有效状态，某些普通 SuperGrok 订阅用户仍可能被拒绝访问，返回 `HTTP 403` 错误（参见问题 [#26847](https://github.com/NousResearch/hermes-agent/issues/26847)）。如果通过浏览器成功完成 OAuth 登录，但推理请求仍返回 403 错误，可设置 `XAI_API_KEY` 并切换到基于 API 密钥的接入方式（`provider: xai`）——目前该方式不受同样的访问限制。:::
+:::warning xAI 可能会根据账号层级限制 OAuth API 的访问权限
+xAI 的后端会对 OAuth API 设置自己的允许列表，即便应用内的订阅处于有效状态，某些普通 SuperGrok 订阅用户仍可能被拒绝访问，返回 `HTTP 403` 错误（参见问题 [#26847](https://github.com/NousResearch/hermes-agent/issues/26847)）。如果通过浏览器成功完成 OAuth 登录，但推理请求却返回 403 错误，请设置 `XAI_API_KEY` 并切换到基于 API 密钥的接入方式（`provider: xai`）——目前该接入方式不受同样的访问限制。
+:::
 
 ## 快速入门
 
@@ -46,7 +47,7 @@ hermes model
 # → Select "xAI Grok OAuth (SuperGrok / X Premium+)" from the provider list
 # → Hermes opens your browser to accounts.x.ai
 # → Approve access in the browser
-# → Pick a model (grok-4.3 is at the top)
+# → Pick a model (grok-build-0.1 is at the top)
 # → Start chatting
 
 hermes
@@ -108,18 +109,18 @@ hermes model --manual-paste
 hermes doctor
 ```
 
-`◆ Auth Providers`部分会显示包括`xai-oauth`在内的所有认证提供程序的当前状态。
+`◆ Auth Providers` 部分会显示包括 `xai-oauth` 在内的所有认证提供程序的当前状态。
 
 ```bash
 hermes model
 # → Select "xAI Grok OAuth (SuperGrok / X Premium+)"
-# → Pick from the model list (grok-4.3 is pinned to the top)
+# → Pick from the model list (grok-build-0.1 is pinned to the top)
 ```
 
 或者直接设置模型：
 
 ```bash
-hermes config set model.default grok-4.3
+hermes config set model.default grok-build-0.1
 hermes config set model.provider xai-oauth
 ```
 
@@ -129,7 +130,7 @@ hermes config set model.provider xai-oauth
 
 ```yaml
 model:
-  default: grok-4.3
+  default: grok-build-0.1
   provider: xai-oauth
   base_url: https://api.x.ai/v1
 ```
@@ -159,61 +160,62 @@ hermes tools
 # → X (Twitter) Search   → "xAI Grok OAuth (SuperGrok / X Premium+)"
 ```
 
-如果已存储有 OAuth 令牌，选择器会确认该信息并跳过凭证输入步骤。若既未设置 OAuth 令牌也未设置 `XAI_API_KEY`，选择器会提供三个选项：OAuth 登录、粘贴 API 密钥或直接跳过。
+如果已存储有 OAuth 令牌，选择器会确认该信息并跳过凭证输入步骤。若既未设置 OAuth 令牌也未设置 `XAI_API_KEY`，则选择器会提供三个选项：通过 OAuth 登录、粘贴 API 密钥或直接跳过。
 
 :::注意 视频生成功能默认处于关闭状态
-`video_gen` 工具集默认是禁用的。在智能体能够调用 `video_generate` 功能之前，需先通过 `hermes tools` → `🎬 Video Generation`（按空格键）将其启用。否则，智能体可能会回退到内置的 ComfyUI 技能，该技能同样具备视频生成功能。
+`video_gen` 工具集默认是禁用的。在智能体能够调用 `video_generate` 函数之前，需先通过 `hermes tools` → `🎬 Video Generation`（按空格键）将其启用。否则，智能体可能会回退到内置的 ComfyUI 技能，该技能同样具备视频生成功能。
 :::
 
-:::注意 当配置了 xAI 凭证时，X 搜索功能会自动启用
-一旦配置了 xAI 凭证（SuperGrok / X Premium+ OAuth 令牌或 `XAI_API_KEY`），`x_search` 工具集就会自动启用。如不希望如此，可通过 `hermes tools` → `🐦 X (Twitter) Search`（按空格键）手动禁用它。该工具会通过 xAI 内置的 `x_search` Responses API 运行——无论使用 SuperGrok / X Premium+ OAuth 登录方式还是付费的 `XAI_API_KEY` 都能正常工作；当两种方式都配置时，系统会优先使用 OAuth 方式（从而消耗订阅额度而非 API 费用）。即使工具集处于启用状态，若未配置 xAI 凭证，模型也无法看到该工具的架构信息。
+:::注意 当存在 xAI 凭证时，X 搜索功能会自动启用
+一旦配置了 xAI 凭证（SuperGrok / X Premium+ OAuth 令牌或 `XAI_API_KEY`），`x_search` 工具集就会自动启用。如不希望如此，可通过 `hermes tools` → `🐦 X (Twitter) Search`（按空格键）手动禁用它。该工具会通过 xAI 内置的 `x_search` Responses API 运行——无论使用 SuperGrok / X Premium+ OAuth 登录方式还是付费的 `XAI_API_KEY`，它都能正常工作；当两种方式都配置时，系统会优先使用 OAuth（从而消耗订阅额度而非 API 费用）。即使工具集处于启用状态，若未配置 xAI 凭证，模型也无法看到该工具的架构信息。
 :::
 
 ### 模型
 
 | 工具 | 模型 | 备注 |
 |------|------|------|
-| 聊天 | `grok-4.3` | 默认模型；通过 OAuth 登录时会自动选择 |
-| 聊天 | `grok-4.20-0309-reasoning` | 具有推理功能的版本 |
+| 聊天 | `grok-build-0.1` | 默认模型；通过 OAuth 登录时会自动选中 |
+| 聊天 | `grok-4.3` | 之前的默认模型 |
+| 聊天 | `grok-4.20-0309-reasoning` | 具备推理功能的版本 |
 | 聊天 | `grok-4.20-0309-non-reasoning` | 不具备推理功能的版本 |
-| 聊天 | `grok-4.20-multi-agent-0309` | 多智能体协作版本 |
-| 图像生成 | `grok-imagine-image` | 默认模型；处理时间约 5–10 秒 |
-| 图像生成 | `grok-imagine-image-quality` | 图像质量更高；处理时间约 10–20 秒 |
+| 聊天 | `grok-4.20-multi-agent-0309` | 多智能体版本 |
+| 图像生成 | `grok-imagine-image` | 默认模型；生成时间约 5–10 秒 |
+| 图像生成 | `grok-imagine-image-quality` | 精度更高；生成时间约 10–20 秒 |
 | 视频生成 | `grok-imagine-video` | 文本转视频功能 |
-| 视频生成 | `grok-imagine-video-1.5-preview` | 图像转视频功能；旧版本别名为 `grok-imagine-video-1.5-2026-05-30` |
+| 视频生成 | `grok-imagine-video-1.5-preview` | 图像转视频功能；旧名称为 `grok-imagine-video-1.5-2026-05-30` |
 | 语音合成 | （默认语音） | 使用 xAI 的 `/v1/tts` 接口 |
 
-聊天相关的模型列表会实时从磁盘上的 `models.dev` 缓存中获取；一旦该缓存更新，新的 xAI 版本就会自动出现。`grok-4.3` 模型始终位于列表顶部。
+聊天相关的模型列表会实时从磁盘上的 `models.dev` 缓存中获取；一旦该缓存更新，新的 xAI 版本就会自动出现。`grok-build-0.1` 模型始终会被固定在列表的最顶部。
 
 ## 环境变量
 
 | 变量 | 效果 |
-|----------|------|
+|------|------|
 | `XAI_BASE_URL` | 覆盖默认的 `https://api.x.ai/v1` 接口地址（很少需要使用）。 |
 
-若要将 xAI 设为默认提供方，请在 `config.yaml` 中设置 `model.provider: xai-oauth`（可使用 `hermes setup` 进行引导式配置），或为单次调用添加参数 `--provider xai-oauth`。
+若要将 xAI 设为默认提供方，请在 `config.yaml` 中设置 `model.provider: xai-oauth`（可通过 `hermes setup` 进行引导式设置），或为单次调用添加参数 `--provider xai-oauth`。
 
 ## 故障排除
 
 ### 令牌过期——未自动重新登录
-Hermes 会在每次会话开始前刷新令牌，遇到 401 错误时也会主动进行刷新。如果刷新因 `invalid_grant` 错误失败（即刷新令牌已被撤销或账户信息已变更），Hermes 会显示一条带输入框的重新认证提示，而不会崩溃。
+Hermes 会在每次会话开始前以及检测到 401 错误时主动刷新令牌。如果刷新失败并返回 `invalid_grant` 错误（表示刷新令牌已被撤销或账户信息已变更），Hermes 会显示一条引导用户重新认证的提示，而不会崩溃。
 
-当刷新彻底失败时（如出现 HTTP 4xx 错误、`invalid_grant` 错误、令牌被撤销等），Hermes 会将该刷新令牌标记为无效并在本地将其隔离——后续调用会跳过这次失败的刷新尝试，避免反复出现相同的 401 错误。此时智能体只会显示一条“需要重新认证”的提示，直到你再次登录为止。
+当刷新失败为不可恢复的情况（如 HTTP 4xx 错误、`invalid_grant` 错误、令牌已被撤销等）时，Hermes 会将该刷新令牌标记为无效并在本地将其隔离——后续调用会跳过这次失败的刷新尝试，避免反复出现相同的 401 错误。此时智能体只会显示一条“需要重新认证”的提示，直到你再次登录为止。
 
-**解决方法：** 重新运行 `hermes auth add xai-oauth` 以开始新的登录流程。下次成功完成交互后，该被隔离的令牌就会被清除。
+**解决方法：** 重新运行 `hermes auth add xai-oauth` 以启动新的登录流程。下次成功完成认证后，该被隔离的令牌就会被清除。
 
 ### 认证超时
-回环监听器的有效时间有限（默认为 180 秒）。如果你未能及时确认登录，Hermes 会抛出超时错误。
+回环监听器有一定的有效时间限制（默认为 180 秒）。如果你未能及时确认登录，Hermes 就会抛出超时错误。
 
-**解决方法：** 重新运行 `hermes auth add xai-oauth`（或 `hermes model`），系统将重新开始登录流程。
+**解决方法：** 重新运行 `hermes auth add xai-oauth`（或 `hermes model`）即可重新开始登录流程。
 
 ### 状态不一致（可能是 CSRF 攻击）
-Hermes 检测到认证服务器返回的 `state` 值与自己发送的值不一致。
+Hermes 检测到认证服务器返回的 `state` 值与它之前发送的值不一致。
 
 **解决方法：** 重新进行登录操作。如果问题依旧存在，请检查是否有代理或重定向机制正在修改 OAuth 响应内容。
 
 ### 从远程服务器登录
-在 SSH 或容器环境中运行时，Hermes 会直接输出认证地址，而不会自动打开浏览器。由于远程主机上的回环回调监听器仍绑定在 `127.0.0.1:56121` 地址，因此没有通过 SSH 局部转发的话，你的笔记本浏览器是无法访问该地址的。
+在通过 SSH 或容器运行的会话中，Hermes 会直接输出认证网址，而不会自动打开浏览器。由于远程主机上的回环回调监听器仍绑定在 `127.0.0.1:56121` 地址，因此如果没有通过 SSH 进行本地端口转发，你的笔记本电脑上的浏览器是无法访问该地址的。
 
 ```bash
 # Local machine, separate terminal:
