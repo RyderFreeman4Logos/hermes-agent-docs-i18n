@@ -20,6 +20,7 @@
   - [Hermes Agent Persona](en/docker/SOUL.md)
 - [Docs]()
   - [RCA: SSL CA cert bundle corruption after `hermes update`](en/docs/rca-ssl-cacert-post-git-pull.md)
+  - [Relay ↔ Connector Contract (v1, EXPERIMENTAL)](en/docs/relay-connector-contract.md)
   - [Design]()
     - [Profile Builder — Dashboard-Native, Full-Featured Profile Creation](en/docs/design/profile-builder.md)
   - [Kanban]()
