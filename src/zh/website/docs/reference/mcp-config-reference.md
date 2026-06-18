@@ -49,32 +49,32 @@ mcp_servers:
 | `args` | 列表 | stdio | 子进程的参数 |
 | `env` | 映射结构 | stdio | 传递给子进程的环境变量 |
 | `url` | 字符串 | HTTP | 远程 MCP 接口地址 |
-| `headers` | 映射结构 | HTTP | 发送至远程服务器请求的头部信息 |
-| `ssl_verify` | 布尔值或字符串 | HTTP | TLS 验证设置。`true`（默认值）表示使用系统证书颁发机构；`false` 表示禁用验证（存在安全风险）；也可以是自定义 CA 签名包（PEM 格式）的路径 |
+| `headers` | 映射结构 | HTTP | 发送至远程服务器请求时的头部信息 |
+| `ssl_verify` | 布尔值或字符串 | HTTP | TLS 验证设置。`true`（默认值）表示使用系统证书颁发机构；`false` 表示禁用验证（不安全）；也可以是自定义 CA 包（PEM 格式）的路径字符串 |
 | `client_cert` | 字符串或列表 | HTTP | mTLS 客户端证书。字符串形式表示包含证书和密钥的 PEM 文件路径；列表 `[cert, key]` 表示证书和密钥为单独的文件；列表 `[cert, key, password]` 表示密钥已加密 |
-| `client_key` | 字符串 | HTTP | 当 `client_cert` 为字符串且密钥存储在单独文件中时，该字段表示客户端私钥的路径 |
+| `client_key` | 字符串 | HTTP | 当 `client_cert` 为字符串且密钥存储在单独文件中时，该字段用于指定客户端私钥的路径 |
 | `enabled` | 布尔值 | 两者均适用 | 设置为 `false` 时可完全跳过该服务器 |
-| `timeout` | 数字 | 两者均适用 | 工具调用的超时时间 |
-| `connect_timeout` | 数字 | 两者均适用 | 初始连接超时时间 |
+| `timeout` | 数字 | 两者均适用 | 工具调用的超时时间（以秒为单位，默认值为 `300`） |
+| `connect_timeout` | 数字 | 两者均适用 | 初始连接的超时时间（以秒为单位，默认值为 `60`） |
 | `supports_parallel_tool_calls` | 布尔值 | 两者均适用 | 是否允许该服务器上的工具并行运行 |
 | `tools` | 映射结构 | 两者均适用 | 工具过滤规则及实用工具策略 |
 | `auth` | 字符串 | HTTP | 认证方式。设置为 `oauth` 可启用基于 PKCE 的 OAuth 2.1 认证 |
-| `sampling` | 映射结构 | 两者均适用 | 由服务器发起的 LLM 请求策略（详见 MCP 指南） |
+| `sampling` | 映射结构 | 两者均适用 | 服务器发起的 LLM 请求策略（详见 MCP 指南） |
 
 ## `tools` 策略键
 
 | 键 | 类型 | 含义 |
 |---|---|---|
-| `include` | 字符串或列表 | 白名单机制，用于指定允许使用的服务器原生 MCP 工具 |
-| `exclude` | 字符串或列表 | 黑名单机制，用于指定禁止使用的服务器原生 MCP 工具 |
+| `include` | 字符串或列表 | 白名单，用于指定允许使用的服务器原生 MCP 工具 |
+| `exclude` | 字符串或列表 | 黑名单，用于指定禁止使用的服务器原生 MCP 工具 |
 | `resources` | 类布尔值 | 控制是否启用 `list_resources` 和 `read_resource` 功能 |
 | `prompts` | 类布尔值 | 控制是否启用 `list_prompts` 和 `get_prompt` 功能 |
 
 ## 过滤规则逻辑
 
-### `include` 设置
+### `include`
 
-当设置了 `include` 参数后，仅会注册那些属于服务器原生的 MCP 工具。
+如果设置了 `include`，则仅注册那些属于服务器原生的 MCP 工具。
 
 ```yaml
 tools:
