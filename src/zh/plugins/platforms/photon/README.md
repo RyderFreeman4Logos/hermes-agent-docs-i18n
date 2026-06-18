@@ -75,44 +75,44 @@ PHOTON_PROJECT_SECRET=<projectSecret>
 }
 ```
 
-> **关于 ID 的说明。** Photon 项目的控制台 ID 与 Spectrum 项目的 ID 是同一个值，以 `PHOTON_PROJECT_ID` 的形式暴露。`auth.json` 文件中的 `dashboard_project_id` 和 `spectrum_project_id` 键均存储该 ID。
+> **关于 ID 的说明。** Photon 项目的控制台 ID 与 Spectrum 项目的 ID 是同一个值，以 `PHOTON_PROJECT_ID` 的形式暴露。`auth.json` 文件中的 `dashboard_project_id` 和 `spectrum_project_id` 两个键都存储该 ID。
 
-## 配置选项
+## 配置参数
 
-所有环境变量均在 `plugin.yaml` 中有详细说明。其中最重要的如下：
+所有环境变量均在 `plugin.yaml` 中有详细说明。其中最重要的参数如下：
 
 | 环境变量                   | 默认值                    | 含义                              |
 |---------------------------|----------------------------|--------------------------------------|
 | `PHOTON_PROJECT_ID`       | 来自 .env / auth.json      | Spectrum 项目 ID（SDK 中的 `projectId`）|
 | `PHOTON_PROJECT_SECRET`   | 来自 .env / auth.json      | 项目密钥                           |
 | `PHOTON_SIDECAR_PORT`     | 8789                       | Sidecar 的回环端口                 |
-| `PHOTON_SIDECAR_AUTOSTART`| true                       | 连接时自动启动 sidecar            |
+| `PHOTON_SIDECAR_AUTOSTART`| true                       | 连接时自动启动 Sidecar             |
 | `PHOTON_DASHBOARD_HOST`   | https://app.photon.codes   | 控制台 API 主机地址                 |
 | `PHOTON_SPECTRUM_HOST`    | https://spectrum.photon.codes | Spectrum API 主机地址               |
 | `PHOTON_HOME_CHANNEL`     | 您的号码（由设置确定）   | 用于定时消息发送的默认空间——可以是空间 ID，也可以是纯 E.164 号码（会解析为私信号码） |
 | `PHOTON_ALLOWED_USERS`    | 您的号码（由设置确定）   | 用逗号分隔的允许接收消息的 E.164 号码列表 |
-| `PHOTON_REQUIRE_MENTION`  | false                      | 是否通过唤醒词来控制群组聊天       |
-| `PHOTON_MAX_INLINE_ATTACHMENT_BYTES` | 20 MB           | Sidecar 能读取并内嵌的最大接收附件大小 |
+| `PHOTON_REQUIRE_MENTION`  | false                      | 是否通过唤醒词来控制群聊                 |
+| `PHOTON_MAX_INLINE_ATTACHMENT_BYTES` | 20 MB           | Sidecar 可读取并内嵌的最大接收附件大小 |
 | `PHOTON_TELEMETRY`        | false                      | Spectrum SDK 的遥测功能——可通过 `hermes photon telemetry on\|off` 打开/关闭（需重启网关才能生效） |
-| `PHOTON_MARKDOWN`         | true                       | 以 Markdown 格式发送智能体回复（iMessage 可直接渲染）。设置为 `false` 则会去除格式，仅显示纯文本 |
-| `PHOTON_REACTIONS`        | false                      | 使用👀/👍/👎作为处理状态反馈；机器人消息的反馈会以 `reaction:added:<emoji>` 的形式传递给智能体 |
+| `PHOTON_MARKDOWN`         | true                       | 以 Markdown 格式发送智能体回复（iMessage 可直接渲染）。设置为 `false` 时则去掉格式，仅显示纯文本 |
+| `PHOTON_REACTIONS`        | false                      | 以 👀/👍/👎 形式的反馈作为处理状态；机器人发送的消息所触发的反馈会以 `reaction:added:<emoji>` 的形式传递给智能体 |
 
 ## 附件与限制
 
-- **接收的附件和语音笔记会被下载。** Sidecar 会读取这些数据的字节内容（通过 `content.read()`），并将其以 Base64 格式内嵌到 NDJSON 事件中；适配器会将它们缓存到共享媒体缓存中，并设置 `media_urls`/`media_types`，这样智能体就能查看真实的图片或文件，或对语音笔记进行转录——这与 BlueBubbles iMessage 频道的处理方式一致。对于大于 `PHOTON_MAX_INLINE_ATTACHMENT_BYTES`（默认为 20 MB）的媒体文件，或是读取失败的情况，系统会回退到文本标记形式（如 `[Photon attachment received: …]` 或 `[Photon voice received: …]`），以确保智能体仍能知晓有内容已送达。
-- **支持发送附件。** 图片、语音笔记、视频和文档均可通过 `space.send(attachment(...))`/`space.send(voice(...))`，经由 Sidecar 的 `/send-attachment` 接口发送；配文则会作为单独的文本气泡显示在媒体内容之后。
-- **Markdown 格式可被渲染。** 回复内容会通过 spectrum-ts 的 `markdown()` 构建器处理；iMessage 能直接渲染加粗、斜体、列表和代码格式，而其他 Spectrum 平台则只能显示可读的纯文本。若将 `PHOTON_MARKDOWN` 设置为 `false`，则会恢复为无格式的纯文本。
-- 在 `PHOTON_REACTIONS`（默认为关闭）的支持下，系统也支持**反馈表情**：适配器在处理过程中会显示👀，处理完成后则替换为👍/👎；用户对机器人发送的消息给出的反馈表情，会以 `reaction:added:<emoji>` 的形式传递给智能体。Sidecar 重启后，这些反馈表情的清除是尽力而为的——由于实时反馈标识会丢失，因此旧的反馈表情会在新的反馈出现时被替换。借助 spectrum-ts v3 的 `space.get(id)` 功能，群组空间在重启后仍可保持连接。
-- **消息特效和投票功能**——虽然 `spectrum-ts` 已支持，但目前尚未开放；将这些功能添加进去，Sidecar 是最合适的载体。
+- **接收的附件和语音笔记会被下载。** Sidecar 会读取这些数据的字节内容（通过 `content.read()`），并将其以 Base64 格式内嵌到 NDJSON 事件中；适配器会将它们缓存到共享媒体缓存中，并设置 `media_urls`/`media_types`，这样智能体就能看到真实的图片或文件，或对语音笔记进行转录——这与 BlueBubbles iMessage 频道的功能一致。同时包含文本和附件的混合 iMessage 消息会被整理为分组数据，从而在保留用户输入文本的同时保存缓存的媒体内容。如果附件大小超过 `PHOTON_MAX_INLINE_ATTACHMENT_BYTES` 的默认值 20 MB，或读取过程中出现错误，系统会回退到文本标记形式（如 `[Photon attachment received: …]` 或 `[Photon voice received: …]`），这样智能体仍能知道有新内容到达。
+- **支持发送附件。** 图片、语音笔记、视频和文档可通过 `space.send(attachment(...))`/`space.send(voice(...))`，经由 Sidecar 的 `/send-attachment` 接口发送；附带的说明文字会作为单独的文本气泡出现在媒体内容之后。
+- **Markdown 格式可被渲染。** 智能体的回复会通过 spectrum-ts 的 `markdown()` 构建器处理；iMessage 能直接渲染加粗、斜体、列表和代码格式，而其他 Spectrum 平台则仅能显示可读的纯文本。若将 `PHOTON_MARKDOWN` 设置为 `false`，则会恢复为无格式的纯文本。
+- 在 `PHOTON_REACTIONS`（默认为关闭）的支持下，系统也支持反馈功能：适配器在处理消息时会发送 👀 反馈，处理完成后会替换为 👍/👎；用户对机器人发送的消息做出的反馈则会以 `reaction:added:<emoji>` 的形式传递给智能体。Sidecar 重启后，这些反馈的清除是尽力而为的——因为实时的反馈标识会丢失，所以旧的反馈会在新的反馈出现时被替代。通过 spectrum-ts v3 的 `space.get(id)` 功能，群组空间在重启后仍可保持连通性。
+- **消息特效和投票功能**——虽然已被 `spectrum-ts` 支持，但目前尚未开放；这些功能未来可添加到 Sidecar 中。
 
 ## 升级 spectrum-ts
 
-`spectrum-ts` 在 `sidecar/package.json` 中被锁定为**特定版本**（没有使用 `^` 范围），并通过 `npm ci` 安装，因为该 SDK 会发布带有破坏性变更的 major 版本（v2 版移除了 `defineFusorPlatform` 功能；v3 版则重构了空间结构）。如果使用浮动版本范围或 `npm install spectrum-ts@latest` 的方式，可能会让带有破坏性变更的新版本在用户不知情的情况下破坏现有配置。升级过程需谨慎操作：
+`spectrum-ts` 在 `sidecar/package.json` 中被锁定为**特定版本**（没有使用 `^` 范围），并通过 `npm ci` 安装，因为该 SDK 会发布具有破坏性变更的 major 版本（v2 版移除了 `defineFusorPlatform` 功能；v3 版则重新设计了空间结构）。如果使用浮动版本范围或 `npm install spectrum-ts@latest` 的方式，可能会在不知不觉中让新版本带来破坏性变更，影响现有设置。升级流程如下：
 
-1. 查阅当前锁定版本与目标版本之间的所有版本的[SDK 发布说明](https://github.com/photon-hq/spectrum-ts/releases)。
-2. 在 `sidecar/package.json` 中更新为对应的精确版本，然后在 `sidecar/` 目录下运行 `npm install` 以重新生成 `package-lock.json`。将这两项更改都提交到版本控制中。
-3. 根据新的类型定义修改 `sidecar/index.mjs` 文件（真实类型定义位于 `sidecar/node_modules/spectrum-ts/dist/*.d.ts`，官方文档可能会滞后更新）。
+1. 查阅当前锁定版本与目标版本之间的每一个版本的 [SDK 发布说明](https://github.com/photon-hq/spectrum-ts/releases)。
+2. 在 `sidecar/package.json` 中更新对应的锁定版本，然后在 `sidecar/` 目录下运行 `npm install` 以重新生成 `package-lock.json`。将这两项更改都提交到版本控制中。
+3. 根据新的类型定义修改 `sidecar/index.mjs` 文件（真正的类型定义来自 `sidecar/node_modules/spectrum-ts/dist/*.d.ts` 文件——官方文档的更新可能会滞后）。
 4. 运行 `pytest tests/plugins/platforms/photon/` 进行测试。
-5. 进行端到端验证：使用 `hermes photon status` 检查状态，发送私信和群组消息并查看往返处理情况，以及在网关重启后立即向群组发送智能体回复，以此测试 `space.get` 功能的恢复能力。
+5. 进行端到端验证：查看 `hermes photon status` 的状态，发送私信和群聊消息并往返测试，以及在网关重启后立即向群组发送智能体回复（以此测试 `space.get` 功能的恢复情况）。
 
 [photon]: https://photon.codes/
