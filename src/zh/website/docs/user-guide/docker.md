@@ -145,23 +145,33 @@ docker run -it --rm \
 
 ## 持久卷
 
-`/opt/data` 卷是所有 Hermes 状态的唯一数据源。它对应于主机上的 `~/.hermes/` 目录，其中包含以下内容：
+`/opt/data` 卷是所有 Hermes 状态的唯一真实来源。它对应于宿主机的 `~/.hermes/` 目录，其中包含以下内容：
 
 | 路径 | 内容 |
 |------|------|
-| `.env` | API 密钥与敏感信息 |
+| `.env` | API 密钥和敏感信息 |
 | `config.yaml` | 所有 Hermes 配置 |
 | `SOUL.md` | Agent 的个性/身份设定 |
 | `sessions/` | 对话历史记录 |
 | `memories/` | 持久内存存储区 |
 | `skills/` | 已安装的技能 |
-| `home/` | 供 Hermes 工具子进程（如 `git`、`ssh`、`gh`、`npm` 及各类技能的 CLI）使用的独立用户目录 |
+| `home/` | 供 Hermes 工具子进程（如 `git`、`ssh`、`gh`、`npm` 及各类技能 CLI）使用的独立用户目录 |
 | `cron/` | 定时任务定义 |
 | `hooks/` | 事件钩子 |
 | `logs/` | 运行时日志 |
-| `skins/` | 自定义 CLI 外观主题 |
+| `skins/` | 自定义 CLI 外观皮肤 |
 
-那些将凭证存储在 `~` 目录下的技能 CLI，必须以子进程的用户目录作为初始化依据，而不仅仅是数据卷的根目录。例如，[xurl 技能](./skills/bundled/social-media/social-media-xurl.md)会将 OAuth 状态存储在 `~/.xurl` 中；在官方 Docker 部署结构中，Hermes 工具会将该路径视为 `/opt/data/home/.xurl`，因此需要使用 `HOME=/opt/data/home` 手动执行 xurl 认证，并通过 `HOME=/opt/data/home xurl auth status` 查看认证状态。
+### 不可修改的安装结构
+
+在托管版及发布的 Docker 镜像中，`/opt/hermes` 是已安装的应用程序结构。该目录归 root 所有，且对运行时的 `hermes` 用户为只读模式，因此 Agent 的行为、网关会话、控制台操作以及常规的 `docker exec hermes hermes ...` 命令都无法直接修改核心源代码、打包好的 `.venv`、`node_modules` 文件或 TUI 组件。
+
+所有可修改的 Hermes 状态都存储在 `/opt/data` 下：包括配置文件、`.env`、用户配置文件、技能、内存数据、会话记录、日志、控制台上传内容、插件以及其他由用户管理的文件。该镜像还会禁止在运行时向 `/opt/hermes` 写入 `.pyc` 文件或进行懒加载依赖安装；发布版镜像所需的可选平台依赖项应直接嵌入镜像中，或通过重新构建镜像来安装。
+
+在托管版/发布的镜像中，Agent 的自我优化仅限于 `/opt/data` 下的技能、内存、插件及配置文件。而 `/opt/hermes` 中已安装的核心源代码是不可修改的；核心功能的更改需通过向仓库提交 PR 并更新镜像来实现，而非直接对正在运行的实例进行实时编辑。
+
+如果操作员需要修复或检查 `/opt/data` 之外的文件，则必须手动使用 root shell。通常情况下，`hermes` shim 会将 `docker exec hermes hermes ...` 的命令转交回运行时用户；只有在确实需要 root 权限时，才可通过设置 `HERMES_DOCKER_EXEC_AS_ROOT=1` 来实现一次性以 root 身份执行命令。
+
+那些将凭证存储在 `~` 目录下的技能 CLI，必须基于子进程的独立用户目录进行初始化，而不仅仅是数据卷的根目录。例如，[xurl 技能](./skills/bundled/social-media/social-media-xurl.md) 会将 OAuth 状态信息存储在 `~/.xurl` 中；在官方 Docker 镜像中，Hermes 工具读取该路径时会视为 `/opt/data/home/.xurl`，因此需使用 `HOME=/opt/data/home` 参数手动执行 xurl 认证，并通过 `HOME=/opt/data/home xurl auth status` 查看认证状态。
 
 :::warning
 切勿同时让两个 Hermes **网关** 容器访问同一个数据目录——会话文件和内存存储区并非为并发写入设计。
@@ -169,16 +179,16 @@ docker run -it --rm \
 
 ## 多配置文件支持
 
-Hermes 支持[多个配置文件](../reference/profile-commands.md)，即多个独立的 `~/.hermes/` 子目录，这使得你能够在同一套安装环境中运行多个独立的 Agent（拥有不同的 SOUL 设置、技能、内存状态、会话记录及凭证）。**在官方 Docker 镜像中，s6 监控系统会将每个配置文件视为一个一级受监控服务**，因此推荐的部署方式是**使用一个容器来承载所有配置文件**。
+Hermes 支持[多个配置文件](../reference/profile-commands.md)，即通过创建多个 `~/.hermes/` 子目录，从而让单个安装实例能够运行多个独立的 Agent（拥有不同的 SOUL 设置、技能、内存数据、会话记录及凭证）。**在官方 Docker 镜像中，s6 监控系统会将每个配置文件视为独立的受监控服务**，因此推荐的部署方式是**使用一个容器来承载所有配置文件**。
 
 通过 `hermes profile create <name>` 创建的每个配置文件都会获得：
 
 - 一个位于 `/run/service/gateway-<name>/` 的专用 s6 服务槽位，该槽位由运行时动态注册——无需重新构建容器。
-- 在崩溃时自动重启，由 `s6-supervise` 负责实现重试机制。
+- 出现故障时自动重启，由 `s6-supervise` 负责实现延迟重启机制。
 - 每个配置文件都有独立的轮转日志，存储路径为 `${HERMES_HOME}/logs/gateways/<name>/current`（共保留 10 个归档文件，每个 1 MB）。
-- 容器重启后状态依然保持：启动时的状态同步工具会读取每个配置文件目录中的 `gateway_state.json`，仅对那些最后记录的状态为 `running` 的配置文件重新启动其服务槽位。只有通过 `hermes gateway stop` 显式停止的网关才会在重启后保持关闭状态——无论是容器重启、镜像升级还是意外退出，系统都会将状态保留为 `running`，因此网关会在下一次启动时自动恢复运行。
+- 容器重启后状态依然保持：启动时，状态同步工具会读取每个配置文件目录中的 `gateway_state.json` 文件，仅对上次记录状态为 `running` 的配置文件重新启动其服务槽位。只有通过 `hermes gateway stop` 显式停止的网关才会在重启后保持关闭状态——而容器重启、镜像升级或意外退出都会使状态仍显示为 `running`，因此网关会在下一次启动时自动恢复运行。
 
-在主机上执行的生命周期管理命令，在容器内部同样适用：
+在宿主机上使用的生命周期管理命令，在容器内部同样可以正常使用。
 
 ```sh
 # Create a profile — registers the gateway-<name> s6 slot.
