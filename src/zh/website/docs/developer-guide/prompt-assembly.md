@@ -114,9 +114,34 @@ You are a CLI AI Agent. Try not to use markdown but simple text
 renderable inside a terminal.
 ```
 
-## SOUL.md 在提示词中的呈现方式
+## 自定义平台提示
 
-`SOUL.md` 位于 `~/.hermes/SOUL.md` 文件中，它代表了智能体的身份，即系统提示词中的第一个部分。`prompt_builder.py` 中的加载逻辑如下：
+平台提示（位于第10层）是Hermes为Telegram、WhatsApp、Slack、CLI等平台提供的针对特定界面的指导信息——例如“您当前处于终端界面，请避免使用Markdown格式”。内置的默认提示存储在`PLATFORM_HINTS`（位于`agent/system_prompt.py`文件中）；而由插件提供的平台则通过平台注册表来设置各自的提示。
+
+管理员可以通过`config.yaml`文件中的顶层`platform_hints`键，对某个特定平台的提示进行补充或替换，而无需影响其他任何平台。
+
+```yaml
+platform_hints:
+  whatsapp:
+    append: >
+      When tabular output would be useful, invoke the table_formatting
+      skill instead of emitting a Markdown table.
+  slack:
+    replace: "You are on Slack. Keep responses tight and avoid wide tables."
+  telegram: "Prefer short messages; split long answers."   # shorthand = append
+```
+
+- `append` — 保留内置提示信息，并在其后添加额外文本。  
+- `replace` — 完全替换内置提示信息。  
+- 空字符串 — 即为 `append` 的简写形式。  
+- 当同时使用 `append` 和 `replace` 时，`replace` 的优先级更高。  
+- 若配置项格式错误，系统会安全地忽略该选项并恢复到未修改的默认值，因此错误的配置绝不会破坏提示信息的生成，也不会在不同平台间造成异常。
+
+此覆盖设置会在系统提示信息生成时生效（即会话启动时，以及在提示信息重新构建时）。它为固定配置生成字节级稳定的提示信息，因此会与内置提示信息一同存储在 **stable** 类别中，不会影响提示信息的缓存功能 —— 它并非对已冻结的提示信息在会话进行中的实时修改。
+
+## SOUL.md 如何出现在提示信息中
+
+`SOUL.md` 位于 `~/.hermes/SOUL.md` 文件中，它代表了智能体的身份，即系统提示信息的第一个部分。`prompt_builder.py` 中的加载逻辑如下：
 
 ```python
 # From agent/prompt_builder.py (simplified)
