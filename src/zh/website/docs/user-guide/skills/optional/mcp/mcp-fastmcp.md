@@ -14,19 +14,19 @@ description: "Build, test, inspect, install, and deploy MCP servers with FastMCP
 
 | | |
 |---|---|
-| 来源 | 可选 —— 使用 `hermes skills install official/mcp/fastmcp` 进行安装 |
+| 来源 | 可选 —— 使用 `hermes skills install official/mcp/fastmcp` 安装 |
 | 路径 | `optional-skills/mcp/fastmcp` |
 | 版本 | `1.0.0` |
 | 创建者 | Hermes Agent |
 | 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `MCP`、`FastMCP`、`Python`、`工具`、`资源`、`提示词`、`部署` |
-| 相关技能 | [`native-mcp`](/docs/user-guide/skills/bundled/mcp/mcp-native-mcp)、[`mcporter`](/docs/user-guide/skills/optional/mcp/mcp-mcporter) |
+| 相关技能 | `native-mcp`、[`mcporter`](/docs/user-guide/skills/optional/mcp/mcp-mcporter) |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能激活后，Agent 就会看到这些指令作为操作指南。
 :::
 
 # FastMCP
@@ -38,16 +38,16 @@ description: "Build, test, inspect, install, and deploy MCP servers with FastMCP
 当需要执行以下任务时，可使用此技能：
 - 用 Python 创建新的 MCP 服务器
 - 将 API、数据库、CLI 或文件处理流程封装为 MCP 工具
-- 除工具外还需暴露资源或提示词
+- 除了工具之外还需暴露资源或提示词
 - 在将服务器接入 Hermes 或其他客户端之前，使用 FastMCP CLI 进行初步测试
 - 将服务器安装到 Claude Code、Claude Desktop、Cursor 或类似的 MCP 客户端中
 - 为 HTTP 部署准备 FastMCP 服务器代码库
 
-如果服务器已存在且仅需连接到 Hermes，则可使用 `native-mcp`。若目标是临时通过 CLI 访问现有的 MCP 服务器而非从头构建，则可使用 `mcporter`。
+如果服务器已存在且仅需连接到 Hermes，则可使用 `native-mcp`。若目标是临时通过 CLI 访问现有的 MCP 服务器而非从头构建，则应使用 `mcporter`。
 
 ## 先决条件
 
-首先需在工作环境中安装 FastMCP：
+首先在工作环境中安装 FastMCP：
 
 ```bash
 pip install fastmcp
