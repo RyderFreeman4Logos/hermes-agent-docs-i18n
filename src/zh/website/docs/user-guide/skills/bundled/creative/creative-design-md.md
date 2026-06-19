@@ -4,13 +4,13 @@ sidebar_label: "Design Md"
 description: "Author/validate/export Google's DESIGN"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# DESIGN.md 模型
+# DESIGN.md 技能
 
 用于生成/验证/导出 Google 的 DESIGN.md 标识规范文件。
 
-## 模型元数据
+## 技能元数据
 
 | | |
 |---|---|
@@ -21,32 +21,32 @@ description: "Author/validate/export Google's DESIGN"
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `design`、`design-system`、`tokens`、`ui`、`accessibility`、`wcag`、`tailwind`、`dtcg`、`google` |
-| 相关模型 | [`popular-web-designs`](/docs/user-guide/skills/bundled/creative/creative-popular-web-designs)、[`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claude-design)、[`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw)、[`architecture-diagram`](/docs/user-guide/skills/bundled/creative/creative-architecture-diagram) |
+| 相关技能 | [`popular-web-designs`](/docs/user-guide/skills/bundled/creative/creative-popular-web-designs)、[`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claude-design)、[`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw)、[`html-artifact`](/docs/user-guide/skills/bundled/creative/creative-html-artifact) |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下为 Hermes 在触发该模型时加载的完整技能定义。当模型处于激活状态时，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，智能体看到的指令即为此内容。
 :::
 
-# DESIGN.md 模型详解
+# DESIGN.md 技能详解
 
-DESIGN.md 是 Google 推出的开放规范（Apache-2.0 许可，文件地址：`google-labs-code/design.md`），用于向编程智能体描述视觉设计规范。一个 DESIGN.md 文件包含以下两部分：
+DESIGN.md 是 Google 推出的开放规范（采用 Apache-2.0 许可，文件地址为 `google-labs-code/design.md`），旨在为编程智能体描述视觉设计规范。一个 DESIGN.md 文件包含以下两部分：
 
-- **YAML 前置内容**——以机器可读格式呈现的设计标识符（标准数值）
-- **Markdown 正文**——以人类可读形式说明设计思路，内容按规范章节组织
+- **YAML 前置内容**——机器可读取的设计标识符（标准化数值）
+- **Markdown 正文**——人类可阅读的设计思路，按标准章节组织
 
-设计标识符提供精确的数值值，而正文则向智能体解释这些数值存在的理由以及应用方法。可通过 CLI 工具（`npx @google/design.md`）对文件结构及 WCAG 对比度进行检查、对比不同版本以检测功能退化，并将结果导出为 Tailwind 或 W3C DTCG JSON 格式。
+设计标识符提供精确的数值值，而正文则向智能体说明这些数值的设定依据及应用方法。可通过 CLI 工具（`npx @google/design.md`）对文件结构进行代码检查、验证 WCAG 对比度标准、对比不同版本以检测功能退化，并将结果导出为 Tailwind 或 W3C DTCG JSON 格式。
 
-## 何时使用该模型
+## 何时使用此技能
 
 - 用户需要 DESIGN.md 文件、设计标识符或设计系统规范
-- 用户希望在多个项目或工具中保持统一的界面/品牌风格
-- 用户粘贴现有的 DESIGN.md 文件，希望对其进行检查、对比、导出或扩展
+- 用户希望在不同项目或工具中保持统一的界面/品牌风格
+- 用户粘贴现有的 DESIGN.md 文件，要求对其进行代码检查、对比、导出或扩展
 - 用户希望将样式指南转换为智能体可识别的格式
 - 用户需要对色彩方案进行对比度检测或 WCAG 无障碍性验证
 
-若仅需获取视觉灵感或布局示例，建议使用 `popular-web-designs` 模型。对于从零开始设计一次性 HTML 文件（如原型、演示文稿、着陆页、组件库）时的设计流程与风格把控，可使用 `claude-design` 模型。而本模型专用于处理正式的设计规范文件本身。
+若仅需获取视觉灵感或布局示例，建议使用 `popular-web-designs` 技能。对于从零开始设计一次性 HTML 文件（如原型、演示文稿、着陆页、组件库）时的设计流程与风格把控，可使用 `claude-design` 技能。而本技能专门用于处理正式的设计规范文件本身。
 
 ## 文件结构
 
