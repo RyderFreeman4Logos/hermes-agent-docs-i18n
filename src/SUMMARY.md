@@ -2082,6 +2082,7 @@
     - [Html Artifact]()
       - [References]()
         - [深色科技风格图表变体](zh/skills/creative/html-artifact/references/dark-tech.md)
+        - [参考示例（Anthropic HTML效果展示库）](zh/skills/creative/html-artifact/references/examples.md)
     - [Humanizer]()
       - [Humanizer：去除AI写作特征](zh/skills/creative/humanizer/SKILL.md)
     - [Manim Video](zh/skills/creative/manim-video/README.md)
