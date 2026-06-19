@@ -6,28 +6,23 @@ description: "Connect Hermes Agent to external tool servers via MCP — and cont
 
 # MCP（模型上下文协议）
 
-MCP使Hermes Agent能够连接到外部工具服务器，从而让Agent可以使用Hermes本身之外的各类工具——如GitHub、数据库、文件系统、浏览器环境、内部API等等。
+MCP使Hermes Agent能够连接到外部工具服务器，从而让Agent可以使用Hermes本身之外的工具——如GitHub、数据库、文件系统、浏览器环境、内部API等等。
 
 如果您希望Hermes使用其他地方已有的工具，MCP通常是实现这一目标的最佳方式。
 
 ## MCP带来的优势
 
-- 无需先编写专属的Hermes工具，即可接入外部工具生态系统
-- 同一配置文件中可同时使用本地标准输入输出服务器与远程HTTP MCP服务器
-- 启动时自动发现并注册可用工具
+- 无需先编写专用的Hermes工具，即可接入外部工具生态系统
+- 同一配置文件中可同时使用本地stdio服务器和远程HTTP MCP服务器
+- 启动时自动发现并注册工具
 - 在服务器支持的情况下，为MCP资源及提示语提供便捷的封装功能
 - 支持按服务器进行过滤，仅暴露您希望Hermes使用的MCP工具
 
 ## 快速入门
 
-1. 安装MCP支持功能（若使用标准安装脚本，则已包含该功能）：
+1. 标准安装版本已内置MCP支持，无需额外操作。
 
-```bash
-cd ~/.hermes/hermes-agent
-uv pip install -e ".[mcp]"
-```
-
-2. 在 `~/.hermes/config.yaml` 中添加一个 MCP 服务器：
+2. 在`~/.hermes/config.yaml`文件中添加MCP服务器配置：
 
 ```yaml
 mcp_servers:
@@ -93,31 +88,31 @@ Select tools for 'linear' (SPACE toggle, ENTER confirm)
 
 已预选中的行来自以下来源：
 
-1. **您之前的选择**：如果您之前已安装过该条目，系统会保留之前的选择——重新安装时不会覆盖原有设置，因为清单的默认值不会对其产生影响；
-2. **清单中的 `tools.default_enabled` 设置**：如果该条目指定了默认启用的工具，系统会依据此设置进行筛选（部分目录条目会预先排除那些会修改配置或很少使用的工具）；
-3. **全部选项**：若上述两种情况均不适用，则所有选项都会被选中。
+1. **您之前的选择**：如果您之前已安装过该条目，系统会保留之前的选择——重新安装时不会覆盖原有设置，因为清单文件中的默认值不会取代它们；
+2. **清单文件中的 `tools.default_enabled` 设置**：如果该条目指定了默认启用的工具，系统会依据此设置进行筛选（某些目录条目会预先排除那些会修改配置或很少使用的工具）；
+3. **全部选项**：若上述两种情况均不适用，则所有工具都会被选中。
 
-按下回车键即可提交选中的工具列表。最终只有被选中的工具才会被写入 `mcp_servers.<name>.tools.include` 文件中。如果您选择全部选项，则不会生成任何过滤规则（这样配置最为简洁，行为也与之前一致）。
+按下回车键即可提交选中的工具列表。最终只有被选中的工具才会被写入 `mcp_servers.<name>.tools.include` 文件中。如果您选择全部工具，则不会生成任何过滤规则（这样配置最为简洁，行为也与之前一致）。
 
-**如果检测失败**（例如服务器无法访问、OAuth 认证尚未完成，或后端服务未运行），安装仍会成功：系统会直接应用清单中指定的 `tools.default_enabled` 设置（如有），否则则不生成任何过滤规则。待服务器可访问后，可再次运行 `hermes mcp configure <name>` 命令进行优化。
+**如果检测失败**（例如服务器无法访问、OAuth认证尚未完成，或后端服务未运行），安装仍会成功：系统会直接应用清单文件中指定的 `tools.default_enabled` 设置（若有该设置），否则则不生成任何过滤规则。待服务器可访问后，可再次运行 `hermes mcp configure <name>` 命令进行优化。
 
 ### 信任模型
 
-安装目录条目时会执行清单中规定的所有操作——包括 `git clone`、条目自身的 `bootstrap` 命令（如 `pip install`、`npm install` 等），最终还会运行 MCP 服务器的代码。由于清单需经过 PR 审核才能加入 hermes-agent 仓库，因此 Nous 已在每个条目发布前对其进行了审核——**但您仍应在安装前仔细阅读清单**，尤其是 `source:` 字段中指定的仓库地址、`install.bootstrap:` 命令，以及任何 `transport.command:` 调用内容。
+安装目录条目时，系统会按照清单文件中的指定内容执行操作——包括执行 `git clone` 命令、条目中的 `bootstrap` 命令（如 `pip install`、`npm install` 等），最终还会运行 MCP 服务器自身的代码。由于清单文件在加入 hermes-agent 仓库之前需经过代码审查，因此 Nous 已在每个条目发布前对其进行了审核——**但您仍应在安装前仔细阅读清单文件**，尤其是 `source:` 字段中指定的仓库地址、`install.bootstrap:` 命令，以及任何 `transport.command:` 调用内容。
 
-清单文件存储在 GitHub 的 [`optional-mcps/<name>/manifest.yaml`](https://github.com/NousResearch/hermes-agent/tree/main/optional-mcps) 地址。在安装过程中，选择工具的工具也会同时显示清单的 `source:` URL，方便您快速验证上游仓库的真实性。
+清单文件存储在 GitHub 的 [`optional-mcps/<name>/manifest.yaml`](https://github.com/NousResearch/hermes-agent/tree/main/optional-mcps) 地址下。在安装过程中，选择工具的工具也会显示清单文件中的 `source:` URL，方便您快速验证上游仓库信息。Web 控制台的 MCP 页面会展示每个目录条目的详细信息——包括传输方式、认证类型、端点地址（HTTP 格式）或命令及参数（标准输入/输出格式）、Git 安装的源代码/引用地址及 bootstrap 命令，以及相关设置说明——其中 `source:` 字段会以可点击链接的形式呈现，让您在点击“安装”之前就能清楚了解该条目将连接到何处或运行什么程序。
 
-### 清单版本兼容性
+### 清单文件版本兼容性
 
-清单会指定一个 `manifest_version` 版本。该目录系统具备向前兼容性：如果某个 PR 添加了版本号高于您当前所使用的 Hermes 版本的条目，工具会选择器会针对该条目显示警告信息（`⚠ '<name>' requires a newer Hermes`），而不会直接将其隐藏。发现这种情况时，可运行 `hermes update` 命令来安装最新版本的 Hermes。
+清单文件会指定一个 `manifest_version` 版本。该目录系统具备向前兼容性：如果某个提交添加的条目所使用的 `manifest_version` 版本高于您当前安装的 Hermes 版本，工具选择器会针对该条目显示警告信息（`⚠ '<name>' requires a newer Hermes`），而不会直接隐藏它。看到此类警告时，请运行 `hermes update` 命令来安装最新版本的 Hermes。
 
 ### 运行时 `${ENV_VAR}` 变量替换
 
 在条目的 `transport.command`、`transport.args`、`transport.url` 和 `headers` 字段中，`${VAR}` 占位符会在服务器连接时根据环境变量进行替换（这些环境变量包括 `~/.hermes/.env` 文件中的所有内容）。当某个目录条目需要引用用户在其他地方配置的值时，这一功能非常有用——例如 `${HOME}/foo` 或 `${MY_PROVIDER_TOKEN}`。
 
-需注意，这与目录清单中的 `${INSTALL_DIR}` 是不同的，后者会在安装时被替换为目录克隆条目代码库后的实际路径。
+需注意，这与目录清单文件中的 `${INSTALL_DIR}` 是不同的，后者会在安装时被替换为目录条目所对应的仓库克隆路径。
 
-### 后期更新工具选择
+### 后续更新工具选择
 
 ```bash
 hermes mcp configure linear
