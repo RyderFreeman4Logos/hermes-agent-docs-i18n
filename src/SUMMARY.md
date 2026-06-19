@@ -1820,7 +1820,7 @@
     - [Stripe Link Cli]()
       - [Stripe Link CLI 技能](zh/optional-skills/payments/stripe-link-cli/SKILL.md)
     - [Stripe Projects]()
-      - [Stripe Projects 技能](zh/optional-skills/payments/stripe-projects/SKILL.md)
+      - [Stripe Projects 功能](zh/optional-skills/payments/stripe-projects/SKILL.md)
   - [Productivity]()
     - [Canvas]()
       - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)

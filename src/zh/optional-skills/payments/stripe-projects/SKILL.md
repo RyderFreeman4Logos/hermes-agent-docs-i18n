@@ -11,11 +11,11 @@ metadata:
     related_skills: [stripe-link-cli, mpp-agent]
 ---
 
-# Stripe Projects 技能
+# Stripe Projects 功能
 
-该技能封装了 [Stripe Projects](https://projects.dev) CLI 插件，使 Hermes 能够统一管理各类 SaaS 服务（如 Neon、Twilio、Vercel 等）的配置，自动生成凭证并同步到用户的 `.env` 文件中，同时实现跨服务提供商的账单管理。
+该功能封装了 [Stripe Projects](https://projects.dev) CLI 插件，使 Hermes 能够统一管理各类 SaaS 服务（如 Neon、Twilio、Vercel 等）的配置，自动生成凭证并同步到用户的 `.env` 文件中，同时实现跨服务提供商的账单管理。
 
-目前该技能仅支持 `[linux, macos]` 系统，因为更广泛的支付相关功能仍在 Windows 上完善中。虽然 Stripe CLI 本身是跨平台的，但此限制主要是出于集群架构的考虑，并非绝对的限制。
+目前该功能仅支持 `[linux, macos]` 系统，而更广泛的支付相关功能集群仍在 Windows 上完善中。尽管 Stripe CLI 本身是跨平台的，但此限制主要是出于集群架构考虑，并非硬性规定。
 
 ## 适用场景
 
@@ -24,15 +24,15 @@ metadata:
 - “设置 <provider>”，“配置 <Neon|Twilio|Vercel|...>”，“创建数据库”
 - “为这个项目提供一个 <Postgres|Redis|Twilio number|...>”
 - “管理我的服务栈凭证”，“更换此密钥”，“升级我的套餐”
-- “我可以添加哪些服务提供商？”
+- “我可以添加哪些提供商？”
 
-如果用户已手动配置好相关服务并仅需使用，那么该技能并非合适的起点。
+即使用户已拥有某个提供商的账户，仍可通过 `stripe projects link <provider>` 将其与 Hermes 连接。若用户希望使用现有的资源（如已有数据库或 Vercel 项目），需先确认该提供商是否支持此类操作；目前许多提供商仅支持创建新资源，暂不支持导入现有资源。
 
 ## 先决条件
 
 - 已安装 Stripe CLI（macOS 可通过 Homebrew 安装，Linux 可通过包管理器安装，或从 https://docs.stripe.com/stripe-cli/install 下载）
 - 已安装 Stripe Projects 插件
-- 拥有 Stripe 账户，并已通过 `stripe login` 登录
+- 拥有 Stripe 账户。如果用户尚未注册，CLI 可在设置过程中引导其通过浏览器完成登录或账户创建。
 
 ## 安装方式
 
