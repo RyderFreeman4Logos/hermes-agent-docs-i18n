@@ -8,7 +8,7 @@ description: "Airtable REST API via curl"
 
 # Airtable
 
-通过 curl 调用 Airtable REST API，支持记录的创建、读取、更新和删除操作，以及数据过滤与合并写入功能。
+通过 curl 调用 Airtable REST API，支持记录的创建、读取、更新和删除操作，以及数据筛选与合并写入功能。
 
 ## 技能元数据
 
@@ -17,30 +17,30 @@ description: "Airtable REST API via curl"
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/productivity/airtable` |
 | 版本 | `1.1.0` |
-| 开发者 | 社区贡献 |
+| 开发者 | 社区用户 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `Airtable`、`生产力工具`、`数据库`、`API` |
+| 标签 | `Airtable`、`效率工具`、`数据库`、`API` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用后，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
 # Airtable — 基础库、表格与记录
 
-使用 `terminal` 工具通过 `curl` 直接调用 Airtable 的 REST API。无需 MCP 服务器、OAuth 流程或 Python SDK，仅需 `curl` 和个人访问令牌即可。
+使用 `terminal` 工具通过 `curl` 直接调用 Airtable 的 REST API。无需 MCP 服务器、OAuth 认证流程或 Python SDK，仅需 `curl` 以及个人访问令牌即可。
 
 ## 先决条件
 
 1. 访问 https://airtable.com/create/tokens 创建**个人访问令牌（PAT）**（此类令牌以 `pat...` 开头）。
-2. 至少授予以下权限范围：
+2. 至少授予以下权限：
    - `data.records:read` — 读取记录行
    - `data.records:write` — 创建、更新或删除记录行
    - `schema.bases:read` — 列出所有基础库及表格
-3. **重要提示：** 在同一令牌设置界面中，将需要访问的每个基础库添加到令牌的**访问权限**列表中。PAT 的权限是针对单个基础库设置的——在错误的基础库上使用的有效令牌也会返回 `403` 错误。
-4. 将该令牌存储在 `~/.hermes/.env` 文件中（或通过 `hermes setup` 命令设置）。
+3. **重要提示：** 在同一令牌设置界面中，将需要访问的每个基础库添加到令牌的**访问权限**列表中。个人访问令牌的权限是针对特定基础库设置的——在错误的基础库上使用的有效令牌也会返回 `403` 错误。
+4. 将该令牌存储在 `${HERMES_HOME:-~/.hermes}/.env` 文件中（或通过 `hermes setup` 命令设置）。
    ```
    AIRTABLE_API_KEY=pat_your_token_here
    ```
@@ -215,29 +215,29 @@ while :; do
 done
 ```
 
-## Hermes 的典型工作流程
+## Hermes的典型工作流程
 
-1. **确认身份认证。** 执行命令：`curl -s -o /dev/null -w "%{http_code}\n" https://api.airtable.com/v0/meta/bases -H "Authorization: Bearer $AIRTABLE_API_KEY"`，预期返回码为 `200`。
-2. **定位目标数据表。** 可先通过上一步列出所有数据表，或直接询问用户 `app...` ID——前提是该访问令牌已拥有 `schema.bases:read` 权限。
-3. **检查数据结构。** 执行请求：`GET /v0/meta/bases/$BASE_ID/tables`。在对数据进行处理之前，需将字段名称及主键名称缓存到当前会话中。
-4. **先读取再写入。** 对于“根据条件更新 X”的操作，应先使用 `filterByFormula` 查找对应的 `rec...` ID，然后再执行 `PATCH /v0/$BASE_ID/$TABLE/$RECORD_ID` 操作。切勿猜测记录 ID。
-5. **批量写入。** 将多个相关的创建操作合并为一次包含 10 条记录的 POST 请求，以避免超出每秒 5 次请求的限制。
-6. **注意破坏性操作。** 数据删除操作无法通过 API 恢复。如果用户要求“删除所有 X”，需先反馈筛选条件及记录数量，并在确认后才能执行删除。
+1. **确认身份认证。** 执行命令：`curl -s -o /dev/null -w "%{http_code}\n" https://api.airtable.com/v0/meta/bases -H "Authorization: Bearer $AIRTABLE_API_KEY"`，预期返回状态码为 `200`。
+2. **定位目标数据表。** 可先通过上一步列出所有数据表，或者如果令牌未包含 `schema.bases:read` 权限，则直接让用户提供 `app...` ID。
+3. **检查数据结构。** 执行请求：`GET /v0/meta/bases/$BASE_ID/tables`。在对数据进行任何修改之前，需将具体的字段名及主键名称缓存到当前会话中。
+4. **先读取再写入。** 对于“根据条件Y更新X”的操作，应先使用 `filterByFormula` 查询以获取 `rec...` ID，然后再执行 `PATCH /v0/$BASE_ID/$TABLE/$RECORD_ID` 操作。切勿尝试猜测记录ID。
+5. **批量写入。** 将相关的创建操作合并为一次包含10条记录的POST请求，以此避免超过每秒5次请求的限制。
+6. **不可逆的操作。** 通过API无法撤销删除操作。如果用户要求“删除所有X”，应先反馈筛选条件及记录数量，并在确认后才能执行删除。
 
 ## 常见陷阱
 
-- **`filterByFormula` 的参数必须进行 URL 编码。** 包含空格或非 ASCII 字符的字段名同样需要编码（例如 `{My Field}` 应编码为 `%7BMy%20Field%7D`）。建议使用 Python 标准库中的编码函数，切勿手动处理编码。
-- **响应中缺失的空字段不会被列出。** 如果响应中缺少 `"Assignee"` 这一键值，并不意味着该字段根本不存在，而只是表示该记录的对应值为空。在判定字段缺失之前，请先检查数据结构（步骤 3）。
-- **`PATCH` 与 `PUT` 的区别。** `PATCH` 会将提供的字段值合并到现有记录中；而 `PUT` 会完全替换记录，并清除所有未指定的字段。建议优先使用 `PATCH`。
-- **单选选项必须预先存在。** 如果字段的选项列表中不存在 “Shipping” 这一选项，直接写入 `"Status": "Shipping"` 将会触发 `INVALID_MULTIPLE_CHOICE_OPTIONS` 错误。除非使用 `"typecast": true` 参数（该参数会自动创建缺失的选项），否则需先确保选项存在。
-- **令牌的权限是针对特定数据表的。** 如果某个数据表返回 `403` 错误，而其他数据表可以正常访问，说明该令牌的访问列表中未包含该数据表，而非权限范围或认证问题。此时应引导用户前往 https://airtable.com/create/tokens 为该数据表授予相应权限。
-- **请求速率限制是针对单个数据表，而非整个令牌。** `baseA` 每秒允许 5 次请求，`baseB` 同样允许 5 次请求，这种情况是正常的；但仅 `baseA` 就达到每秒 6 次请求，则会触发速率限制。遇到 `429` 错误时，请查看响应中的 `Retry-After` 头部信息以确定等待时间。
+- **`filterByFormula` 的参数必须进行URL编码。** 包含空格或非ASCII字符的字段名同样需要编码（例如 `{My Field}` 应编码为 `%7BMy%20Field%7D`）。建议使用Python标准库中的相关函数进行编码，切勿手动处理。
+- **响应中缺失的空字段不会被列出。** 如果响应中缺少 `"Assignee"` 这一键值，并不意味着该字段根本不存在，而只是表示该记录的对应值为空。在判定某个字段缺失之前，请先检查数据结构（步骤3）。
+- **`PATCH` 与 `PUT` 的区别。** `PATCH` 会将提供的字段值合并到现有记录中；而 `PUT` 会完全替换整个记录，并清除所有未包含的字段。建议默认使用 `PATCH`。
+- **单选选项必须预先存在。** 如果字段的选项列表中不存在 “Shipping” 这一选项，直接写入 `"Status": "Shipping"` 将会触发 `INVALID_MULTIPLE_CHOICE_OPTIONS` 错误。除非设置 `"typecast": true`（该选项会自动创建缺失的选项），否则应避免此类情况。
+- **令牌的权限是针对特定数据表的。** 如果某个数据表返回 `403` 错误，而其他数据表可以正常访问，那说明该令牌的访问列表中未包含该数据表，而非权限范围或认证问题。此时应引导用户前往 https://airtable.com/create/tokens 为该数据表授予相应权限。
+- **速率限制是针对单个数据表，而非整个令牌。** `baseA` 每秒5次请求、`baseB` 每秒5次请求是允许的；但仅 `baseA` 就达到每秒6次请求则会被限流。遇到 `429` 错误时，请查看响应中的 `Retry-After` 头部信息以确定重试时间。
 
-## Hermes 使用注意事项
+## Hermes使用注意事项
 
-- **始终配合 `curl` 使用 `terminal` 工具。** 禁止使用 `web_extract`（它无法发送身份认证相关头部信息），也避免使用 `browser_navigate`（需要通过用户界面进行认证且速度较慢）。
-- **当加载此技能时，`AIRTABLE_API_KEY` 会自动从 `~/.hermes/.env` 文件中读取并传递给子进程**，无需在每次执行 `curl` 命令前重复导出该密钥。
-- **在公式中处理花括号时需格外小心。** 在 heredoc 内容中，`{Status}` 是字面值；而在 shell 参数中，只要不在 `{...}` 的扩展上下文中，`{Status}` 即可安全使用。不过，若要将动态字符串插入 URL 中，仍需先通过 `python3 urllib.parse.quote` 进行编码。
-- **建议始终使用 `python3 -m json.tool` 工具来格式化 JSON 输出**（该工具为必选），而非可选的 `jq` 工具。只有在进行数据过滤或字段提取时才考虑使用 `jq`。
-- **分页是针对每页数据而言的，而非全局分页。** Airtable 对单条记录的限制为 100 条，此限制无法更改。需通过 `offset` 参数循环查询，直到不再返回相关数据为止。
-- **对于非 2xx 状态码的响应，请仔细查看 `errors` 数组**。Airtable 会返回结构化的错误代码，如 `AUTHENTICATION_REQUIRED`、`INVALID_PERMISSIONS`、`MODEL_ID_NOT_FOUND`、`INVALID_MULTIPLE_CHOICE_OPTIONS` 等，这些代码能明确指示出现问题的原因。
+- **始终结合 `curl` 使用 `terminal` 工具。** 严禁使用 `web_extract`（它无法发送认证头信息），也避免使用 `browser_navigate`（需要通过用户界面进行认证且速度较慢）。
+- **当加载此技能时，`AIRTABLE_API_KEY` 会自动从 `${HERMES_HOME:-~/.hermes}/.env` 文件中读取并传递给子进程**，无需在每次执行 `curl` 命令前再次导出该密钥。
+- **在公式中处理大括号时需格外小心。** 在heredoc内容中，`{Status}` 是字面值；而在shell参数中，只要不在 `{...}` 的扩展上下文中，`{Status}` 即可安全使用。不过，若要将动态字符串插入URL中，仍需先通过 `python3 urllib.parse.quote` 进行编码。
+- **建议始终使用 `python3 -m json.tool` 进行结果美化显示**（该工具为必选），而非可选的 `jq` 工具。只有在需要过滤或提取特定字段时才使用 `jq`。
+- **分页是针对每页数据而言的，而非全局分页。** Airtable 对单条记录的限制为100条，此为硬性限制，无法更改。需通过 `offset` 参数循环查询，直到不再返回相关数据为止。
+- **对于非2xx状态的响应，请查看 `errors` 数组**——Airtable会返回结构化的错误代码，如 `AUTHENTICATION_REQUIRED`、`INVALID_PERMISSIONS`、`MODEL_ID_NOT_FOUND`、`INVALID_MULTIPLE_CHOICE_OPTIONS` 等，这些代码能准确指示问题所在。
