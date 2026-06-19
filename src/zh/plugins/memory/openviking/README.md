@@ -29,17 +29,19 @@ echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.hermes/.env
 | 环境变量 | 默认值 | 描述 |
 |---------|---------|-------------|
 | `OPENVIKING_ENDPOINT` | `http://127.0.0.1:1933` | 服务器地址 |
-| `OPENVIKING_API_KEY` | （无） | API密钥（可选） |
-| `OPENVIKING_ACCOUNT` | （无） | 租户账户覆盖值 |
-| `OPENVIKING_USER` | （无） | 租户用户覆盖值 |
-| `OPENVIKING_AGENT` | `hermes` | 租户代理命名空间 |
+| `OPENVIKING_API_KEY` | （无） | 用于身份验证的服务器用户/管理员 API 密钥 |
+| `OPENVIKING_ACCOUNT` | `default` | 本地/可信模式下的租户账户 |
+| `OPENVIKING_USER` | `default` | 本地/可信模式下的租户用户 |
+| `OPENVIKING_AGENT` | `hermes` | OpenViking 中的 Hermes 对等体 ID，用于基于对等体的记忆管理 |
+
+当设置了 `OPENVIKING_API_KEY` 后，Hermes 会允许 OpenViking 根据该密钥推断出账户/用户身份。在未使用 API 密钥的本地或可信部署环境中，Hermes 会通过身份标识头传递 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER` 的值。
 
 ## 工具
 
 | 工具 | 描述 |
 |------|-------------|
 | `viking_search` | 支持快速/深度/自动模式的语义搜索功能 |
-| `viking_read` | 读取 viking:// 格式的内容（摘要/概览/完整版） |
+| `viking_read` | 读取 viking:// URI 指定的内容（摘要/概览/完整版） |
 | `viking_browse` | 具有文件系统风格的导航功能（列表/树形结构/统计信息） |
-| `viking_remember` | 存储事实信息，以便在会话结束时提取使用 |
-| `viking_add_resource` | 将网址/文档导入知识库中 |
+| `viking_remember` | 存储某项事实，以便在会话结束时提取使用 |
+| `viking_add_resource` | 将 URL 或文档导入知识库中 |
