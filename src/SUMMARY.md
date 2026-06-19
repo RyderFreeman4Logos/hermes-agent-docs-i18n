@@ -2081,6 +2081,7 @@
         - [Excalidraw 图表示例](zh/skills/creative/excalidraw/references/examples.md)
     - [Html Artifact]()
       - [References]()
+        - [概念图原型](zh/skills/creative/html-artifact/references/concept-archetypes.md)
         - [深色科技风格图表变体](zh/skills/creative/html-artifact/references/dark-tech.md)
         - [参考示例（Anthropic HTML效果展示库）](zh/skills/creative/html-artifact/references/examples.md)
         - [精度控制与验证](zh/skills/creative/html-artifact/references/fidelity-and-verify.md)
