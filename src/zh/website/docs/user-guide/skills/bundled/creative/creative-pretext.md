@@ -4,68 +4,68 @@ sidebar_label: "Pretext"
 description: "Use when building creative browser demos with @chenglou/pretext — DOM-free text layout for ASCII art, typographic flow around obstacles, text-as-geometry gam..."
 ---
 
-{{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。*/}}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Pretext
 
-当使用 @chenglou/pretext 构建创意型浏览器演示时便能用到该技能——它可实现无需 DOM 的 ASCII 艺术文本排版、围绕障碍物的文字流动效果、以文字为几何元素的互动游戏、动态排版，以及基于文字的生成艺术。默认情况下会生成单文件 HTML 演示。
+当使用 @chenglou/pretext 构建创意型浏览器演示时即可使用该技能——它支持无需 DOM 的 ASCII 艺术文本排版、围绕障碍物的文字流动效果、以文字为几何元素的互动游戏、动态排版，以及基于文字的生成艺术。默认情况下会生成单文件 HTML 演示。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 已内置（默认安装） |
+| 来源 | 已内嵌（默认即安装） |
 | 路径 | `skills/creative/pretext` |
 | 版本 | `1.0.0` |
 | 创建者 | Hermes Agent |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `creative-coding`、`typography`、`pretext`、`ascii-art`、`canvas`、`generative`、`text-layout`、`kinetic-typography` |
-| 相关技能 | [`p5js`](/docs/user-guide/skills/bundled/creative/creative-p5js)、[`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claude-design)、[`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw)、[`architecture-diagram`](/docs/user-guide/skills/bundled/creative/creative-architecture-diagram) |
+| 相关技能 | [`p5js`](/docs/user-guide/skills/bundled/creative/creative-p5js)、[`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claude-design)、[`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw)、[`html-artifact`](/docs/user-guide/skills/bundled/creative/creative-html-artifact) |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，智能体看到的指令即为内容。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，Agent 就会看到这些指令作为操作指南。
 :::
 
 # Pretext 创意演示
 
 ## 概述
 
-[`@chenglou/pretext`](https://github.com/chenglou/pretext) 是由 Cheng Lou 开发的一个仅 15KB 大小、无任何依赖的 TypeScript 库（他同时还参与了 React 核心、ReasonML 以及 Midjourney 的开发），专为**无需 DOM 的多行文本测量与排版**而设计。它的功能非常单一：给定 `(text, font, width)` 参数，即可通过 Canvas 测量方式返回换行位置、每行宽度、每个字符的位置以及整体高度，全程无需重新布局。
+[`@chenglou/pretext`](https://github.com/chenglou/pretext) 是由 Cheng Lou 开发的一个仅 15KB 大小、无任何依赖的 TypeScript 库（他同样开发过 React 核心、ReasonML 和 Midjourney），专为**无需 DOM 的多行文本测量与排版**而设计。它的功能非常专注：给定 `(text, font, width)` 参数，即可通过 Canvas 测量方式返回换行位置、每行宽度、每个字素的精确位置以及整体高度，全程无需重新布局。
 
-这听起来像是管道工程相关的技术，但实际上并非如此。由于其高效且基于几何计算，它实际上是一种**创意基础元素**：你可以让段落围绕以 60fps 移动的精灵元素重新布局，打造以真实文字构成关卡几何结构的游戏，让 ASCII 标识在文字流中移动，将文本拆解为具有精确字符起始位置的粒子，或是实现无需使用 `getBoundingClientRect` 方法即可完成的多行“紧凑式”UI 显示。
+这听起来像管道工程，但实际上并非如此。由于其高效且基于几何计算，它实际上是一种**创意基础工具**：你可以让段落围绕以 60fps 移动的精灵元素重新布局，打造以真实文字构成关卡几何结构的游戏，让 ASCII 标识在文字流中移动，将文本拆解为具有精确字素起始位置的粒子，或是实现无需调用 `getBoundingClientRect` 即可完成的“收缩包装”多行 UI 效果。
 
-开发该技能的目的是让 Hermes 能够利用它制作出**令人惊叹的演示效果**——那种人们会发布到 X 平台上的作品。你可以在 `pretext.cool` 以及 `chenglou.me/pretext` 中查看社区分享的演示案例集。
+开发此技能的目的是让 Hermes 能够利用它创建**令人惊叹的演示效果**——那种人们会发到 X 平台上的作品。你可以查看 `pretext.cool` 以及 `chenglou.me/pretext` 来了解社区中的优秀演示案例。
 
 ## 适用场景
 
-当用户提出以下需求时，可使用该技能：
+当用户要求实现以下功能时，可使用该技能：
 - “Pretext 演示”/“超酷的 Pretext 效果”/“以文字实现 X 功能”
-- 文字围绕移动的图形流动（适用于标题区域、杂志版面、动态长文页面）
-- 使用**真实文字或段落**而非等宽字体点阵实现的 ASCII 艺术效果
-- 以文字作为游戏场地、障碍物或砖块的游戏（例如用字母构成的俄罗斯方块、用文字构成的打砖块游戏）
-- 具有逐字符物理效果的动态排版（如破碎、散射、群集、流动效果）
-- 排版类生成艺术，尤其是涉及非拉丁字母或混合字母体系的创作
-- 多行“紧凑式”UI（在尽可能小的容器宽度下仍能完整显示文本）
-- 任何需要在渲染之前就确定换行位置的场景
+- 文字围绕移动的图形流动（适用于首页标题区、杂志版面、动态长文页面）
+- 使用**真实文字或段落**而非等宽字体网格实现的 ASCII 艺术效果
+- 以文字作为游戏场地、障碍物或砖块的互动游戏（如用字母构成的俄罗斯方块、用文字构成的打砖块游戏）
+- 具有字素级物理效果的动态排版（如破碎、散射、群聚、流动效果）
+- 排版类生成艺术，尤其适用于非拉丁字母或混合字体场景
+- 多行“收缩包装”UI（在尽可能小的容器宽度下仍能完整显示文本）
+- 任何需要在渲染前就确定换行位置的场景
 
-**不适用于以下场景**：
-- CSS 已经能够解决布局问题的静态 SVG/HTML 页面——直接使用 CSS 即可
-- 富文本编辑器、通用内联格式化引擎（Pretext 的功能范围刻意较为有限）
-- 图像转文字的功能（可使用 `ascii-art` / `ascii-video` 技能实现）
-- 无需文字元素的纯 Canvas 生成艺术——可使用 `p5js` 实现
+**不推荐用于以下情况**：
+- CSS 已经能解决布局问题的静态 SVG/HTML 页面——直接使用 CSS 即可
+- 富文本编辑器、通用内联格式化引擎（Pretext 的功能范围本就较为有限）
+- 图片转文字的功能（可使用 `ascii-art` / `ascii-video` 技能）
+- 完全不涉及文字元素的纯 Canvas 生成艺术——此时应使用 `p5js`
 
 ## 创意标准
 
-这是在浏览器中呈现的视觉艺术作品。Pretext 只负责输出数值，**实际绘图工作由你完成**。
+这是在浏览器中呈现的视觉艺术作品。Pretext 只负责提供数值数据，**实际绘制效果需由你完成**。
 
-- **切勿提交“Hello World”式的简单演示**。`hello-orb-flow.html` 模板仅作为**起点**，每个最终交付的演示都应加入有意的色彩、动态效果、构图设计，以及一个用户虽未提出但会欣赏的视觉细节。
-- **采用深色背景搭配暖色调主色，精心挑选配色方案**。经典的琥珀色配黑色（类似 CRT 显示器/终端风格）很合适，冷白色配炭灰色（类似杂志版面风格）以及低饱和度的柔和色彩（类似油印效果）也同样出色。选定一种风格后请坚持使用。
-- **比例字体是核心要点**。Pretext 的设计理念就是“非等宽字体”，因此应充分利用这一特点。可选择 Iowan Old Style、Inter、JetBrains Mono、Helvetica Neue 或变量字体，切勿默认使用无衬线字体。
-- **使用真实来源的文本，而非 lorem ipsum 示例文本**。演示内容应当具有实际意义，可以是简短的宣言、诗歌、真实代码、找到的随机文本，或是该库自身的 README 文件——绝不能用 `lorem ipsum`。
-- **确保首次渲染效果优异**。不得出现加载状态或空白帧，演示页面在打开的瞬间就必须呈现出可直接使用的完美状态。
+- **切勿提交“Hello World”式的简单演示**。`hello-orb-flow.html` 模板仅作为**起点**，每个最终提交的演示都应加入有意的色彩、动态效果、构图设计，以及一个用户虽未明确提出但会欣赏的视觉细节。
+- **采用深色背景搭配暖色调主色，精心挑选配色方案**。经典的琥珀色配黑色（类似 CRT 显示器/终端风格）很合适，冷白色配炭灰色（适合杂志类设计）以及低饱和度的柔和色彩（类似凸版印刷效果）也是不错的选择。选定一种风格后就要坚持使用。
+- **比例字体是核心要素**。Pretext 的设计理念就是“非等宽字体”，因此应充分利用这一特点。可选择 Iowan Old Style、Inter、JetBrains Mono、Helvetica Neue 或变量字体，切勿默认使用无衬线字体。
+- **使用真实来源的文本，而非 lorem ipsum**。演示内容应当具有实际意义，可以是简短的宣言、诗歌、真实代码、找到的随机文本，或是该库自身的 README 文件——绝不能使用 `lorem ipsum` 这类虚拟文本。
+- **确保首次渲染效果出色**。不得出现加载状态或空白画面，演示页面在打开的瞬间就必须呈现出可直接发布的完美状态。
 
 ## 技术栈
 
@@ -74,9 +74,9 @@ description: "Use when building creative browser demos with @chenglou/pretext �
 | 层级 | 工具 | 用途 |
 |-------|------|---------|
 | 核心功能 | 通过 `esm.sh` CDN 引入的 `@chenglou/pretext` | 文本测量与行布局计算 |
-| 渲染层 | HTML5 Canvas 2D | 字符渲染及逐帧构图 |
-| 分割处理 | 内置的 `Intl.Segmenter` | 对表情符号、汉字及组合字符进行字符分割 |
-| 交互功能 | 原生 DOM 事件 | 鼠标/触摸/滚轮交互——无需任何框架支持 |
+| 渲染层 | HTML5 Canvas 2D | 字素渲染及每帧画面合成 |
+| 分割处理 | 内置的 `Intl.Segmenter` | 处理表情符号、汉字及组合字符的字素分割 |
+| 交互功能 | 原生 DOM 事件 | 鼠标、触摸、滚轮交互——无需任何框架支持 |
 
 ```html
 <script type="module">
