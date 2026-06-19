@@ -347,7 +347,7 @@ hermes uninstall            Uninstall Hermes
 
 ```
 ~/.hermes/config.yaml       Main configuration
-~/.hermes/.env              API keys and secrets
+~/.hermes/.env              API keys and secrets (under $HERMES_HOME if set)
 $HERMES_HOME/skills/        Installed skills
 ~/.hermes/sessions/         Gateway routing index, request dumps, *.jsonl transcripts (and optional per-session JSON snapshots when sessions.write_json_snapshots: true)
 ~/.hermes/state.db          Canonical session store (SQLite + FTS5)
@@ -823,7 +823,7 @@ hermes-agent/
 ├── tests/                # ~3000 pytest tests
 └── website/              # Docusaurus docs site
 ```
-配置文件：`~/.hermes/config.yaml`（用于设置参数），`~/.hermes/.env`（用于存储 API 密钥）。
+配置文件：`~/.hermes/config.yaml`（用于设置参数），`~/.hermes/.env`（用于存储 API 密钥）——若已设置 `$HERMES_HOME`，则这两个文件均位于该路径下。
 
 ### 添加工具（需 3 个文件）
 
@@ -910,7 +910,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 ### 扩展系统提示中的执行环境模块
 
-关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示以及针对不同终端后端的检测逻辑。具体规则如下：
+关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统中的 bash 与 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。WSL 相关提示及针对不同后端的检测逻辑也位于该函数中。具体规则如下：
 
 - **本地终端后端** → 输出主机信息（操作系统、`$
 
