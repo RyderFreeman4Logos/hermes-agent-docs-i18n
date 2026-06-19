@@ -64,9 +64,9 @@ memory:
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（目前它会重定向到 `hermes memory setup`），但仅在将 Honcho 设定为激活的内存提供者之后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（现在它会重定向到 `hermes memory setup`），但仅在选择 Honcho 作为活跃内存提供者之后才会被注册。
 
-**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置加载顺序为：`$
+**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置文件的优先级顺序为：`$
 
 ```json
 {
@@ -262,12 +262,16 @@ hermes memory setup    # select "openviking"
 # Or manually:
 hermes config set memory.provider openviking
 echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.hermes/.env
+# Authenticated servers should use a user/admin API key:
+echo "OPENVIKING_API_KEY=..." >> ~/.hermes/.env
 ```
 
 **核心特性：**  
-- 分层上下文加载：L0（约100个标记）→ L1（约2,000个标记）→ L2（完整上下文）  
-- 会话保存时自动提取记忆信息（包括个人资料、偏好设置、实体、事件、案例及模式）  
+- 分层上下文加载：L0（约100个标记）→ L1（约2000个标记）→ L2（完整上下文）  
+- 会话保存时自动提取内存信息（包括配置文件、偏好设置、实体、事件、案例及模式）  
 - 支持使用 `viking://` URI方案实现分层知识浏览  
+
+在本地/可信模式下，需使用 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER`；而 `OPENVIKING_AGENT` 则是Hermes在OpenViking中的对等体标识，用于实现基于对等体的内存共享。  
 
 ---
 
@@ -277,17 +281,17 @@ echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.hermes/.env
 
 | | |  
 |---|---|  
-| **最佳适用场景** | 无需手动管理记忆——Mem0可自动完成信息提取 |  
+| **最佳适用场景** | 无需手动管理内存——Mem0可自动完成数据提取 |  
 | **所需条件** | 安装 `pip install mem0ai` 及API密钥 |  
 | **数据存储** | Mem0云服务 |  
-| **费用** | 参见Mem0定价说明 |  
+| **费用** | 按Mem0官方定价收费 |  
 
 **相关工具：**  
-- `mem0_profile`（查看所有已存储的记忆信息）  
-- `mem0_search`（语义搜索及结果重排序）  
-- `mem0_conclude`（以原文形式存储事实信息）  
+- `mem0_profile`：查看所有已存储的内存数据  
+- `mem0_search`：支持语义搜索与结果重排序  
+- `mem0_conclude`：存储原始事实内容  
 
-**设置方式：**
+**配置方法：**
 ```bash
 hermes memory setup    # select "mem0"
 # Or manually:
