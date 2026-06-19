@@ -2080,6 +2080,7 @@
         - [Excalidraw 深色模式图表](zh/skills/creative/excalidraw/references/dark-mode.md)
         - [Excalidraw 图表示例](zh/skills/creative/excalidraw/references/examples.md)
     - [Html Artifact]()
+      - [HTML文档生成技能](zh/skills/creative/html-artifact/SKILL.md)
       - [References]()
         - [概念图原型](zh/skills/creative/html-artifact/references/concept-archetypes.md)
         - [深色科技风格图表变体](zh/skills/creative/html-artifact/references/dark-tech.md)
