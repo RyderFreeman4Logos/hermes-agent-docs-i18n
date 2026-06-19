@@ -86,30 +86,61 @@ Create a square portrait of a wise old owl — use the typography model
 Make me a futuristic cityscape, landscape orientation
 ```
 
-## 宽高比设置
+## 图像到图像/图像编辑
 
-从智能体的视角来看，所有模型都支持相同的三种宽高比。在内部处理时，每个模型的原生尺寸规格会自动填充：
+当当前激活的模型支持时，同一个 `image_generate` 工具也可用于**编辑现有图像**——只需提供源图像，后端便会自动将其路由至相应的编辑接口（其工作方式与 `video_generate` 处理图像到视频的流程类似）。若不提供源图像，则该工具将执行纯文本到图像的生成功能。
 
-| 智能体输入 | flux/z-image/qwen/recraft/ideogram 的 image_size | nano-banana-pro 的 aspect_ratio | gpt-image-1.5 的 image_size | gpt-image-2 的 image_size |
+```
+Take this photo and make it a rainy Tokyo street at night → <image>
+```
+
+```
+Blend these two product shots into one hero image → <image1> <image2>
+```
+
+编辑功能由两个输入参数驱动：
+
+- **`image_url`** — 需要编辑/转换的原始图片（公共网址或本地路径）。
+- **`reference_image_urls`** — 额外的风格/构图参考图片（每个模型有上限）。
+
+### 哪些后端支持编辑功能
+
+| 后端 | 图像转图像 | 参考图片数量上限 | 实现方式 |
+|---|---|---|---|
+| **FAL.ai**（以下支持编辑的模型） | ✓ | 最多9张 | 路由至模型的 `/edit` 接口 |
+| **OpenAI** (`gpt-image-2`) | ✓ | 最多16张 | 使用 `images.edit()` 方法 |
+| **xAI** (Grok Imagine) | ✓ | 1张 | 通过 `/v1/images/edits` 接口及 `grok-imagine-image-quality` 参数 |
+| **Krea** (`Krea 2`) | ✓ | 最多10张 | 基于参考图片的生成功能（`image_style_references` 参数） |
+| **OpenAI (Codex认证)** | ✗ | — | 仅支持文本转图像 |
+
+具备编辑接口的FAL模型包括：`flux-2/klein/9b`、`flux-2-pro`、`nano-banana-pro`、`gpt-image-1.5`、`gpt-image-2`、`ideogram/v3` 以及 `qwen-image`。而纯文本转图像的FAL模型（如 `z-image/turbo`、`recraft`、`krea/*`）会拒绝接收图片输入，并给出明确错误提示，建议使用支持编辑的模型。
+
+运行时，工具描述中会显示当前模型的编辑功能支持情况，这样智能体在调用工具之前就能知道是否可以处理 `image_url` 参数。
+
+## 宽高比
+
+从智能体的视角来看，所有模型都接受相同的三种宽高比。实际上，每个模型的原生尺寸规格会自动填充：
+
+| 智能体输入 | flux/z-image/qwen/recraft/ideogram模型的图像尺寸 | nano-banana-pro模型的宽高比 | gpt-image-1.5模型的图像尺寸 | gpt-image-2模型的图像尺寸 |
 |---|---|---|---|---|
 | `landscape` | `landscape_16_9` | `16:9` | `1536x1024` | `landscape_4_3`（1024×768） |
 | `square` | `square_hd` | `1:1` | `1024x1024` | `square_hd`（1024×1024） |
 | `portrait` | `portrait_16_9` | `9:16` | `1024x1536` | `portrait_4_3`（768×1024） |
 
-GPT Image 2 因其最小像素数为 655,360，无法使用 `landscape_16_9` 预设（1024×576 = 589,824），因此只能使用 4:3 比例的预设。
+GPT Image 2使用的是4:3比例的预设，而非16:9，因为其最小像素数为655,360——而`landscape_16_9`比例的像素数仅为1024×576=589,824，会因此被拒绝。
 
 这一转换工作在 `_build_fal_payload()` 函数中完成——智能体代码无需了解不同模型之间的格式差异。
 
-## 自动放大功能
+## 自动放大处理
 
-通过 FAL 的 **Clarity Upscaler** 进行放大功能需根据模型类型来决定是否启用：
+通过FAL的**清晰度放大器**进行放大功能需根据模型情况决定是否启用：
 
-| 模型 | 是否放大？ | 原因 |
+| 模型 | 是否支持放大？ | 原因 |
 |---|---|---|
-| `fal-ai/flux-2-pro` | ✓ | 兼容旧版本需求（曾是默认选择） |
-| 其他所有模型 | ✗ | 快速生成模型会失去秒级响应的优势；高分辨率模型则无需此功能 |
+| `fal-ai/flux-2-pro` | ✓ | 兼容旧版本需求（曾是默认选项） |
+| 其他所有模型 | ✗ | 快速生成模型会失去亚秒级响应的优势；高分辨率模型则无需此功能 |
 
-放大处理时会使用以下参数：
+放大处理时会使用以下参数设置：
 
 | 参数 | 值 |
 |---|---|
@@ -119,15 +150,15 @@ GPT Image 2 因其最小像素数为 655,360，无法使用 `landscape_16_9` 预
 | 指导强度 | 4 |
 | 推理步数 | 18 |
 
-如果放大失败（如网络问题或速率限制），系统会自动返回原始图像。
+如果放大处理失败（如网络问题或速率限制），系统会自动返回原始图片。
 
-## 内部工作流程
+## 内部工作原理
 
-1. **模型分辨率确定** — `_resolve_fal_model()` 函数会先从 `config.yaml` 中读取 `image_gen.model` 的配置，若未找到则使用 `FAL_IMAGE_MODEL` 环境变量，最后默认使用 `fal-ai/flux-2/klein/9b` 模型。
-2. **负载构建** — `_build_fal_payload()` 函数会将用户指定的 `aspect_ratio` 转换为模型所支持的格式（预设枚举值、宽高比枚举值或 GPT 的直接数值），合并模型的默认参数，应用调用方设置的自定义参数，最后通过模型的 `supports` 白名单进行过滤，确保不会发送不支持的参数。
-3. **请求提交** — `_submit_fal_request()` 函数会通过直接的 FAL 认证信息或托管的 Nous 网关来提交请求。
-4. **放大处理** — 仅当模型的元数据中标记 `upscale: True` 时才会执行放大操作。
-5. **结果返回** — 最终的图像 URL 会被返回给智能体，智能体会输出 `MEDIA:<url>` 标签，平台适配器会将该标签转换为对应的原生媒体格式。
+1. **模型分辨率确定** — `_resolve_fal_model()`函数会先从`config.yaml`文件中读取`image_gen.model`参数，若未找到则依次尝试环境变量`FAL_IMAGE_MODEL`，最后默认使用`fal-ai/flux-2/klein/9b`模型。
+2. **请求参数构建** — `_build_fal_payload()`函数会将用户指定的宽高比转换为模型所支持的格式（预设枚举值、宽高比枚举值或GPT模型的直接数值），合并模型的默认参数，应用用户自定义的设置，然后通过模型的`supports`白名单进行过滤，确保不会发送不支持的参数。
+3. **请求提交** — `_submit_fal_request()`函数会通过直接的FAL认证信息或托管的Nous网关来提交请求。
+4. **放大处理** — 仅当模型的元数据中标记为`upscale: True`时才会执行放大操作。
+5. **结果返回** — 最终的图片网址会被返回给智能体，智能体随后会生成`MEDIA:<url>`标签，平台适配器会将此标签转换为相应的媒体格式。
 
 ## 调试方法
 
@@ -137,13 +168,13 @@ GPT Image 2 因其最小像素数为 655,360，无法使用 `landscape_16_9` 预
 export IMAGE_TOOLS_DEBUG=true
 ```
 
-调试日志会保存在 `./logs/image_tools_debug_<session_id>.json` 文件中，其中包含每次调用的详细信息（模型、参数、耗时及错误情况）。
+调试日志会保存在 `./logs/image_tools_debug_<session_id>.json` 文件中，其中包含每次调用的详细信息（模型类型、参数、耗时及错误信息）。
 
-## 推送方式
+## 输出方式
 
-| 平台 | 推送形式 |
+| 平台 | 输出形式 |
 |---|---|
-| **CLI** | 以 Markdown 格式输出图片链接 `![](url)` — 点击即可打开 |
+| **CLI** | 以 Markdown 格式输出图片链接 `![](url)`——点击即可打开 |
 | **Telegram** | 附带提示语的图片消息 |
 | **Discord** | 嵌入在消息中 |
 | **Slack** | 由 Slack 自动展开链接 |
@@ -152,7 +183,7 @@ export IMAGE_TOOLS_DEBUG=true
 
 ## 局限性
 
-- **需要 FAL 凭证**（直接使用 `FAL_KEY` 或 Nous 订阅账号）
-- **仅支持文本转图片** — 无法通过该工具进行修复绘图、图像间转换或编辑操作
-- **临时链接** — FAL 返回的链接会在数小时或数天后失效；如需长期保存，请自行下载到本地
-- **模型相关限制** — 部分模型不支持 `seed`、`num_inference_steps` 等参数。系统会自动忽略不受支持的参数，这是正常现象 |
+- **需要有效后端凭证**（FAL 的 `FAL_KEY` / Nous 订阅账号、`OPENAI_API_KEY`、xAI OAuth、`KREA_API_KEY`）
+- **编辑功能取决于模型类型**——仅支持图像间编辑的模型才能实现该功能（参见上表）；仅支持文本生成模型的则会直接拒绝图片输入并给出明确错误提示
+- **临时链接**——后端返回的链接会在数小时或数天后失效；Hermes 会将其缓存到本地，以确保链接过期后仍能正常使用
+- **模型特定限制**——部分模型不支持 `seed`、`num_inference_steps` 等参数。`supports` / `edit_supports` 过滤机制会自动忽略不受支持的参数，这是正常现象 |
