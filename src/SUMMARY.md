@@ -1563,7 +1563,7 @@
       - [Kanban 视频编排工具](zh/optional-skills/creative/kanban-video-orchestrator/SKILL.md)
       - [References]()
         - [实际案例解析](zh/optional-skills/creative/kanban-video-orchestrator/references/examples.md)
-        - [信息收集——需求探索问题库](zh/optional-skills/creative/kanban-video-orchestrator/references/intake.md)
+        - [收集信息——探索式问题库](zh/optional-skills/creative/kanban-video-orchestrator/references/intake.md)
         - [看板设置 — 项目初始化与配置](zh/optional-skills/creative/kanban-video-orchestrator/references/kanban-setup.md)
         - [监控——实时观察流水线并及时干预](zh/optional-skills/creative/kanban-video-orchestrator/references/monitoring.md)
         - [角色原型](zh/optional-skills/creative/kanban-video-orchestrator/references/role-archetypes.md)
