@@ -4,28 +4,28 @@ sidebar_label: "1Password"
 description: "Set up and use 1Password CLI (op)"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据该技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # 1Password
 
-用于设置及使用 1Password CLI（op）。适用于安装 CLI、启用桌面应用集成、登录，以及为命令读取/注入机密信息。
+用于设置和使用 1Password CLI（op）。适用于安装 CLI、启用桌面应用集成、登录，以及为命令读取/注入机密信息。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/security/1password` 安装 |
+| 来源 | 可选 —— 使用 `hermes skills install official/security/1password` 进行安装 |
 | 路径 | `optional-skills/security/1password` |
 | 版本 | `1.0.0` |
-| 创建者 | arceus77-7，经 Hermes Agent 改进 |
-| 许可协议 | MIT |
+| 创建者 | arceus77-7，由 Hermes Agent 改进 |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `security`、`secrets`、`1password`、`op`、`cli` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，Agent 会以这些内容作为操作指引。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据此内容执行操作。
 :::
 
 # 1Password CLI
@@ -37,7 +37,7 @@ description: "Set up and use 1Password CLI (op)"
 - 1Password 账户
 - 已安装 1Password CLI（op）
 - 其中一种方式：桌面应用集成、服务账户令牌（`OP_SERVICE_ACCOUNT_TOKEN`）或 Connect 服务器
-- 为在 Hermes 终端调用期间保持稳定认证会话，需安装 `tmux`（仅限桌面应用流程）
+- 为在 Hermes 终端调用期间保持稳定的认证会话，需安装 `tmux`（仅适用于桌面应用流程）
 
 ## 使用场景
 
@@ -45,13 +45,13 @@ description: "Set up and use 1Password CLI (op)"
 - 使用 `op signin` 登录
 - 读取类似 `op://Vault/Item/field` 的机密信息引用
 - 使用 `op inject` 将机密信息注入配置文件/模板中
-- 通过 `op run` 运行带有机密环境变量的命令
+- 通过 `op run` 使用含机密信息的环境变量运行命令
 
 ## 认证方式
 
 ### 服务账户（Hermes 推荐）
 
-在 `~/.hermes/.env` 文件中设置 `OP_SERVICE_ACCOUNT_TOKEN`（首次加载时技能会提示输入该值）。
+在 `${HERMES_HOME:-~/.hermes}/.env` 文件中设置 `OP_SERVICE_ACCOUNT_TOKEN`（首次加载时技能会提示输入该值）。
 无需桌面应用。支持 `op read`、`op inject`、`op run` 功能。
 
 ```bash
