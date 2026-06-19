@@ -2604,6 +2604,7 @@
             - [ComfyUI](zh/website/docs/user-guide/skills/bundled/creative/creative-comfyui.md)
             - [DESIGN.md 技能](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
+            - [HTML 文档生成](zh/website/docs/user-guide/skills/bundled/creative/creative-html-artifact.md)
             - [Humanizer](zh/website/docs/user-guide/skills/bundled/creative/creative-humanizer.md)
             - [Manim 视频生成](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
             - [p5Js](zh/website/docs/user-guide/skills/bundled/creative/creative-p5js.md)
