@@ -2086,6 +2086,7 @@
         - [参考示例（Anthropic HTML效果展示库）](zh/skills/creative/html-artifact/references/examples.md)
         - [精度控制与验证](zh/skills/creative/html-artifact/references/fidelity-and-verify.md)
         - [SVG 图表](zh/skills/creative/html-artifact/references/svg-diagrams.md)
+        - [一次性编辑器](zh/skills/creative/html-artifact/references/throwaway-editors.md)
     - [Humanizer]()
       - [Humanizer：去除AI写作特征](zh/skills/creative/humanizer/SKILL.md)
     - [Manim Video](zh/skills/creative/manim-video/README.md)
