@@ -8,7 +8,7 @@ description: "Index a codebase with GitNexus and serve an interactive knowledge 
 
 # GitNexus Explorer
 
-使用 GitNexus 对代码库进行索引，并通过网页界面结合 Cloudflare 隧道技术提供交互式知识图谱服务。
+利用 GitNexus 对代码库进行索引，并通过 Web UI 加上 Cloudflare 隧道技术提供交互式知识图谱服务。
 
 ## 技能元数据
 
@@ -18,20 +18,20 @@ description: "Index a codebase with GitNexus and serve an interactive knowledge 
 | 路径 | `optional-skills/research/gitnexus-explorer` |
 | 版本 | `1.0.0` |
 | 开发者 | Hermes Agent + Teknium |
-| 许可证 | MIT |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `gitnexus`、`代码智能`、`知识图谱`、`可视化` |
-| 相关技能 | [`native-mcp`](/docs/user-guide/skills/bundled/mcp/mcp-native-mcp)、[`codebase-inspection`](/docs/user-guide/skills/bundled/github/github-codebase-inspection) |
+| 相关技能 | `native-mcp`、[`codebase-inspection`](/docs/user-guide/skills/bundled/github/github-codebase-inspection) |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，Agent 就会依据这些内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据这些内容执行操作。
 :::
 
 # GitNexus Explorer
 
-将任意代码库映射到知识图谱中，并提供交互式网页界面，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 隧道技术实现远程访问。
+将任意代码库映射到知识图谱中，并提供一个交互式 Web UI，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 隧道技术实现远程访问。
 
 ## 适用场景
 
@@ -43,11 +43,11 @@ description: "Index a codebase with GitNexus and serve an interactive knowledge 
 
 - **Node.js**（v18+）——GitNexus 及代理服务所需
 - **git**——代码仓库必须包含 `.git` 目录
-- **cloudflared**——用于隧道连接（如未安装则自动安装至 ~/.local/bin）
+- **cloudflared**——用于构建隧道连接（如未安装则会自动安装到 ~/.local/bin）
 
 ## 容量提示
 
-网页界面会在浏览器中渲染所有节点。文件数量在 5,000 个以内的代码仓库使用效果最佳。对于大型代码仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI 和 MCP 工具则不受此限制，仅网页可视化功能存在此类限制。
+Web UI 会在浏览器中渲染所有节点。文件数量在 5,000 个以内的代码仓库使用效果最佳。对于大型代码仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI 和 MCP 工具则不受此限制，仅 Web 可视化功能存在此类局限。
 
 ## 操作步骤
 
