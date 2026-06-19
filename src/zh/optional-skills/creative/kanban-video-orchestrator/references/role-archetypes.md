@@ -1,208 +1,208 @@
 # 角色原型
 
-用于视频制作的角色原型库。**请从该列表中组合团队，而非直接复制固定的角色配置**。大多数视频需要4到7个角色。导演角色始终存在，其他角色的设置则取决于项目需求。
+用于视频制作的角色原型库。**请从该列表中组合团队，而非直接复制固定的角色配置**。大多数视频需要4到7个角色配置。导演角色始终存在；其他角色的设置则取决于项目需求。
 
-按照惯例，每个角色的名称采用“kebab-case”格式（例如 `creative-director`、`image-generator`）。当同一角色需要承担不同职责时，会为其添加描述性后缀（例如 `renderer-ascii`、`renderer-3d`）。
+按照惯例，每个角色配置的名称采用“kebab-case”格式（例如 `creative-director`、`image-generator`）。当同一角色需要承担不同职责时，会通过添加描述性后缀来区分（例如 `renderer-ascii`、`renderer-3d`）。
 
-关于各角色的工具集与技能对应关系，请参阅 [tool-matrix.md](tool-matrix.md)。
+关于各角色的工具集与技能对应关系，请参阅 [tool-matrix.md](tool-matrix.md) 文档。
 
 ## 始终存在的角色
 
 ### 导演
 
-项目的创意核心。负责阅读项目需求与品牌指南，将其拆解为任务结构图，通过评论指导创作方向，并最终审核成片。
+负责把握整体创意方向的人。他会仔细阅读项目需求文档和品牌指南，将其拆解为任务结构图，通过评论来指导创作方向，并最终审核成品。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-orchestrator`。该插件可自动提供基础的任务协调指导；`kanban-orchestrator`则用于更深入的任务拆解。如果项目需求较为宽泛且需要创意框架指导，可额外添加 `creative-ideation` 技能。
-- **性格特质**：需与品牌语调保持一致——详情参见 `assets/soul.md.tmpl`。
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-orchestrator`。该插件可自动提供基础的任务协调指导；而 `kanban-orchestrator` 则用于更深入的任务拆解。如果项目需求较为模糊，需要帮助明确框架，可额外添加 `creative-ideation` 技能。
+- **性格特征**：需与品牌语调保持一致——详情参见 `assets/soul.md.tmpl` 文件。
 
-导演与其他角色使用相同的工具集，但其 `SOUL.md` 规则**禁止**直接执行任务。这种“先拆解、后执行”的工作准则是通过性格设定与 `kanban-orchestrator` 技能来强制执行的，而非因为缺乏相应工具。
+导演与其他角色使用相同的工具集，但其 `SOUL.md` 规则**禁止**直接执行任务。这种“先拆解、后执行”的工作准则是通过性格设定以及 `kanban-orchestrator` 技能来保障的，而非因为缺乏相应工具。
 
 ## 前期制作角色
 
 根据项目需求选择合适的角色。
 
-### 编剧 / 电影剧本作者
+### 编剧 / 旁白撰写人
 
-负责撰写脚本、对白、旁白文案及叙事文本。适用于任何需要口语或文字内容的视频，尤其是超出标语范畴的内容。
+负责撰写剧本、对话内容、旁白脚本以及解说词。适用于任何需要文字内容的视频，除了标语之外。
 
-- **工具集**：kanban、文件
-- **技能**：`kanban-worker`、`humanizer`（用于后期处理，去除人工智能产生的痕迹）
+- **工具集**：kanban、文件管理
+- **技能**：`kanban-worker`、`humanizer`（用于后期处理，去除 AI 生成的痕迹）
 - **输出文件**：`script.md`、`narration.md`、`dialogue/scene-NN.md`
 
 ### 广告文案撰写人
 
-与编剧类似，但专门负责营销文案的创作：如标语、行动号召语以及产品视频的旁白脚本。
+与编剧类似，但专门负责撰写营销文案：如标语、行动号召语，以及产品视频的旁白脚本。
 
-- **工具集**：kanban、文件
+- **工具集**：kanban、文件管理
 - **技能**：`kanban-worker`、`humanizer`
 - **输出文件**：`copy.md`
 
-### 概念艺术家 / 视觉设计师
+### 构思艺术家 / 视觉设计师
 
-负责构建视觉识别体系：包括情绪板、风格参考图、色彩方案说明以及字体选择等。他们会制定一份 `visual-spec.md` 文件，供所有生成工具遵循。通常还会使用图像生成API或本地技能创建静态参考帧。
+负责打造视觉识别系统：包括情绪板、风格参考图、色彩方案说明以及字体选择等。他们会制定一份 `visual-spec.md` 文件，作为所有生成工具的参考依据。通常还会使用图像生成 API 或本地技能来制作静态参考图。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-worker`，再加上与项目相关的设计技能——如 `claude-design`（用于UI/网页设计）、`sketch`（快速制作原型）、`popular-web-designs`（匹配常见网页风格）、`pixel-art`（复古风格）、`ascii-art`（终端/复古风格）、`excalidraw`（手绘参考图）、`design-md`（基于文本的设计文档）
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-worker`，再加上与项目相关的设计技能——如 `claude-design`（用于 UI/网页设计）、`html-artifact`（用于快速制作原型、说明图和图表）、`popular-web-designs`（用于匹配常见的网页风格）、`pixel-art`（复古风格）、`ascii-art`（终端/复古风格）、`excalidraw`（手绘风格帧）、`design-md`（基于文本的设计文档）
 - **输出文件**：`visual-spec.md`、`taste/style-frames/*.png`
 
 ### 分镜师
 
-负责将项目需求转化为包含时间节点的逐镜头分镜表。这对叙事类电影和音乐视频尤为重要，通常会搭配图表工具使用。
+负责将项目需求转化为带有时间标注的逐帧分镜表。这对叙事类电影和音乐视频尤为重要。通常会搭配图表工具一起使用。
 
-- **工具集**：kanban、文件
-- **技能**：`kanban-worker`，再加上图表制作技能——如 `excalidraw`（用于手绘）、`architecture-diagram`（用于技术/系统设计）、`concept-diagrams`（用于教育/科学类内容）
-- **输出文件**：`storyboard.md`，每场景/镜头占一行，可选附带分镜草图
+- **工具集**：kanban、文件管理
+- **技能**：`kanban-worker`，再加上图表制作技能——如 `excalidraw`（用于草图绘制）、`html-artifact`（用于技术/系统类以及教育/科学类图表）
+- **输出文件**：`storyboard.md`，每场/每个镜头占一行；可选地还会提供分镜草图
 
 ### 摄影指导 / 摄影师
 
-负责设计视觉语言：包括构图、色彩、动作表现及转场效果。他们会审核生成工具的输出结果，确保视觉风格一致，并为每个场景提供 `VISUAL_SPEC.md` 文件作为参考。
+负责设计视觉语言：包括构图、色彩、动态效果以及转场方式。他们会检查生成工具的输出结果，确保视觉风格一致，并为每个场景提供 `VISUAL_SPEC.md` 文件作为参考。
 
-- **工具集**：kanban、终端、文件、视频处理工具、视觉分析工具
-- **技能**：`kanban-worker`，再加上与项目匹配的视觉相关技能——如用于ASCII风格作品的 `ascii-video`、用于解说类内容的 `manim-video`、用于实时视觉效果的 `touchdesigner-mcp` 等
+- **工具集**：kanban、终端、文件管理、视频处理、视觉分析
+- **技能**：`kanban-worker`，再加上与项目匹配的视觉相关技能——例如用于 ASCII 风格内容的 `ascii-video`、用于制作解说视频的 `manim-video`、用于实时视觉效果的 `touchdesigner-mcp` 等
 - **输出文件**：`scenes/scene-NN/VISUAL_SPEC.md`，以及对渲染任务的审核意见
-- **审核工具**：`video_analyze`（将完整片段发送给多模态大语言模型进行专业审核）、`vision_analyze`（用于抽查帧图像）、ffprobe统计信息
+- **审核工具**：`video_analyze`（将完整片段发送给多模态大语言模型进行直接审核）、`vision_analyze`（用于抽查帧图像）、ffprobe 统计信息
 
 ## 制作阶段角色
 
-### 通用渲染器
+### 渲染器（通用型）
 
-负责为一个或多个场景生成视觉内容的任务执行者。会根据场景风格加载相应的创意技能。多个渲染器可以并行运行，每个渲染器通过其配置文件中的 `always_load` 参数或任务中的 `--skill` 参数指定要使用的技能。
+负责为一个或多个场景生成视觉内容的任务执行者。它会根据场景风格加载相应的创意技能。多个渲染器可以并行运行，每个渲染器通过其配置文件中的 `always_load` 选项或任务中的 `--skill` 参数指定要使用的技能。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：一种创意技能（具体类型见下文专用版本）
 - **输出文件**：`scenes/scene-NN/clip.mp4`
 
 ### 专用渲染器版本
 
-当不同场景需要完全不同的工具时，可创建专用渲染器配置，而非让单个渲染器承担过多功能。每个专用版本会加载不同的创意技能。
+当不同场景需要完全不同的处理工具时，可以创建专用渲染器配置，而非让单个渲染器承担过多任务。每个专用版本会加载不同的创意技能。
 
 | 版本 | 技能 | 适用场景 |
 |------|------|----------|
-| `renderer-ascii` | `ascii-video` | 终端风格、复古像素风、随音频变化的网格效果、视频转ASCII格式 |
-| `renderer-manim` | `manim-video` | 数学内容、算法讲解、类似3Blue1Brown风格的解说、方程推导 |
-| `renderer-p5js` | `p5js` | 生成艺术、粒子效果、着色器、自然运动效果、网页画布内容 |
-| `renderer-comfyui` | `comfyui` | 使用本地ComfyUI工作流生成AI静态图和视频（如图像转图像、图像转视频等） |
-| `renderer-touchdesigner` | `touchdesigner-mcp` | 实时动态效果、随音频变化的视觉内容、装置艺术、VJ风格内容 |
-| `renderer-3d` | `blender-mcp`（可选） | 3D建模、动画制作、真实感场景、角色动画 |
-| `renderer-pixel` | `pixel-art` | 复古游戏风格，搭配符合时代背景的色彩方案 |
+| `renderer-ascii` | `ascii-video` | 终端风格、复古像素风、音频响应式网格、视频转 ASCII 图像 |
+| `renderer-manim` | `manim-video` | 数学内容、算法讲解、类似 3Blue1Brown 风格的解说、方程推导 |
+| `renderer-p5js` | `p5js` | 生成艺术、粒子效果、着色器、自然动态效果、网页画布内容 |
+| `renderer-comfyui` | `comfyui` | 使用本地 ComfyUI 工作流生成 AI 静态图和视频（如图像转图像、图像转视频等） |
+| `renderer-touchdesigner` | `touchdesigner-mcp` | 实时动态效果、音频响应式内容、装置艺术、VJ 风格内容 |
+| `renderer-3d` | `blender-mcp`（可选） | 3D 模型制作、动画制作、真实感场景渲染、角色动画 |
+| `renderer-pixel` | `pixel-art` | 复古游戏风格，搭配符合时代特征的色彩方案 |
 | `renderer-comic` | `baoyu-comic` | 以知识漫画风格呈现叙事场景 |
-| `renderer-meme` | `meme-generation`（可选） | 用于讽刺或社交内容的梗图风格静态图 |
-| `renderer-procedural` | 无——直接使用Python结合PIL和ffmpeg | 无法用现有技能实现的定制化程序化内容 |
-| `renderer-video` | （外部图像转视频API：Runway / Kling / Luma） | 为叙事电影中的静态图像添加动画效果 |
-| `renderer-motion-graphics` | （外部工具——Remotion CLI） | 动态图形、动态排版、UI动画 |
+| `renderer-meme` | `meme-generation`（可选） | 用于讽刺或社交内容的模因风格静态图 |
+| `renderer-procedural` | 无——直接使用 Python 加 PIL 和 ffmpeg 实现 | 适合那些没有合适技能可用的自定义程序化内容生成 |
+| `renderer-video` | （外部图像转视频 API：Runway / Kling / Luma） | 用于在叙事电影中为静态图像添加动画效果 |
+| `renderer-motion-graphics` | （外部工具——Remotion CLI） | 动态图形、动态字体、UI 动画效果 |
 
-对于使用外部API的渲染器，其配置文件中会包含API客户端逻辑；仅加载 `kanban-worker`，以及终端工具集和API密钥。
+对于使用外部 API 的渲染器，其配置文件中会包含 API 客户端逻辑；仅加载 `kanban-worker`，以及终端工具集和 API 密钥。
 
 ### 图像生成器
 
-专门用于文本转图像任务。通常生成的静态图会交由 `renderer-video` 进行动画处理。
+专门用于文本转图像功能。它通常会生成静态图像，之后再由 `renderer-video` 进行动画处理。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-worker`，可选 `comfyui`（用于驱动本地ComfyUI进行图像生成）
-- **外部API（作为本地ComfyUI的替代方案）**：FAL、Replicate、OpenAI Images、Midjourney
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-worker`，可选 `comfyui`（用于驱动本地 ComfyUI 安装以进行图像生成）
+- **外部 API（可作为本地 ComfyUI 的替代方案）**：FAL、Replicate、OpenAI Images、Midjourney
 - **输出文件**：`scenes/scene-NN/stills/*.png`
 
 ### 图像转视频生成器
 
-负责将静态图像通过Runway/Kling/Luma API或本地ComfyUI的图像转视频工作流转化为动画。在叙事类电影的制作流程中，它通常位于 `image-generator` 之后。
+负责将静态图像通过 Runway/Kling/Luma API 或本地 ComfyUI 的图像转视频工作流转换为动态视频。在叙事类电影的制作流程中，它几乎总是紧跟在 `image-generator` 之后。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-worker`，可选 `comfyui`（用于本地图像转视频工作流，如AnimateDiff或WAN）
-- **外部API**：Runway、Kling、Luma、Pika
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-worker`，可选 `comfyui`（用于本地图像转视频工作流，如 AnimateDiff 或 WAN）
+- **外部 API**：Runway、Kling、Luma、Pika
 - **输出文件**：`scenes/scene-NN/clip.mp4`
 
-### 音乐监制
+### 音乐监督
 
-负责寻找、分析并准备音乐曲目。对于音乐视频，还会制作节拍/BPM图表以及关键时间点标记。当剪辑师或渲染器需要直观了解音频的节奏强度时，会使用 `songsee` 工具生成频谱图。
+负责寻找、分析并准备音乐曲目。对于音乐视频，还会制作节拍/BPM 图以及关键节点的时间戳。当剪辑师或渲染器需要了解音频的能量分布时，会使用 `songsee` 工具生成频谱图作为参考。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-worker`、`songsee`（音频可视化工具），此外还需具备以下之一：
-  - `songwriting-and-ai-music`——用于委托创作歌词并使用Suno生成提示词
-  - `heartmula`——用于使用开源本地模型生成音乐
-  - `spotify`——用于寻找现有音乐曲目
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-worker`、`songsee`（音频可视化工具），此外还需具备以下其中一项技能：
+  - `songwriting-and-ai-music`：用于委托创作歌词并使用 Suno 生成提示词
+  - `heartmula`：用于使用开源本地模型生成音乐
+  - `spotify`：用于寻找现有的音乐曲目
 - **输出文件**：`audio/track.mp3`、`audio/beats.json`，可选 `audio/track-spectrogram.png`
 
 ### 旁白演员 / 叙述者
 
-负责生成旁白音频。直接调用TTS API即可完成生成，除了 `kanban-worker` 外无需其他Hermes技能。用户也可以直接提供预先录制的旁白音频，而无需生成。
+负责生成旁白音频。它会直接调用 TTS API 进行生成；除了 `kanban-worker` 外，不需要其他 Hermes 技能。用户也可以直接提供预先录制的旁白音频，而无需生成。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
-- **外部API**：ElevenLabs、OpenAI TTS等
+- **外部 API**：ElevenLabs、OpenAI TTS 等
 - **输出文件**：`audio/voiceover/line-NN.mp3`、`audio/voiceover/timeline.mp3`
 
 ### 音效设计师
 
-负责设计音效和环境音。除非项目需求明确要求，否则该角色通常是可选的。
+负责设计音效和环境音。除非项目需求明确要求，否则这一角色通常是可选的。
 
-- **工具集**：kanban、终端、文件
-- **技能**：`kanban-worker`，在为音乐曲目设计音效时，可搭配 `songsee` 工具进行音频特征可视化
+- **工具集**：kanban、终端、文件管理
+- **技能**：`kanban-worker`、`songsee`（在为音乐配乐时用于可视化音频特征）
 - **输出文件**：`audio/sfx/*.mp3`
 
 ## 后期制作角色
 
 ### 剪辑师
 
-负责将各个片段拼接成最终成片。使用ffmpeg工具进行剪辑、淡入淡出处理及转场效果。在拼接之前，会逐一检查每个片段的节奏与质量。
+负责将各个片段拼接成最终版本。他会使用 ffmpeg 工具进行剪辑、淡入淡出处理以及转场效果。在拼接之前，还会逐一检查每个片段的节奏和质量。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
 - **外部工具**：ffmpeg、ffprobe
 - **输出文件**：`output/final.mp4`、`output/final-noaudio.mp4`
 
 ### 调色师
 
-负责视频的色彩调校。这一角色通常是可选的——如果渲染器已经能生成符合品牌风格的输出，而剪辑师仅负责拼接，那么调色师的功能就显得多余了。但对于包含大量特写镜头的叙事类电影，调色师则十分重要。
+负责色彩 grading。这一角色通常是可选的——如果渲染器已经能够生成符合品牌风格的输出，而剪辑师仅负责拼接，那么调色师的角色就显得多余了。不过，对于包含大量特写镜头的叙事类电影，设置调色师则是很有必要的。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
 - **输出文件**：`output/final-graded.mp4`
 
 ### 音频混音师
 
-负责将旁白、音乐和音效混合成最终的音频轨道。他会调整各元素的音量，确保音乐在旁白出现时自动降低音量，并统一音频的响度（LUFS标准）。
+负责将旁白、音乐和音效混合成最终的音频轨道。他会调整各声道的音量，确保旁白的音量高于音乐，并统一整体音量的 LUFS 值。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
-- **外部工具**：带有 `loudnorm` 滤镜的ffmpeg，可选 `sox` 工具
+- **外部工具**：带有 `loudnorm` 滤镜的 ffmpeg，可选 `sox` 工具
 - **输出文件**：`audio/final-mix.mp3`
 
 ### 字幕生成师
 
-负责将字幕嵌入视频中，生成SRT格式的字幕文件，并确保视频具备无障碍观看功能。也可通过Whisper工具从音频中提取字幕。
+负责将字幕嵌入视频中，生成 SRT 格式的字幕文件，并确保内容的无障碍访问性。它还可以通过 Whisper 工具从音频中提取字幕。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
-- **外部工具**：Whisper（命令行或API）、ffmpeg字幕过滤工具
+- **外部工具**：Whisper（命令行或 API）、ffmpeg 字幕过滤工具
 - **输出文件**：`output/captions.srt`、`output/final-captioned.mp4`
 
 ### 最终编码师
 
-负责视频的最终编码及不同格式的输出。会根据目标平台的要求生成对应的交付文件——如Instagram用方形格式、TikTok用竖屏格式、YouTube用全高清格式等。
+负责进行最终编码以及生成不同格式的版本。他会为不同的平台目标制作对应的交付文件——如 Instagram 用方形格式、TikTok 用竖屏格式、YouTube 用全高清格式等。
 
-- **工具集**：kanban、终端、文件
+- **工具集**：kanban、终端、文件管理
 - **技能**：`kanban-worker`
 - **输出文件**：`output/final-1080.mp4`、`output/final-9x16.mp4` 等
 
-## 质量控制角色
+## 质量管控角色
 
 ### 审核员
 
-作为中立的品质把关人。负责阅读项目需求，观看成片，并针对节奏、同步性、品牌一致性及技术质量等方面提出具体意见。他与拍摄指导（在制作过程中审核视觉效果）和剪辑师（在拼接阶段进行审核）是不同的角色。
+扮演中立的品质把关角色。他会阅读项目需求，观看完整视频，针对节奏、同步性、品牌一致性以及技术质量等方面提出具体意见。他与拍摄指导（在制作过程中负责审核视觉效果）以及剪辑师（在拼接阶段进行审核）是不同的角色。
 
-- **工具集**：kanban、终端、文件、视频处理工具、视觉分析工具
+- **工具集**：kanban、终端、文件管理、视频处理、视觉分析
 - **技能**：`kanban-worker`
-- **审核工具**：`video_analyze`（通过多模态大语言模型对完整片段进行专业审核）、`vision_analyze`（用于查看单帧或缩略图）、ffprobe
+- **审核工具**：`video_analyze`（通过多模态大语言模型对完整片段进行直接审核）、`vision_analyze`（用于审核帧图像或缩略图）、ffprobe
 - **输出文件**：`review-notes.md`，以及对各项任务的审核意见
 
 ### 品牌合规审核员
 
-专门负责检查内容是否符合品牌规范——包括色彩、字体和语音风格等。当品牌指南非常详细时，普通审核员可能会遗漏一些违规之处，此时就需要该角色来把关。
+专门负责检查是否符合品牌规范——包括色彩、字体以及语音风格等。当品牌指南非常详细时，普通审核员可能会遗漏一些违规之处，这时就需要这一角色。
 
-- **工具集**：kanban、文件
+- **工具集**：kanban、文件管理
 - **技能**：`kanban-worker`
-- **输出文件**：审核意见及 `brand-review.md` 文件
+- **输出文件**：审核意见以及 `brand-review.md` 文件
 
 ## 团队组建——实用建议- **标准配置：** 1名导演 + 至少1名渲染器 + 1名编辑。  
 - 若剧本中的对话、旁白或屏幕文字量超过简短标语的长度，则需**添加文案撰写员**。  
