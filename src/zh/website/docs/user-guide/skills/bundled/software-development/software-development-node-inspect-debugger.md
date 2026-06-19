@@ -8,7 +8,7 @@ description: "Debug Node"
 
 # Node Inspect 调试器
 
-通过 --inspect 与 Chrome DevTools Protocol CLI 功能对 Node.js 进行调试。
+通过 --inspect + Chrome DevTools Protocol CLI 功能对 Node.js 进行调试。
 
 ## 技能元数据
 
@@ -21,33 +21,33 @@ description: "Debug Node"
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `debugging`、`nodejs`、`node-inspect`、`cdp`、`breakpoints`、`ui-tui` |
-| 相关技能 | [`systematic-debugging`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging)、[`python-debugpy`](/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy)、[`debugging-hermes-tui-commands`](/docs/user-guide/skills/bundled/software-development/software-development-debugging-hermes-tui-commands) |
+| 相关技能 | [`systematic-debugging`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging)、[`python-debugpy`](/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy)、`debugging-hermes-tui-commands` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会依据此内容执行操作。
 :::
 
 # Node.js Inspect 调试器
 
 ## 概述
 
-当 `console.log` 已无法满足需求时，可通过终端以编程方式调用 Node 内置的 V8 探查工具。该工具支持设置真实断点、执行单步执行/跳过执行/跳出执行操作、查看调用栈、导出局部变量/闭包作用域信息，以及对暂停帧中的任意表达式进行求值。
+当 `console.log` 已无法满足需求时，可通过终端以编程方式调用 Node 内置的 V8 探查工具。该调试器支持设置真正的断点、单步执行/跳过/退出、查看调用栈、导出局部变量/闭包作用域信息，以及在对当前帧进行暂停后评估任意表达式。
 
 您可以选择以下两种工具之一：
 
-- **`node inspect`** —— 内置工具，无需安装，支持 CLI REPL 模式，非常适合快速调试。
-- **`ndb` / 通过 `chrome-remote-interface` 的 CDP** —— 可从 Node/Python 环境中编写脚本使用，适用于需要自动设置多个断点、在多次运行中收集状态信息，或通过代理循环进行非交互式调试的场景。
+- **`node inspect`** —— 内置工具，无需安装，支持 CLI REPL 模式，适合快速测试。
+- **`ndb` / 通过 `chrome-remote-interface` 实现的 CDP** —— 可从 Node/Python 脚本中调用，适用于需要自动化设置多个断点、在多次运行中收集状态信息，或通过代理循环进行非交互式调试的场景。
 
 **建议优先使用 `node inspect`**。它始终可用，且 REPL 模式的响应速度很快。
 
 ## 适用场景
 
 - Node 测试失败，需要查看中间状态
-- ui-tui 发生崩溃或行为异常，需要检查 React/Ink 组件在预渲染阶段的状态
-- tui_gateway 的子进程（如 `_SlashWorker`、PTY 网桥进程）运行异常
-- 需要检查 `console.log` 无法直接获取、且无法通过修改代码才能访问的闭包中的值
+- ui-tui 发生崩溃或行为异常，需要检查 React/Ink 组件在预渲染前的状态
+- tui_gateway 的子进程（如 `_SlashWorker`、PTY 网桥进程）表现异常
+- 需要检查闭包中的某个值，而 `console.log` 无法直接获取（除非进行代码修改）
 - 性能分析：附加到正在运行的进程上，捕获 CPU 使用情况或堆内存快照
 
 **不推荐用于**：那些 `console.log` 即可在一分钟以内解决的问题。基于断点的调试方式较为繁琐，仅应在能带来显著收益的情况下使用。
