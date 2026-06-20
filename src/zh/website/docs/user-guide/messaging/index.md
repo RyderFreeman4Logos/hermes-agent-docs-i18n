@@ -1,23 +1,23 @@
 ---
 sidebar_position: 1
 title: "Messaging Gateway"
-description: "Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, SMS, Email, Home Assistant, Mattermost, Matrix, DingTalk, Yuanbao, Microsoft Teams, LINE, Webhooks, or any OpenAI-compatible frontend via the API server — architecture and setup overview"
+description: "Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, SMS, Email, Home Assistant, Mattermost, Matrix, DingTalk, Yuanbao, Microsoft Teams, LINE, Raft, Webhooks, or any OpenAI-compatible frontend via the API server — architecture and setup overview"
 ---
 
 # 消息网关
 
-您可以通过 Telegram、Discord、Slack、WhatsApp、Signal、短信、电子邮件、Home Assistant、Mattermost、Matrix、钉钉、飞书/企业微信、企业微信、BlueBubbles（iMessage）、QQ、元宝、Microsoft Teams、LINE、ntfy 或浏览器与 Hermes 进行聊天。该网关作为一个独立的后台进程，可连接所有已配置的平台，管理会话、执行定时任务，并传递语音消息。
+您可以通过 Telegram、Discord、Slack、WhatsApp、Signal、短信、电子邮件、Home Assistant、Mattermost、Matrix、钉钉、飞书/企业微信、企业微信回调、微信、BlueBubbles（iMessage）、QQ、元宝、Microsoft Teams、LINE、ntfy 或浏览器与 Hermes 进行聊天。该网关作为一个后台进程，可连接所有已配置的平台，管理会话、执行定时任务，并传输语音消息。
 
 如需了解完整的语音功能集——包括 CLI 麦克风模式、消息中的语音回复以及 Discord 语音频道对话功能，请参阅 [语音模式](/user-guide/features/voice-mode) 和 [在 Hermes 中使用语音模式](/guides/use-voice-mode-with-hermes)。
 
 :::提示
-机器人需要模型提供方以及工具提供方（文本转语音、网页接口）。[Nous Portal](/integrations/nous-portal) 的订阅服务可同时提供这些功能。
+机器人需要模型提供方以及工具提供方（文本转语音、网页接口）。[Nous Portal](/integrations/nous-portal) 订阅套餐可同时提供这些功能。
 :::
 
 ## 平台功能对比
 
-| 平台 | 语音功能 | 图片传输 | 文件传输 | 线上聊天 | 表情反应 | 输入中提示 | 流式消息更新 |
-|------|:-------:|:--------:|:--------:|:-------:|:---------:|:----------:|:------------:|
+| 平台 | 语音功能 | 图片功能 | 文件功能 | 线程对话 | 表情反应 | 输入中状态 | 流式更新 |
+|------|:-------:|:-------:|:-------:|:-------:|:---------:|:--------:|:-------:|
 | Telegram | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
 | Discord | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Slack | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -31,7 +31,6 @@ description: "Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, 
 | Matrix | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | 钉钉 | — | ✅ | ✅ | — | ✅ | — | ✅ |
 | 飞书/企业微信 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 企业微信 | ✅ | ✅ | ✅ | — | — | — | — |
 | 企业微信回调 | — | — | — | — | — | — | — |
 | 微信 | ✅ | ✅ | ✅ | — | — | ✅ | ✅ |
 | BlueBubbles | — | ✅ | ✅ | — | ✅ | ✅ | — |
@@ -40,8 +39,9 @@ description: "Chat with Hermes from Telegram, Discord, Slack, WhatsApp, Signal, 
 | Microsoft Teams | — | ✅ | — | ✅ | — | ✅ | — |
 | LINE | — | ✅ | ✅ | — | — | ✅ | — |
 | ntfy | — | — | — | — | — | — | — |
+| Raft | — | — | — | — | — | — | — |
 
-**语音功能** = 文本转语音回复及/或语音消息转录。**图片传输** = 发送/接收图片。**文件传输** = 发送/接收文件附件。**线上聊天** = 线上聊天功能。**表情反应** = 对消息发送的表情反应。**输入中提示** = 处理消息时的输入状态指示。**流式消息更新** = 通过编辑实现消息的逐步更新。
+**语音功能** = 文本转语音回复及/或语音消息转录。**图片功能** = 发送/接收图片。**文件功能** = 发送/接收文件附件。**线程对话** = 支持多线程聊天。**表情反应** = 对消息发送的表情反应。**输入中状态** = 处理消息时的输入指示器。**流式更新** = 通过实时编辑实现消息的逐步更新。
 
 ## 架构设计
 
@@ -462,18 +462,18 @@ hermes gateway status                # Check status
 tail -f ~/.hermes/logs/gateway.log   # View logs
 ```
 
-生成的plist文件存放在`~/Library/LaunchAgents/ai.hermes.gateway.plist`路径下。该文件包含三个环境变量：
+生成的 plist 文件存储在 `~/Library/LaunchAgents/ai.hermes.gateway.plist` 中。该文件包含三个环境变量：
 
-- **PATH** — 安装时的完整shell PATH路径，其开头会加上虚拟环境中的`bin/`和`node_modules/.bin`目录。这样即可确保用户安装的工具（如Node.js、ffmpeg等）能被WhatsApp桥接等网关子进程所使用。
-- **VIRTUAL_ENV** — 指向Python虚拟环境，以便工具能够正确查找并加载所需包。
-- **HERMES_HOME** — 将网关的作用范围限定在您的Hermes安装目录内。
+- **PATH** — 安装时的完整 shell PATH，其开头会加上虚拟环境中的 `bin/` 和 `node_modules/.bin` 路径。这样就能确保用户安装的工具（如 Node.js、ffmpeg 等）能被 WhatsApp 桥接等网关子进程所使用。
+- **VIRTUAL_ENV** — 指向 Python 虚拟环境，以便工具能够正确查找并加载所需的包。
+- **HERMES_HOME** — 将网关的作用范围限定在你的 Hermes 安装目录内。
 
-:::提示 安装后PATH发生变化
-launchd plist文件是静态的——如果在设置好网关后又安装了新工具（例如通过nvm安装新的Node.js版本，或通过Homebrew安装ffmpeg），请再次运行`hermes gateway install`以更新PATH路径。网关会检测到过时的plist文件并自动重新加载。
+:::提示 安装后 PATH 发生变化
+launchd plist 文件是静态的——如果在设置好网关之后又安装了新工具（例如通过 nvm 安装新版本的 Node.js，或通过 Homebrew 安装 ffmpeg），请再次运行 `hermes gateway install` 以更新 PATH。网关会检测到过时的 plist 文件并自动重新加载。
 :::
 
-:::信息 多个安装实例
-与Linux的systemd服务类似，每个`HERMES_HOME`目录都会有独立的launchd标签。默认的`~/.hermes`使用标签`ai.hermes.gateway`；其他安装则使用`ai.hermes.gateway-<后缀>`标签。
+:::信息 多个 Hermes 安装实例
+与 Linux 的 systemd 服务类似，每个 `HERMES_HOME` 目录都有独立的 launchd 标签。默认的 `~/.hermes` 使用 `ai.hermes.gateway`；其他安装实例则使用 `ai.hermes.gateway-<后缀>`。
 :::
 
 ## 各平台专用工具集
@@ -486,13 +486,13 @@ launchd plist文件是静态的——如果在设置好网关后又安装了新�
 | Telegram | `hermes-telegram` | 包含终端在内的全部功能 |
 | Discord | `hermes-discord` | 包含终端在内的全部功能 |
 | WhatsApp | `hermes-whatsapp` | 包含终端在内的全部功能 |
-| WhatsApp Cloud API | `hermes-whatsapp` | 包含终端在内的全部功能（与Baileys桥接共享工具集） |
+| WhatsApp Cloud API | `hermes-whatsapp` | 包含终端在内的全部功能（与 Baileys 桥接共享同一工具集） |
 | Slack | `hermes-slack` | 包含终端在内的全部功能 |
 | Google Chat | `hermes-google_chat` | 包含终端在内的全部功能 |
 | Signal | `hermes-signal` | 包含终端在内的全部功能 |
 | SMS | `hermes-sms` | 包含终端在内的全部功能 |
 | Email | `hermes-email` | 包含终端在内的全部功能 |
-| Home Assistant | `hermes-homeassistant` | 全部功能 + HA设备控制能力（如ha_list_entities、ha_get_state、ha_call_service、ha_list_services） |
+| Home Assistant | `hermes-homeassistant` | 全功能 + HA 设备控制能力（如 ha_list_entities、ha_get_state、ha_call_service、ha_list_services） |
 | Mattermost | `hermes-mattermost` | 包含终端在内的全部功能 |
 | Matrix | `hermes-matrix` | 包含终端在内的全部功能 |
 | DingTalk | `hermes-dingtalk` | 包含终端在内的全部功能 |
@@ -504,16 +504,17 @@ launchd plist文件是静态的——如果在设置好网关后又安装了新�
 | QQBot | `hermes-qqbot` | 包含终端在内的全部功能 |
 | Yuanbao | `hermes-yuanbao` | 包含终端在内的全部功能 |
 | Microsoft Teams | `hermes-teams` | 包含终端在内的全部功能 |
-| API Server | `hermes-api-server` | 全部功能（不含`clarify`、`send_message`、`text_to_speech`等功能——程序化访问无需交互式用户界面） |
+| API Server | `hermes-api-server` | 全功能（不包含 `clarify`、`send_message`、`text_to_speech` 等功能——因为程序化访问方式没有交互式用户界面） |
 | Webhooks | `hermes-webhook` | 包含终端在内的全部功能 |
+| Raft | `hermes-raft` | 仅支持唤醒频道；代理通过 Raft CLI 进行消息收发操作 |
 
 ## 运行多平台网关
 
-一个网关通常会同时运行多个适配器（如Telegram + Discord + Slack等）。以下内容将介绍适用于所有平台的后续运维操作。
+一个网关通常会同时运行多个适配器（例如 Telegram + Discord + Slack 等）。以下内容介绍了适用于所有平台的后续运维操作。
 
-### `/platform`命令
+### `/platform` 命令
 
-一旦网关开始运行，您可以通过任何已连接的CLI会话或聊天界面使用 `/platform` 命令，无需重启整个网关即可查看和操控各个适配器的运行状态。
+一旦网关开始运行，即可通过任何已连接的 CLI 会话或聊天界面使用 `/platform` 命令来查看和操控各个适配器，而无需重启整个网关：
 
 ```
 /platform list                  # show all adapters and their state
@@ -607,7 +608,7 @@ display:
       cleanup_progress: true
 ```
 
-默认值为 `false`。仅当平台的适配器实现了 `delete_message` 功能时，才会尊重该设置（目前为 Telegram 和 Discord）。运行失败时**不会**执行清理操作，因此气泡图标会保留下来作为操作记录。
+默认值为 `false`。仅当平台的适配器实现了 `delete_message` 功能时，才会尊重该设置（目前支持 Telegram 和 Discord）。运行失败时**不会**执行清理操作，因此这些气泡会作为操作记录保留下来。
 
 ## 后续步骤
 
@@ -634,4 +635,5 @@ display:
 - [Microsoft Teams 设置](teams.md)
 - [Teams 会议处理流程](teams-meetings.md)
 - [Open WebUI + API 服务器](open-webui.md)
+- [Raft 设置](raft.md)
 - [Webhooks](webhooks.md)
