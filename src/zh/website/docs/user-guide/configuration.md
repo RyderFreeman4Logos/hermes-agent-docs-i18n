@@ -42,24 +42,28 @@ hermes config set terminal.backend docker
 hermes config set OPENROUTER_API_KEY sk-or-...  # Saves to .env
 ```
 
-:::tip
-`hermes config set` 命令会自动将配置值写入正确的文件——API 密钥会被保存到 `.env` 文件中，而其他所有设置则存储在 `config.yaml` 中。
+:::提示  
+`hermes config set` 命令会自动将配置值路由到正确的文件中——API 密钥会被保存到 `.env` 文件中，而其他所有配置则存储在 `config.yaml` 中。  
 :::
 
-## 配置优先级
+## 配置优先级  
 
-配置项将按照以下顺序解析（优先级从高到低）：
+配置项的解析顺序如下（优先级从高到低）：  
 
-1. **CLI 参数**——例如 `hermes chat --model anthropic/claude-sonnet-4`（每次调用时均可覆盖当前设置）
-2. **`~/.hermes/config.yaml`**——所有非敏感设置的主要配置文件
-3. **`~/.hermes/.env`**——环境变量的备用存储位置；对于敏感信息（如 API 密钥、令牌、密码）则**必须**使用此文件
-4. **内置默认值**——当没有其他配置时，将使用硬编码的安全默认值
+1. **CLI 参数**——例如 `hermes chat --model anthropic/claude-sonnet-4`（每次调用时可覆盖现有设置）  
+2. **`~/.hermes/config.yaml`**——所有非敏感配置的主要存储文件  
+3. **`~/.hermes/.env`**——环境变量的备用存储位置；对于敏感信息（如 API 密钥、令牌、密码）则**必须**使用此文件  
+4. **内置默认值**——当未设置任何其他配置时，将使用硬编码的安全默认值  
 
-:::info 实用原则
-敏感信息（如 API 密钥、机器人令牌、密码）应存放在 `.env` 文件中。其他所有设置（如模型类型、终端后端、压缩设置、内存限制、工具集等）则应放入 `config.yaml` 中。如果两者都进行了配置，对于非敏感设置，将以 `config.yaml` 中的设置为准。
+:::信息提示  
+敏感信息（如 API 密钥、机器人令牌、密码）应存储在 `.env` 文件中；其余配置（如模型类型、终端后端、压缩设置、内存限制、工具集等）则应存放在 `config.yaml` 中。若两者都进行了配置，对于非敏感项，则以 `config.yaml` 中的设置为准。  
 :::
 
-## 环境变量替换
+:::提示 组织级部署  
+管理员可通过系统级管理目录，锁定某些特定的配置和敏感值，防止普通用户对其进行覆盖。详情请参阅[管理范围](/user-guide/managed-scope)。  
+:::
+
+## 环境变量替换  
 
 您可以在 `config.yaml` 中使用 `${VAR_NAME}` 语法来引用环境变量：
 
@@ -973,6 +977,16 @@ auxiliary:
   # Context compression timeout (separate from compression.* config)
   compression:
     timeout: 120               # seconds — compression summarizes long conversations, needs more time
+
+  # Auto-generated session titles. Empty language follows the conversation;
+  # set e.g. "English" or "Japanese" to pin titles to one language.
+  title_generation:
+    provider: "auto"
+    model: ""
+    base_url: ""
+    api_key: ""
+    timeout: 30
+    language: ""
 
   # Skills hub — skill matching and search
   skills_hub:
