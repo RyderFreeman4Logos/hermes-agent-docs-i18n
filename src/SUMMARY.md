@@ -1612,6 +1612,7 @@
           - [第一性原理](zh/optional-skills/creative/creative-ideation/references/methods/first-principles.md)
           - [需要完成的任务](zh/optional-skills/creative/creative-ideation/references/methods/jobs-to-be-done.md)
           - [横向激发法](zh/optional-skills/creative/creative-ideation/references/methods/lateral-provocations.md)
+          - [杠杆效应点](zh/optional-skills/creative/creative-ideation/references/methods/leverage-points.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
           - [OuLiPo](zh/optional-skills/creative/creative-ideation/references/methods/oulipo.md)
           - [奇想物理学](zh/optional-skills/creative/creative-ideation/references/methods/pataphysics.md)
