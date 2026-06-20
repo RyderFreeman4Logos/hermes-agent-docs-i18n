@@ -4,11 +4,11 @@ sidebar_label: "Spike"
 description: "Throwaway experiments to validate an idea before build"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Spike
 
-在正式构建之前，用于验证想法的临时实验。
+在正式开发之前，用于快速验证想法的临时实验。
 
 ## 技能元数据
 
@@ -21,33 +21,33 @@ description: "Throwaway experiments to validate an idea before build"
 | 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `spike`、`prototype`、`experiment`、`feasibility`、`throwaway`、`exploration`、`research`、`planning`、`mvp`、`proof-of-concept` |
-| 相关技能 | [`html-artifact`](/docs/user-guide/skills/bundled/creative/creative-html-artifact)、[`subagent-driven-development`](/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development)、[`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) |
+| 相关技能 | [`sketch`](/docs/user-guide/skills/bundled/creative/creative-sketch)、[`subagent-driven-development`](/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development)、[`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) |
 
-## 参考：完整 SKILL.md
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为内容。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。当技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
 :::
 
 # Spike
 
-当用户希望在投入实际构建之前**初步探索某个想法**时，可使用此技能——用于验证可行性、比较不同方案，或发现仅靠常规研究无法解答的疑问。Spike 设计上即为一次性使用，完成目标后即可丢弃。
+当用户希望在投入实际开发之前**初步探索某个想法**时，可使用此技能——用于验证可行性、比较不同方案，或发现仅靠常规研究无法解答的疑问。Spike 设计上即为一次性使用，完成其目标后即可丢弃。
 
-当用户说出“让我试试这个”、“我想看看 X 是否可行”、“先做个临时实验”、“在决定使用 Y 之前”、“快速制作 Z 的原型”、“这真的可能吗？”或“比较 A 和 B”之类的话语时，即可加载此技能。
+当用户说出“让我试试看”、“我想看看 X 是否可行”、“先快速测试一下”、“在确定使用 Y 之前”、“快速制作 Z 的原型”、“这真的可能吗？”或“比较 A 和 B”之类的话语时，即可加载此技能。
 
 ## 何时不应使用此技能
 
-- 答案可通过文档或代码阅读获得——直接进行研究，无需构建
-- 任务属于正式生产流程——请改用 `plan` 技能
+- 答案可通过文档或代码阅读获得——直接进行研究，无需开发
+- 该任务属于正式生产流程——请改用 `plan` 技能
 - 该想法已得到验证——可直接进入实现阶段
 
 ## 如果用户已安装完整的 GSD 系统
 
-如果 `gsd-spike` 作为同级技能出现（通过 `npx get-shit-done-cc --hermes` 安装），且用户希望使用完整的 GSD 工作流——包括持久的 `.planning/spikes/` 状态、跨会话的 MANIFEST 跟踪、Given/When/Then 判定格式，以及与 GSD 其他功能集成的提交规范——则建议优先使用 **`gsd-spike`**。此技能则是为那些没有（或不愿）使用完整系统的用户提供的轻量级独立版本。
+如果 `gsd-spike` 作为同级技能出现（通过 `npx get-shit-done-cc --hermes` 安装），且用户希望使用完整的 GSD 工作流——包括持久的 `.planning/spikes/` 状态管理、跨会话的 MANIFEST 文件跟踪、Given/When/Then 判定格式，以及与 GSD 其他功能集成的提交规范——则建议优先使用 **`gsd-spike`**。而本技能则是为那些没有（或不愿）使用完整系统的用户准备的轻量级独立版本。
 
 ## 核心流程
 
-无论规模大小，每个 Spike 都遵循以下循环：
+无论规模大小，所有 Spike 实验都遵循以下循环：
 
 ```
 decompose  →  research  →  build  →  verdict
