@@ -1603,6 +1603,7 @@
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
         - [Methods]()
+          - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
     - [Hyperframes]()
       - [HyperFrames](zh/optional-skills/creative/hyperframes/SKILL.md)
