@@ -1605,6 +1605,7 @@
         - [Methods]()
           - [随机性与再创作](zh/optional-skills/creative/creative-ideation/references/methods/chance-and-remix.md)
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
+          - [陌生化手法](zh/optional-skills/creative/creative-ideation/references/methods/defamiliarization.md)
           - [需要完成的任务](zh/optional-skills/creative/creative-ideation/references/methods/jobs-to-be-done.md)
           - [横向激发法](zh/optional-skills/creative/creative-ideation/references/methods/lateral-provocations.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
