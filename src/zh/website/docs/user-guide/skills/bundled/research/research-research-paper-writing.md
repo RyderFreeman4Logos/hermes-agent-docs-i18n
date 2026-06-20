@@ -8,7 +8,7 @@ description: "Write ML papers for NeurIPS/ICML/ICLR: design→submit"
 
 # 研究论文撰写
 
-协助完成面向 NeurIPS/ICML/ICLR 的机器学习论文撰写：从设计到投稿的全流程服务。
+帮助用户为 NeurIPS/ICML/ICLR 等会议撰写机器学习论文：从设计到投稿全程支持。
 
 ## 技能元数据
 
@@ -22,19 +22,19 @@ description: "Write ML papers for NeurIPS/ICML/ICLR: design→submit"
 | 依赖项 | `semanticscholar`, `arxiv`, `habanero`, `requests`, `scipy`, `numpy`, `matplotlib`, `SciencePlots` |
 | 支持平台 | linux, macos |
 | 标签 | `研究`, `论文撰写`, `实验设计`, `机器学习`, `人工智能`, `NeurIPS`, `ICML`, `ICLR`, `ACL`, `AAAI`, `COLM`, `LaTeX`, `引用管理`, `统计分析` |
-| 相关技能 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv), `ml-paper-writing`, [`subagent-driven-development`](/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development), [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) |
+| 相关技能 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv), `ml-paper-writing`, [`subagent-driven-development`](/docs/user-guide/skills/bundled/software-development/software-development-subagent-driven-development), [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) |
 
 ## 参考：完整 SKILL.md 内容
 
 :::info
-以下为 Hermes 在触发该技能时加载的完整技能定义。当该技能处于激活状态时，智能体将依据此内容执行相应操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行相应操作。
 :::
 
-# 研究论文撰写全流程
+# 研究论文撰写流程
 
-专为面向 **NeurIPS、ICML、ICLR、ACL、AAAI 以及 COLM** 发表而设计的端到端机器学习/人工智能研究论文生成流程。该技能覆盖了整个研究生命周期：实验设计、执行、监控、分析、论文撰写、审稿、修改以及投稿。
+专为面向 **NeurIPS、ICML、ICLR、ACL、AAAI 和 COLM** 等会议发表而设计的端到端机器学习/人工智能研究论文撰写流程。该技能覆盖了完整的研究生命周期：实验设计、执行、监控、分析、论文撰写、审稿、修改以及投稿。
 
-这**并非线性流程**，而是一个循环迭代的过程——实验结果会触发新的实验，审稿意见又会促使进一步分析。智能体需能够处理这些反馈循环。
+这**并非线性流程**，而是一个迭代循环——实验结果会触发新的实验，审稿意见又会促使进一步分析。智能体需妥善处理这些反馈循环。
 
 <!-- ascii-guard-ignore -->
 <!-- ascii-guard-ignore -->
@@ -563,7 +563,20 @@ Git 提交记录了所发生的一切，但无法体现**探索路径**——即
 ```bash
 cp experiment.py results/exp_003/experiment_snapshot.py
 ```
-这样一来，即便后续对代码进行修改，也能实现完全一致的复现结果。
+即便后续对代码进行修改，该机制也能确保结果的一致性。
+
+---
+
+## 第四阶段：结果分析
+
+**目标**：提取分析结果、计算统计数据，并明确核心问题所在。
+
+### 步骤 4.1：汇总结果
+
+编写分析脚本，实现以下功能：
+1. 加载批次处理中的所有结果文件
+2. 计算每项任务的指标以及总体汇总指标
+3. 生成汇总表格
 
 ```python
 # Standard analysis pattern
@@ -1255,7 +1268,7 @@ Baseline & 85.2 & 45ms \\
 ```
 
 规则：  
-- 用粗体标出各项指标的最佳值；  
+- 用粗体标出各项指标的最佳数值  
 - 使用方向符号（$\uparrow$
 
 ```latex
