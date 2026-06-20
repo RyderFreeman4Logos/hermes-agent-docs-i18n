@@ -8,45 +8,45 @@ description: "Search personal knowledge bases, notes, docs, and meeting transcri
 
 # Qmd
 
-Qmd 是一款融合了 BM25、向量搜索及大语言模型重排技术的混合检索引擎，可帮助你在本地搜索个人知识库、笔记、文档以及会议记录。该工具同时支持命令行界面使用和 MCP 集成。
+Qmd 是一款融合了 BM25、向量搜索以及大语言模型重排技术的混合检索引擎，可帮助用户在本地搜索个人知识库、笔记、文档及会议记录。该工具同时支持命令行界面使用和 MCP 集成。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/research/qmd` 安装 |
+| 来源 | 可选 —— 通过 `hermes skills install official/research/qmd` 安装 |
 | 路径 | `optional-skills/research/qmd` |
 | 版本 | `1.0.0` |
 | 开发者 | Hermes Agent + Teknium |
 | 许可协议 | MIT |
 | 支持平台 | macos、linux |
 | 标签 | `搜索`、`知识库`、`RAG`、`笔记`、`MCP`、`本地 AI` |
-| 相关技能 | [`obsidian`](/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian)、`native-mcp`、[`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv) |
+| 相关技能 | [`obsidian`](/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian)、[`native-mcp`](/docs/user-guide/skills/bundled/mcp/mcp-native-mcp)、[`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv) |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能运行时，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用后，智能体将依据这些内容执行操作。
 :::
 
-# QMD — 查询标记文档
+# QMD —— 查询标记文档工具
 
-这是一款用于个人知识库的本地端搜索引擎。它能对 Markdown 笔记、会议记录、文档以及各类文本文件进行索引，进而提供结合关键词匹配、语义理解以及大语言模型驱动的重排功能的混合搜索方式——所有处理均在本地完成，无需依赖云端服务。
+这是一款用于个人知识库的本地端搜索引擎。它能够对 Markdown 笔记、会议记录、文档以及各类文本文件进行索引，进而通过结合关键词匹配、语义理解以及大语言模型驱动的重排技术来实现混合搜索——所有操作均在本地完成，无需依赖云端服务。
 
-该工具由 [Tobi Lütke](https://github.com/tobi/qmd) 创建，采用 MIT 许可协议。
+该工具由 [Tobi Lütke](https://github.com/tobi/qmd) 开发，采用 MIT 许可协议。
 
 ## 适用场景
 
 - 用户希望搜索自己的笔记、文档、知识库或会议记录
 - 用户需要在大量 Markdown/文本文件中查找特定内容
-- 用户需要语义搜索（例如“查找与 X 概念相关的笔记”），而不仅仅是基于关键词的简单检索
-- 用户已搭建好 qmd 数据集并希望对其进行查询
-- 用户希望构建本地知识库或文档搜索系统
-- 相关关键词：「搜索我的笔记」、「在我的文档中查找」、「知识库」、「qmd」
+- 用户需要语义搜索（例如“查找与 X 概念相关的笔记”），而不仅仅是关键词匹配
+- 用户已搭建好 Qmd 文档集合并希望对其进行查询
+- 用户希望搭建本地知识库或文档搜索系统
+- 相关关键词：“搜索我的笔记”、“在文档中查找内容”、“知识库”、“QMD”
 
 ## 先决条件
 
-### 需要 Node.js 22 及以上版本
+### 需要 Node.js 22 及以上版本（必需）
 
 ```bash
 # Check version
