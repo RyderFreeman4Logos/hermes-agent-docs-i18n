@@ -4,11 +4,11 @@ sidebar_label: "Stripe Projects"
 description: "Provision SaaS services + sync creds via Stripe Projects"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Stripe Projects
 
-通过 Stripe Projects 提供 SaaS 服务并同步凭证。
+通过 Stripe Projects 功能部署 SaaS 服务并同步凭证。
 
 ## 技能元数据
 
@@ -23,34 +23,34 @@ description: "Provision SaaS services + sync creds via Stripe Projects"
 | 标签 | `Payments`、`Stripe`、`Projects`、`Provisioning`、`Infrastructure` |
 | 相关技能 | [`stripe-link-cli`](/docs/user-guide/skills/optional/payments/payments-stripe-link-cli)、[`mpp-agent`](/docs/user-guide/skills/optional/payments/payments-mpp-agent) |
 
-## 参考：完整 SKILL.md
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据这些指令进行操作。
 :::
 
 # Stripe Projects 技能
 
-该技能封装了 [Stripe Projects](https://projects.dev) CLI 插件，使 Hermes 能够统一管理 SaaS 服务（如 Neon、Twilio、Vercel 等），生成并同步凭证到用户的 `.env` 文件中，同时实现跨服务提供商的账单管理。
+该技能封装了 [Stripe Projects](https://projects.dev) 的 CLI 插件，使 Hermes 能够统一部署各类 SaaS 服务（如 Neon、Twilio、Vercel 等），生成凭证并同步到用户的 `.env` 文件中，同时实现跨服务提供商的账单管理。
 
-目前仅支持 `[linux, macos]` 平台，因为更广泛的支付集群仍在 Windows 上完善中。Stripe CLI 本身是跨平台的；此限制只是针对集群的整体策略，并非硬性规定。
+目前仅支持 `linux` 和 `macos` 平台，因为更广泛的支付功能集群仍在 Windows 上完善中。Stripe CLI 本身是跨平台的；此限制只是针对整个集群的策略要求，并非硬性规定。
 
 ## 适用场景
 
 触发语句示例：
 
-- “设置 <provider>”，“配置 <Neon|Twilio|Vercel|...>”，“创建数据库”
-- “为这个项目提供一个 <Postgres|Redis|Twilio number|...>”
+- “设置 <provider>”，“部署 <Neon|Twilio|Vercel|...>”，“创建数据库”
+- “为这个项目提供一个 <Postgres|Redis|Twilio号码|...>”
 - “管理我的服务栈凭证”，“更换此密钥”，“升级我的套餐”
 - “我可以添加哪些提供商？”
 
-即使用户已有某个提供商的账户，该技能仍可通过 `stripe projects link <provider>` 将其关联起来。如果用户希望使用现有的提供商资源（如现有数据库或 Vercel 项目），请先确认该提供商是否支持；目前许多提供商仅支持创建新资源，暂不支持导入现有资源。
+即使用户已拥有某个提供商的账户，该技能仍可通过 `stripe projects link <provider>` 实现连接。如果用户希望使用现有的提供商资源（如已有数据库或 Vercel 项目），需先确认该提供商是否支持；目前许多提供商仅支持创建新资源，暂不支持导入现有资源。
 
 ## 先决条件
 
 - 已安装 Stripe CLI（macOS 可通过 Homebrew 安装，Linux 可通过包管理器安装，或从 https://docs.stripe.com/stripe-cli/install 下载）
 - 已安装 Stripe Projects 插件
-- 拥有 Stripe 账户。如果用户尚未拥有账户，CLI 可在设置过程中引导其通过浏览器完成登录或账户创建。
+- 拥有 Stripe 账户。如果用户尚未拥有账户，CLI 可在设置过程中引导其在浏览器中完成登录或账户创建。
 
 ## 安装
 
