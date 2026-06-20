@@ -1608,6 +1608,7 @@
         - [电影制作流程](zh/optional-skills/creative/concept-diagrams/examples/feature-film-production-pipeline.md)
         - [医院急诊科流程图](zh/optional-skills/creative/concept-diagrams/examples/hospital-emergency-department-flow.md)
         - [双坐标轴的机器学习基准分组柱状图](zh/optional-skills/creative/concept-diagrams/examples/ml-benchmark-grouped-bar-chart.md)
+        - [下单流程 —— UML序列图](zh/optional-skills/creative/concept-diagrams/examples/place-order-uml-sequence.md)
         - [智慧城市基础设施](zh/optional-skills/creative/concept-diagrams/examples/smart-city-infrastructure.md)
         - [智能手机结构解析图](zh/optional-skills/creative/concept-diagrams/examples/smartphone-layer-anatomy.md)
         - [SN2反应机理](zh/optional-skills/creative/concept-diagrams/examples/sn2-reaction-mechanism.md)
