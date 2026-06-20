@@ -1603,6 +1603,7 @@
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
         - [Methods]()
+          - [随机性与再创作](zh/optional-skills/creative/creative-ideation/references/methods/chance-and-remix.md)
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
           - [横向激发法](zh/optional-skills/creative/creative-ideation/references/methods/lateral-provocations.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
