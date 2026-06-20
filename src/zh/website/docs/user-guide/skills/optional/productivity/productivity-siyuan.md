@@ -8,13 +8,13 @@ description: "SiYuan Note API for searching, reading, creating, and managing blo
 
 # SiYuan
 
-SiYuan Note API 允许您通过 curl 命令在自托管的知识库中搜索、读取、创建及管理笔记块与文档。
+SiYuan Note API 允许用户通过 curl 命令，在自托管的知识库中搜索、读取、创建及管理笔记块与文档。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/productivity/siyuan` 安装 |
+| 来源 | 可选 —— 可使用 `hermes skills install official/productivity/siyuan` 安装 |
 | 路径 | `optional-skills/productivity/siyuan` |
 | 版本 | `1.0.0` |
 | 开发者 | FEUAZUR |
@@ -31,13 +31,13 @@ SiYuan Note API 允许您通过 curl 命令在自托管的知识库中搜索、�
 
 # SiYuan Note API
 
-您可以通过 curl 命令调用 [SiYuan](https://github.com/siyuan-note/siyuan) 核心 API，从而在自托管的知识库中对笔记块与文档进行搜索、读取、创建、更新及删除操作。无需额外工具，只需拥有 curl 工具及 API 令牌即可。
+可通过 curl 命令调用 [SiYuan](https://github.com/siyuan-note/siyuan) 核心 API，从而在自托管的知识库中对笔记块与文档进行搜索、读取、创建、更新及删除操作。无需额外工具——仅需 curl 命令及 API 令牌即可。
 
-## 前提条件
+## 先决条件
 
 1. 安装并运行 SiYuan（桌面版或 Docker 版）
 2. 获取您的 API 令牌：**设置 > 关于 > API 令牌**
-3. 将该令牌保存至 `${HERMES_HOME:-~/.hermes}/.env` 文件中：
+3. 将该令牌保存在 `~/.hermes/.env` 文件中：
    ```
    SIYUAN_TOKEN=your_token_here
    SIYUAN_URL=http://127.0.0.1:6806
