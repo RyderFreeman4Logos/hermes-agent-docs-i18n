@@ -1630,6 +1630,7 @@
           - [波利亚的启发式方法](zh/optional-skills/creative/creative-ideation/references/methods/polya.md)
           - [前置尸检法与逆向思维法](zh/optional-skills/creative/creative-ideation/references/methods/premortem-and-inversion.md)
           - [SCAMPER 方法](zh/optional-skills/creative/creative-ideation/references/methods/scamper.md)
+          - [故事骨架](zh/optional-skills/creative/creative-ideation/references/methods/story-skeletons.md)
           - [TRIZ — 发明问题解决理论](zh/optional-skills/creative/creative-ideation/references/methods/triz-principles.md)
           - [思想量产方法](zh/optional-skills/creative/creative-ideation/references/methods/volume-generation.md)
     - [Hyperframes]()
