@@ -2610,6 +2610,7 @@
         - [开放式 WebUI 集成](zh/website/docs/user-guide/messaging/open-webui.md)
         - [Photon iMessage](zh/website/docs/user-guide/messaging/photon.md)
         - [QQ机器人](zh/website/docs/user-guide/messaging/qqbot.md)
+        - [Raft 设置](zh/website/docs/user-guide/messaging/raft.md)
         - [Signal 设置](zh/website/docs/user-guide/messaging/signal.md)
         - [SimpleX Chat](zh/website/docs/user-guide/messaging/simplex.md)
         - [Slack 设置](zh/website/docs/user-guide/messaging/slack.md)
