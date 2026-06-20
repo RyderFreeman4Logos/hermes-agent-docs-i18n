@@ -4,7 +4,7 @@ sidebar_label: "Python Debugpy"
 description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Python Debugpy
 
@@ -17,19 +17,19 @@ description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/software-development/python-debugpy` |
 | 版本 | `1.0.0` |
-| 创建者 | Hermes Agent |
+| 开发者 | Hermes Agent |
 | 许可证 | MIT |
 | 支持平台 | linux、macos |
-| 标签 | `调试`, `python`, `pdb`, `debugpy`, `断点`, `dap`, `事后分析` |
-| 相关技能 | [`系统化调试`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging), [`node-inspect-debugger`](/docs/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger), `debugging-hermes-tui-commands` |
+| 标签 | `调试`, `python`, `pdb`, `debugpy`, `断点`, `dap`, `故障分析` |
+| 相关技能 | [`系统化调试`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging), [`node-inspect-debugger`](/docs/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger), [`debugging-hermes-tui-commands`](/docs/user-guide/skills/bundled/software-development/software-development-debugging-hermes-tui-commands) |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 加载的完整技能定义。技能处于激活状态时，Agent 会看到这些指令作为操作指南。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
 :::
 
-# Python 调试工具（pdb + debugpy）
+# Python 调试器（pdb + debugpy）
 
 ## 概述
 
@@ -37,25 +37,25 @@ description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 
 | 工具 | 适用场景 |
 |---|---|
-| **`breakpoint()` + pdb** | 本地使用，交互式，最简单。在源代码中添加 `breakpoint()`，正常运行后会在对应行进入 REPL 环境。 |
-| **`python -m pdb`** | 不修改源代码即可将现有脚本在 pdb 环境下运行，适合快速测试。 |
-| **`debugpy`** | 用于远程/无界面调试，或“附加到已运行的进程”进行调试。支持 DAP 协议，可通过终端编写脚本，适用于长时间运行的进程（如网关、守护进程、PTY 子进程）。 |
+| **`breakpoint()` + pdb** | 本地使用，交互式，最简单。在源代码中添加 `breakpoint()`，正常运行后会在该行进入 REPL 环境。 |
+| **`python -m pdb`** | 不修改源代码即可让现有脚本在 pdb 环境下运行，适合快速测试。 |
+| **`debugpy`** | 用于远程/无界面调试，或“附加到已运行的进程”进行调试。支持 DAP 协议，可通过终端脚本化操作，适用于长时间运行的进程（如网关、守护进程、PTY 子进程）。 |
 
-**建议从 `breakpoint()` 开始使用**，这是最简单且有效的方案。
+**建议先从 `breakpoint()` 开始使用**，这是最简单有效的方案。
 
 ## 使用场景
 
-- 测试失败但堆栈跟踪信息无法说明变量值出错的原因
-- 需要逐行执行函数并观察数据集合的变化
+- 测试失败但堆栈跟踪信息无法说明数值出错的原因
+- 需要逐步执行函数并观察数据集合的变化
 - 长时间运行的进程（如 hermes gateway、tui_gateway）出现异常且无法重启
-- 事后分析：在类似生产环境的代码中发生异常，需要查看崩溃时的局部变量
-- 实际故障发生在子进程/子任务中（如 Python `_SlashWorker`、PTY 桥接工作进程）
+- 故障分析：在类似生产环境的代码中发生异常，需要查看崩溃时的局部变量
+- 实际故障发生在子进程/子线程中（如 Python `_SlashWorker`、PTY 桥接进程）
 
-**不推荐用于**：那些通过 `print()` / `logging.debug` 即可在一分钟内解决的问题，或 `pytest -vv --tb=long --showlocals` 已能显示信息的场景。
+**不推荐用于**：那些通过 `print()` 或 `logging.debug` 即可在一分钟内解决的问题的调试，或是那些 `pytest -vv --tb=long --showlocals` 已经能显示信息的场景。
 
 ## pdb 快速参考
 
-在任何 pdb 提示符（`(Pdb)`）下：
+在任何 pdb 提示符下（`(Pdb)`）：
 
 | 命令 | 功能 |
 |---|---|
@@ -66,7 +66,7 @@ description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 | `c` | 继续执行 |
 | `unt N` | 继续执行直到第 N 行 |
 | `j N` | 跳转到第 N 行（仅限同一函数内） |
-| `l` / `ll` | 查看当前行周围的源代码/整个函数的代码内容 |
+| `l` / `ll` | 查看当前行周围的源代码/整个函数的源代码 |
 | `w` | 显示堆栈跟踪信息 |
 | `u` / `d` | 在堆栈中向上/向下移动 |
 | `a` | 打印当前函数的参数 |
@@ -77,7 +77,7 @@ description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 | `b file:line, cond` | 条件断点 |
 | `cl N` | 删除第 N 个断点 |
 | `tbreak file:line` | 一次性断点 |
-| `!stmt` | 执行任意 Python 代码（包括赋值语句） |
+| `!stmt` | 执行任意 Python 代码（包括赋值操作） |
 | `interact` | 进入当前作用域下的完整 Python REPL 环境（按 Ctrl+D 退出） |
 | `q` | 退出 |
 
@@ -85,7 +85,7 @@ description: "Debug Python: pdb REPL + debugpy remote (DAP)"
 
 ## 方法一：本地断点
 
-最简单的方式。直接编辑对应文件即可：
+最简单的方式。直接编辑相关文件即可：
 
 ```python
 def compute(x, y):
