@@ -47,14 +47,14 @@ Honcho 提供了专为人工智能设计的跨会话用户建模能力。它能�
 ### 云端版本（app.honcho.dev）
 
 ```bash
-hermes memory setup honcho
+hermes honcho setup
 # select "cloud", paste API key from https://app.honcho.dev
 ```
 
 ### 自托管模式
 
 ```bash
-hermes memory setup honcho
+hermes honcho setup
 # select "local", enter base URL (e.g. http://localhost:8000)
 ```
 
@@ -322,7 +322,7 @@ honcho_conclude conclusion="<specific, actionable fact>"
 ```
 
 优秀结论示例：“更倾向于使用代码示例而非文字说明”，“截至2026年4月仍在从事Rust异步项目开发”  
-较差结论示例：“用户提到了Rust”（过于模糊），“用户似乎具备技术背景”（该信息已体现在角色设定中）
+较差结论示例：“用户提到了Rust”（过于模糊），“用户似乎具备技术背景”（这一信息已在初始描述中体现）
 
 ```
 honcho_search query="<topic>"       → fast, no LLM, good for specific facts
@@ -339,14 +339,14 @@ honcho_reasoning query="<question>"  → synthesized answer, use when search isn
 
 ### 何时不应调用工具 
 
-在 `hybrid` 和 `context` 模式下，基础上下文（用户描述信息 + 身份卡 + 会话摘要）会在每一轮对话之前自动注入。因此无需重复获取已注入的内容。仅在下述情况才需调用工具：
-- 需要基础上下文中所没有的信息
+在 `hybrid` 和 `context` 模式下，基础上下文（用户描述信息 + 身份卡 + 会话摘要）会在每个对话轮次开始前自动注入。无需重复获取已注入的内容。仅在以下情况下才应调用工具：
+- 需要基础上下文所不具备的信息
 - 用户明确要求你调取或检查记忆内容
 - 需要针对新内容撰写结论时
 
 ### 节奏控制意识 
 
-在工具端使用 `honcho_reasoning` 时，其成本与自动注入的推理过程相同。在明确调用工具之后，自动注入的节奏会重置——从而避免在同一轮对话中重复计费。
+在工具端使用 `honcho_reasoning` 所产生的成本与自动注入机制的成本相同。在明确调用工具之后，自动注入的节奏会重置——从而避免在同一轮次中重复计费。
 
 ## 配置参考 
 
