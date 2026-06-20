@@ -4,7 +4,7 @@ sidebar_label: "Hyperliquid"
 description: "Hyperliquid market data, account history, trade review"
 ---
 
-{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Hyperliquid
 
@@ -22,16 +22,16 @@ description: "Hyperliquid market data, account history, trade review"
 | 支持平台 | linux、macos、windows |
 | 标签 | `Hyperliquid`、`区块链`、`加密货币`、`交易`、`永续合约`、`现货`、`去中心化金融` |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，Agent 就会依据这些内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，Agent 会依据此内容执行操作。
 :::
 
 # Hyperliquid 技能
 
 通过公共的 `/info` 接口查询 Hyperliquid 市场及账户数据。
-仅支持读取操作 — 无需 API 密钥，无需签名，也无法下单。
+仅支持读取操作 — 无需 API 密钥，无需签名，也不支持下单。
 
 包含 12 个命令：`dexs`、`markets`、`spots`、`candles`、`funding`、`l2`、`state`、`spot-balances`、`fills`、`orders`、`review`、`export`。仅使用标准库模块（`urllib`、`json`、`argparse`）。
 
@@ -39,11 +39,11 @@ description: "Hyperliquid market data, account history, trade review"
 
 ## 适用场景
 
-- 用户需要查询 Hyperliquid 永续合约或现货市场数据、K线图、资金费率或 Layer 2 市场深度信息
-- 用户希望查看某个钱包的永续合约持仓、现货余额、成交记录或待处理订单
+- 用户需要查询 Hyperliquid 永续合约或现货市场数据、K线图、资金费率或 Layer 2 流动性信息
+- 用户希望查看某个钱包的永续合约持仓、现货余额、成交记录或订单信息
 - 用户需要结合近期成交情况与市场背景进行交易后分析
 - 用户希望查看由构建工具部署的永续合约去中心化交易所或 HIP-3 市场信息
-- 用户需要将 K线图及资金费率数据以标准化 JSON 格式导出，以便后续回测使用
+- 用户需要将 K线图和资金费率数据以标准化 JSON 格式导出，以便后续回测使用
 
 ---
 
@@ -51,12 +51,12 @@ description: "Hyperliquid market data, account history, trade review"
 
 仅依赖标准库 — 无需任何外部包，也无需 API 密钥。
 
-脚本会从 `${HERMES_HOME:-~/.hermes}/.env` 文件中读取两个可选的默认值：
+脚本会从 `~/.hermes/.env` 文件中读取两个可选的默认值：
 
 - `HYPERLIQUID_API_URL` — 默认值为 `https://api.hyperliquid.xyz`。如需测试环境，可设置为 `https://api.hyperliquid-testnet.xyz`
 - `HYPERLIQUID_USER_ADDRESS` — 用于获取 `state`、`spot-balances`、`fills`、`orders` 及 `review` 数据的默认地址。若未设置该值，则需将对应地址作为第一个参数传入。
 
-当前工作目录下的项目 `.env` 文件可作为开发阶段的备用配置。
+当前工作目录下的项目 `.env` 文件可作为开发时的备用配置。
 
 辅助脚本：`~/.hermes/skills/blockchain/hyperliquid/scripts/hyperliquid_client.py`
 
@@ -93,7 +93,7 @@ hyperliquid_client.py review [address] [--coin COIN] [--hours N] [--fills N]
 hyperliquid_client.py export <coin> [--interval 1h] [--hours N] [--output PATH]
 ```
 
-对于 `state`、`spot-balances`、`fills`、`orders` 和 `review` 这些字段，如果在 `${HERMES_HOME:-~/.hermes}/.env` 文件中已设置了 `HYPERLIQUID_USER_ADDRESS`，则地址为可选项。
+对于 `state`、`spot-balances`、`fills`、`orders` 和 `review` 这些字段，如果在 `~/.hermes/.env` 文件中已设置 `HYPERLIQUID_USER_ADDRESS`，则地址为可选项。
 
 ---
 
