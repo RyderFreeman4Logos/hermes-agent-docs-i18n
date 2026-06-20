@@ -1608,6 +1608,7 @@
     - [Creative Ideation]()
       - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
       - [References]()
+        - [避免平庸内容规则](zh/optional-skills/creative/creative-ideation/references/anti-slop.md)
         - [定时练习](zh/optional-skills/creative/creative-ideation/references/exercises.md)
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
         - [路由策略](zh/optional-skills/creative/creative-ideation/references/heuristics.md)
