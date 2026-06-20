@@ -1605,6 +1605,7 @@
         - [Methods]()
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
+          - [OuLiPo](zh/optional-skills/creative/creative-ideation/references/methods/oulipo.md)
     - [Hyperframes]()
       - [HyperFrames](zh/optional-skills/creative/hyperframes/SKILL.md)
       - [References]()
