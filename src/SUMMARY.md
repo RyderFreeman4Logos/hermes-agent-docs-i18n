@@ -1604,6 +1604,7 @@
       - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
+        - [方法目录](zh/optional-skills/creative/creative-ideation/references/method-catalog.md)
         - [Methods]()
           - [聚类图](zh/optional-skills/creative/creative-ideation/references/methods/affinity-diagrams.md)
           - [模仿自然设计](zh/optional-skills/creative/creative-ideation/references/methods/biomimicry.md)
