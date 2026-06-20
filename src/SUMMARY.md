@@ -2257,6 +2257,8 @@
       - [Pretext创意演示](zh/skills/creative/pretext/SKILL.md)
       - [References]()
         - [前提模式](zh/skills/creative/pretext/references/patterns.md)
+    - [Sketch]()
+      - [草图绘制](zh/skills/creative/sketch/SKILL.md)
     - [Songwriting And Ai Music]()
       - [歌曲创作与AI音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
     - [Touchdesigner Mcp]()
