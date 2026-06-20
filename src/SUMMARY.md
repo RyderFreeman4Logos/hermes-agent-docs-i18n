@@ -1468,6 +1468,7 @@
 - [Docker]()
   - [Hermes Agent 人格设定](zh/docker/SOUL.md)
 - [Docs]()
+  - [Chronos managed-cron — 代理 ↔ NAS 通信协议](zh/docs/chronos-managed-cron-contract.md)
   - [根因分析：执行 `hermes update` 后 SSL 证书包损坏](zh/docs/rca-ssl-cacert-post-git-pull.md)
   - [中继 ↔ 连接器合约（v1，实验性）](zh/docs/relay-connector-contract.md)
   - [Design]()
