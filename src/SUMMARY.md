@@ -1610,6 +1610,7 @@
           - [模仿自然设计](zh/optional-skills/creative/creative-ideation/references/methods/biomimicry.md)
           - [随机性与再创作](zh/optional-skills/creative/creative-ideation/references/methods/chance-and-remix.md)
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
+          - [创意自律体系](zh/optional-skills/creative/creative-ideation/references/methods/creative-discipline.md)
           - [陌生化手法](zh/optional-skills/creative/creative-ideation/references/methods/defamiliarization.md)
           - [漫游与映射](zh/optional-skills/creative/creative-ideation/references/methods/derive-and-mapping.md)
           - [第一性原理](zh/optional-skills/creative/creative-ideation/references/methods/first-principles.md)
