@@ -1604,6 +1604,7 @@
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
         - [Methods]()
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
+          - [横向激发法](zh/optional-skills/creative/creative-ideation/references/methods/lateral-provocations.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
           - [OuLiPo](zh/optional-skills/creative/creative-ideation/references/methods/oulipo.md)
           - [波利亚的启发式方法](zh/optional-skills/creative/creative-ideation/references/methods/polya.md)
