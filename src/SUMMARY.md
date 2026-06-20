@@ -1609,6 +1609,7 @@
         - [智慧城市基础设施](zh/optional-skills/creative/concept-diagrams/examples/smart-city-infrastructure.md)
         - [智能手机结构解析图](zh/optional-skills/creative/concept-diagrams/examples/smartphone-layer-anatomy.md)
         - [SN2反应机理](zh/optional-skills/creative/concept-diagrams/examples/sn2-reaction-mechanism.md)
+        - [现代陆上风力发电机结构](zh/optional-skills/creative/concept-diagrams/examples/wind-turbine-structure.md)
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
         - [基础设施设计模式](zh/optional-skills/creative/concept-diagrams/references/infrastructure-patterns.md)
