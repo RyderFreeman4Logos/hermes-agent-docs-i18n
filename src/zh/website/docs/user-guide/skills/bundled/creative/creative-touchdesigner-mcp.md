@@ -14,19 +14,19 @@ description: "Control a running TouchDesigner instance via twozero MCP — creat
 
 | | |
 |---|---|
-| 来源 | 内置（默认已安装） |
+| 来源 | 已捆绑（默认安装） |
 | 路径 | `skills/creative/touchdesigner-mcp` |
 | 版本 | `1.1.0` |
 | 开发者 | kshitijk4poor |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `TouchDesigner`、`MCP`、`twozero`、`创意编程`、`实时视觉效果`、`生成艺术`、`音频响应式`、`VJ`、`装置艺术`、`GLSL` |
-| 相关技能 | `native-mcp`、[`ascii-video`](/docs/user-guide/skills/bundled/creative/creative-ascii-video)、[`manim-video`](/docs/user-guide/skills/bundled/creative/creative-manim-video)、`hermes-video` |
+| 标签 | `TouchDesigner`、`MCP`、`twozero`、`creative-coding`、`real-time-visuals`、`generative-art`、`audio-reactive`、`VJ`、`installation`、`GLSL` |
+| 相关技能 | [`native-mcp`](/docs/user-guide/skills/bundled/mcp/mcp-native-mcp)、[`ascii-video`](/docs/user-guide/skills/bundled/creative/creative-ascii-video)、[`manim-video`](/docs/user-guide/skills/bundled/creative/creative-manim-video)、`hermes-video` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，Agent 会将此内容视为操作指令。
 :::
 
 # TouchDesigner 集成（twozero MCP）
@@ -36,8 +36,8 @@ description: "Control a running TouchDesigner instance via twozero MCP — creat
 1. **绝不要猜测参数名称。** 首先调用 `td_get_par_info` 获取对应操作符类型的参数信息。您所使用的训练数据可能不适用于 TD 2025.32 版本。
 2. **如果出现 `tdAttributeError` 错误，立即停止操作。** 在继续之前，先对出错的节点调用 `td_get_operator_info`。
 3. **切勿在脚本回调中硬编码绝对路径。** 应使用 `me.parent()` / `scriptOp.parent()` 来获取路径。
-4. **优先使用原生 MCP 工具，而非 `td_execute_python`。** 推荐使用 `td_create_operator`、`td_set_operator_pars`、`td_get_errors` 等函数。仅在对复杂的多步骤逻辑处理时才考虑使用 `td_execute_python`。
-5. **在构建内容之前先调用 `td_get_hints`。** 该函数会返回与您正在使用的操作符类型相关的特定提示信息。
+4. **优先使用原生 MCP 工具，而非 `td_execute_python`。** 建议使用 `td_create_operator`、`td_set_operator_pars`、`td_get_errors` 等函数。仅在对复杂的多步骤逻辑处理时才考虑使用 `td_execute_python`。
+5. **在构建内容之前先调用 `td_get_hints`。** 该函数会返回与您正在操作的特定操作符类型相关的提示信息。
 
 ## 架构设计
 
@@ -236,21 +236,21 @@ td_set_operator_pars(path="/project1/shader", parameters={"value0name": "uTime"}
 # In GLSL: uniform float uTime;
 ```
 
-**回退方案**：始终使用 `rgba32float` 格式的常量 TOP 值（8 位数值会被限制在 0-1 范围内，从而导致着色器无法正常运行）。
+**备用方案：** 使用 `rgba32float` 格式的固定 TOP 值（8 位数据会被限制在 0-1 范围内，从而导致着色器无法正常运行）。
 
-**反馈 TOP 值的设置方式**：应参考 `top` 参数的相关说明，而非直接输入数据线。首次处理完成后，“源数据不足”的问题即会得到解决；出现“处理依赖循环”警告属于正常现象。
+**反馈 TOP 值设置：** 应使用 `top` 参数引用，而非直接输入数据线。“源数据不足”的问题在首次处理后会得到解决，出现“处理依赖循环”警告属于正常现象。
 
-**分辨率限制**：非商业用途的渲染分辨率上限为 1280×1280，此时需使用 `outputresolution = 'custom'` 参数。
+**分辨率限制：** 非商业用途的分辨率上限为 1280×1280，此时需设置 `outputresolution = 'custom'`。
 
-**大型着色器的处理方法**：先将 GLSL 代码写入 `/tmp/file.glsl` 文件，再通过 `td_write_dat` 或 `td_execute_python` 命令将其加载进来。
+**大型着色器处理：** 先将 GLSL 代码写入 `/tmp/file.glsl` 文件，再通过 `td_write_dat` 或 `td_execute_python` 命令来加载该文件。
 
-**顶点/点数据的访问方式（TD 2025.32 版本）**：应使用 `point.P[0]`、`point.P[1]`、`point.P[2]` 这样的格式，而非 `.x`、`.y`、`.z`。
+**顶点/点数据访问（TD 2025.32 版本）：** 应使用 `point.P[0]`、`point.P[1]`、`point.P[2]` 这种形式，而非 `.x`、`.y`、`.z`。
 
-**扩展功能的配置**：在 CONSTANT 模式下，`ext0object` 格式的代码应为 `"op('./datName').module.ClassName(me)"`。使用 `td_write_dat` 编辑完扩展代码后，需调用 `td_reinit_extension` 函数以重新初始化该扩展。
+**扩展功能相关：** 在 CONSTANT 模式下，`ext0object` 格式的写法为 `"op('./datName').module.ClassName(me)"`。使用 `td_write_dat` 编辑完扩展代码后，需调用 `td_reinit_extension` 函数以重新初始化扩展功能。
 
-**脚本回调函数的路径指定**：务必通过 `me.parent()` 或 `scriptOp.parent()` 方法来指定相对路径。
+**脚本回调函数：** 必须始终通过 `me.parent()` 或 `scriptOp.parent()` 来使用相对路径。
 
-**节点清理操作**：在遍历节点之前，必须先使用 `list(root.children)` 获取所有子节点列表，并同时检查每个节点的 `valid` 属性是否为真。
+**节点清理操作：** 在遍历节点之前，务必先调用 `list(root.children)` 查看所有子节点，并同时检查每个节点的 `valid` 状态。
 
 ```python
 # via td_execute_python:
