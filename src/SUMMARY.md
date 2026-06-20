@@ -1602,6 +1602,8 @@
       - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
+        - [Methods]()
+          - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
     - [Hyperframes]()
       - [HyperFrames](zh/optional-skills/creative/hyperframes/SKILL.md)
       - [References]()
