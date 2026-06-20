@@ -1597,6 +1597,7 @@
     - [Concept Diagrams]()
       - [Examples]()
         - [香蕉的旅程：从树上到冰沙](zh/optional-skills/creative/concept-diagrams/examples/banana-journey-tree-to-smoothie.md)
+        - [电力网：从发电到消费](zh/optional-skills/creative/concept-diagrams/examples/electricity-grid-flow.md)
         - [双坐标轴的机器学习基准分组柱状图](zh/optional-skills/creative/concept-diagrams/examples/ml-benchmark-grouped-bar-chart.md)
         - [智能手机结构解析图](zh/optional-skills/creative/concept-diagrams/examples/smartphone-layer-anatomy.md)
       - [References]()
