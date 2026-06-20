@@ -8,19 +8,19 @@ description: "Shopify Admin & Storefront GraphQL APIs via curl"
 
 # Shopify
 
-通过 curl 访问 Shopify 管理后台及前端店铺的 GraphQL API，可处理产品、订单、客户、库存以及元字段等相关操作。
+通过 curl 接口使用 Shopify 后台及前端 GraphQL API。可处理产品、订单、客户、库存以及元字段等相关操作。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/productivity/shopify` 安装 |
+| 来源 | 可选 —— 通过 `hermes skills install official/productivity/shopify` 安装 |
 | 路径 | `optional-skills/productivity/shopify` |
 | 版本 | `1.0.0` |
 | 创建者 | 社区用户 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `Shopify`、`电子商务`、`Commerce`、`API`、`GraphQL` |
+| 标签 | `Shopify`、`电子商务`、`商业`、`API`、`GraphQL` |
 | 相关技能 | [`airtable`](/docs/user-guide/skills/bundled/productivity/productivity-airtable)、[`xurl`](/docs/user-guide/skills/bundled/social-media/social-media-xurl) |
 
 ## 参考：完整的 SKILL.md 文件
@@ -29,18 +29,18 @@ description: "Shopify Admin & Storefront GraphQL APIs via curl"
 以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
-# Shopify — 管理后台及前端店铺 GraphQL API
+# Shopify —— 后台及前端 GraphQL API
 
-可直接通过 `curl` 操作 Shopify 店铺：列出产品、管理库存、查询订单、更新客户信息、读取元字段等。无需 SDK 也不用应用框架，仅需 GraphQL 接口以及自定义应用的访问令牌即可。
+可直接通过 `curl` 工具操作 Shopify 商店：列出产品、管理库存、获取订单信息、更新客户资料、读取元字段数据。无需 SDK 也不用任何应用框架，仅需 GraphQL 接口地址以及自定义应用访问令牌即可。
 
-自 2024 年 4 月起，REST 管理后台 API 已属于旧版本，仅会接收安全补丁。所有管理操作请使用 **GraphQL 管理 API**；针对仅用于读取的客户端查询（如产品、系列、购物车信息），则可使用 **前端店铺 GraphQL API**。
+自 2024 年 4 月起，REST 后台 API 已属于旧版本，仅会进行安全修复。所有后台操作请使用 **GraphQL 后台 API**；而针对产品、系列、购物车等仅需读取数据的客户端查询，则应使用 **前端 GraphQL API**。
 
 ## 前提条件
 
-1. 进入 Shopify 管理后台：**设置 → 应用与销售渠道 → 开发应用 → 创建应用**。
-2. 点击 **配置管理 API 权限范围**，选择所需功能（见下方示例），然后保存。
-3. **安装应用** — 管理 API 访问令牌仅会显示一次，请立即复制，因为 Shopify 不会再次展示该令牌。令牌开头为 `shpat_`。
-4. 将该令牌保存到 `${HERMES_HOME:-~/.hermes}/.env` 文件中：
+1. 进入 Shopify 后台：**设置 → 应用与销售渠道 → 开发应用 → 创建应用**。
+2. 点击 **配置后台 API 权限范围**，选择所需功能（见下方示例），然后保存。
+3. **安装应用** —— 后台 API 访问令牌仅会显示一次，请立即复制，因为 Shopify 不会再次展示该令牌。令牌开头为 `shpat_`。
+4. 将该令牌保存至 `~/.hermes/.env` 文件中：
    ```
    SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxx
    SHOPIFY_STORE_DOMAIN=my-store.myshopify.com
