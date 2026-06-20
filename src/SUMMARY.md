@@ -1597,6 +1597,7 @@
     - [Concept Diagrams]()
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
+        - [实体物体绘制指南](zh/optional-skills/creative/concept-diagrams/references/physical-shape-cookbook.md)
     - [Creative Ideation]()
       - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
       - [References]()
