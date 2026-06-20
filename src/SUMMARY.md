@@ -1599,6 +1599,7 @@
         - [双坐标轴的机器学习基准分组柱状图](zh/optional-skills/creative/concept-diagrams/examples/ml-benchmark-grouped-bar-chart.md)
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
+        - [基础设施设计模式](zh/optional-skills/creative/concept-diagrams/references/infrastructure-patterns.md)
         - [实体物体绘制指南](zh/optional-skills/creative/concept-diagrams/references/physical-shape-cookbook.md)
     - [Creative Ideation]()
       - [创意构思](zh/optional-skills/creative/creative-ideation/SKILL.md)
