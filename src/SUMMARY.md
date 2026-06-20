@@ -1608,6 +1608,7 @@
           - [横向激发法](zh/optional-skills/creative/creative-ideation/references/methods/lateral-provocations.md)
           - [斜向策略](zh/optional-skills/creative/creative-ideation/references/methods/oblique-strategies.md)
           - [OuLiPo](zh/optional-skills/creative/creative-ideation/references/methods/oulipo.md)
+          - [奇想物理学](zh/optional-skills/creative/creative-ideation/references/methods/pataphysics.md)
           - [波利亚的启发式方法](zh/optional-skills/creative/creative-ideation/references/methods/polya.md)
           - [前置尸检法与逆向思维法](zh/optional-skills/creative/creative-ideation/references/methods/premortem-and-inversion.md)
           - [SCAMPER 方法](zh/optional-skills/creative/creative-ideation/references/methods/scamper.md)
