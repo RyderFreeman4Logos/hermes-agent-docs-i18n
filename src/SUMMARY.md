@@ -2674,6 +2674,7 @@
             - [Kanban Codex 工作流](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-kanban-codex-lane.md)
             - [Opencode](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode.md)
           - [Creative]()
+            - [架构图](zh/website/docs/user-guide/skills/bundled/creative/creative-architecture-diagram.md)
             - [ASCII 艺术字](zh/website/docs/user-guide/skills/bundled/creative/creative-ascii-art.md)
             - [ASCII 视频](zh/website/docs/user-guide/skills/bundled/creative/creative-ascii-video.md)
             - [宝玉信息图生成器](zh/website/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic.md)
