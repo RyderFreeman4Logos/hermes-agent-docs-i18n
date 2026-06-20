@@ -1603,6 +1603,7 @@
       - [References]()
         - [完整提示词库](zh/optional-skills/creative/creative-ideation/references/full-prompt-library.md)
         - [Methods]()
+          - [聚类图](zh/optional-skills/creative/creative-ideation/references/methods/affinity-diagrams.md)
           - [模仿自然设计](zh/optional-skills/creative/creative-ideation/references/methods/biomimicry.md)
           - [随机性与再创作](zh/optional-skills/creative/creative-ideation/references/methods/chance-and-remix.md)
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
