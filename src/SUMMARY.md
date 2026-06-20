@@ -2786,6 +2786,7 @@
             - [宝玉文章插画师](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-article-illustrator.md)
             - [宝玉漫画](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-comic.md)
             - [Blender Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
+            - [概念图绘制](zh/website/docs/user-guide/skills/optional/creative/creative-concept-diagrams.md)
             - [创意构思](zh/website/docs/user-guide/skills/optional/creative/creative-creative-ideation.md)
             - [Hyperframes](zh/website/docs/user-guide/skills/optional/creative/creative-hyperframes.md)
             - [Kanban 视频编排器](zh/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
