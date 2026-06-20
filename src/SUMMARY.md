@@ -2072,6 +2072,8 @@
       - [OpenCode CLI](zh/skills/autonomous-ai-agents/opencode/SKILL.md)
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
+    - [Architecture Diagram]()
+      - [架构图生成功能](zh/skills/creative/architecture-diagram/SKILL.md)
     - [Ascii Art]()
       - [ASCII艺术生成技能](zh/skills/creative/ascii-art/SKILL.md)
     - [Ascii Video](zh/skills/creative/ascii-video/README.md)
