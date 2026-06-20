@@ -413,8 +413,8 @@ class TestAPISmoke:
 ## 安全性
 
 ### 令牌处理
-- 绝不对完整的令牌进行日志记录。应进行遮蔽处理，格式为：`Bearer <REDACTED>`。
-- 绝不在脚本中硬编码令牌。应从环境变量（如 `os.environ["API_TOKEN"]`）或 `${HERMES_HOME:-~/.hermes}/.env` 中读取令牌。
+- 绝不对完整的令牌进行日志记录。应将其遮蔽为：`Bearer <REDACTED>`。
+- 切勿在脚本中硬编码令牌，而应从环境变量（如 `os.environ["API_TOKEN"]`）或 `~/.hermes/.env` 中读取。
 - 若在日志、错误信息或 Git 历史记录中发现令牌，应立即更换。
 
 ### 安全的日志记录方式
