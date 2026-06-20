@@ -1597,6 +1597,7 @@
     - [Concept Diagrams]()
       - [Examples]()
         - [双坐标轴的机器学习基准分组柱状图](zh/optional-skills/creative/concept-diagrams/examples/ml-benchmark-grouped-bar-chart.md)
+        - [智能手机结构解析图](zh/optional-skills/creative/concept-diagrams/examples/smartphone-layer-anatomy.md)
       - [References]()
         - [仪表板设计模式](zh/optional-skills/creative/concept-diagrams/references/dashboard-patterns.md)
         - [基础设施设计模式](zh/optional-skills/creative/concept-diagrams/references/infrastructure-patterns.md)
