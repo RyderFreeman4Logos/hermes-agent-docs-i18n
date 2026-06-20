@@ -100,24 +100,62 @@ tick()
   6. Release scheduler lock
 ```
 
-### 网关集成模式
+### 网关集成
 
-在网关模式下，调度器会在一个专用的后台线程中运行（位于 `gateway/run.py` 文件中的 `_start_cron_ticker` 函数），该线程会在处理消息的同时，每隔 60 秒调用一次 `scheduler.tick()` 函数。
+在网关模式下，用于决定任务*触发时间*的 cron **触发器**（即“轴B”）是通过可插拔的 `CronScheduler` 提供程序来选定的。网关会调用 `resolve_cron_scheduler()` 函数（位于 `cron/scheduler_provider.py` 文件中），并在一个专用的后台线程中运行选定提供程序的 `start()` 方法，同时还会启动一个独立的网关维护线程。
 
-而在 CLI 模式下，定时任务仅会在执行 `hermes cron` 命令或处于活跃的 CLI 会话期间才会被触发。
+当前生效的提供程序由 `cron.provider` 配置键决定：
 
-### 全新会话隔离机制
+- **空值（默认值）** → 内置的 `InProcessCronScheduler`，它会以每60秒调用一次 `scheduler.tick()` 的方式运行内置的循环处理逻辑。其行为与旧版提供程序完全一致。
+- **指定名称的提供程序**（例如 `chronos`，一种适用于零扩展部署的托管型 cron 提供程序）→ 从 `plugins/cron/<name>/` 或 `$HERMES_HOME/plugins/<name>/` 路径中加载。
 
-每个定时任务都在一个完全独立的智能体会话中运行：
+如果指定的提供程序不存在、无法加载，或返回 `is_available() == False` 的结果，解析器会发出警告并回退到内置提供程序——**绝不会让 cron 陷入无触发器的状态**。由于内置提供程序位于核心代码库中（`cron/scheduler_provider.py`），而非 `plugins/` 目录下，因此不会意外被移除。
 
-- 不保留之前任务的历史对话记录
-- 不记忆之前的定时任务执行情况（除非已保存到内存或文件中）
-- 提示语必须具备完整性——定时任务不得提出需要进一步澄清的问题
-- `cronjob` 工具集处于禁用状态（具有递归防护机制）
+所谓“触发”所代表的含义（任务执行与结果传递）对所有提供程序而言都是相同的，相关逻辑仍存在于 `scheduler.run_job()` 和 `scheduler._deliver_result()` 函数中。提供程序仅负责控制触发时机，而无法干预任务的实际执行过程。
+
+在 CLI 模式下，cron 任务仅在运行 `hermes cron` 命令或处于活跃的 CLI 会话期间才会被触发。
+
+### 适用于零扩展部署的托管型 cron（Chronos）
+
+托管型网关可以使用 **Chronos** 提供程序（配置项为 `cron.provider: chronos`）来替代内置的定时器。Chronos 允许处于空闲状态的网关实现**零扩展**，同时仍能触发 cron 任务：它不会像内置方案那样运行每60秒一次的循环以保持进程运行，而是通过 Nous 基础设施在每个任务的真正触发时间点，精确地启动**一个一次性任务处理实例**。当触发时刻到来时，Nous 会通过经过身份验证的 webhook（请求地址为 `POST /api/cron/fire`）向网关发送通知；网关会通过与内置方案相同的 `run_one_job` 路径执行该任务，之后再启动下一个一次性任务处理实例。在两次触发之间，网关进程可以完全停止——它仅在真正需要执行任务时才会唤醒，而不会因定时器而持续运行。
+
+整个流程由 Nous 提供托管型调度器，代理端无需持有任何调度器相关凭证：
+
+```
+create/update a cron job
+  → Chronos asks Nous to arm a one-shot at the job's next_run_at
+      (authenticated with the agent's existing Nous token)
+  → at fire time Nous calls the gateway: POST {callback_url}/api/cron/fire
+      (authenticated with a short-lived, purpose-scoped Nous-minted JWT)
+  → the gateway verifies the token, claims the job (store compare-and-set so
+    multi-replica deployments fire at-most-once), runs it, and re-arms the next
+    one-shot
+```
+
+配置项（均为非敏感信息；在托管型智能体中，Nous会在部署时设置这些值）：
+
+| 键名 | 含义 |
+|---|---|
+| `cron.provider` | 激活的计时服务，值为 `chronos`（留空则表示使用内置计时器） |
+| `cron.chronos.portal_url` | Nous的基础网址（用于触发任务及生成火令牌） |
+| `cron.chronos.callback_url` | 网关用于接收外部请求的公共基础网址 |
+| `cron.chronos.expected_audience` | 该智能体所生成的火令牌的预期使用方 |
+| `cron.chronos.nas_jwks_url` | 用于验证传入火令牌的密钥集 |
+
+如果Chronos配置错误或智能体未登录Nous，`resolve_cron_scheduler()`函数会回退到内置计时器，并记录警告信息——这样任务触发功能就不会丢失。周期性任务会在每次触发后重新启动；而设置“重复N次”的任务在达到指定次数后会正常停止，不会留下未完成的一次性任务。关于智能体与Nous之间的完整交互协议，可参阅`docs/chronos-managed-cron-contract.md`文档。
+
+### 新会话隔离机制
+
+每个定时任务都在一个全新的智能体会话中运行：
+
+- 不保留之前任务的对话历史
+- 不记忆之前的定时任务执行记录（除非手动保存到内存或文件中）
+- 提示语必须完整独立——定时任务无法提出补充性问题
+- `cronjob`工具集已被禁用（以防止递归调用）
 
 ## 基于技能的任务处理
 
-定时任务可通过 `skills` 字段绑定一个或多个技能。在任务执行时，系统会按指定顺序加载这些技能，然后将每个技能对应的 SKILL.md 文件内容作为上下文注入，同时将任务的提示语作为任务指令附加进去，最终由智能体处理整合后的技能上下文与指令。这样一来，无需在定时任务的提示语中重复输入完整的操作指令，即可实现可复用且经过测试的工作流程。例如：
+定时任务可通过`skills`字段绑定一个或多个技能。在执行时，系统会按指定顺序加载这些技能，再将每个技能对应的SKILL.md文件内容作为上下文注入，同时把任务的提示语作为具体指令附加进去，最终由智能体处理整合后的技能上下文与指令。这种方式无需在定时任务提示语中重复输入完整指令，即可实现可复用、经过测试的工作流程。例如：
 
 ```
 Create a daily funding report → attach "ai-funding-daily-report" skill
