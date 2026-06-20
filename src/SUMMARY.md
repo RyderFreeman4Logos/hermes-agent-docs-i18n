@@ -1608,6 +1608,7 @@
         - [方法目录](zh/optional-skills/creative/creative-ideation/references/method-catalog.md)
         - [Methods]()
           - [聚类图](zh/optional-skills/creative/creative-ideation/references/methods/affinity-diagrams.md)
+          - [类比与融合方法](zh/optional-skills/creative/creative-ideation/references/methods/analogy-and-blending.md)
           - [模仿自然设计](zh/optional-skills/creative/creative-ideation/references/methods/biomimicry.md)
           - [随机性与再创作](zh/optional-skills/creative/creative-ideation/references/methods/chance-and-remix.md)
           - [压缩进度](zh/optional-skills/creative/creative-ideation/references/methods/compression-progress.md)
