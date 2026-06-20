@@ -2568,6 +2568,7 @@
       - [桌面应用](zh/website/docs/user-guide/desktop.md)
       - [Hermes Agent — Docker](zh/website/docs/user-guide/docker.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
+      - [受管理作用域](zh/website/docs/user-guide/managed-scope.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [配置分发：共享完整代理](zh/website/docs/user-guide/profile-distributions.md)
       - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
