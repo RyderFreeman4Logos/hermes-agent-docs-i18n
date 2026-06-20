@@ -507,7 +507,7 @@ hermes cron <list|create|edit|pause|resume|run|remove|status|tick>
 ```
 
 | 子命令 | 描述 |
-|------------|-------------|
+|----------|------|
 | `list` | 显示已安排的作业。 |
 | `create` / `add` | 根据提示创建定时作业，可通过多次使用 `--skill` 选项附加一个或多个技能。 |
 | `edit` | 更新作业的调度时间、提示语、名称、交付方式、重复次数或附加的技能。支持 `--clear-skills`、`--add-skill` 和 `--remove-skill` 参数。 |
@@ -517,6 +517,8 @@ hermes cron <list|create|edit|pause|resume|run|remove|status|tick>
 | `remove` | 删除已安排的作业。 |
 | `status` | 检查 cron 调度器是否正在运行。 |
 | `tick` | 执行到期的作业一次后退出。 |
+
+Cron **触发器**可通过 `cron.provider` 配置键进行插件化扩展。保持该值为空（即默认值）时，将使用内置的进程内计时器。若将其设置为 `chronos`（一种由 NAS 管理、适用于零扩展规模托管网关的提供者），则需通过 `cron.chronos.*` 相关键值（如 `portal_url`、`callback_url`、`expected_audience`、`nas_jwks_url`）进行配置；或者可以在 `plugins/cron/<名称>/` 或 `$HERMES_HOME/plugins/<名称>/` 下自定义提供者名称。如果指定的提供者未知或不可用，系统会回退到内置触发器，因此始终不会出现没有触发器的状况。详情请参阅 [Cron 内部机制](../developer-guide/cron-internals.md#gateway-integration) 文档。
 
 ## `hermes kanban`
 
@@ -711,15 +713,15 @@ config_overrides:
 hermes debug share [options]
 ```
 
-将调试报告（系统信息 + 最新日志）上传至粘贴服务后，即可获取一个可分享的链接。此功能非常适合快速提交支持请求——报告中包含了助手诊断问题所需的所有信息。
+将调试报告（系统信息+近期日志）上传至粘贴服务后，即可获取一个可分享的链接。该功能非常适合快速提交支持请求——报告中包含了辅助人员诊断问题所需的所有信息。
 
 | 选项 | 描述 |
 |------|------|
-| `--lines <N>` | 每个日志文件中要包含的行数（默认：200）。 |
+| `--lines <N>` | 每个日志文件需包含的行数（默认：200）。 |
 | `--expire <days>` | 粘贴内容的有效期，以天为单位（默认：7）。 |
 | `--local` | 直接在本地打印报告，而无需上传。 |
 
-该报告包含系统信息（操作系统、Python版本、Hermes版本）、最近的代理及网关日志（每个文件大小上限为512 KB），以及经过脱敏处理的API密钥状态。所有密钥都会被严格脱敏处理，绝不会上传任何敏感信息。
+该报告包含系统信息（操作系统、Python版本、Hermes版本），以及近期代理、网关、GUI/控制台和桌面端的日志（每个文件大小上限为512 KB），还会显示已脱敏的API密钥状态。所有密钥都会被自动处理，绝不会上传任何敏感信息。
 
 系统会按顺序尝试以下粘贴服务：paste.rs、dpaste.com。
 
