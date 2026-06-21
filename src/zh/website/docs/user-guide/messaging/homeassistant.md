@@ -253,11 +253,8 @@ Agent automatically:
 
 ## 故障排除
 
-**环境变量未被识别。**
-该适配器会从 `~/.hermes/.env` 文件（在启动时自动合并）或 `config.yaml` 文件中读取凭证。请仔细确认该文件位于当前激活的 Hermes 配置目录下，并且 URL 或令牌周围没有多余的引号。修改文件后需重启网关——环境变量的更改仅在进程启动时才会生效。
-
-**“未找到对话实体”/智能体始终不回复。**
-Home Assistant 的对话 API 需要配置好 *Assist* 对话智能体。在 Home Assistant 中，进入 **设置 → 语音助手 → 添加助手**，记下生成的实体 ID（通常为 `conversation.home_assistant` 或 `conversation.openai_<名称>`）。将该实体 ID 设置在适配器的 `conversation_entity` 参数中；某些版本可能不存在默认值。
+**环境变量未被读取。**
+适配器会从 `~/.hermes/.env` 文件（在启动时自动合并）或 `config.yaml` 文件中读取凭证。请仔细确认该文件位于当前激活的 Hermes 配置目录下，并且 URL/令牌周围没有多余的引号。修改后请重启网关——环境变量的更改仅在进程启动时才会生效。
 
 **REST 认证失败（返回 `401 Unauthorized` 错误）。**
-该令牌必须是通过 Home Assistant 的用户配置页面生成的*长期有效访问令牌*（路径为 **设置 → 安全 → 长期有效访问令牌**）。短期的 UI 会话令牌无法使用。同时，请确认基础 URL 包含协议和端口信息（例如 `http://homeassistant.local:8123`），并且从运行 Hermes 的主机上能够访问该地址——执行命令 `curl -H "Authorization: Bearer <token>" <url>/api/` 应该能返回 `{"message": "API running."}`。
+该令牌必须是您在 HA 用户配置页面中生成的*长有效期访问令牌*（路径为 **Profile → Security → Long-lived access tokens**）。短时效的 UI 会话令牌无法使用。同时，请确认基础 URL 包含协议和端口信息（例如 `http://homeassistant.local:8123`），并且从运行 Hermes 的主机上能够访问该地址——执行 `curl -H "Authorization: Bearer <token>" <url>/api/` 命令后，应能返回 `{"message": "API running."}`。
