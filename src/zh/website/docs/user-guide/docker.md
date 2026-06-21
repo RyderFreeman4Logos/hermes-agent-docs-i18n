@@ -52,18 +52,30 @@ docker run -d \
 端口 8642 用于暴露网关的 [兼容 OpenAI 的 API 服务器](./features/api-server.md)以及健康检查端点。如果您仅使用聊天平台（如 Telegram、Discord 等），则该端口为可选配置；但若希望仪表板或外部工具能够访问网关，则必须启用它。
 
 :::提示 网关处于受监督运行状态
-在官方 Docker 镜像中，`gateway run` 命令会**由 s6-overlay 自动进行监督**：一旦网关进程崩溃，系统会在几秒钟内自动重启该进程且不会导致容器丢失。同时，当设置 `HERMES_DASHBOARD=1` 时，仪表板也会一同受到监督。`gateway run` 命令本身的作用是通过 `sleep infinity` 实现心跳检测，以保持容器运行状态，而实际的网关进程则由 s6 来管理——因此即使执行 `docker stop` 命令，所有服务仍会有序停止，且 `docker logs` 输出中会显示受监督运行的网关的运行信息。
+在官方 Docker 镜像中，`gateway run` 命令会**由 s6-overlay 自动进行监督**：一旦网关进程崩溃，系统会在几秒钟内自动重启该进程，且不会导致容器丢失。同时，当设置了 `HERMES_DASHBOARD=1` 时，仪表板也会一并受到监督。`gateway run` 命令本身的执行过程实际上是一个 `sleep infinity` 心跳机制，用于保持容器运行状态，而真正的网关进程则由 s6 来管理——因此即使执行 `docker stop`，所有服务也能干净地停止，且 `docker logs` 中仍会显示受监督运行的网关输出信息。
 
-在 `docker logs` 的输出中，您会看到一条简短的信息来确认升级已完成。如果您希望取消此监督机制——并恢复旧版的“网关为容器的主进程，容器退出即表示网关退出”的运行逻辑——可以传递 `--no-supervise` 参数，或设置 `HERMES_GATEWAY_NO_SUPERVISE=1`。对于那些需要容器随网关状态码一同退出的 CI 自动化测试而言，这种取消监督的配置十分有用；但在生产环境部署中，默认的受监督运行模式显然更为可靠。
+在 `docker logs` 中，您会看到一条确认升级完成的一行提示信息。如需取消此监督模式——并恢复“网关为容器的主进程，容器退出即表示网关退出”的传统运行逻辑——可以传递 `--no-supervise` 参数，或设置 `HERMES_GATEWAY_NO_SUPERVISE=1`。对于那些希望容器随网关的状态码一同退出的 CI 自动化测试而言，取消监督模式十分有用；但在生产环境部署中，默认的受监督运行模式显然更为稳妥。
 
 此行为仅适用于基于 s6 的镜像。早期基于 tini 的镜像仍会将 `gateway run` 作为前台主进程来运行。
 :::
 
 :::注意 网关日志的存储位置
-有关完整的日志路由规则（包括按配置文件划分的网关、仪表板、启动同步器以及整个容器的 `docker logs` 输出），请参阅下文的[日志存储位置](#where-the-logs-go)部分。
+有关完整的日志路由规则（包括按配置文件划分的网关、仪表板、启动同步器以及整个容器的 `docker logs` 输出），请参阅下方的[日志存储位置](#where-the-logs-go)部分。
 :::
 
-注意：API 服务器仅在 `API_SERVER_ENABLED=true` 时才被启用。若希望让该服务器能从容器内部的 `127.0.0.1` 地址之外被访问，还需同时设置 `API_SERVER_HOST=0.0.0.0` 及一个 `API_SERVER_KEY`（长度至少为 8 个字符，可使用 `openssl rand -hex 32` 生成）。示例如下：
+:::注意 无人值守网关的工具调用循环强制终止功能
+`tool_loop_guardrails.hard_stop_enabled` 的默认值为 `false`，这对于交互式 CLI 和 TUI 会话来说是合理的，因为用户可以直观地看到重复的工具调用警告。但在无人值守的网关或服务器部署中，仅靠警告可能无法阻止陷入工具调用循环的智能体。若需要具备断路器功能，操作人员应在配置文件的 `config.yaml` 中明确启用强制终止功能：
+
+```yaml
+tool_loop_guardrails:
+  hard_stop_enabled: true
+  hard_stop_after:
+    exact_failure: 5
+    idempotent_no_progress: 5
+```
+:::
+
+注意：API服务器的运行需以`API_SERVER_ENABLED=true`为前提。若希望让容器内的该服务可被`127.0.0.1`之外的地址访问，还需设置`API_SERVER_HOST=0.0.0.0`以及`API_SERVER_KEY`（长度至少为8位——可通过`openssl rand -hex 32`命令生成）。示例如下：
 
 ```sh
 docker run -d \
@@ -451,38 +463,40 @@ docker run -d \
 
 官方镜像基于 `debian:13.4` 构建，包含以下组件：
 
-- 带有所有 Hermes 依赖的 Python 3（通过 `uv pip install -e ".[all]"` 安装）
-- Node.js + npm（用于浏览器自动化及 WhatsApp 桥接功能）
-- 配备 Chromium 的 Playwright（通过 `npx playwright install --with-deps chromium --only-shell` 安装）
-- 作为系统工具的 ripgrep、ffmpeg、git 以及 `xz-utils`
-- **`docker-cli`** — 使容器内运行的 Agent 能够控制宿主机的 Docker 守护进程（可通过绑定挂载 `/var/run/docker.sock` 启用），从而执行 `docker build`、`docker run`、容器检查等操作
-- **`openssh-client`** — 允许在容器内部使用 [SSH 终端后端](/user-guide/configuration#ssh-backend)。该后端会调用系统自带的 `ssh` 工具；若缺少此组件，容器化环境中的安装将会静默失败
-- WhatsApp 桥接工具（位于 `scripts/whatsapp-bridge/` 目录）
-- 作为 PID 1 进程的 **[`s6-overlay`](https://github.com/just-containers/s6-overlay) v3**（取代了旧版的 `tini`）——负责监控控制台及各用户配置的网关，可在进程崩溃时自动重启、清理僵尸子进程并转发信号
+- Python 3.13 及其依赖项，这些依赖项通过 `uv sync --frozen --no-install-project` 从锁定文件中同步而来，用于预置各类扩展功能（如 `all`、`messaging`、Anthropic/Bedrock/Azure 身份验证、Hindsight、Matrix 等），之后再以无需额外依赖的可编辑方式安装 Hermes 本身。
+- Node.js 22 + npm（用于浏览器自动化、WhatsApp 桥接、TUI/桌面版打包以及工作区构建工具）。
+- 带 Chromium 的 Playwright（通过 `npx playwright install --with-deps chromium --only-shell` 安装）。
+- 作为系统工具的 ripgrep、ffmpeg、git 和 `xz-utils`。
+- **`docker-cli`**——使容器内的 Agent 能够控制宿主机的 Docker 守护进程（可通过绑定挂载 `/var/run/docker.sock` 启用），从而执行 `docker build`、`docker run`、容器检查等操作。
+- **`openssh-client`**——允许在容器内部使用 [SSH 终端后端](/user-guide/configuration#ssh-backend)。该后端会调用系统自带的 `ssh` 工具；若缺少此组件，容器化安装时会静默失败。
+- WhatsApp 桥接工具（位于 `scripts/whatsapp-bridge/` 目录）。
+- 作为 PID 1 进程的 **[`s6-overlay`](https://github.com/just-containers/s6-overlay) v3**（取代了旧版的 `tini`）——负责监控仪表板和各用户配置的网关，可在进程崩溃时自动重启、清理僵尸子进程并转发信号。
 
-该容器的 `ENTRYPOINT` 为 s6-overlay 的 `/init`。在启动时会执行以下操作：
-1. 以 root 权限运行 `/etc/cont-init.d/01-hermes-setup`（即 `docker/stage2-hook.sh`）：可选地重新映射 UID/GID，修复卷的所有权问题，在首次启动时生成 `.env`、`config.yaml` 和 `SOUL.md` 文件；除非设置了 `HERMES_SKIP_CONFIG_MIGRATION=1`，否则会自动执行非交互式的配置结构迁移，并同步预装的技能包。
-2. 运行 `/etc/cont-init.d/02-reconcile-profiles`（即 `hermes_cli.container_boot`）：遍历 `$HERMES_HOME/profiles/<name>/` 目录，在 `/run/service/gateway-<profile>/` 下重新创建对应用户配置的网关 s6 服务槽，并仅自动启动那些上次记录状态为 `running` 的服务（详见[用户配置网关监控](#per-profile-gateway-supervision)部分）。
+该镜像在运行时会将 `/opt/hermes` 视为不可修改的安装目录。所有需要在 Docker 内部使用的可选 Python 扩展、Node 工作区以及 TUI 资源都必须在镜像构建阶段预置；运行时不会进行延迟安装，以避免受监控的网关及 `docker exec hermes …` 命令试图将依赖文件写回只读的源代码目录中。
+
+容器的 `ENTRYPOINT` 为 s6-overlay 的 `/init`。启动时，它会执行以下操作：
+1. 以 root 权限运行 `/etc/cont-init.d/01-hermes-setup`（即 `docker/stage2-hook.sh`）：可选地重新映射 UID/GID、修复卷的所有权、在首次启动时生成 `.env`、`config.yaml` 和 `SOUL.md` 文件、在未设置 `HERMES_SKIP_CONFIG_MIGRATION=1` 时自动执行非交互式的配置架构迁移，同时同步预置的技能。
+2. 运行 `/etc/cont-init.d/02-reconcile-profiles`（即 `hermes_cli.container_boot`）：遍历 `$HERMES_HOME/profiles/<name>/` 目录，在 `/run/service/gateway-<profile>/` 下重新创建对应用户配置的网关 s6 服务槽，并仅自动启动那些上次记录状态为 `running` 的服务（详见[用户配置网关监控](#per-profile-gateway-supervision)）。
 3. 启动静态的 `main-hermes` 和 `dashboard` s6-rc 服务。
-4. 以容器中的 CMD 作为主程序执行（即 `/opt/hermes/docker/main-wrapper.sh`），该脚本会处理用户通过 `docker run` 传递的参数：
-   - 无参数 → 默认启动 `hermes`
-   - 第一个参数是 PATH 中的可执行文件（如 `sleep`、`bash`）→ 直接执行该命令
-   - 其他参数 → 执行 `hermes <args>`（即传递子命令）
+4. 以容器内的 CMD 作为主程序执行（即 `/opt/hermes/docker/main-wrapper.sh`），该脚本会处理用户通过 `docker run` 传递的参数：
+   - 无参数 → 默认启动 `hermes`。
+   - 第一个参数是 PATH 中的可执行文件（如 `sleep`、`bash`）→ 直接执行该文件。
+   - 其他参数 → 以 `hermes <args>` 的形式传递给 Hermes（实现子命令直接传递）。
    容器会随着主程序的退出而终止，其退出码也会随之确定。
 
-:::warning 与旧版 s6 镜像相比的变更
-当前容器的 ENTRYPOINT 已改为 `/init`（即 s6-overlay），而非原来的 `/usr/bin/tini`。所有五种已文档记录的 `docker run` 调用方式（无参数、`chat -q "…"`、`sleep infinity`、`bash`、`--tui`）在行为上与基于 tini 的镜像完全一致。如果您使用的封装工具依赖于 tini 特有的信号处理机制或硬编码了 `/usr/bin/tini --` 的调用方式，请继续使用旧版本的镜像标签。
+:::warning 与 s6 之前的镜像相比的变更
+当前容器的 ENTRYPOINT 已改为 `/init`（即 s6-overlay），而非 `/usr/bin/tini`。所有五种已记录的 `docker run` 调用方式（无参数、`chat -q "…"`、`sleep infinity`、`bash`、`--tui`）在行为上与基于 tini 的镜像完全一致。如果您有依赖 tini 特定信号处理机制或硬编码了 `/usr/bin/tini --` 调用方式的下游封装工具，请继续使用旧版本的镜像标签。
 :::
 
 :::warning 权限模型
-除非您在命令链中保留 `/init`（或等效的、用于转发至 stage2 钩子的旧版 `docker/entrypoint.sh`），否则请勿覆盖镜像的入口点。s6-overlay 的 `/init` 以 root 权限运行，因此可在首次启动时修改卷的所有权；之后，它会通过 `s6-setuidgid` 将权限切换为 `hermes` 用户，这一机制同样适用于所有受监控的服务以及主程序。在官方镜像中，默认会拒绝以 root 权限运行 `hermes gateway run`，因为这可能会导致 `/opt/data` 目录中出现 root 所有的文件，进而影响后续控制台或网关的启动。只有当您明确接受此类风险时，才可设置 `HERMES_ALLOW_ROOT_GATEWAY=1`。
+除非您在命令链中保留 `/init`（或等效的、用于转发到 stage2 钩子的旧版 `docker/entrypoint.sh`），否则请勿覆盖镜像的入口点。s6-overlay 的 `/init` 以 root 权限运行，因此可在首次启动时修改卷的所有权；之后，它会通过 `s6-setuidgid` 将权限转换为 `hermes` 用户，这一机制既适用于所有受监控的服务，也适用于主程序。在官方镜像中，默认会拒绝以 root 权限启动 `hermes gateway run`，因为这可能会导致 `/opt/data` 目录中出现 root 所有的文件，进而影响后续仪表板或网关的启动。只有当您明确接受此类风险时，才可设置 `HERMES_ALLOW_ROOT_GATEWAY=1`。
 :::
 
-### `docker exec` 会自动切换至 `hermes` 用户权限
+### `docker exec` 会自动切换到 `hermes` 用户权限
 
-虽然 `docker exec hermes <cmd>` 默认会在容器内以 root 权限运行，但该镜像在 `/opt/hermes/bin/hermes`（PATH 中优先出现的路径）处提供了一个轻量级的脚本，能够检测到以 root 身份发起的请求，并通过 `s6-setuidgid hermes` 透明地重新执行命令。因此，无论是 `docker exec hermes login`、`docker exec hermes profile create …`、`docker exec hermes setup` 等操作，都会将文件以 UID 10000 的权限创建——即只有受监控的网关才能读取这些文件——而无需额外添加 `--user` 参数。非 root 用户（即那些受监控的进程本身、通过 `docker exec --user hermes` 启动的进程，以及容器内的看板子 Agent）则会被直接执行虚拟环境中的二进制文件，从而避免在高频调用路径上产生额外开销。
+`docker exec hermes <cmd>` 默认会在容器内以 root 权限运行，但镜像中在 `/opt/hermes/bin/hermes`（PATH 中的最早路径）处提供了一个轻量级的封装脚本，该脚本能够检测到以 root 身份调用的情况，并通过 `s6-setuidgid hermes` 透明地重新执行命令。因此，无论是 `docker exec hermes login`、`docker exec hermes profile create …`、`docker exec hermes setup` 还是其他类似命令，都会以 UID 10000 所拥有的权限创建文件——即受监控的网关能够读取这些文件——而无需额外使用 `--user` 参数。非 root 用户（即受监控的进程本身、通过 `docker exec --user hermes` 调用的用户，以及容器内的看板子 Agent）则会直接执行虚拟环境中的二进制文件，从而避免在高频调用的路径上产生额外开销。
 
-如果您确实需要保持 root 权限的 `docker exec` 行为（例如用于诊断、查看仅 root 可访问的状态、操作 `/opt/data` 外且由 root 拥有的文件），则可在每次调用时手动取消此自动切换功能。
+如果您确实需要保持 root 权限的 `docker exec` 行为（例如用于诊断会话、检查仅 root 可访问的状态、操作 root 所拥有的 `/opt/data` 之外的文件），则可以在每次调用时手动取消此自动转换。
 
 ```sh
 docker exec -e HERMES_DOCKER_EXEC_AS_ROOT=1 hermes <cmd>
