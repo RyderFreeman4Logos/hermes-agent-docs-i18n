@@ -235,18 +235,18 @@ Portal 的模型目录与 OpenRouter 的模型列表（300 多种）保持一致
 
 如果某个模型确实无法使用，请[提交问题](https://github.com/NousResearch/hermes-agent/issues)——大多数情况都是路由配置的问题，我们可以通过更新配置来解决。
 
-### 为何我的门户账户中未显示计费信息？
+### 为什么我的门户账户中看不到计费信息？
 
-运行 `hermes portal info` 命令即可查看当前请求是通过门户系统处理，还是由其他提供商处理。常见原因包括：
+运行 `hermes portal info` 命令即可查看当前请求是通过门户系统路由，还是通过其他提供商处理的。常见原因包括：
 
 - `model.provider` 的值被设置为 `openrouter`/`anthropic` 等而非 `nous`
 - OAuth刷新失败，系统自动切换到了其他已配置的提供商
-- 您使用了多个Hermes配置文件，但选错了当前使用的那个（可运行 `hermes profile current` 查看）
+- 您同时使用了多个Hermes配置文件，却选错了当前使用的那个（可运行 `hermes profile list` 查看）
 
-### 希望撤销当前配置并重新开始
+### 希望彻底撤销并重新开始
 
 ```bash
-hermes auth remove nous       # wipes the local refresh token
+hermes auth logout nous       # wipes the local refresh token
 # Then re-run setup or remove the subscription from the Portal web UI
 ```
 
