@@ -74,42 +74,42 @@ hermes setup          # Or run the full setup wizard to configure everything at 
 hermes setup --portal
 ```
 
-该命令可一次性完成登录操作、将Nous设为服务提供方，并启用Tool Gateway。
+该命令可一次性完成登录操作、将Nous设置为服务提供商，并启用工具网关。
 :::
 
 ---
 
 ## 先决条件
 
-**安装程序：**在非Windows平台上，唯一的先决条件是**Git**。安装程序会自动处理其余所有依赖项：
+**安装程序：**在非Windows系统上，唯一的先决条件是**Git**。在Linux系统中，还需确保已安装`curl`和`xz-utils`（因为安装程序会将Node.js以`.tar.xz`格式下载）。桌面应用还需要`g++`（或在Debian/Ubuntu系统中使用`build-essential`）来编译原生模块。其余所有依赖项都会由安装程序自动处理：
 
-- **uv**（高效的Python包管理工具）
-- **Python 3.11**（通过uv安装，无需使用sudo权限）
-- **Node.js v22**（用于浏览器自动化及WhatsApp桥接功能）
+- **uv**（高效的Python包管理器）
+- **Python 3.11**（通过uv安装，无需使用sudo）
+- **Node.js v22**（用于浏览器自动化和WhatsApp桥接功能）
 - **ripgrep**（快速文件搜索工具）
 - **ffmpeg**（用于文本转语音的音频格式转换）
 
 :::info
-您无需手动安装Python、Node.js、ripgrep或ffmpeg。安装程序会自动检测缺失的组件并为您完成安装。只需确保系统已安装`git`（可通过`git --version`命令验证）即可。
+您无需手动安装Python、Node.js、ripgrep或ffmpeg。安装程序会自动检测缺失的组件并为您完成安装。只需确保已安装`git`（可通过`git --version`命令验证）。在Linux系统中，还需确保已安装`curl`和`xz-utils`（在Debian/Ubuntu系统中可使用`sudo apt install curl xz-utils`命令安装）。对于桌面应用，还需安装`build-essential`（可使用`sudo apt install build-essential`命令安装）。
 :::
 
 :::tip Nix用户提示
-如果您使用Nix（在NixOS、macOS或Linux系统中），有专门的设置方案，包括Nix flake配置、声明式NixOS模块以及可选的容器模式。详情请参阅**[Nix与NixOS设置指南](./nix-setup.md)**。
+如果您使用Nix（在NixOS、macOS或Linux系统上），有一个专门的设置方案，包括Nix flake配置、声明式NixOS模块以及可选的容器模式。详情请参阅**[Nix与NixOS设置指南](./nix-setup.md)**。
 :::
 
 ---
 
 ## 手动/开发者安装方式
 
-如果您希望克隆代码库并从源码进行安装——比如为了贡献代码、在特定分支上运行程序，或希望对虚拟环境拥有完全控制权——请参阅《贡献指南》中的[开发环境设置](../developer-guide/contributing.md#development-setup)部分。
+如果您希望克隆代码库并从源代码进行安装——例如为了贡献代码、在特定分支上运行程序，或需要对虚拟环境拥有完全控制权——请参阅《贡献指南》中的[开发环境设置](../developer-guide/contributing.md#development-setup)部分。
 
 ---
 
-## 无需sudo权限/以系统服务用户身份安装
+## 无需sudo/以系统服务用户身份安装
 
-支持以专用的无特权用户身份运行Hermes（例如`hermes` systemd服务账户，或任何没有sudo权限的用户）。在安装过程中，唯一真正需要root权限的步骤是Playwright的`--with-deps`选项，该选项会通过`apt`安装Chromium所依赖的共享库（如`libnss3`、`libxkbcommon`等）。安装程序会检测是否存在sudo权限，若不存在则会自动降级处理——它会将Chromium二进制文件安装到服务用户自身的Playwright缓存目录中，并输出管理员需要单独执行的精确命令。
+支持以专用非特权用户身份运行Hermes（例如使用`hermes` systemd服务账户，或任何没有sudo权限的用户）。在整个安装过程中，真正需要root权限的仅是Playwright的`--with-deps`步骤，该步骤会通过`apt`安装Chromium所依赖的共享库（如`libnss3`、`libxkbcommon`等）。安装程序会自动检测是否具备sudo权限，若没有则会自动降级处理——它会将Chromium二进制文件安装到服务用户自身的Playwright缓存目录中，并输出管理员需要单独执行的精确命令。
 
-**Debian/Ubuntu系统推荐的安装步骤：**
+**Debian/Ubuntu系统的推荐安装步骤：**
 
 1. **仅需一次**，以拥有sudo权限的管理员身份，安装Chromium所需的系统库：
    ```bash
