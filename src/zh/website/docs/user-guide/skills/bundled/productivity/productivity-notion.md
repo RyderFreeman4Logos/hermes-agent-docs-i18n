@@ -4,7 +4,7 @@ sidebar_label: "Notion"
 description: "Notion API + ntn CLI: pages, databases, markdown, Workers"
 ---
 
-{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Notion
 
@@ -17,12 +17,12 @@ Notion API + ntn CLI：支持页面、数据库、Markdown 内容以及 Workers 
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/productivity/notion` |
 | 版本 | `2.0.0` |
-| 创建者 | 社区用户 |
+| 开发者 | 社区贡献 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `Notion`、`效率工具`、`笔记`、`数据库`、`API`、`CLI`、`Workers` |
+| 标签 | `Notion`、`生产力工具`、`笔记`、`数据库`、`API`、`CLI`、`Workers` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
 以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
@@ -30,18 +30,18 @@ Notion API + ntn CLI：支持页面、数据库、Markdown 内容以及 Workers 
 
 # Notion
 
-可通过两种方式与 Notion 进行交互。两种方式均使用相同的集成令牌——请根据实际情况选择合适的方式。
+可通过两种方式与 Notion 进行交互。两种方式均使用相同的集成令牌——请根据实际可用情况选择合适的方式。
 
-◆ **`ntn` CLI** — Notion 官方命令行工具。语法更为简洁，支持单行文件上传，且是 Workers 功能的必需项。截至 2026 年 5 月仅支持 macOS 和 Linux 系统（Windows 支持功能“即将推出”）。**安装时默认选用此方式。**
-◆ **HTTP + curl** — 在所有系统上均可使用，包括 Windows。当未安装 `ntn` 时，**将自动回退至此方式。**
+◆ **`ntn` CLI** — Notion 官方命令行工具。语法更为简洁，支持单行文件上传，是 Workers 功能的必需项。截至 2026 年 5 月仅支持 macOS 和 Linux 系统（Windows 支持功能“即将推出”）。**安装时默认选用此方式。**
+◆ **HTTP + curl** — 在所有系统上均可使用，包括 Windows。当未安装 `ntn` 时，**会自动回退至此方式。**
 
 ## 设置步骤
 
-### 1. 获取集成令牌（两种方式均需）
+### 1. 获取集成令牌（两种使用方式均需）
 
 1. 访问 https://notion.so/my-integrations 创建一个集成账户
 2. 复制 API 密钥（以 `ntn_` 或 `secret_` 开头）
-3. 将其保存在 `~/.hermes/.env` 文件中：
+3. 将其保存至 `${HERMES_HOME:-~/.hermes}/.env` 文件中：
    ```
    NOTION_API_KEY=ntn_your_key_here
    ```
@@ -65,7 +65,7 @@ export NOTION_API_TOKEN=$NOTION_API_KEY      # ntn reads NOTION_API_TOKEN
 export NOTION_KEYRING=0                       # don't try to use the OS keychain
 ```
 
-请将这些导出项添加到您的 Shell 配置文件中（或 `~/.hermes/.env` 文件中），这样每个会话都能自动继承这些设置。
+请将这些导出内容添加到您的 shell 配置文件中（或 `${HERMES_HOME:-~/.hermes}/.env` 文件中），这样每个会话都能自动继承这些设置。
 
 ### 3. 运行时选择路径
 
@@ -176,7 +176,7 @@ curl -s -X GET "https://api.notion.com/v1/..." \
   -H "Content-Type: application/json"
 ```
 
-在 Windows 系统上，Windows 10 及更高版本自带的 `curl` 工具可直接使用。PowerShell 用户则可以使用 `Invoke-RestMethod` 命令。
+在 Windows 系统上，Windows 10 及更高版本自带的 `curl` 工具可直接使用。PowerShell 用户则可以选择使用 `Invoke-RestMethod` 命令。
 ```bash
 curl -s -X POST "https://api.notion.com/v1/search" \
   -H "Authorization: Bearer $NOTION_API_KEY" \
