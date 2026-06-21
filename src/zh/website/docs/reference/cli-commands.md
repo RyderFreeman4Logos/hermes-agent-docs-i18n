@@ -21,17 +21,17 @@ hermes [global-options] <command> [subcommand/options]
 | 选项 | 描述 |
 |------|------|
 | `--version`, `-V` | 显示版本信息后退出。 |
-| `--profile <name>`, `-p <name>` | 指定本次调用使用的 Hermes 配置文件。会覆盖由 `hermes profile use` 设置的默认值。 |
+| `--profile <name>`, `-p <name>` | 指定本次调用使用的 Hermes 配置文件。该选项会覆盖 `hermes profile use` 设置的默认值。 |
 | `--resume <session>`, `-r <session>` | 根据会话 ID 或标题恢复之前的会话。 |
 | `--continue [name]`, `-c [name]` | 恢复最近的会话，或匹配指定标题的最新会话。 |
 | `--worktree`, `-w` | 在独立的 git worktree 中启动，适用于并行 Agent 工作流。 |
 | `--yolo` | 跳过危险命令的确认提示。 |
 | `--pass-session-id` | 在 Agent 的系统提示中显示会话 ID。 |
-| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。不过 `.env` 文件中的凭证仍会被加载。 |
+| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。 |
 | `--ignore-rules` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules`、内存内容以及预加载的技能。 |
-| `--tui` | 启动 [TUI](../user-guide/tui.md) 而非传统的 CLI 界面。相当于设置 `HERMES_TUI=1`。该选项始终优先于 `display.interface` 的设置。 |
+| `--tui` | 启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于设置 `HERMES_TUI=1`。该选项始终优先于 `display.interface` 的设置。 |
 | `--cli` | 强制使用传统的 prompt_toolkit REPL。可在单次调用时覆盖 `display.interface: tui` 的设置。 |
-| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 运行 TypeScript 源代码，而非预编译的包（适用于 TUI 贡献者）。 |
+| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 编译 TypeScript 源代码，而非使用预编译的打包文件（专为 TUI 贡献者设计）。 |
 
 ## 顶层命令
 
@@ -39,52 +39,52 @@ hermes [global-options] <command> [subcommand/options]
 |------|------|
 | `hermes chat` | 与 Agent 进行交互式或一次性聊天。 |
 | `hermes model` | 交互式选择默认的提供者和模型。 |
-| `hermes fallback` | 管理在主模型出现错误时尝试使用的备用提供者。 |
+| `hermes fallback` | 管理在主模型出错时尝试使用的备用提供者。 |
 | `hermes gateway` | 运行或管理消息传递网关服务。 |
-| `hermes proxy` | 本地兼容 OpenAI 的代理，用于附加 OAuth 提供者凭证。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
-| `hermes lsp` | 管理语言服务器协议集成（为 write_file/patch 操作提供语义诊断功能）。 |
+| `hermes proxy` | 本地兼容 OpenAI 的代理工具，用于添加 OAuth 提供者凭据。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
+| `hermes lsp` | 管理语言服务器协议集成功能（为 write_file/patch 操作提供语义诊断支持）。 |
 | `hermes setup` | 交互式设置向导，可用于全部或部分配置的设置。 |
-| `hermes whatsapp` | 配置并关联 WhatsApp 桥接服务。 |
-| `hermes slack` | Slack 相关工具（目前功能为：每个命令都会生成对应的原生 slash 应用清单）。 |
-| `hermes auth` | 管理凭证——添加、列出、删除、重置凭证以及设置认证策略。支持 Codex/Nous/Anthropic 的 OAuth 认证流程。 |
-| `hermes login` / `logout` | **已废弃**——请改用 `hermes auth`。 |
-| `hermes send` | 向已配置的消息平台（Telegram、Discord、Slack、Signal、短信等）发送一次性消息。适用于 shell 脚本、cron 作业、CI 钩子以及监控进程——无需 Agent 循环，也不涉及大语言模型。 |
+| `hermes whatsapp` | 配置并连接 WhatsApp 桥接服务。 |
+| `hermes slack` | Slack 相关工具（目前功能为：每个命令都会自动生成对应的原生 slash 应用清单）。 |
+| `hermes auth` | 管理凭据——添加、列出、删除、重置、查看状态及登出。支持 Codex/Nous/Anthropic 的 OAuth 流程。 |
+| `hermes login` / `logout` | **已废弃**——请改用 `hermes auth` 命令。 |
+| `hermes send` | 向已配置的消息平台（Telegram、Discord、Slack、Signal、短信等）发送一次性消息。适用于 shell 脚本、cron 作业、CI 钩子以及监控进程——无需 Agent 循环，也不涉及 LLM。 |
 | `hermes secrets` | 管理外部密钥源（目前为 Bitwarden Secrets Manager），可在进程启动时从这些源获取 API 密钥，而非从 `~/.hermes/.env` 文件读取。 |
-| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换已废弃模型或过时设置的相关引用（例如 `migrate xai`）。 |
-| `hermes status` | 显示 Agent、认证以及平台的状态信息。 |
-| `hermes cron` | 查看并操作 cron 定时调度器。 |
+| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换已淘汰的模型或过时的配置项（例如 `migrate xai`）。 |
+| `hermes status` | 显示 Agent、认证及平台的状态信息。 |
+| `hermes cron` | 查看并管理 cron 定时任务调度器。 |
 | `hermes kanban` | 多配置文件协作看板（用于管理任务、链接及任务分配者）。 |
 | `hermes webhook` | 管理动态 webhook 订阅，实现基于事件的触发机制。 |
 | `hermes hooks` | 查看、批准或删除在 `config.yaml` 中声明的 shell 脚本钩子。 |
 | `hermes doctor` | 诊断配置及依赖问题。 |
-| `hermes security audit` | 对虚拟环境、插件需求以及固定的 MCP 服务器进行按需的供应链审计（由 OSV.dev 提供服务）。 |
+| `hermes security audit` | 对虚拟环境、插件需求以及固定的 MCP 服务器进行按需的供应链安全审计（由 OSV.dev 提供服务）。 |
 | `hermes dump` | 生成可复制粘贴的设置摘要，便于获取支持或进行调试。 |
-| `hermes prompt-size` | 显示系统提示语及工具架构（技能索引、内存、配置文件）的字节占用情况。可在离线模式下运行。 |
-| `hermes debug` | 调试工具——上传日志和系统信息以获取支持。 |
+| `hermes prompt-size` | 显示系统提示信息及工具架构（技能索引、内存、配置文件）的字节分布情况。可在离线环境下运行。 |
+| `hermes debug` | 调试工具——上传日志和系统信息以获取技术支持。 |
 | `hermes backup` | 将 Hermes 的主目录备份为 zip 文件。 |
 | `hermes checkpoints` | 查看、清理或删除 `~/.hermes/checkpoints/` 目录中的内容（该目录是 `/rollback` 功能使用的隐藏存储空间）。不带参数运行可查看整体状态。 |
-| `hermes import` | 从 zip 文件恢复 Hermes 备份内容。 |
-| `hermes logs` | 查看、滚动查看并过滤 Agent/网关/错误日志文件。 |
+| `hermes import` | 从 zip 文件恢复 Hermes 备份数据。 |
+| `hermes logs` | 查看、查看日志尾部内容以及过滤 Agent/网关/错误日志文件。 |
 | `hermes config` | 显示、编辑、迁移及查询配置文件。 |
-| `hermes pairing` | 批准或撤销消息传递配对码的授权。 |
+| `hermes pairing` | 批准或撤销消息传递配对码。 |
 | `hermes skills` | 浏览、安装、发布、审计及配置技能。 |
 | `hermes bundles` | 将多个技能整合到单个 `/<name>` 形式的命令下。详见 [技能包](../user-guide/features/skills.md#skill-bundles)。 |
-| `hermes curator` | 在后台维护技能——可查看状态、运行、暂停或固定技能。详见 [Curator](../user-guide/features/curator.md)。 |
+| `hermes curator` | 在后台维护技能——可查看状态、运行、暂停或固定技能。详见 [Curator 功能](../user-guide/features/curator.md)。 |
 | `hermes memory` | 配置外部内存提供者。当对应的提供者处于激活状态时，特定插件会自动注册相应的子命令（例如 `hermes honcho`）。 |
 | `hermes acp` | 以 ACP 服务器模式运行 Hermes，实现与编辑器的集成。 |
 | `hermes mcp` | 管理 MCP 服务器配置，并以 MCP 服务器模式运行 Hermes。 |
-| `hermes plugins` | 管理 Hermes Agent 插件（安装、启用、禁用、删除）。 |
+| `hermes plugins` | 管理 Hermes Agent 插件——可执行安装、启用、禁用及删除操作。 |
 | `hermes portal` | 显示 Nous Portal 的状态、订阅链接以及工具网关的路由信息。详见 [工具网关](../user-guide/features/tool-gateway.md)。 |
 | `hermes tools` | 按平台配置已启用的工具。 |
 | `hermes computer-use` | 安装或检查 cua-driver 后端（用于 macOS 的 Computer Use 功能）。 |
 | `hermes sessions` | 浏览、导出、清理、重命名及删除会话。 |
-| `hermes insights` | 显示令牌使用量、成本及活动分析数据。 |
+| `hermes insights` | 显示令牌使用情况、成本统计及活动分析数据。 |
 | `hermes claw` | OpenClaw 迁移辅助工具。 |
-| `hermes dashboard` | 启动网页控制面板，用于管理配置、API 密钥及会话。 |
+| `hermes dashboard` | 启动网页控制面板，用于管理配置、API 密钥及会话信息。 |
 | `hermes profile` | 管理多个独立的 Hermes 实例——即不同的配置文件。 |
 | `hermes completion` | 输出 shell 自动补全脚本（支持 bash/zsh/fish）。 |
 | `hermes version` | 显示版本信息。 |
-| `hermes update` | 下载最新代码并重新安装依赖项（通过 git 安装），或检查 PyPI 并执行 `pip install --upgrade`（通过 pip 安装）。使用 `--check` 可预览更新内容而无需实际安装；使用 `--backup` 可在下载前创建 `HERMES_HOME` 的快照。 |
+| `hermes update` | 下载最新代码并重新安装依赖项（通过 git 安装），或检查 PyPI 并执行 `pip install --upgrade` 进行安装（通过 pip 安装）。使用 `--check` 可预览更新内容而无需实际安装；使用 `--backup` 可在更新前创建 `HERMES_HOME` 的快照。 |
 | `hermes uninstall` | 从系统中卸载 Hermes。 |
 
 ## `hermes chat`
@@ -221,20 +221,23 @@ hermes gateway <subcommand>
 | `stop` | 停止该服务（或前台进程）。 |
 | `restart` | 重启该服务。 |
 | `status` | 显示服务状态。 |
-| `list` | 列出**所有配置文件**，以及每个配置文件的网关当前是否正在运行（如有 PID 也会一并显示）。当您同时运行多个配置文件并希望获得整体概览时，此命令非常实用。 |
+| `list` | 列出**所有配置文件**，以及每个配置文件中的网关当前是否正在运行（如有 PID 也会一并显示）。当您同时运行多个配置文件并希望获得整体概览时，此命令非常实用。 |
 | `install` | 作为 systemd（Linux）或 launchd（macOS）后台服务进行安装。 |
 | `uninstall` | 卸载已安装的服务。 |
-| `setup` | 交互式消息平台设置。 |
+| `setup` | 交互式设置消息平台。 |
+| `enroll` | 实验性功能：将此网关与中继连接器关联，并为基于连接器的平台保存中继凭据。 |
 
 选项：
 
 | 选项 | 描述 |
 |------|------|
-| `--all` | 在 `start` / `restart` / `stop` 操作中：会对**所有配置文件**的网关生效，而不仅限于当前激活的 `HERMES_HOME`。如果您同时运行多个配置文件，并希望在执行 `hermes update` 后重启所有网关，此选项非常有用。 |
-| `--no-supervise` | 在 `run` 操作中：在 s6-overlay Docker 镜像内部，取消自动监控功能，采用 s6 之前的前台进程机制——网关作为容器的主进程运行，且不会自动重启。在非 s6 镜像环境下此选项无效。其效果等同于设置 `HERMES_GATEWAY_NO_SUPERVISE=1`。 |
+| `--all` | 在 `start` / `restart` / `stop` 操作中：会对**所有配置文件**中的网关生效，而不仅限于当前活跃的 `HERMES_HOME` 配置。如果您同时运行多个配置文件，并希望在执行 `hermes update` 后重启所有网关，此选项非常有用。 |
+| `--no-supervise` | 在 `run` 操作中：在 s6-overlay Docker 镜像内部，取消自动监控功能，采用 pre-s6 的前台运行模式——网关将以容器的主进程形式运行，且不会自动重启。在 s6 镜像外部此选项无效。其效果等同于设置 `HERMES_GATEWAY_NO_SUPERVISE=1`。 |
+
+`hermes gateway enroll` 命令支持 `--token`、`--connector-url` 和 `--gateway-id` 参数。它会将注册令牌与连接器进行交换，然后将生成的 `GATEWAY_RELAY_ID`、`GATEWAY_RELAY_SECRET`、`GATEWAY_RELAY_DELIVERY_KEY` 以及可选的 `GATEWAY_RELAY_URL` 值写入当前活跃配置文件的 `.env` 文件中。
 
 :::提示 WSL 用户
-请使用 `hermes gateway run` 而非 `hermes gateway start`——WSL 对 systemd 的支持并不可靠。为确保命令持久运行，可将其封装在 tmux 中：`tmux new -s hermes 'hermes gateway run'`。详情请参阅 [WSL 常见问题](/reference/faq#wsl-gateway-keeps-disconnecting-or-hermes-gateway-start-fails)。
+请使用 `hermes gateway run` 而非 `hermes gateway start`——WSL 对 systemd 的支持并不可靠。为确保命令持久运行，可将其封装在 tmux 中：`tmux new -s hermes 'hermes gateway run'`。更多详情请参阅 [WSL 常见问题](/reference/faq#wsl-gateway-keeps-disconnecting-or-hermes-gateway-start-fails)。
 :::
 
 ## `hermes lsp`
