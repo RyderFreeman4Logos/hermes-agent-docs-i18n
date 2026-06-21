@@ -4,9 +4,12 @@
 
 # English
 
+- [Contribuir a Hermes Agent](en/CONTRIBUTING.es.md)
 - [Contributing to Hermes Agent](en/CONTRIBUTING.md)
 - [Hermes Agent Has Had "Routines" Since March](en/hermes-already-has-routines.md)
+- [Hermes Agent ☤](en/README.es.md)
 - [Hermes Agent ☤](en/README.md)
+- [Política de Seguridad de Hermes Agent](en/SECURITY.es.md)
 - [Hermes Agent Security Policy](en/SECURITY.md)
 - [.Plans]()
   - [OpenAI-Compatible API Server for Hermes Agent](en/.plans/openai-api-server.md)
@@ -22,6 +25,7 @@
   - [Chronos managed-cron — agent ↔ NAS wire contract](en/docs/chronos-managed-cron-contract.md)
   - [RCA: SSL CA cert bundle corruption after `hermes update`](en/docs/rca-ssl-cacert-post-git-pull.md)
   - [Relay ↔ Connector Contract (v1, EXPERIMENTAL)](en/docs/relay-connector-contract.md)
+  - [Session Lifecycle](en/docs/session-lifecycle.md)
   - [Design]()
     - [Profile Builder — Dashboard-Native, Full-Featured Profile Creation](en/docs/design/profile-builder.md)
   - [Kanban]()
@@ -1348,7 +1352,7 @@
             - [Baoyu Comic](en/website/docs/user-guide/skills/optional/creative/creative-baoyu-comic.md)
             - [Blender Mcp](en/website/docs/user-guide/skills/optional/creative/creative-blender-mcp.md)
             - [Concept Diagrams](en/website/docs/user-guide/skills/optional/creative/creative-concept-diagrams.md)
-            - [Ideation](en/website/docs/user-guide/skills/optional/creative/creative-creative-ideation.md)
+            - [Creative Ideation](en/website/docs/user-guide/skills/optional/creative/creative-creative-ideation.md)
             - [Hyperframes](en/website/docs/user-guide/skills/optional/creative/creative-hyperframes.md)
             - [Kanban Video Orchestrator](en/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
             - [Meme Generation](en/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)

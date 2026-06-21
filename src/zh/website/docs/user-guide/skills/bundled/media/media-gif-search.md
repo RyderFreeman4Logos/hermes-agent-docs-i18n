@@ -25,7 +25,7 @@ description: "Search/download GIFs from Tenor via curl + jq"
 ## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，代理程序会将此内容视为操作指令。
 :::
 
 # GIF 搜索（Tenor API）
@@ -36,9 +36,9 @@ description: "Search/download GIFs from Tenor via curl + jq"
 
 适用于查找表情 GIF、创建视觉内容，以及在聊天中发送 GIF 图片。
 
-## 设置步骤
+## 设置方法
 
-在您的环境变量中设置 Tenor API 密钥（可添加到 `~/.hermes/.env` 文件中）：
+在您的环境变量中设置 Tenor API 密钥（可添加到 `${HERMES_HOME:-~/.hermes}/.env` 文件中）：
 
 ```bash
 TENOR_API_KEY=your_key_here
