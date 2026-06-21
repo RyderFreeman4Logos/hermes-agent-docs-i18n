@@ -12,11 +12,30 @@ metadata:
 
 # Kanban Worker — 常见问题与示例
 
-> 您之所以能看到此技能，是因为Hermes Kanban调度器通过`--skills kanban-worker`参数将您派定为工作节点——该技能会自动加载到每个被派发的工作节点中。其**生命周期**（共6个阶段：准备就绪 → 执行任务 → 发送心跳 → 暂停/完成任务）也包含在会自动注入系统提示语的`KANBAN_GUIDANCE`块中。此技能则提供了更深入的细节：理想的任务交接方式、重试诊断策略以及各种边界情况处理方法。
+> 您之所以能看到此技能，是因为 Hermes 的 Kanban 调度器通过 `--skills kanban-worker` 参数将您派定为 Worker——该技能会自动加载到每一个被调度的 Worker 中。其**生命周期**（共 6 个阶段：准备 → 执行 → 心跳检测 → 阻塞/完成）也包含在会自动注入系统提示语的 `KANBAN_GUIDANCE` 块中。此技能则提供了更深入的细节：理想的任务交接方式、重试诊断策略以及边缘情况处理方法。
 
 ## 工作空间管理
 
-您的工作空间类型决定了在`$
+您的工作空间类型决定了您在 `$HERMES_KANBAN_WORKSPACE` 环境下的操作方式：
+
+| 类型 | 含义 | 操作方式 |
+|---|---|---|
+| `scratch` | 新建的临时目录，仅属于您个人 | 可自由读写；任务归档后该目录会被清理。 |
+| `dir:<路径>` | 共享的持久化目录 | 其他运行实例会读取您写入的内容。应将其视为长期存在的状态。路径一定是绝对路径（内核不支持相对路径）。 |
+| `worktree` | 位于指定路径下的 Git worktree | 如果该路径下不存在 `.git` 目录，请先在主仓库中执行 `git worktree add <路径> ${HERMES_KANBAN_BRANCH:-wt/$HERMES_KANBAN_TASK}`，之后再切换到该目录并正常工作。请在此处提交代码更改。 |
+
+## 租户隔离
+
+如果设置了 `$HERMES_TENANT`，则任务属于某个租户命名空间。在读写持久化内存时，应在内存条目的前缀加上租户标识，以避免不同租户之间的上下文泄露：
+
+- 正确示例：`business-a: Acme 是我们最大的客户`
+- 错误示例（会导致上下文泄露）：`Acme 是我们最大的客户`
+
+## 合理的摘要与元数据格式
+
+下游 Worker 通过 `kanban_complete(summary=..., metadata=...)` 的方式来了解您所完成的工作。以下是有效的格式示例：
+
+**编码任务：**
 ```python
 kanban_complete(
     summary="shipped rate limiter — token bucket, keys on user_id with IP fallback, 14 tests pass",
@@ -79,11 +98,32 @@ kanban_complete(
 )
 ```
 
-请合理设置 `metadata` 的结构，以便后续的解析器（如审核工具、数据聚合器、调度程序）无需重新读取您的文本内容即可直接使用这些信息。
+请合理设计`metadata`的结构，以便后续的解析工具（如审核者、数据聚合器、调度程序）无需重新读取您的文本内容即可直接使用这些信息。
 
-## 声明由您创建的卡片
+## 交付成果（`artifacts=[...]`）
 
-如果您的运行过程通过 `kanban_create` 功能生成了新的看板任务，请在 `kanban_complete` 操作中通过 `created_cards` 参数传入这些任务的编号。系统会验证每个编号确实存在且是由您的账户创建的；任何不存在或来源不明的编号都会导致操作失败，并会显示具体的错误信息，同时该失败的尝试记录会永久保存在任务的日志中。**请仅列出从成功的 `kanban_create` 返回值中获取的编号——绝不可凭空编造编号，亦不可复制之前运行时的编号，更不能声称自己创建了其他用户制作的卡片。**
+如果您的任务生成了人类实际需要的文件——比如图表、PDF文档、电子表格、生成的图片或压缩包——请将它们的**绝对路径**传递给`kanban_complete(artifacts=[...])`函数。网关通知系统会将这些文件作为原生附件发送给所有关注该任务的用户，这样交付成果就会直接出现在他们的聊天窗口中，与完成消息一同呈现，而无需用户自行去查找路径。
+
+```python
+kanban_complete(
+    summary="Q3 revenue analysis: 14% QoQ growth, EMEA the laggard. Chart + full PDF attached.",
+    artifacts=["/tmp/q3-revenue.png", "/tmp/q3-report.pdf"],
+    metadata={"rows_analyzed": 48000, "growth_qoq": 0.14},
+)
+```
+
+图片和视频可直接内嵌；PDF、docx、csv/xlsx/json/yaml、pptx、zip/tar/gz、音频以及html文件则需以独立文件的形式上传。相关规则如下：
+
+- **仅允许使用绝对路径**，且在你完成操作时该文件必须仍然存在——切勿指向已被删除的临时文件。
+- **仅上传真正的交付成果**。请忽略中间日志、临时文件以及用户已拥有的输入内容。
+- `artifacts`是通知器读取的**顶层参数**。切勿将交付文件的路径藏在`metadata`中（例如`metadata.codex_lane.artifacts`），并期望它们能被上传——通知器仅会扫描顶层的`artifacts`列表，必要时才会参考你的`summary`/`result`文本作为补充。元数据路径仅用于下游处理程序的记录，而非实际文件传输。
+- 空字符串会自动转换为包含一个元素的列表，且会与现有的`metadata.artifacts`合并，同时避免重复项。
+
+即使在非看板环境中，这一机制同样适用：任何智能体只需在响应中写入文件的绝对路径，即可让目标平台直接上传该文件；而Slack、Discord、Telegram等平台则可直接处理这些文件——`artifacts`参数则是结构化看板任务的处理入口。
+
+## 声明由你创建的卡片
+
+如果你的任务执行产生了新的看板任务（通过`kanban_create`功能），请在`kanban_complete`请求中通过`created_cards`参数传递这些任务的ID。系统会验证每个ID确实存在且是由你的账户创建的；任何无效的ID都会导致任务无法完成，并返回错误信息说明问题所在，同时该失败尝试会被永久记录在任务的事件日志中。**请仅列出从成功的`kanban_create`返回值中获取的ID——切勿凭文字描述编造ID，切勿复制之前任务中的ID，也切勿声称是其他用户创建的卡片。**
 
 ```python
 # GOOD — capture return values, then claim them.
