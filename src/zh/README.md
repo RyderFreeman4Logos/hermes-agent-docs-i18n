@@ -7,33 +7,34 @@
   <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> | <a href="https://hermes-agent.nousresearch.com/">Hermes Desktop</a>
 </p>
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="文档"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="许可证：MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="由 Nous Research 开发"></a>
+  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="文档说明"></a>
+  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord社区"></a>
+  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="许可证：MIT协议"></a>
+  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="由Nous Research开发"></a>
   <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文文档"></a>
   <a href="README.ur-pk.md"><img src="https://img.shields.io/badge/Lang-اردو-green?style=for-the-badge" alt="乌尔都语文档"></a>
+  <a href="README.es.md"><img src="https://img.shields.io/badge/Lang-Español-orange?style=for-the-badge" alt="西班牙语文档"></a>
 </p>
 
-**这是一款由 [Nous Research](https://nousresearch.com) 开发的自我进化型 AI 智能体。**它是唯一具备内置学习循环的智能体——它能够从经验中创建技能，在使用过程中不断优化这些技能，主动保持知识记忆，检索过往对话记录，并在多次会话之间逐步构建对用户特征的深入理解。您可以在价值 5 美元的 VPS、GPU 集群，或是闲置时成本几乎为零的无服务器基础设施上运行它。它并不局限于您的笔记本电脑——即使智能体运行在云虚拟机上，您也可以通过 Telegram 与其交互。
+**这是一款由[Nous Research](https://nousresearch.com)打造的自我进化型AI智能体。**它是唯一具备内置学习循环的智能体——它能从使用经验中创建技能，在使用过程中不断优化这些技能，主动保持知识记忆，检索过往对话记录，并在多次会话间逐步构建对你特征的深入理解。你可以在价值5美元的VPS上运行它，也可以选择GPU集群或几乎无需成本的空闲时资源就能使用的无服务器架构。它并不绑定在你的笔记本电脑上——即使它在云虚拟机上运行，你依然可以通过Telegram与其交互。
 
-您可以使用任何想要的模型——[Nous Portal](https://portal.nousresearch.com)、[OpenRouter](https://openrouter.ai)（200 多种模型）、[NovitaAI](https://novita.ai）（提供 Model API、Agent Sandbox 和 GPU Cloud 的原生 AI 云平台）、[NVIDIA NIM](https://build.nvidia.com)（Nemotron 框架）、[Xiaomi MiMo](https://platform.xiaomimimo.com)、[z.ai/GLM](https://z.ai)、[Kimi/Moonshot](https://platform.moonshot.ai)、[MiniMax](https://www.minimax.io)、[Hugging Face](https://huggingface.co)、OpenAI，或是您自己的模型端点。只需使用 `hermes model` 命令即可切换模型——无需修改代码，也不会受到绑定限制。
+你可以使用任何想要的模型——[Nous Portal](https://portal.nousresearch.com)、[OpenRouter](https://openrouter.ai)（200多种模型）、[NovitaAI](https://novita.ai)（提供Model API、Agent Sandbox和GPU Cloud功能的原生AI云平台）、[NVIDIA NIM](https://build.nvidia.com)（Nemotron框架）、[Xiaomi MiMo](https://platform.xiaomimimo.com)、[z.ai/GLM](https://z.ai)、[Kimi/Moonshot](https://platform.moonshot.ai)、[MiniMax](https://www.minimax.io)、[Hugging Face](https://huggingface.co)、OpenAI，或是你自己的模型端点。只需通过`hermes model`命令即可切换模型——无需修改代码，也不会受到限制。
 
 <table>
-<tr><td><b>真正的终端界面</b></td><td>具备多行编辑、斜杠命令自动补全、对话历史记录、中断与重定向功能，以及工具输出流式显示的完整 TUI 界面。</td></tr>
-<tr><td><b>随您所在之处而存在</b></td><td>通过单个网关进程即可连接 Telegram、Discord、Slack、WhatsApp、Signal 以及 CLI 等平台。还支持语音备忘录转录以及跨平台对话连续性功能。</td></tr>
-<tr><td><b>闭环学习机制</b></td><td>智能体会自主筛选记忆内容并定期进行优化。完成复杂任务后可自动创建新技能，这些技能在使用过程中还会持续改进。通过 FTS5 实现会话间搜索，并借助大语言模型进行总结，从而方便跨会话调用信息。<a href="https://github.com/plastic-labs/honcho">Honcho</a>式的辩证用户建模技术，同时兼容 <a href="https://agentskills.io">agentskills.io</a> 开放标准。</td></tr>
-<tr><td><b>定时自动化任务</b></td><td>内置 cron 定时调度器，可将任务发送到任意平台。每日报告、夜间备份、每周审计——所有操作均可用自然语言描述，且可在无人值守情况下自动执行。</td></tr>
-<tr><td><b>任务委派与并行处理</b></td><td>可创建独立的子智能体以并行处理不同任务流。您还可以编写 Python 脚本，通过 RPC 接口调用各种工具，将多步骤流程简化为无需额外上下文开销的快速操作。</td></tr>
-<tr><td><b>可在任何地方运行，不仅限于笔记本</b></td><td>支持六种终端后端——本地、Docker、SSH、Singularity、Modal 以及 Daytona。Daytona 和 Modal 提供无服务器持久化功能：智能体的环境在闲置时会进入休眠状态，需要时再唤醒，因此在不同会话之间的运行成本几乎为零。您可以在价值 5 美元的 VPS 或 GPU 集群上运行它。</td></tr>
-<tr><td><b>适合研究用途</b></td><td>支持批量轨迹生成及轨迹压缩功能，可用于训练下一代工具调用模型。</td></tr>
+<tr><td><b>真正的终端界面</b></td><td>支持多行编辑、斜杠命令自动补全、对话历史记录、中断与重定向功能，以及工具输出流式显示的完整文本用户界面。</td></tr>
+<tr><td><b>与你同在</b></td><td>通过Telegram、Discord、Slack、WhatsApp、Signal以及CLI即可与其交互——所有操作都通过同一个入口进程完成。还支持语音备忘录转录以及跨平台对话连续性。</td></tr>
+<tr><td><b>闭环学习机制</b></td><td>智能体会自行筛选记忆内容并定期进行优化。完成复杂任务后会自动创建新技能，这些技能在使用过程中还会持续改进。支持FTS5会话检索，并通过大语言模型进行摘要处理，从而实现跨会话信息调用。<a href="https://github.com/plastic-labs/honcho">Honcho</a>式的辩证用户建模技术，同时兼容<a href="https://agentskills.io">agentskills.io</a>开放标准。</td></tr>
+<tr><td><b>定时自动化任务</b></td><td>内置cron调度器，可将任务部署到任意平台。每日报告、夜间备份、每周审计——所有操作都以自然语言形式呈现，可自动运行无需人工干预。</td></tr>
+<tr><td><b>任务委派与并行处理</b></td><td>可创建独立的子智能体来并行处理不同任务。你可以编写Python脚本，通过RPC方式调用各类工具，将多步骤流程简化为无需额外上下文开销的即时响应。</td></tr>
+<tr><td><b>可在任意环境运行，不止限于笔记本</b></td><td>支持六种终端后端——本地系统、Docker、SSH、Singularity、Modal和Daytona。Daytona和Modal还提供无服务器持久化功能——智能体的运行环境在空闲时会进入休眠状态，需要时再唤醒，因此在不同会话之间的运行成本几乎为零。你可以在价值5美元的VPS或GPU集群上运行它。</td></tr>
+<tr><td><b>适合研究使用</b></td><td>支持批量轨迹生成和轨迹压缩功能，可用于训练下一代工具调用模型。</td></tr>
 </table>
 
 ---
 
-## 快速安装
+## 快速安装指南
 
-### Linux、macOS、WSL2、Termux
+### Linux、macOS、WSL2、Termux系统
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
@@ -63,6 +64,43 @@ iex (irm https://hermes-agent.nousresearch.com/install.ps1)
 source ~/.bashrc    # reload shell (or: source ~/.zshrc)
 hermes              # start chatting!
 ```
+
+### 故障排除
+
+#### Windows Defender 或其他杀毒软件将 `uv.exe` 标记为恶意程序
+
+如果您的杀毒软件（如 Bitdefender、Windows Defender 等）将 Hermes `bin` 文件夹中的 `uv.exe`（位于 `%LOCALAPPDATA%\hermes\bin\uv.exe`）隔离起来，这属于**误报**。该文件实际上是 Astral 开发的 `uv` —— 一种 Rust 语言的 Python 包管理工具，Hermes 会将其集成在内以管理 Python 环境。基于机器学习的杀毒引擎通常会将用于下载和安装包的未签名 Rust 可执行文件标记为恶意程序。
+
+**如需确认您所使用的文件是正版，请按以下步骤操作：**
+
+```powershell
+# Install GitHub CLI if needed
+winget install --id GitHub.cli
+
+# Login to GitHub
+gh auth login
+
+# Run verification
+$uv = "$env:LOCALAPPDATA\hermes\bin\uv.exe"
+$ver = (& $uv --version).Split(' ')[1]
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$zip = "$env:TEMP\uv.zip"
+Invoke-WebRequest "https://github.com/astral-sh/uv/releases/download/$ver/uv-x86_64-pc-windows-msvc.zip" -OutFile $zip -UseBasicParsing
+gh attestation verify $zip --repo astral-sh/uv
+Expand-Archive $zip "$env:TEMP\uv_x" -Force
+(Get-FileHash "$env:TEMP\uv_x\uv.exe").Hash -eq (Get-FileHash $uv).Hash
+```
+
+如果验证结果显示“验证成功”，且最后一行输出 `True`，则表示一切正常。
+
+**将 Hermes 加入白名单：**
+- **Windows Defender：** 以管理员身份运行 PowerShell → 输入 `Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\hermes\bin"` 
+- **Bitdefender：** 在 Bitdefender 控制台添加例外规则（路径为 Protection > Antivirus > Settings > Manage Exceptions）
+- 应对**文件夹**进行白名单处理，而非文件哈希值——因为 Hermes 会更新 `uv`，且每个版本都会导致哈希值变化。
+
+如需更多背景信息，请查看上游项目 Astral 的相关报告：[astral-sh/uv#13553](https://github.com/astral-sh/uv/issues/13553)、[astral-sh/uv#15011](https://github.com/astral-sh/uv/issues/15011)、[astral-sh/uv#10079](https://github.com/astral-sh/uv/issues/10079)。
+
+---
 
 ## 入门指南
 
