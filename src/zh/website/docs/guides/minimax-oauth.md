@@ -215,7 +215,7 @@ Hermes 会打印出对应的 URL 和代码。请在任何设备上打开该 URL�
 如需移除已存储的 MiniMax OAuth 凭证：
 
 ```bash
-hermes auth remove minimax-oauth
+hermes auth logout minimax-oauth
 ```
 
 ## 相关文档
