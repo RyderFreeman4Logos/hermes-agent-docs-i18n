@@ -4,7 +4,7 @@ sidebar_label: "Teams Meeting Pipeline"
 description: "Operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs, manage Microsoft Graph subscriptions"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 文件自动生成。请修改源文件 SKILL.md，而非此页面。 */}
 
 # Teams 会议处理流程
 
@@ -24,33 +24,33 @@ description: "Operate the Teams meeting summary pipeline via Hermes CLI — summ
 ## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 加载的完整技能定义。技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
+以下是当触发该技能时 Hermes 加载的完整技能定义。技能处于激活状态时，Agent 会将此内容视为操作指令。
 :::
 
 # Teams 会议处理流程
 
-每当用户询问有关 Microsoft Teams 会议摘要、转录内容、录音文件、行动项、Graph 订阅，或与 Teams 会议处理流程相关的任何运营问题时，均可使用此技能。它支持多种语言——以下的触发条件仅为示例，并非完整列表。
+每当用户询问有关 Microsoft Teams 会议摘要、文字记录、录像、待办事项、Graph 订阅，或与 Teams 会议处理流程相关的任何运营问题时，均可使用此技能。它支持多种语言——以下触发语句仅为示例，并非完整列表。
 
-所有面向操作人员的功能均通过终端工具的 `hermes teams-pipeline` 子命令来执行。该处理流程没有新的模型工具，CLI 即为其操作界面。
+所有面向操作人员的功能均通过终端工具的 `hermes teams-pipeline` 子命令来实现。该流程没有新的模型工具，CLI 即为其操作界面。
 
 ## 何时使用此技能
 
 当用户需要执行以下操作时，可使用此技能：
-- 对 Teams 会议进行总结/提取行动项/获取会议笔记
-- 查看流程状态、检查已存储的会议任务或查看近期会议记录
-- 重新运行因失败或需要重新生成摘要的已存储任务
+- 对 Teams 会议进行总结/提取待办事项/获取会议笔记
+- 查看流程状态、查看已存储的会议任务或浏览近期会议记录
+- 重新运行失败或需要重新生成摘要的已存储任务
 - 在更改环境或配置后验证 Microsoft Graph 的设置
-- 排查“会议摘要始终未送达”或“没有新会议被导入”的问题
-- 管理 Graph Webhook 订阅（创建、续订、删除、查看状态）
+- 排查“会议摘要未送达”或“无新会议被处理”的问题
+- 管理 Graph webhook 订阅（创建、续订、删除、查看状态）
 - 设置自动订阅续订功能（详见下方注意事项）
 
-多语言触发条件示例（非完整列表）：
+多语言触发语句示例（非完整列表）：
 - 英语： "summarize the Teams meeting"、"pipeline status"、"replay job X"
 - 土耳其语： "Teams meeting özetle"、"action item çıkar"、"toplantı notu"、"pipeline durumu"、"replay job"
 
 ## 先决条件
 
-在使用该处理流程之前，请先确认 `~/.hermes/.env` 文件中已设置以下内容：
+在使用该流程之前，请先确认 `${HERMES_HOME:-~/.hermes}/.env` 文件中已设置以下内容：
 
 ```bash
 MSGRAPH_TENANT_ID=...
