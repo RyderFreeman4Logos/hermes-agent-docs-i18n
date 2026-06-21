@@ -368,30 +368,31 @@ def register(ctx):
 
 **所有钩子的通用规则：**
 
-- 回调函数接收**关键字参数**。为确保向后兼容性，务必接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
-- 如果某个回调发生**崩溃**，系统会将其记录并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体瘫痪。
-- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具执行，而 [`pre_llm_call`](#pre_llm_call) 可以向 LLM 调用中**注入上下文**。其余所有钩子均为仅触发即忽略的观察者。
-- 观察者回调函数会自动接收到 `telemetry_schema_version` 参数。若该参数存在，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可见的标识符，无需解析其字符串格式。
+- 回调函数接收**关键字参数**。为确保向后兼容性，始终应接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
+- 如果某个回调发生**崩溃**，系统会将其记录并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体崩溃。
+- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具调用，而 [`pre_llm_call`](#pre_llm_call) 可以在向大语言模型发起请求时**注入上下文**。其余所有钩子均为仅触发即忽略的观察者。
+- 观察者回调函数会自动接收 `telemetry_schema_version` 参数。若该参数存在，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可解析的标识符，无需解析其字符串格式。
 
 ### 快速参考表
 
-| 钩子 | 触发时机 | 返回值 |
-|------|-----------|---------|
-| [`pre_tool_call`](#pre_tool_call) | 任何工具执行之前 | `{"action": "block", "message": str}`，用于拒绝该调用 |
+| 钩子名称 | 触发时机 | 返回值 |
+|----------|----------|--------|
+| [`pre_tool_call`](#pre_tool_call) | 任何工具执行之前 | `{"action": "block", "message": str}`，用于拒绝该工具调用 |
 | [`post_tool_call`](#post_tool_call) | 任何工具返回之后 | 被忽略 |
 | [`pre_llm_call`](#pre_llm_call) | 每轮对话中，在工具调用循环之前仅触发一次 | `{"context": str}`，用于在用户消息前添加上下文 |
 | [`post_llm_call`](#post_llm_call) | 每轮对话中，在工具调用循环之后仅触发一次 | 被忽略 |
 | [`on_session_start`](#on_session_start) | 创建新会话时（仅第一轮对话） | 被忽略 |
 | [`on_session_end`](#on_session_end) | 会话结束时 | 被忽略 |
-| [`on_session_finalize`](#on_session_finalize) | CLI/网关终止正在使用的会话时（用于刷新、保存数据或统计信息） | 被忽略 |
+| [`on_session_finalize`](#on_session_finalize) | CLI或网关终止当前会话时（用于刷新、保存数据或统计信息） | 被忽略 |
 | [`on_session_reset`](#on_session_reset) | 网关更换新的会话密钥时（例如通过 `/new` 或 `/reset` 指令） | 被忽略 |
-| [`subagent_stop`](#subagent_stop) | 子智能体 `delegate_task` 已退出时 | 被忽略 |
-| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | 网关收到用户消息后，在进行身份验证和任务分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程 |
-| [`pre_approval_request`](#pre_approval_request) | 需要用户批准的危险命令在发送提示或通知之前 | 被忽略 |
-| [`post_approval_response`](#post_approval_response) | 用户对审批提示作出回应或超时时 | 被忽略 |
+| [`subagent_start`](#subagent_start) | 已创建待运行的 `delegate_task` 子智能体时 | 被忽略 |
+| [`subagent_stop`](#subagent_stop) | `delegate_task` 子智能体已退出时 | 被忽略 |
+| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | 网关收到用户消息后，在进行身份验证和任务分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程走向 |
+| [`pre_approval_request`](#pre_approval_request) | 需要用户批准的危险指令在发送提示或通知之前 | 被忽略 |
+| [`post_approval_response`](#post_approval_response) | 用户对批准提示作出响应（或超时）时 | 被忽略 |
 | [`transform_tool_result`](#transform_tool_result) | 任何工具返回之后，在将结果传递给模型之前 | `str`，用于替换结果；`None`，表示保持原样 |
-| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，在进行内容截断、ANSI 格式清除或信息隐藏之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
-| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后，在最终响应发送之前 | `str`，用于替换响应文本；`None`/空字符串，表示保持原样 |
+| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，于内容截断、ANSI编码移除或敏感信息遮蔽之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
+| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后，在最终响应返回给用户之前 | `str`，用于替换响应文本；`None` 或空字符串，表示保持原样 |
 
 ---
 
@@ -781,23 +782,94 @@ def my_callback(session_id: str, platform: str, **kwargs):
 | 参数 | 类型 | 描述 |
 |-----------|------|-------------|
 | `session_id` | `str` | 新会话的 ID（已更新为最新值）。 |
-| `platform` | `str` | 消息传递平台的名称。 |
+| `platform` | `str` | 消息平台名称。 |
 
-**触发时机：** 在 `gateway/run.py` 中，新会话密钥分配完成后、处理下一条传入消息之前触发。在网关端，执行顺序为：首次接收到消息时依次执行 `on_session_finalize(old_id)` → 密钥交换 → `on_session_reset(new_id)` → `on_session_start(new_id)`。 
+**触发时机：** 在 `gateway/run.py` 中，新会话密钥分配完成后、处理下一条入站消息之前触发。在网关端，执行顺序为：首次接收到入站消息时，依次执行 `on_session_finalize(old_id)` → 密钥替换 → `on_session_reset(new_id)` → `on_session_start(new_id)`。 
 
-**返回值：** 该参数将被忽略。
+**返回值：** 该参数会被忽略。
 
-**应用场景：** 清除以 `session_id` 为键的会话级缓存，生成“会话已更换”的分析数据，为系统准备全新的状态存储空间。
+**应用场景：** 重置以 `session_id` 为键的会话级缓存，生成“会话已更换”的分析数据，为新的状态存储桶初始化数据。
 
 ---
 
-如需包含工具结构、处理函数及高级钩子模式的完整实现指南，请参阅 **[构建插件指南](/guides/build-a-hermes-plugin)**。
+如需包含工具架构、处理函数及高级钩子模式的完整操作指南，请参阅 **[构建插件指南](/guides/build-a-hermes-plugin)**。
+
+---
+
+### `subagent_start`
+
+在 `delegate_task` 构建完子代理 `AIAgent` 之后、该子代理开始运行之前，**每个子代理仅触发一次**。无论您是委托单个任务还是三组任务，此钩子都会为每个子代理触发一次。
+
+该钩子专用于代理/子代理的生命周期管理，并非适用于网关、CLI、cron、批处理、MoA 或其他由运行器发起的代理执行的通用“在任何代理调用之前”触发点。
+
+**回调函数签名：**
+
+```python
+def my_callback(parent_session_id: str | None,
+                parent_turn_id: str,
+                parent_subagent_id: str | None,
+                child_session_id: str | None,
+                child_subagent_id: str,
+                child_role: str,
+                child_goal: str,
+                **kwargs):
+```
+
+| 参数 | 类型 | 描述 |
+|-----------|------|-------------|
+| `parent_session_id` | `str \| None` | 上级代理的会话 ID。 |
+| `parent_turn_id` | `str` | 发起委托的上级代理轮次的 ID（如有）。 |
+| `parent_subagent_id` | `str \| None` | 当该子代理由其他子代理创建时的上级子代理 ID；顶级上级代理则为 `None`。 |
+| `child_session_id` | `str \| None` | 为子代理分配的会话 ID。 |
+| `child_subagent_id` | `str` | 用于委托监控与控制的稳定子代理 ID。 |
+| `child_role` | `str` | 应用委托策略后的实际子代理角色，例如 `"leaf"` 或 `"orchestrator"`。 |
+| `child_goal` | `str` | 子代理将执行的委托目标/提示语。 |
+
+**触发时机：** 在 `tools/delegate_tool.py` 文件的 `_build_child_agent()` 函数中，即在构建完子 `AIAgent` 并为其添加子代理身份元数据之后、调用 `_run_single_child()` 运行子代理之前。
+
+**返回值：** 该参数将被忽略。这仅是一个观察者钩子；返回值不会阻止子代理的运行，也不会对其造成任何修改。
+
+**应用场景：** 记录子代理的创建过程、映射上下级会话关系、追踪嵌套的委托结构、生成运行前的审计记录、预先为每个子代理分配监控资源。
+
+**示例——记录子代理创建：**
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+def log_subagent_start(
+    parent_session_id,
+    parent_turn_id,
+    child_session_id,
+    child_subagent_id,
+    child_role,
+    child_goal,
+    **kwargs,
+):
+    logger.info(
+        "SUBAGENT_START parent=%s turn=%s child_session=%s child=%s role=%s goal=%r",
+        parent_session_id,
+        parent_turn_id,
+        child_session_id,
+        child_subagent_id,
+        child_role,
+        child_goal[:200],
+    )
+
+def register(ctx):
+    ctx.register_hook("subagent_start", log_subagent_start)
+```
+
+:::info  
+`subagent_start` 功能有助于实现任务委派的可视化监控，但它并非用于阻塞操作的策略钩子。若希望在子代理生成之前阻止任务委派，应使用 [`pre_tool_call`](#pre_tool_call) 来拦截 `delegate_task` 工具调用。  
+:::
 
 ---
 
 ### `subagent_stop`
 
-在 `delegate_task` 完成后，**每个子代理仅触发一次**。无论您委托的是单个任务还是三个任务，此钩子都会为每个子代理触发一次，且在父线程中串行执行。
+在 `delegate_task` 执行完成之后，**每个子代理仅触发一次**。无论您是委派单个任务还是三批任务，该钩子都会针对每个子代理触发一次，且所有触发会在父线程中依次处理。  
 
 **回调函数签名：**
 
@@ -1281,7 +1353,7 @@ printf '{}\n'
 
 ### 同意机制
 
-每当 Hermes 首次遇到独特的 `(event, command)` 对时，都会向用户请求批准；之后会将用户的决策保存到 `~/.hermes/shell-hooks-allowlist.json` 文件中。后续的运行（无论是通过 CLI 还是网关）都将跳过此提示。
+每当 Hermes 首次遇到独特的 `(事件, 命令)` 对时，都会向用户请求批准，随后会将该决策保存至 `~/.hermes/shell-hooks-allowlist.json` 文件中。后续的运行（无论是通过 CLI 还是网关）都将跳过此提示。
 
 有三种方式可以绕过交互式提示——任意一种均可：
 
@@ -1289,28 +1361,45 @@ printf '{}\n'
 2. 设置 `HERMES_ACCEPT_HOOKS=1` 环境变量
 3. 在 `cli-config.yaml` 中将 `hooks_auto_accept` 设置为 `true`
 
-在非 TTY 环境下运行（如网关、cron 任务或 CI 环境）时，必须使用上述三种方式之一；否则任何新添加的钩子都将保持未注册状态，并会生成警告日志。
+在非 TTY 环境下运行（如网关、cron 任务或 CI 环境）时，必须使用上述三种方式之一；否则任何新添加的钩子都会被默默忽略且会记录警告信息。
 
-**对脚本的修改会被默认视为有效。** 允许列表是根据确切的命令字符串来匹配的，而非脚本的哈希值，因此直接修改磁盘上的脚本并不会导致之前的同意失效。`hermes hooks doctor` 命令能够检测文件修改时间的变化，帮助你发现脚本被修改，并决定是否需要重新批准。
+**对脚本的修改会被默认视为有效。** 允许列表是依据确切的命令字符串来识别的，而非脚本的哈希值，因此对磁盘上的脚本进行修改不会导致之前的同意失效。`hermes hooks doctor` 命令能够检测文件修改时间的变化，帮助你发现脚本已被修改，并决定是否需要重新批准。
 
-### `hermes hooks` CLI 工具
+#### 手动添加允许项
+
+对于无法通过交互方式回应首次使用提示的非 TTY 环境或服务账户部署场景，手动添加允许项非常实用。允许列表文件位于 `~/.hermes/shell-hooks-allowlist.json`，其预期格式为一个 `approvals` 数组。每条批准记录都会包含对应的钩子 `事件` 以及确切的 `命令` 字符串：
+
+```json
+{
+  "approvals": [
+    {
+      "event": "post_llm_call",
+      "command": "/home/hermes/.hermes/hooks/my-hook.py"
+    }
+  ]
+}
+```
+
+命令字符串必须与已配置的钩子命令完全一致。包含 `sha256` 字段的路径键对象并不符合预期格式，因此不会被批准用于该钩子。建议使用 `hermes hooks list` 命令来验证手动输入的内容。
+
+### `hermes hooks` CLI 命令
 
 | 命令 | 功能说明 |
-|------|----------|
-| `hermes hooks list` | 列出所有已配置的钩子，包括匹配规则、超时设置以及同意状态 |
-| `hermes hooks test <event> [--for-tool X] [--payload-file F]` | 使用模拟数据触发所有匹配的钩子，并输出解析后的响应结果 |
-| `hermes hooks revoke <command>` | 移除所有与 `<command>` 匹配的允许列表条目（下次重启后生效） |
-| `hermes hooks doctor` | 对每个已配置的钩子进行检查：包括执行权限、允许列表状态、文件修改时间变化、JSON 输出的有效性以及大致的执行时间 |
+|---------|----------|
+| `hermes hooks list` | 列出所有已配置的钩子，包括匹配规则、超时设置以及授权状态 |
+| `hermes hooks test <event> [--for-tool X] [--payload-file F]` | 使用模拟请求触发所有匹配的钩子，并输出解析后的响应结果 |
+| `hermes hooks revoke <command>` | 删除所有与 `<command>` 匹配的允许列表项（更改将在下次重启后生效） |
+| `hermes hooks doctor` | 对每个已配置的钩子进行检查：包括执行权限、允许列表状态、修改时间偏差、JSON 输出有效性以及大致的执行时间 |
 
 ### 安全性
 
-Shell 钩子是以**你的完整用户凭证**来运行的——其信任级别与 cron 任务或 shell 别名相同。因此，请将 `config.yaml` 文件中的 `hooks:` 部分视为高权限配置：
+Shell 钩子是以**完整的用户凭证**来运行的，其信任级别与 cron 任务或 shell 别名相同。因此，请将 `config.yaml` 文件中的 `hooks:` 部分视为高权限配置：
 
-- 只引用你自己编写或经过彻底审查的脚本。
-- 将脚本保存在 `~/.hermes/agent-hooks/` 目录下，以便于审计路径。
-- 在拉取共享配置后，重新运行 `hermes hooks doctor`，以便在钩子注册之前发现新添加的钩子。
-- 如果你的 `config.yaml` 是在团队中通过版本控制管理的，请像审查 CI 配置一样仔细审查那些修改了 `hooks:` 部分的提交请求。
+- 仅引用您自己编写或经过彻底审查的脚本。
+- 将脚本保存在 `~/.hermes/agent-hooks/` 目录下，以便于进行路径审计。
+- 在拉取共享配置后，重新运行 `hermes hooks doctor`，以便在新的钩子注册之前及时发现它们。
+- 如果您的 `config.yaml` 文件是在团队内部进行版本控制的，请像审查 CI 配置一样仔细检查所有修改了 `hooks:` 部分的提交请求。
 
 ### 执行顺序与优先级
 
-Python 插件钩子和 Shell 钩子都会通过同一个 `invoke_hook()` 调度器来执行。Python 插件会首先被注册（通过 `discover_and_load()` 函数），随后才是 Shell 钩子（通过 `register_from_config()` 函数）。因此在出现冲突时，Python 的 `pre_tool_call` 块中的决策将具有优先权。只要某个回调返回包含非空消息的 `{"action": "block", "message": str}` 对象，聚合器就会立即停止后续处理并返回该结果。
+Python 插件钩子和 Shell 钩子都会通过同一个 `invoke_hook()` 调度器来处理。Python 插件会首先被注册（通过 `discover_and_load()` 函数），而 Shell 钩子则在之后注册（通过 `register_from_config()` 函数）。因此在出现冲突时，Python 的 `pre_tool_call` 块中的决策将具有优先权。只要有任何回调函数返回包含非空消息的 `{"action": "block", "message": str}` 对象，聚合器就会立即停止后续处理并返回结果。
