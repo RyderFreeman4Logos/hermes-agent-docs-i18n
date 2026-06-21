@@ -8,7 +8,7 @@ description: "Zero-install localhost tunnels over SSH via Pinggy"
 
 # Pinggy 隧道
 
-通过 Pinggy 利用 SSH 创建无需安装的本地主机隧道。
+通过 Pinggy 利用 SSH 构建无需安装的本地主机隧道。
 
 ## 技能元数据
 
@@ -17,41 +17,41 @@ description: "Zero-install localhost tunnels over SSH via Pinggy"
 | 来源 | 可选 — 通过 `hermes skills install official/devops/pinggy-tunnel` 安装 |
 | 路径 | `optional-skills/devops/pinggy-tunnel` |
 | 版本 | `0.1.0` |
-| 创建者 | Teknium (teknium1)、Hermes Agent |
-| 许可证 | MIT |
+| 开发者 | Teknium (teknium1)、Hermes Agent |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Pinggy`、`隧道`、`网络`、`SSH`、`Webhook`、`本地主机` |
-| 相关技能 | `cloudflared-quick-tunnel`、[`webhook-subscriptions`](/docs/user-guide/skills/bundled/devops/devops-webhook-subscriptions) |
+| 相关技能 | `cloudflared-quick-tunnel`、`webhook-subscriptions` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会依据此内容执行相应操作。
 :::
 
 # Pinggy 隧道技能
 
-通过 Pinggy 的 SSH 反向隧道，将本地服务（开发服务器、Webhook 接收端、MCP 端点、演示程序）暴露到公共互联网上。无需安装任何守护进程——用户现有的 SSH 客户端只需连接到 `a.pinggy.io:443`，Pinggy 便会返回一个公共的 HTTP/HTTPS 地址。
+通过 Pinggy 的 SSH 反向隧道，将本地服务（开发服务器、Webhook 接收端、MCP 端点、演示程序）暴露到公共互联网上。无需安装任何后台进程——用户现有的 SSH 客户端只需连接到 `a.pinggy.io:443`，Pinggy 便会返回一个公共的 HTTP/HTTPS 地址。
 
-免费套餐：可创建时长为 60 分钟的隧道，使用随机子域名，无需注册。专业套餐（每月 3 美元）需主动选择并获取令牌。
+免费版：支持最长60分钟的隧道连接，子域名随机生成，无需注册。专业版（每月3美元）需手动选择并使用令牌。
 
 ## 适用场景
 
-- 用户希望“将本地服务暴露到网络”、“共享我的开发服务器”、“让该地址对公众可见”、“为某个端口创建隧道”、“为 Webhook 获取公共地址”
-- 需要在执行本地任务时接收 Webhook 回调（如来自 Stripe、GitHub、Discord、AgentMail 的请求）
-- 需要与远程方共享一次性的 HTTP 演示内容（如 MCP 服务器、Ollama/vLLM 端点、控制面板）
-- 主机已安装 SSH，但没有 `cloudflared`/`ngrok` 程序，且安装这些程序又显得过于繁琐
+- 用户希望“将本地服务公开”、“共享我的开发服务器”、“让该地址可访问公共网络”、“为某个端口建立隧道”、“为 Webhook 获取公共地址”
+- 需要在执行本地任务时接收 Webhook 回调（如 Stripe、GitHub、Discord、AgentMail）
+- 需要与远程方共享一次性使用的 HTTP 演示内容（如 MCP 服务器、Ollama/vLLM 端点、控制面板）
+- 主机已安装 SSH，但没有 `cloudflared`/`ngrok` 程序，且安装这些工具又显得过于繁琐
 
-如果主机已配置好 `cloudflared`，建议使用 `cloudflared-quick-tunnel` 技能——Cloudflare 的快速隧道不会在 60 分钟后失效。
+如果主机已配置好 `cloudflared`，建议使用 `cloudflared-quick-tunnel` 技能——Cloudflare 的快速隧道不会在60分钟后失效。
 
 ## 先决条件
 
-- PATH 环境变量中包含 `ssh` 命令（可通过 `ssh -V` 查验）。Linux、macos 及 Windows 10 及以上系统均已预装，无需额外安装。
-- 在创建隧道之前，本地服务需已在 `127.0.0.1:<port>` 地址上监听。Pinggy 会返回相关地址，但在本地服务启动之前，这些地址将无法正常使用，会出现 502 错误。
+- PATH 环境变量中包含 `ssh` 命令（可通过 `ssh -V` 查验）。Linux、macOS 及 Windows 10及以上系统均已预装，无需额外安装。
+- 在建立隧道之前，本地服务需已在 `127.0.0.1:<端口>` 上运行。Pinggy 会返回相关地址，但在本地服务启动前这些地址将无法正常访问，会出现502错误。
 
-可选配置：
+可选条件：
 
-- `PINGGY_TOKEN` 环境变量：用于启用专业套餐的付费功能（如固定子域名、自定义域名、同时创建多个隧道、取消 60 分钟时间限制）。免费套餐无需提供任何凭证。
+- 若需使用付费的专业版功能（如固定子域名、自定义域名、同时建立多个隧道、免除60分钟时间限制），可设置 `PINGGY_TOKEN` 环境变量。免费版则无需任何凭据。
 
 ## 快速参考
 
