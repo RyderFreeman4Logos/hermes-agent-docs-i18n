@@ -1,7 +1,7 @@
 ---
 name: hermes-agent
 description: "Configure, extend, or contribute to Hermes Agent."
-version: 2.1.0
+version: 2.2.0
 author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
@@ -14,22 +14,32 @@ metadata:
 
 # Hermes Agent
 
-Hermes Agent 是 Nous Research 开发的开源 AI 智能体框架，可在终端、消息平台及集成开发环境（IDE）中运行。它与 Claude Code（Anthropic）、Codex（OpenAI）、OpenClaw 属于同一类别——这类自主编程与任务执行型智能体均通过调用工具与用户系统进行交互。Hermes 能与各类大语言模型服务提供商兼容（包括 OpenRouter、Anthropic、OpenAI、DeepSeek 以及本地模型等，共计15种以上），并在 Linux、macOS 和 WSL 环境下运行。
+Hermes Agent 是 Nous Research 开发的开源 AI 智能体框架，可在终端、消息平台及集成开发环境（IDE）中运行。它与 Claude Code（Anthropic）、Codex（OpenAI）、OpenClaw 属于同一类别——这类自主编程与任务执行型智能体通过调用工具与用户的系统进行交互。Hermes 能与各类大语言模型提供商配合使用（包括 OpenRouter、Anthropic、OpenAI、DeepSeek、本地模型以及另外15种以上选项），并在 Linux、macOS 和 WSL 环境中运行。
 
 Hermes 的独特优势：
 
-- **通过“技能”实现自我提升** — Hermes 能从经验中学习，将可复用的操作流程保存为“技能”。当它解决复杂问题、发现新的工作流程或得到纠正后，会将这些知识以技能文档的形式保存下来，供后续会话使用。随着时间的积累，这些技能会让智能体更擅长处理您的特定任务及适应相应环境。
-- **跨会话持久记忆** — 能记住您的身份、偏好设置、环境详情以及过往经验教训。通过可插拔的记忆后端（内置选项、Honcho、Mem0 等），您可以自行决定记忆的存储方式。
-- **多平台接入能力** — 同一个智能体可在 Telegram、Discord、Slack、WhatsApp、Signal、Matrix、Email 以及另外10多种平台上运行，不仅能进行聊天，还能完全访问系统工具。
-- **与模型服务提供商解耦** — 在工作流程中进行时，无需更改其他设置即可更换模型和服务提供商。凭证池会自动在多个 API 密钥之间切换。
-- **多配置文件支持** — 可运行多个独立的 Hermes 实例，每个实例拥有独立的配置、会话、技能和记忆数据。
-- **高度可扩展** — 支持插件、MCP 服务器、自定义工具、Webhook 触发器、定时任务以及完整的 Python 生态系统。
+- **通过技能实现自我提升**——Hermes 能从经验中学习，将可重复使用的操作流程保存为“技能”。当它解决复杂问题、发现新的工作流程或得到纠正后，会将这些知识以技能文档的形式保存下来，供后续会话调用。随着时间的积累，这些技能会让智能体更擅长处理用户的特定任务及适应相应环境。
+- **跨会话持久记忆**——能够记住用户身份、偏好设置、环境详情以及以往的经验教训。通过可插拔的记忆后端（内置选项、Honcho、Mem0 等），用户可自行决定记忆的存储方式。
+- **多平台接入能力**——同一个智能体可在 Telegram、Discord、Slack、WhatsApp、Signal、Matrix、Email 以及另外10多种平台上运行，不仅能进行聊天，还能完全访问系统工具。
+- **与模型提供商无关**——在任务执行过程中可随时更换模型和提供商，而无需调整其他配置。凭证池会自动在多个 API 密钥之间切换。
+- **多实例配置功能**——支持运行多个独立的 Hermes 实例，每个实例拥有独立的配置、会话、技能和记忆数据。
+- **高度可扩展**——支持插件、MCP 服务器、自定义工具、Webhook 触发器、定时任务以及完整的 Python 生态系统。
 
-人们将 Hermes 应用于软件开发、科学研究、系统管理、数据分析、内容创作、家庭自动化等领域，凡是能够从具备持久上下文和完整系统访问权限的 AI 智能体中受益的场景，都可以使用它。
+人们将 Hermes 应用于软件开发、科学研究、系统管理、数据分析、内容创作、家庭自动化等领域，凡是能从具备持久上下文和完整系统访问权限的 AI 智能体中受益的场景，都能用到它。
 
-**本技能指南将帮助您高效使用 Hermes Agent** — 包括如何进行初始化设置、配置各项功能、创建额外的智能体实例、排查故障、查找合适的命令与设置，以及在需要扩展或为该系统做出贡献时了解其运作原理。
+**本技能旨在帮助您高效使用 Hermes Agent**——涵盖其设置安装、功能配置、启动额外智能体实例、故障排查、查找相关命令与设置，以及在需要扩展或贡献代码时理解系统运作原理等内容。
 
 **文档链接：** https://hermes-agent.nousresearch.com/docs/
+
+## 范围与验证说明
+
+本技能仅为简明的操作指南，并非所有 Hermes 功能的完整权威参考。如果某项功能、命令或设置未在此提及，也请勿直接认为其不存在。在给出否定答复之前，请务必查看官方仓库及完整文档。
+
+推荐的验证来源包括：
+
+- 命令行工具：`hermes --help`、`hermes <command> --help` 以及 `hermes_cli/main.py`
+- 用户文档：https://hermes-agent.nousresearch.com/docs/
+- 源代码仓库：https://github.com/NousResearch/hermes-agent
 
 ## 快速入门
 
@@ -345,28 +355,28 @@ $HERMES_HOME/skills/        Installed skills
 
 可通过 `hermes config edit` 或 `hermes config set section.key value` 命令进行编辑。
 
-| 章节 | 可配置键值 |
-|------|------------|
-| `model` | `default`, `provider`, `base_url`, `api_key`, `context_length` |
-| `agent` | `max_turns`（90），`tool_use_enforcement` |
-| `terminal` | `backend`（local/docker/ssh/modal），`cwd`，`timeout`（180） |
-| `compression` | `enabled`，`threshold`（0.50），`target_ratio`（0.20） |
-| `display` | `skin`，`tool_progress`，`show_reasoning`，`show_cost` |
-| `stt` | `enabled`，`provider`（local/groq/openai/mistral） |
+| 章节 | 可配置选项 |
+|---------|-------------|
+| `model` | `default`、`provider`、`base_url`、`api_key`、`context_length` |
+| `agent` | `max_turns`（90）、`tool_use_enforcement` |
+| `terminal` | `backend`（local/docker/ssh/modal）、`cwd`、`timeout`（180） |
+| `compression` | `enabled`、`threshold`（0.50）、`target_ratio`（0.20） |
+| `display` | `skin`、`tool_progress`、`show_reasoning`、`show_cost` |
+| `stt` | `enabled`、`provider`（local/groq/openai/mistral） |
 | `tts` | `provider`（edge/elevenlabs/openai/minimax/mistral/neutts） |
-| `memory` | `memory_enabled`，`user_profile_enabled`，`provider` |
-| `security` | `tirith_enabled`，`website_blocklist` |
-| `delegation` | `model`，`provider`，`base_url`，`api_key`，`max_iterations`（50），`reasoning_effort` |
-| `checkpoints` | `enabled`，`max_snapshots`（50） |
+| `memory` | `memory_enabled`、`user_profile_enabled`、`provider` |
+| `security` | `tirith_enabled`、`website_blocklist` |
+| `delegation` | `model`、`provider`、`base_url`、`api_key`、`max_iterations`（50）、`reasoning_effort` |
+| `checkpoints` | `enabled`、`max_snapshots`（50） |
 
 完整配置参考：https://hermes-agent.nousresearch.com/docs/user-guide/configuration
 
 ### 提供商支持
 
-目前支持20多种供应商。可通过 `hermes model` 或 `hermes setup` 命令进行设置。
+目前支持20多种提供商，可通过 `hermes model` 或 `hermes setup` 命令进行配置。
 
 | 提供商 | 认证方式 | 对应环境变量 |
-|--------|----------|--------------|
+|----------|------|-------------|
 | OpenRouter | API密钥 | `OPENROUTER_API_KEY` |
 | Anthropic | API密钥 | `ANTHROPIC_API_KEY` |
 | Nous Portal | OAuth认证 | `hermes auth` |
@@ -386,61 +396,110 @@ $HERMES_HOME/skills/        Installed skills
 | OpenCode Zen | API密钥 | `OPENCODE_ZEN_API_KEY` |
 | OpenCode Go | API密钥 | `OPENCODE_GO_API_KEY` |
 | Qwen OAuth | OAuth认证 | `hermes auth add qwen-oauth` |
-| 自定义端点 | 配置文件 | 在 config.yaml 中设置 `model.base_url` 和 `model.api_key` |
+| 自定义接口端点 | 配置文件 | 在 config.yaml 中设置 `model.base_url` 和 `model.api_key` |
 | GitHub Copilot ACP | 外部工具 | `COPILOT_CLI_PATH` 或 Copilot CLI |
 
-完整供应商文档：https://hermes-agent.nousresearch.com/docs/integrations/providers
+完整提供商文档：https://hermes-agent.nousresearch.com/docs/integrations/providers
 
 ### 工具集
 
 可通过 `hermes tools`（交互式命令）或 `hermes tools enable/disable NAME` 命令启用/禁用工具集。
 
 | 工具集 | 功能说明 |
-|--------|----------|
+|---------|----------|
 | `web` | 网页搜索与内容提取 |
 | `search` | 仅支持网页搜索（属于 `web` 的子集） |
-| `browser` | 浏览器自动化（支持 Browserbase、Camofox 或本地 Chromium） |
+| `browser` | 浏览器自动化操作（支持 Browserbase、Camofox 或本地 Chromium） |
 | `terminal` | Shell命令执行与进程管理 |
-| `file` | 文件的读取、写入、搜索与修改 |
-| `code_execution` | 沙箱化 Python 代码执行 |
-| `vision` | 图像分析 |
-| `image_gen` | AI图像生成 |
-| `video` | 视频分析与生成 |
-| `tts` | 文本转语音 |
+| `file` | 文件读写、搜索与修补操作 |
+| `code_execution` | 沙箱环境下的 Python 代码执行 |
+| `vision` | 图像分析功能 |
+| `image_gen` | AI图像生成功能 |
+| `video` | 视频分析与生成功能 |
+| `tts` | 文本转语音功能 |
 | `skills` | 技能浏览与管理工作 |
-| `memory` | 跨会话持久化记忆 |
+| `memory` | 跨会话持久化内存功能 |
 | `session_search` | 搜索历史对话内容 |
-| `delegation` | 向子代理分配任务 |
-| `cronjob` | 定时任务管理 |
+| `delegation` | 向子智能体分配任务 |
+| `cronjob` | 定时任务管理功能 |
 | `clarify` | 向用户提问以获取更多信息 |
-| `messaging` | 跨平台消息发送 |
-| `todo` | 会话内任务规划与跟踪 |
-| `kanban` | 多代理工作队列工具（仅对工作者开放） |
-| `debugging` | 额外的调试工具（默认关闭） |
-| `safe` | 为受限会话设计的简易低风险工具集 |
-| `spotify` | Spotify 播放与播放列表控制 |
-| `homeassistant` | 智能家居控制（默认关闭） |
+| `messaging` | 跨平台消息发送功能 |
+| `todo` | 会话内任务规划与跟踪功能 |
+| `kanban` | 多智能体工作队列工具（仅对工作节点开放） |
+| `debugging` | 额外的调试与检查工具（默认关闭） |
+| `safe` | 为受限会话设计的简易、低风险工具集 |
+| `spotify` | Spotify 播放与播放列表控制功能 |
+| `homeassistant` | 智能家居控制功能（默认关闭） |
 | `discord` | Discord 集成工具 |
 | `discord_admin` | Discord 管理与审核工具 |
 | `feishu_doc` | Feishu（Lark）文档处理工具 |
-| `feishu_drive` | Feishu（Lark）云盘工具 |
+| `feishu_drive` | Feishu（Lark）云盘操作工具 |
 | `yuanbao` | Yuanbao 集成工具 |
-| `rl` | 强化学习工具（默认关闭） |
-| `moa` | 混合代理模型（默认关闭） |
+| `rl` | 强化学习相关工具（默认关闭） |
+| `moa` | 混合智能体技术相关工具（默认关闭） |
 
 所有工具集的完整列表存储在 `toolsets.py` 文件中的 `TOOLSETS` 字典中；`_HERMES_CORE_TOOLS` 是大多数平台默认使用的工具组合。
 
-工具更改需通过重启会话（执行 `/reset`）才能生效。为保留提示词缓存，这些更改不会在对话进行过程中即时应用。
+对工具的更改需通过 `/reset` 命令启动新会话后才会生效。为保留提示词缓存，这些更改不会在当前对话进行中生效。
 
 ---
 
+## 项目上下文文件
+
+Hermes 会从工作目录读取上下文文件，将项目级配置指令注入系统提示词中。文件的加载遵循**首次匹配原则**——每个会话仅加载一个项目上下文来源。
+
+| 文件（按优先级顺序） | 加载方式 | 适用场景 |
+|---|---|---|
+| `.hermes.md` / `HERMES.md` | 从当前目录向上遍历至 Git 根目录，仅在 Git 根目录停止 | 需要分层项目规则配置（根目录规则及各包的覆盖规则） |
+| `AGENTS.md` / `agents.md` | **仅考虑当前工作目录**——子目录及父目录的副本将被忽略 | 需要编写可在 Hermes、Claude Code、Codex 等工具中通用的语法简洁的智能体配置 |
+| `CLAUDE.md` / `claude.md` | 仅考虑当前工作目录 | 与 `AGENTS.md` 功能类似，但针对 Claude 工具优化 |
+| `.cursorrules` / `.cursor/rules/*.mdc` | 仅考虑当前工作目录 | 从 Cursor 平台迁移过来的用户使用 |
+
+位于 `$HERMES_HOME` 目录下的 `SOUL.md` 文件独立存在，只要存在就会始终被加载——它用于设置智能体的身份信息，而非项目规则。
+
+### 如何选择合适的文件
+
+- **选择 `.hermes.md`**：当需要定义适用于整个项目（包括根目录及所有子目录）的、针对 Hermes 的特殊规则，或希望规则能从父目录继承时使用。由于遍历会在 Git 根目录停止，因此位于用户主目录下的 `.hermes.md` 文件不会影响其他项目（Git 仓库的根目录即为分隔边界）。
+- **选择 `AGENTS.md`**：当同一项目还需要由其他智能体工具（如 Codex、Claude Code、OpenCode）处理时使用。这些工具对 `AGENTS.md` 都有各自的格式规范，而“仅考虑当前工作目录”的设计使得该文件具备跨平台兼容性。
+- **不要将项目规则放在 `~/.hermes/AGENTS.md`（或其他用户主目录下的位置）**。当 Hermes 以该目录作为当前工作目录运行时，虽然该文件会被加载，但仅对该目录有效。如需实现跨项目上下文共享，可使用位于 `$HERMES_HOME` 的 `SOUL.md` 文件（仅用于设置身份信息），或通过 `hermes skills install` 命令安装技能。
+
+### 文件大小与截断处理
+
+每个上下文文件的字符上限为20,000个。超过此限制的文件会被**截取开头和结尾部分**（中间内容将被删除，并显示 `[...truncated...]` 标记）。对于内容较多的项目规则，建议将其拆分为多个独立技能，而非试图将所有内容塞入一个文件中。
+
+### 安全性
+
+所有上下文文件在进入系统提示词之前都会经过威胁模式扫描器检测。凡是匹配到提示词注入或恶意提示词技术的内容，都会被替换为 `[BLOCKED: ...]` 占位符。这意味着，即使 `AGENTS.md` 文件中包含明显的注入尝试，相关内容也不会传递给模型——扫描器会拦截内容本身，而不会阻止整个文件的加载。
+
+### 临时禁用上下文加载
+
+可通过 `hermes --ignore-rules` 命令跳过所有项目上下文文件（`.hermes.md`、`AGENTS.md`、`CLAUDE.md`、`.cursorrules`）以及 `SOUL.md` 中的身份信息，同时还会忽略用户自定义配置、插件和 MCP 服务器。该命令可用于判断问题出在用户设置还是 Hermes 本身。
+
+### 示例：一个简短的 `.hermes.md` 文件
+
+```markdown
+# My Project
+
+Hermes: when working in this repo, follow these rules.
+
+## Build
+- Always run `make test` before declaring a change done.
+- Use `uv run` for Python, not `pip install`.
+
+## Style
+- Prefer `pathlib.Path` over `os.path`.
+- No `print()` in production code — use the `logger`.
+```
+
+当 Hermes 在 `/home/me/projects/myrepo` 的任意子目录中运行时，会自动加载位于 `/home/me/projects/myrepo/.hermes.md` 的该文件；但若在 `/home/me/other-project` 中运行，则不会加载。
+
 ## 安全与隐私相关开关
 
-介绍一些常见的“为何Hermes会对我的输出/工具调用/命令执行此类操作？”类开关，以及对应的修改命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要重启会话（在聊天界面执行 `/reset` 或重新启动 `hermes`）才能生效。
+常见的一些“为何 Hermes 会对我的输出、工具调用或命令执行特定操作？”类开关，以及用于修改它们的具体命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要重新启动会话（在聊天界面中使用 `/reset` 命令，或重新调用 `hermes`）才能生效。
 
-### 工具输出中的敏感信息遮蔽
+### 工具输出中的机密信息遮蔽
 
-敏感信息遮蔽功能**默认处于开启状态**——工具输出（包括终端标准输出、`read_file` 操作结果、网页内容、子代理总结等）在进入对话上下文和日志之前，会自动扫描其中可能包含的API密钥、令牌及敏感信息。日常使用建议保持该功能开启：
+机密信息遮蔽功能**默认处于开启状态**——在工具输出（终端标准输出、`read_file` 的返回内容、网页内容、子代理的总结信息等）进入对话上下文及日志之前，系统会自动扫描其中可能包含的 API 密钥、令牌和机密字符串。在正常使用情况下建议保持该功能开启：
 
 ```bash
 hermes config set security.redact_secrets true       # keep enabled globally
@@ -893,7 +952,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 ### 扩展系统提示中的执行环境模块
 
-关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数同时还负责处理 WSL 相关提示及针对不同终端后端的检测逻辑。具体规则如下：
+关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数同时还负责处理 WSL 相关提示及针对不同后端的检测逻辑。具体规则如下：
 
 - **本地终端后端** → 输出主机信息（操作系统、`$
 
