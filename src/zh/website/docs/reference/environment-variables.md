@@ -6,7 +6,7 @@ description: "Complete reference of all environment variables used by Hermes Age
 
 # 环境变量参考
 
-所有变量均存储在 `~/.hermes/.env` 文件中。您也可以通过命令 `hermes config set VAR value` 来设置这些变量。
+Hermes 会从进程环境读取环境变量，而对于用户管理的机密信息，则从 `~/.hermes/.env` 文件中获取。请将 API 密钥、机器人令牌、OAuth 密钥以及其他凭证存储在 `.env` 文件中；如果存在配置键，建议优先使用 `config.yaml` 来设置非机密性的行为参数。以下部分变量仅为进程级覆盖项或内部桥接变量，即便此处有相关说明，也不应将其加入 `.env` 文件中。
 
 ## 大语言模型提供方| 变量名 | 描述 |
 |--------|------|
@@ -291,21 +291,25 @@ description: "Complete reference of all environment variables used by Hermes Age
 
 用于[Web控制台](/user-guide/features/web-dashboard)的认证，以及实现[Hermes Desktop与远程后端连接](/user-guide/features/web-dashboard#connecting-hermes-desktop-to-a-remote-backend)。遵循“仅使用密钥”的原则，凭证应存储在`~/.hermes/.env`文件中；而OAuth的`client_id`则建议设置在`config.yaml`的`dashboard.oauth`字段下（若同时设置，环境变量优先生效）。
 
-系统预置了三种控制台认证提供程序。对于远程Hermes Desktop连接或任何面向互联网的控制台，推荐的提供程序是**OAuth（Nous Portal）**——需设置`HERMES_DASHBOARD_OAUTH_CLIENT_ID`（可通过`hermes dashboard register`命令进行配置）。内置的**用户名/密码**提供程序（`HERMES_DASHBOARD_BASIC_AUTH_*`）适用于信任的局域网或VPN后的后端，操作最为便捷，但不适合直接暴露在公共互联网上。若需使用自定义身份提供商进行认证，则可使用**自托管OIDC**提供程序（`HERMES_DASHBOARD_OIDC_*`）。无论选择哪种方式，只要通过`hermes dashboard --host 0.0.0.0`命令以非回环地址绑定，就会启用认证网关。详情请参阅[Web控制台→认证](/user-guide/features/web-dashboard#authentication-gated-mode)。
+系统预置了三种控制台认证提供程序。对于远程Hermes Desktop连接或任何面向互联网的控制台，推荐的提供程序是**OAuth（Nous Portal）**——需设置`HERMES_DASHBOARD_OAUTH_CLIENT_ID`（可通过`hermes dashboard register`命令进行配置）。内置的**用户名/密码**提供程序（`HERMES_DASHBOARD_BASIC_AUTH_*`）适用于位于可信局域网或VPN后的后端，是最快的解决方案，但不适合直接暴露在公共互联网上。若要使用自建的身份验证服务，可使用**自托管OIDC**提供程序（`HERMES_DASHBOARD_OIDC_*`）。无论采用哪种方式，只要设置非回环绑定地址（如`hermes dashboard --host 0.0.0.0`），就会启用认证网关。详情请参阅[Web控制台 → 认证](/user-guide/features/web-dashboard#authentication-gated-mode)。
 
 | 变量 | 描述 |
 |------|------|
-| `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` | 内置用户名/密码控制台认证提供程序（`plugins/dashboard_auth/basic`）的用户名。当该变量与密码一同设置时，即可激活该提供程序，同时会覆盖`dashboard.basic_auth.username`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` | 该基本认证提供程序所需的明文密码（加载时会以哈希形式存储在内存中）。若设置了此变量，其优先级高于配置文件中的`password_hash`，便于通过环境变量随时更换密码，同时会覆盖`dashboard.basic_auth.password`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` | 该基本认证提供程序所使用的scrypt密码哈希值（更佳选择，因为不会以明文形式存储）。可通过命令`python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`生成。该值会覆盖`dashboard.basic_auth.password_hash`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_SECRET` | 用于为基本认证提供程序的无状态会话令牌签名 的HMAC密钥（长度需大于32字节，支持base64、hex或原始格式）。建议明确设置此值，以确保会话在重启后依然有效且可跨多个工作进程使用；若留空，则系统会为每个进程随机生成密钥（此时每次重启都会导致用户登出），同时会覆盖`dashboard.basic_auth.secret`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_TTL_SECONDS` | 该基本认证提供程序的访问令牌有效期（默认为12小时），同时会覆盖`dashboard.basic_auth.session_ttl_seconds`的值。 |
+| `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` | 内置用户名/密码认证提供程序（`plugins/dashboard_auth/basic`）的用户名。当该变量与密码一同设置时，即可激活该提供程序，同时会覆盖`dashboard.basic_auth.username`的值。 |
+| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` | 该基础认证提供程序的明文密码（加载时会以哈希形式存储在内存中）。其优先级高于配置文件中的`password_hash`字段，因此可通过环境变量方便地更换密码，同时会覆盖`dashboard.basic_auth.password`的值。 |
+| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` | 该基础认证提供程序的scrypt哈希密码（更推荐，因为不会以明文形式存储）。可通过命令`python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`生成，同时会覆盖`dashboard.basic_auth.password_hash`的值。 |
+| `HERMES_DASHBOARD_BASIC_AUTH_SECRET` | 用于为该基础认证提供程序的无状态会话令牌签名 的HMAC密钥（长度需大于32字节，支持base64、hex或原始格式）。明确设置此值可确保会话在重启后依然有效，或跨多个工作进程使用；若留空，则会为每个进程随机生成密钥（此时每次重启都会导致用户登出），同时会覆盖`dashboard.basic_auth.secret`的值。 |
+| `HERMES_DASHBOARD_BASIC_AUTH_TTL_SECONDS` | 该基础认证提供程序的访问令牌有效期（默认为12小时），同时会覆盖`dashboard.basic_auth.session_ttl_seconds`的值。 |
 | `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | 用于受保护/公共控制台的OAuth客户端ID（格式为`agent:{instance_id}`），可激活Nous提供程序（`plugins/dashboard_auth/nous`），同时会覆盖`dashboard.oauth.client_id`的值。需通过`hermes dashboard register`命令进行配置。 |
-| `HERMES_DASHBOARD_PUBLIC_URL` | 控制台的完整公共访问URL，用于在反向代理后构建OAuth回调地址，同时会覆盖`dashboard.public_url`的值。 |
+| `HERMES_DASHBOARD_PUBLIC_URL` | 控制台的完整公共URL地址，用于在反向代理后构建OAuth回调地址，同时会覆盖`dashboard.public_url`的值。 |
 | `HERMES_DASHBOARD_OIDC_ISSUER` | 内置自托管OIDC提供程序（`plugins/dashboard_auth/self_hosted`）的OIDC发行方URL，激活该提供程序时必须设置此值，同时会覆盖`dashboard.oauth.self_hosted.issuer`的值。 |
-| `HERMES_DASHBOARD_OIDC_CLIENT_ID` | 自托管OIDC提供程序所使用的公共OIDC客户端ID（支持授权码模式和PKCE机制），激活该提供程序时必须设置此值，同时会覆盖`dashboard.oauth.self_hosted.client_id`的值。 |
-| `HERMES_DASHBOARD_OIDC_SCOPES` | 自托管OIDC提供程序请求的OIDC作用域（默认为`openid profile email`），同时会覆盖`dashboard.oauth.self_hosted.scopes`的值。 |
-| `HERMES_DESKTOP_REMOTE_URL` | （桌面端）远程后端的基URL，例如`http://host:9119`。设置此变量后会覆盖应用内的网关URL；用户仍需通过网关设置面板进行登录（登录方式由后端指定，可为OAuth重定向或用户名/密码登录）。 |
+| `HERMES_DASHBOARD_OIDC_CLIENT_ID` | 自托管OIDC提供程序的公共OIDC客户端ID（支持授权码模式和PKCE机制），激活该提供程序时必须设置此值，同时会覆盖`dashboard.oauth.self_hosted.client_id`的值。 |
+| `HERMES_DASHBOARD_OIDC_SCOPES` | 自托管OIDC提供程序所请求的OIDC作用域（默认为`openid profile email`），同时会覆盖`dashboard.oauth.self_hosted.scopes`的值。 |
+| `HERMES_DESKTOP_REMOTE_URL` | （桌面端）远程后端的基URL地址，例如`http://host:9119`。设置此值后会覆盖应用内的网关URL；用户仍需通过网关设置面板进行登录（可选择OAuth重定向或用户名/密码认证，具体取决于后端支持的认证方式）。 |
+| `HERMES_DESKTOP_HERMES` | 桌面端后端命令的覆盖值，打包工具或Nix环境以及故障排查时使用，用于在探测到后端后指定给Electron进程的特定`hermes`可执行文件路径。 |
+| `HERMES_DESKTOP_HERMES_ROOT` | 桌面端源代码检出路径的覆盖值，由`hermes desktop --hermes-root`命令使用，在首次启动时或系统`PATH`环境中已存在`hermes`可执行文件之前会优先检查此路径。 |
+| `HERMES_DESKTOP_IGNORE_EXISTING` | 设置为`1`时，桌面端在确定后端地址时会忽略系统`PATH`环境中的现有`hermes`可执行文件，功能等同于`hermes desktop --ignore-existing`命令。 |
+| `HERMES_DESKTOP_CWD` | 桌面端聊天会话的初始项目目录，可通过`hermes desktop --cwd`命令进行设置。 |
 
 ### Microsoft Graph（Teams会议）
 
@@ -315,56 +319,56 @@ description: "Complete reference of all environment variables used by Hermes Age
 |------|------|
 | `MSGRAPH_TENANT_ID` | Graph应用注册所对应的Azure AD租户ID（即目录GUID）。 |
 | `MSGRAPH_CLIENT_ID` | Azure应用注册对应的应用程序（客户端）ID。 |
-| `MSGRAPH_CLIENT_SECRET` | 该应用注册对应的客户端密钥，应存储在`~/.hermes/.env`文件中，并设置权限为`chmod 600`；建议定期通过Azure门户更换此密钥。 |
-| `MSGRAPH_SCOPE` | 用于客户端凭据令牌请求的OAuth2作用域（默认值为`https://graph.microsoft.com/.default`）。 |
-| `MSGRAPH_AUTHORITY_URL` | Microsoft身份平台的授权服务器地址（默认值为`https://login.microsoftonline.com`）。仅在国家/主权云环境中才需要修改此值，例如GCC High区域的地址为`https://login.microsoftonline.us`。 |
+| `MSGRAPH_CLIENT_SECRET` | 该应用注册对应的客户端密钥，应存储在`~/.hermes/.env`文件中，并设置权限为`chmod 600`；需定期通过Azure门户更换此密钥。 |
+| `MSGRAPH_SCOPE` | 用于客户端凭证令牌请求的OAuth2作用域（默认值为`https://graph.microsoft.com/.default`）。 |
+| `MSGRAPH_AUTHORITY_URL` | Microsoft身份平台的服务地址（默认值为`https://login.microsoftonline.com`），仅在国家/主权云环境中需要修改此值（例如GCC High区域需使用`https://login.microsoftonline.us`）。 |
 
 ### Microsoft Graph Webhook监听器
 
-用于接收Graph事件（如Teams会议、日历事件、聊天消息等）的入站变更通知监听器。有关设置及安全强化措施，请参阅[Microsoft Graph Webhook监听器](/user-guide/messaging/msgraph-webhook)。
+用于接收Graph事件（如Teams会议、日历事件、聊天消息等）的入站变更通知。有关设置及安全强化措施，请参阅[Microsoft Graph Webhook监听器](/user-guide/messaging/msgraph-webhook)。
 
 | 变量 | 描述 |
 |------|------|
 | `MSGRAPH_WEBHOOK_ENABLED` | 是否启用`msgraph_webhook`网关平台，取值为`true`、`1`或`yes`。 |
 | `MSGRAPH_WEBHOOK_PORT` | 监听器绑定的端口，默认值为`8646`。 |
-| `MSGRAPH_WEBHOOK_CLIENT_STATE` | Graph会在每条通知中回传的共享密钥，系统会使用`hmac.compare_digest`函数对其与预设值进行比对。可通过命令`openssl rand -hex 32`生成该密钥。 |
-| `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | 以逗号分隔的Graph资源路径/模式允许列表（例如`communications/onlineMeetings,chats/*/messages`）。末尾的`*`表示前缀匹配，若该字段为空，则表示允许所有资源。 |
-| `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | 以逗号分隔的CIDR范围列表，仅允许来自这些范围的请求发送到监听器（例如`52.96.0.0/14,52.104.0.0/14`）。若该字段为空，则表示允许所有来源（为默认值）。在正式生产环境中，建议仅允许Microsoft Graph官方公布的出站访问范围。 |
+| `MSGRAPH_WEBHOOK_CLIENT_STATE` | Graph会在每条通知中回传的共享密钥，用于通过`hmac.compare_digest`函数进行验证，可通过命令`openssl rand -hex 32`生成该密钥。 |
+| `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | 以逗号分隔的Graph资源路径/模式允许列表（例如`communications/onlineMeetings,chats/*/messages`），末尾的`*`表示前缀匹配，若留空则表示允许所有资源。 |
+| `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | 以逗号分隔的CIDR范围列表，仅允许来自这些范围的请求发送到监听器（例如`52.96.0.0/14,52.104.0.0/14`），若留空则表示允许所有来源（为默认值）。在生产环境中应限制为Microsoft Graph官方公布的出站访问范围。 |
 
-### Teams会议摘要发送功能
+### Teams会议摘要发送
 
-仅在启用了[`teams_pipeline`插件](/user-guide/messaging/msgraph-webhook)时才会使用此功能。相关设置也可通过`config.yaml`文件中的`platforms.teams.extra`字段进行配置——若两者都设置了相应值，则环境变量优先生效。详情请参阅[Microsoft Teams→会议摘要发送](/user-guide/messaging/teams#meeting-summary-delivery-teams-meeting-pipeline)。
+仅当启用了[`teams_pipeline`插件](/user-guide/messaging/msgraph-webhook)时才会使用该功能。相关设置也可通过`config.yaml`文件中的`platforms.teams.extra`字段进行配置——若同时设置了环境变量，则环境变量优先生效。详情请参阅[Microsoft Teams → 会议摘要发送](/user-guide/messaging/teams#meeting-summary-delivery-teams-meeting-pipeline)。
 
 | 变量 | 描述 |
 |------|------|
 | `TEAMS_DELIVERY_MODE` | 发送模式，可选值为`graph`或`incoming_webhook`。 |
-| `TEAMS_INCOMING_WEBHOOK_URL` | Teams生成的Webhook URL，当`TEAMS_DELIVERY_MODE`设置为`incoming_webhook`时必须提供此地址。 |
-| `TEAMS_GRAPH_ACCESS_TOKEN` | 用于Graph数据发送的预获取委托访问令牌。一般情况下无需设置此变量，若未配置，则系统会回退使用`MSGRAPH_*`系列的应用专用凭证。 |
-| `TEAMS_TEAM_ID` | 用于向频道发送内容的目标团队ID（适用于`graph`模式）。 |
+| `TEAMS_INCOMING_WEBHOOK_URL` | Teams生成的Webhook URL地址，当`TEAMS_DELIVERY_MODE`设置为`incoming_webhook`时必需。 |
+| `TEAMS_GRAPH_ACCESS_TOKEN` | 用于Graph数据发送的预获取委托访问令牌，一般情况下并不需要使用；若未设置此值，系统会回退到使用`MSGRAPH_*`系列的应用专用凭证。 |
+| `TEAMS_TEAM_ID` | 用于频道发送的目标团队ID（适用于`graph`模式）。 |
 | `TEAMS_CHANNEL_ID` | 目标频道ID，需与`TEAMS_TEAM_ID`配对使用。 |
-| `TEAMS_CHAT_ID` | 目标一对一或群组聊天ID，可作为`graph`模式下团队+频道的替代选项。 |
+| `TEAMS_CHAT_ID` | 目标一对一或群组聊天的ID（在`graph`模式下可作为团队+频道的替代选项）。 |
 
 ### LINE消息API
 
-由内置的LINE平台插件（`plugins/platforms/line/`）所使用。有关完整设置流程，请参阅[消息网关→LINE](/user-guide/messaging/line)。
+由内置的LINE平台插件（`plugins/platforms/line/`）所使用。有关完整设置流程，请参阅[消息网关 → LINE](/user-guide/messaging/line)。
 
 | 变量 | 描述 |
 |------|------|
-| `LINE_CHANNEL_ACCESS_TOKEN` | 来自LINE开发者控制台（消息API选项卡）的长期有效频道访问令牌，为必填项。 |
-| `LINE_CHANNEL_SECRET` | 频道密钥，位于基本设置选项卡中，用于通过HMAC-SHA256算法验证Webhook签名，为必填项。 |
+| `LINE_CHANNEL_ACCESS_TOKEN` | 来自LINE开发者控制台（消息API选项卡）的长期有效频道访问令牌，为必需项。 |
+| `LINE_CHANNEL_SECRET` | 频道密钥，位于基本设置选项卡中，用于通过HMAC-SHA256算法对Webhook签名进行验证，为必需项。 |
 | `LINE_HOST` | Webhook绑定的主机地址，默认值为`0.0.0.0`。 |
 | `LINE_PORT` | Webhook绑定的端口，默认值为`8646`。 |
-| `LINE_PUBLIC_URL` | 公共HTTPS基础URL（例如`https://my-tunnel.example.com`），用于发送图片、音频和视频内容——LINE仅接受可通过HTTPS访问的URL。 |
+| `LINE_PUBLIC_URL` | 公共HTTPS基础URL地址（例如`https://my-tunnel.example.com`），用于发送图片、音频或视频文件——LINE仅接受可通过HTTPS访问的URL地址。 |
 | `LINE_ALLOWED_USERS` | 以逗号分隔的允许向机器人发送私信的用户ID，用户ID前需加上`U`前缀。 |
-| `LINE_ALLOWED_GROUPS` | 以逗号分隔的机器人可响应消息的群组ID，群组ID前需加上`C`前缀。 |
-| `LINE_ALLOWED_ROOMS` | 以逗号分隔的机器人可响应消息的房间ID，房间ID前需加上`R`前缀。 |
+| `LINE_ALLOWED_GROUPS` | 以逗号分隔的机器人将回复消息的群组ID，群组ID前需加上`C`前缀。 |
+| `LINE_ALLOWED_ROOMS` | 以逗号分隔的机器人将回复消息的房间ID，房间ID前需加上`R`前缀。 |
 | `LINE_ALLOW_ALL_USERS` | 仅开发人员可使用，表示允许来自任何来源的请求，默认值为`false`。 |
 | `LINE_HOME_CHANNEL` | 当使用`deliver: line`指令通过定时任务发送消息时，默认的目标发送频道。 |
-| `LINE_SLOW_RESPONSE_THRESHOLD` | 在触发慢响应LLM模板按钮的回调之前等待的秒数，默认值为`45`。将此值设置为`0`可禁用该功能，始终强制使用推送方式。 |
+| `LINE_SLOW_RESPONSE_THRESHOLD` | 在触发慢响应LLM模板按钮的回调之前等待的秒数，默认值为`45`。将此值设置为`0`可禁用该功能，始终强制使用推送式回复。 |
 | `LINE_PENDING_TEXT` | 显示在回调按钮旁边的提示文本。 |
-| `LINE_BUTTON_LABEL` | 回调按钮的标签文字，默认值为`Get answer`。 |
-| `LINE_DELIVERED_TEXT` | 当用户再次点击已发送过的回调内容时显示的回复文本，默认值为`Already replied ✅`。 |
-| `LINE_INTERRUPTED_TEXT` | 当用户点击被 `/stop` 指令中断的回调按钮时显示的回复文本，默认值为`Run was interrupted before completion.`。 |
+| `LINE_BUTTON_LABEL` | 回调按钮的显示标签，默认值为`Get answer`。 |
+| `LINE_DELIVERED_TEXT` | 当用户再次点击已发送过的回调消息时显示的回复文本，默认值为`Already replied ✅`。 |
+| `LINE_INTERRUPTED_TEXT` | 当用户点击被标记为 `/stop` 的异常回调按钮时显示的回复文本，默认值为`Run was interrupted before completion.`。 |
 
 ### ntfy（推送通知）
 
@@ -372,119 +376,128 @@ description: "Complete reference of all environment variables used by Hermes Age
 
 | 变量 | 描述 |
 |------|------|
-| `NTFY_TOPIC` | 需要订阅的主题（用于接收新消息），为必填项。 |
-| `NTFY_SERVER_URL` | 服务器URL，默认值为`https://ntfy.sh`。为保障隐私，可配置为自托管的ntfy服务器地址。 |
-| `NTFY_TOKEN` | 可选的认证令牌，可为Bearer令牌（格式如`tk_xyz`），也可为Basic认证所需的`user:pass`格式字符串。 |
-| `NTFY_PUBLISH_TOPIC` | 用于发送回复消息的主题，默认值为`NTFY_TOPIC`。 |
+| `NTFY_TOPIC` | 需要订阅的主题地址（用于接收新消息），为必需项。 |
+| `NTFY_SERVER_URL` | 服务器URL地址，默认值为`https://ntfy.sh`，如需保障隐私，可指向自托管的ntfy服务。 |
+| `NTFY_TOKEN` | 可选的认证令牌，可以是Bearer令牌（格式为`tk_xyz`），也可以是用于基本认证的`user:pass`格式凭证。 |
+| `NTFY_PUBLISH_TOPIC` | 用于发送回复消息的主题地址，默认值为`NTFY_TOPIC`。 |
 | `NTFY_MARKDOWN` | 设置为`true`时，回复消息会附带`X-Markdown: true`头部，允许使用Markdown格式，默认值为`false`。 |
-| `NTFY_ALLOWED_USERS` | 允许发送消息的用户列表，这些值被视为用户ID；在ntfy系统中，这些值实际上对应的是主题名称，通常可设置为与`NTFY_TOPIC`相同的值。 |
-| `NTFY_ALLOW_ALL_USERS` | 仅开发人员可使用，表示允许向所有用户发送消息，但此功能仅在受访问控制的私有主题中才安全使用，默认值为`false`。 |
+| `NTFY_ALLOWED_USERS` | 允许发送消息的用户列表，这些值被视为用户ID；在ntfy系统中实际上对应的是主题名称，通常该值与`NTFY_TOPIC`相同。 |
+| `NTFY_ALLOW_ALL_USERS` | 仅开发人员可使用，表示允许向所有用户发送消息，但仅能在访问受控的私有主题中使用，默认值为`false`。 |
 | `NTFY_HOME_CHANNEL` | 当使用`deliver: ntfy`指令通过定时任务发送消息时，默认的目标发送频道。 |
-| `NTFY_HOME_CHANNEL_NAME` | 该默认发送频道的可读名称，默认值为主题名称。 |
+| `NTFY_HOME_CHANNEL_NAME` | 该默认发送频道的显示名称，通常与主题名称相同。 |
 
-在将应用部署到使用不受信任的主题环境中之前，请先仔细阅读[ntfy消息指南](/user-guide/messaging/ntfy)，尤其是**身份模型**相关章节。
+在将不受信任的主题用于生产环境之前，请先仔细阅读[ntfy消息指南](/user-guide/messaging/ntfy)，尤其是**身份模型**相关章节。
 
-### 高级消息发送参数调整
+### 高级消息配置调优用于控制出站消息批量处理功能的各平台高级配置项。大多数用户无需调整这些参数；系统默认设置已能确保在不过度降低性能的前提下遵守各平台的速率限制。
 
-针对不同平台提供的高级参数，可用于控制出站消息批量发送的频率。大多数用户无需调整这些参数，因为系统已默认设置，可在不影响性能的前提下遵守各平台的速率限制。| 变量 | 描述 |
-|------|------|
-| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | 打发已排队 Telegram 文本数据块之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当单条 Telegram 消息超出长度限制时，分割数据块之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | 打发已排队 Telegram 媒体数据之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | 在智能体处理完成后再发送后续消息前的延迟时间，以避免与最后一条流式数据块发生冲突。 |
-| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | 覆盖底层的 `python-telegram-bot` HTTP 超时时间（单位：秒）。 |
+| 参数名 | 描述 |
+|--------|------|
+| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | 清除队列中的 Telegram 文本消息块之前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当单条 Telegram 消息长度超出限制时，分割消息块之间的延迟时间（默认值：`2.0` 秒）。 |
+| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | 清除队列中的 Telegram 媒体文件之前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | 在智能体处理完成后发送后续消息前的延迟时间，以避免与最后一条消息块的处理发生冲突。 |
+| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | 覆盖底层的 `python-telegram-bot` HTTP 相关超时时间（单位：秒）。 |
 | `HERMES_TELEGRAM_HTTP_POOL_SIZE` | 连接到 Telegram API 的最大并发 HTTP 连接数。 |
-| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | 禁用在 DNS 解析失败时使用的硬编码 Cloudflare 备用 IP（值：`true`/`false`）。 |
-| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 打发已排队 Discord 文本数据块之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当 Discord 消息超出长度限制时，分割数据块之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Matrix 平台对应的 Telegram 批量处理参数。 |
-| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu 平台的批量处理参数——包括延迟时间、分割延迟、每条消息的最大字符数以及每批的最大消息数。 |
-| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu 媒体数据打发的延迟时间。 |
-| `HERMES_FEISHU_DEDUP_CACHE_SIZE` | Feishu webhook 重复内容缓存的大小（默认值：`1024`）。 |
-| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom 平台的批量处理参数。 |
-| `HERMES_VISION_DOWNLOAD_TIMEOUT` | 在将图像传递给视觉模型之前，下载该图像的超时时间（单位：秒，默认值：`30`）。 |
-| `HERMES_RESTART_DRAIN_TIMEOUT` | Gateway 功能：在强制重启之前，等待正在运行的任务完成的时间（单位：秒，默认值：`900`）。 |
-| `HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT` | Gateway 启动过程中针对不同平台的连接超时时间（单位：秒）。 |
-| `HERMES_GATEWAY_BUSY_INPUT_MODE` | Gateway 处理用户输入时的默认行为：`queue`、`steer` 或 `interrupt`。可通过 `/busy` 命令针对特定聊天单独设置。 |
-| `HERMES_GATEWAY Busy_ACK_ENABLED` | 当智能体正在处理任务时用户发送输入，Gateway 是否会发送确认消息（⚡/⏳/⏩）（默认值：`true`）。设置为 `false` 可完全隐藏这些消息——输入仍会按常规被排队、引导或中断，仅不会显示聊天回复的确认状态。该参数继承自 `config.yaml` 中的 `display.busy_ack_enabled`。 |
-| `HERMES_GATEWAY_NO_SUPERVISE` | 在 s6-overlay Docker 镜像中，运行 `hermes gateway run` 时取消自动监控功能，采用 s6 之前的前台进程逻辑（无自动重启，Gateway 成为容器的主进程）。有效值为：`1`、`true`、`yes`。相当于 CLI 参数 `--no-supervise`。在 s6 镜像之外此参数无效。 |
-| `HERMES_GATEWAY_BOOTSTRAP_STATE` | 在 s6-overlay Docker 镜像中，用于指定在新创建的卷上 Gateway 的**初始**监控状态。由于空卷上不存在持久化的 `gateway_state.json` 文件，因此启动时的协调器会注册 `gateway-default` 选项，但将其状态设置为**关闭**（仅当上次记录的状态为 `running` 时才会自动启动）。将此值设置为 `running`，则首次启动时的设置钩子会在协调器运行之前生成 `gateway_state.json`，从而使 Gateway 在首次启动时就处于运行状态。仅接受字面值 `running`。该功能仅在首次启动时生效：已存在的 `gateway_state.json` 文件不会被覆盖，因此故意停止的 Gateway 在重启后仍会保持停止状态。在 s6 镜像之外此参数无效。 |
-| `HERMES_FILE_MUTATION_VERIFIER` | 启用每轮对话的文件变更验证器功能（默认值：`true`）。启用后，Hermes 会在对话记录中附加提示信息，列出该轮对话中所有失败且未被后续成功写入覆盖的 `write_file`/`patch` 操作。如需禁用此功能，可将其设置为 `0`、`false`、`no` 或 `off`。该参数与 `config.yaml` 中的 `display.file_mutation_verifier` 相对应；若环境变量已设置，则以环境变量为准。 |
-| `HERMES_CRON_TIMEOUT` | Cron 任务型智能体运行时的空闲超时时间（单位：秒，默认值：`600`）。只要智能体仍在主动调用工具或接收流式数据，就可以无限期运行——此超时机制仅在智能体处于空闲状态时触发。设置为 `0` 表示无超时限制。 |
-| `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在 Cron 任务前的预运行脚本的超时时间（单位：秒，默认值：`120`）。对于需要更长执行时间的脚本（例如为防止机器人攻击而设置的随机延迟），可对此值进行覆盖。该参数也可通过 `config.yaml` 中的 `cron.script_timeout_seconds` 进行配置。 |
-| `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可并行运行的 Cron 任务数量（默认值：`4`）。 |
+| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | 禁用在 DNS 解析失败时使用的硬编码 Cloudflare 备用 IP 地址（取值：`true`/`false`）。 |
+| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 清除队列中的 Discord 文本消息块之前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当 Discord 消息长度超出限制时，分割消息块之间的延迟时间（默认值：`2.0` 秒）。 |
+| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Matrix 平台的对应批量处理配置项。 |
+| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu 平台的批量处理参数——包括延迟时间、分割延迟、单条消息的最大字符数以及每批消息的最大数量。 |
+| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu 平台的媒体文件清除延迟时间。 |
+| `HERMES_FEISHU_DEDUP_CACHE_SIZE` | Feishu webhook 冗余检测缓存的大小（默认值：`1024`）。 |
+| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom 平台的批量处理配置项。 |
+| `HERMES_VISION_DOWNLOAD_TIMEOUT` | 在将图像传递给视觉分析模型之前，下载该图像的超时时间（单位：秒，默认值：`30`）。 |
+| `HERMES_RESTART_DRAIN_TIMEOUT` | 网关功能：在强制重启之前，等待正在运行的任务完成的时间长度（单位：秒，默认值：`900`）。 |
+| `HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT` | 网关启动时针对不同平台的连接超时时间（单位：秒）。 |
+| `HERMES_GATEWAY_BUSY_INPUT_MODE` | 网关在处理任务繁忙时的默认输入处理方式：`queue`、`steer` 或 `interrupt`。可通过 `/busy` 命令针对特定聊天单独设置。 |
+| `HERMES_GATEWAY_BUSY_ACK_ENABLED` | 当用户在智能体忙碌时发送输入信息，网关是否会发送确认消息（⚡/⏳/⏩）（默认值：`true`）。设置为 `false` 可完全隐藏这些消息——输入信息仍会按常规方式被排队、引导或中断处理，仅不会显示聊天回复的确认状态。该参数继承自 `config.yaml` 文件中的 `display.busy_ack_enabled` 设置。 |
+| `HERMES_GATEWAY_NO_SUPERVISE` | 在 s6-overlay Docker 镜像中使用时，运行 `hermes gateway run` 命令时可选择关闭自动监控功能，从而使用 s6 之前的前台进程模式（无自动重启功能，网关成为容器的主进程）。有效值为：`1`、`true`、`yes`。该参数相当于 CLI 中的 `--no-supervise` 选项。在非 s6 镜像环境中此参数无效。 |
+| `HERMES_GATEWAY_BOOTSTRAP_STATE` | 在 s6-overlay Docker 镜像中使用时，用于指定新卷上网关的**初始**监控状态。由于空白卷上不存在持久化的 `gateway_state.json` 文件，因此启动时协调器会创建 `gateway-default` 名称的配置项，但将其状态设置为**关闭**（仅当上次记录的状态为“运行中”时才会自动启动）。将此参数设置为 `running` 后，首次启动时的设置钩子会在协调器运行之前生成 `gateway_state.json` 文件，从而使网关在首次启动时就处于运行状态。仅接受字符串值 `running`。该功能仅在首次启动时生效：已存在的 `gateway_state.json` 文件不会被覆盖，因此手动停止的网关在重启后仍会保持停止状态。在非 s6 镜像环境中此参数无效。 |
+| `GATEWAY_RELAY_URL` | 实验性的中继连接器 WebSocket 基础地址。设置该参数后，网关会注册通用的 `relay` 适配器，并向外连接该中继服务。该参数对应 `config.yaml` 文件中的 `gateway.relay_url`。 |
+| `GATEWAY_RELAY_ID` | 由 `hermes gateway enroll` 命令分配或通过自主配置管理的中继网关标识符。该参数对应 `gateway.relay_id`。 |
+| `GATEWAY_RELAY_SECRET` | 用于验证 WebSocket 连接的、针对每个网关的唯一密钥。如果已配置此密钥，则无需进行自主配置管理。该参数对应 `gateway.relay_secret`。 |
+| `GATEWAY_RELAY_DELIVERY_KEY` | 由中继服务生成的交付密钥，用于确保兼容中继/直通模式下的身份验证机制。目前的中继服务入站消息是通过出站 WebSocket 而非网关端的 HTTP 接收器传递的。 |
+| `GATEWAY_RELAY_ENROLL_TOKEN` | 当未明确指定 `--token` 参数时，`hermes gateway enroll` 命令会使用的注册令牌。 |
+| `GATEWAY_RELAY_PLATFORM` | 中继功能描述中可选的平台名称。 |
+| `GATEWAY_RELAY_BOT_ID` | 中继功能描述中可选的机器人标识符。 |
+| `GATEWAY_RELAY_ENDPOINT` | 针对需要回调/直通 URL 的连接器模式而可选的网关端点地址；对于默认的仅支持 WebSocket 的入站中继路径而言并非必需。该参数对应 `gateway.relay_endpoint`。 |
+| `GATEWAY_RELAY_ROUTE_KEYS` | 向连接器公布的、以逗号分隔的中继路由键值对。该参数对应 `gateway.relay_route_keys`。 |
+| `HERMES_FILE_MUTATION_VERIFIER` | 是否启用每轮对话的文件修改验证功能（默认值：`true`）。启用该功能后，Hermes 会在对话记录中附加提示信息，列出本轮对话中所有失败且未被后续成功写入操作覆盖的 `write_file`/`patch` 操作。如需禁用此功能，可将其设置为 `0`、`false`、`no` 或 `off`。该参数对应 `config.yaml` 文件中的 `display.file_mutation_verifier`；如果环境变量已设置，则以环境变量值为准。 |
+| `HERMES_CRON_TIMEOUT` | 定时任务智能体运行时的空闲超时时间（单位：秒，默认值：`600`）。只要智能体仍在主动调用工具或接收流式数据，就可以无限期运行——只有处于空闲状态时才会触发超时。设置为 `0` 表示无超时限制。 |
+| `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在定时任务前的预执行脚本的超时时间（单位：秒，默认值：`120`）。对于需要更长时间执行的脚本（例如为防止机器人检测而设置的随机延迟），可调整此参数。该参数也可通过 `config.yaml` 文件中的 `cron.script_timeout_seconds` 进行配置。 |
+| `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可同时运行的定时任务数量（默认值：`4`）。 |
 
 ## 智能体行为| 变量名 | 描述 |
 |--------|------|
 | `HERMES_MAX_ITERATIONS` | 每次对话中调用工具的最大迭代次数（默认值：90） |
-| `HERMES_INFERENCE_MODEL` | 在进程层面强制指定模型名称（其优先级高于会话级别的 `config.yaml` 设置）。也可通过 `-m`/`--model` 参数进行设置。 |
+| `HERMES_INFERENCE_MODEL` | 在进程层面强制指定模型名称（对该会话而言，其优先级高于 `config.yaml` 中的设置）。也可通过 `-m`/`--model` 参数进行设置。 |
 | `HERMES_YOLO_MODE` | 设定为 `1` 可绕过危险命令的审批提示。相当于 `--yolo` 参数。 |
-| `HERMES_ACCEPT_HOOKS` | 在无终端提示的情况下，自动批准 `config.yaml` 中声明的所有未见过的全局 shell hook。相当于 `--accept-hooks` 或 `hooks_auto_accept: true` 设置。 |
-| `HERMES_IGNORE_USER_CONFIG` | 跳过 `~/.hermes/config.yaml` 文件，直接使用内置默认配置（不过 `.env` 文件中的凭证仍会被加载）。相当于 `--ignore-user-config` 参数。 |
-| `HERMES_IGNORE_RULES` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules` 文件、内存内容以及预加载的技能。相当于 `--ignore-rules` 参数。 |
-| `HERMES_SAFE_MODE` | 故障排查模式：禁用所有自定义设置——跳过插件发现和 MCP 服务器加载过程。该模式会由 `--safe-mode` 参数自动启用（同时也会设置上述两个参数）。 |
-| `HERMES_MD_NAMES` | 以逗号分隔的规则文件名列表，系统会自动注入这些文件内容（默认值：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
-| `HERMES_TOOL_PROGRESS` | 用于显示工具处理进度的旧版兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
-| `HERMES_TOOL_PROGRESS_MODE` | 用于控制工具进度显示模式的旧版兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
+| `HERMES_ACCEPT_HOOKS` | 在无终端提示的情况下，自动批准 `config.yaml` 中声明的所有未见过的全局 shell 钩子。相当于 `--accept-hooks` 或 `hooks_auto_accept: true`。 |
+| `HERMES_IGNORE_USER_CONFIG` | 跳过 `~/.hermes/config.yaml` 文件，使用内置默认设置（但 `.env` 文件中的凭据仍会被加载）。相当于 `--ignore-user-config`。 |
+| `HERMES_IGNORE_RULES` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules` 文件、内存内容以及预加载的技能。相当于 `--ignore-rules`。 |
+| `HERMES_SAFE_MODE` | 故障排查模式：禁用所有自定义设置——跳过插件发现及 MCP 服务器加载流程。该模式会由 `--safe-mode` 参数自动启用（同时也会设置上述两个参数）。 |
+| `HERMES_MD_NAMES` | 以逗号分隔的规则文件名列表，系统将自动注入这些文件（默认值：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
+| `HERMES_TOOL_PROGRESS` | 用于显示工具处理进度的过时兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress`。 |
+| `HERMES_TOOL_PROGRESS_MODE` | 用于控制工具进度显示模式的过时兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress`。 |
 | `HERMES_HUMAN_DELAY_MODE` | 响应节奏控制：`off`/`natural`/`custom` |
-| `HERMES_HUMAN_DELAY_MIN_MS` | 自定义延迟的最小值（单位：毫秒） |
-| `HERMES_HUMAN_DELAY_MAX_MS` | 自定义延迟的最大值（单位：毫秒） |
+| `HERMES_HUMAN_DELAY_MIN_MS` | 自定义延迟范围的最小值（单位：毫秒） |
+| `HERMES_HUMAN_DELAY_MAX_MS` | 自定义延迟范围的最大值（单位：毫秒） |
 | `HERMES_QUIET` | 是否抑制非必要输出（`true`/`false`） |
-| `CODEX_HOME` | 当启用了 [Codex 应用服务器运行时环境](../user-guide/features/codex-app-server-runtime) 时，用于指定 Codex CLI 读取配置及认证信息的目录路径（默认值：`~/.codex`）。Hermes 的迁移机制会将相关配置写入 `<CODEX_HOME>/config.toml` 文件中。 |
-| `HERMES_KANBAN_TASK` | 由看板调度器在启动工作进程时设置的任务 UUID。所有工作进程以及由此生成的 `hermes-tools` MCP 子进程都会继承该值，以便看板工具能够正确进行权限控制。请勿手动设置此值。 |
+| `CODEX_HOME` | 当启用 [Codex 应用服务器运行时环境](../user-guide/features/codex-app-server-runtime) 时，用于指定 Codex CLI 读取配置及认证信息的目录路径（默认值：`~/.codex`）。Hermes 的迁移功能会将相关配置写入 `<CODEX_HOME>/config.toml` 文件中。 |
+| `HERMES_KANBAN_TASK` | 由看板调度器在启动工作进程时设置的任务 UUID。各个工作进程以及由此生成的 `hermes-tools` MCP 子进程都会继承该值，以便看板工具能够正确进行权限控制。请勿手动设置此值。 |
 | `HERMES_API_TIMEOUT` | LLM API 调用的超时时间（单位：秒）（默认值：`1800`） |
-| `HERMES_API_CALL_STALE_TIMEOUT` | 非流式请求的超时时间（单位：秒）（默认值：`300`）。若未设置该值，针对本地提供商此功能会自动关闭。也可通过 `config.yaml` 中的 `providers.<id>.stale_timeout_seconds` 或 `providers.<id>.models.<model>.stale_timeout_seconds` 参数进行配置。 |
-| `HERMES_STREAM_READ_TIMEOUT` | 流式连接的读取超时时间（单位：秒）（默认值：`120`）。针对本地提供商，此值会自动设置为 `HERMES_API_TIMEOUT`。如果在长时间代码生成过程中出现超时情况，可适当增加此值。 |
-| `HERMES_STREAM_STALE_TIMEOUT` | 检测流式连接数据过时的超时时间（单位：秒）（默认值：`180`）。针对本地提供商，此功能会自动关闭。若在指定时间内没有新的数据块到达，系统会主动断开连接。 |
-| `HERMES_STREAM_RETRIES` | 遇到临时性网络故障时，在流式连接中断后尝试重新连接的次数（默认值：`3`） |
-| `HERMES_AGENT_TIMEOUT` | 运行中的智能体因无响应而触发的超时时间（单位：秒）（默认值：`900`）。每次调用工具或发送流式令牌时，该计时器都会重置。将其设为 `0` 即可禁用此功能。 |
-| `HERMES_AGENT_TIMEOUT_WARNING` | 当智能体处于无响应状态达到指定时间后，网关会发送警告信息（默认值：`HERMES_AGENT_TIMEOUT` 的 75%）。 |
-| `HERMES_AGENT_NOTIFY_INTERVAL` | 对于长时间运行的智能体轮次，网关在发送进度更新消息之间的间隔时间（单位：秒）。 |
-| `HERMES_CHECKPOINT_TIMEOUT` | 创建文件系统检查点的超时时间（单位：秒）（默认值：`30`） |
-| `HERMES_EXEC_ASK` | 在网关模式下是否启用执行操作前的审批提示（`true`/`false`） |
-| `HERMES_ENABLE_PROJECT_PLUGINS` | 是否允许智能体加载器及控制台网页服务器自动发现位于 `./.hermes/plugins/` 目录中的项目本地插件。该参数接受所有表示“真”的值：`1` / `true` / `yes` / `on`（不区分大小写）。其余所有值——包括 `0`、`false`、`no`、`off` 以及空字符串——均视为**禁用**状态（默认值）。注意：从 GHSA-5qr3-c538-wm9j (#29156) 版本开始，即使启用了此参数，控制台网页服务器仍不会自动导入项目插件的 Python `api` 文件——项目插件只能通过静态 JS/CSS 扩展界面功能，其后台路由仅当放置于 `~/.hermes/plugins/` 目录下时才会被加载。 |
-| `HERMES_PLUGINS_DEBUG` | 设定为 `1`/`true` 时，会在标准错误流中输出详细的插件发现过程日志——包括扫描的目录、解析的清单文件、跳过某些文件的理由，以及解析或 `register()` 操作失败时的完整堆栈跟踪信息。该功能主要面向插件开发者使用。 |
-| `HERMES_BACKGROUND_NOTIFICATIONS` | 网关模式下的后台进程通知方式：`all`（默认）、`result`、`error`、`off` |
+| `HERMES_API_CALL_STALE_TIMEOUT` | 非流式调用中的旧请求超时时间（单位：秒）（默认值：`90`）。若未设置该值，本地提供商将自动禁用此功能；对于上下文规模极大的场景，该超时时间也可能会相应增加。同样可在 `config.yaml` 中通过 `providers.<id>.stale_timeout_seconds` 或 `providers.<id>.models.<model>.stale_timeout_seconds` 参数进行配置。 |
+| `HERMES_STREAM_READ_TIMEOUT` | 流式套接字读取的超时时间（单位：秒）（默认值：`120`）。对于本地提供商，该值会自动调整为 `HERMES_API_TIMEOUT`。如果在长时间代码生成过程中出现本地 LLM 超时情况，可适当提高此值。 |
+| `HERMES_STREAM_STALE_TIMEOUT` | 检测流式数据过时的超时时间（单位：秒）（默认值：`180`）。本地提供商将自动禁用此功能。若在该时间段内没有新的数据块到达，系统会主动断开连接。 |
+| `HERMES_STREAM_RETRIES` | 遇到短暂网络故障时，在流式通信过程中尝试重新连接的次数（默认值：`3`）。 |
+| `HERMES_AGENT_TIMEOUT` | 运行中的智能体处于非活跃状态时的超时时间（单位：秒）（默认值：`1800`，即 30 分钟）。每次调用工具或处理流式数据时，该计时器都会重置。将其设为 `0` 可禁用此功能。 |
+| `HERMES_AGENT_TIMEOUT_WARNING` | 当智能体处于非活跃状态达到指定时间后，网关会发送警告信息（默认值为 `HERMES_AGENT_TIMEOUT` 的 75%）。 |
+| `HERMES_AGENT_NOTIFY_INTERVAL` | 对于长时间运行的智能体轮次，网关在发送进度通知之间的间隔时间（单位：秒）。 |
+| `HERMES_CHECKPOINT_TIMEOUT` | 创建文件系统检查点的超时时间（单位：秒）（默认值：`30`）。 |
+| `HERMES_EXEC_ASK` | 在网关模式下是否启用执行操作前的审批提示（`true`/`false`）。 |
+| `HERMES_ENABLE_PROJECT_PLUGINS` | 是否允许智能体加载器及控制台 Web 服务器自动发现位于 `./.hermes/plugins/` 目录中的项目级插件。该参数接受所有表示“真”的值：`1` / `true` / `yes` / `on`（不区分大小写）。其余所有值——包括 `0`、`false`、`no`、`off` 以及空字符串——均视为**禁用**状态（默认值）。注意：从 GHSA-5qr3-c538-wm9j (#29156) 版本开始，即使启用了此参数，控制台 Web 服务器仍不会自动导入项目插件的 Python `api` 文件——项目插件虽然可以通过静态 JS/CSS 扩展界面功能，但其后台路由仅当被放置在 `~/.hermes/plugins/` 目录下时才会被加载。 |
+| `HERMES_PLUGINS_DEBUG` | 设定为 `1`/`true` 可在标准错误流中输出详细的插件发现过程日志——包括扫描的目录、解析的清单文件、跳过某些文件的理由，以及解析或 `register()` 操作失败时的完整堆栈跟踪信息。该功能主要面向插件开发者。 |
+| `HERMES_BACKGROUND_NOTIFICATIONS` | 网关模式下的后台进程通知方式：`all`（默认）、`result`、`error`、`off`。 |
 | `HERMES_EPHEMERAL_SYSTEM_PROMPT` | 在调用 API 时注入的临时系统提示语——此类提示语不会被保存到会话记录中。 |
 | `HERMES_PREFILL_MESSAGES_FILE` | 包含临时预填提示语的 JSON 文件路径，这些提示语会在调用 API 时被注入。 |
-| `HERMES_ALLOW_PRIVATE_URLS` | `true`/`false`——决定是否允许工具访问本地主机或私有网络地址。在网关模式下默认为关闭状态。 |
+| `HERMES_ALLOW_PRIVATE_URLS` | `true`/`false`——决定是否允许工具访问本地主机或私有网络中的 URL。在网关模式下默认为关闭状态。 |
 | `HERMES_REDACT_SECRETS` | `true`/`false`——控制是否在工具输出、日志及聊天回复中隐藏敏感信息（默认值：`true`）。 |
 | `HERMES_WRITE_SAFE_ROOT` | 可选目录前缀，用于限制 `write_file`/`patch` 操作的写入范围；位于该前缀之外的路径将需要额外审批才能写入。 |
-| `HERMES_DISABLE_LAZY_INSTALLS` | 官方 Docker 镜像中自动设置的内部桥接变量，旨在防止在不可变的 `/opt/hermes` 目录树中安装运行时依赖项。在用户配置文件中，对应的设置应为 `config.yaml` 中的 `security.allow_lazy_installs: false`；请勿在 `.env` 文件中设置此参数。 |
+| `HERMES_DISABLE_LAZY_INSTALLS` | 官方 Docker 镜像中自动设置的内部桥接变量，旨在防止在不可变的 `/opt/hermes` 目录树中安装运行时依赖项。在用户配置文件 `config.yaml` 中，对应的设置值为 `security.allow_lazy_installs: false`；请勿在 `.env` 文件中设置此参数。 |
 | `HERMES_DISABLE_FILE_STATE_GUARD` | 设定为 `1` 可关闭 `patch`/`write_file` 操作中的“自上次读取后文件已被修改”检测功能。 |
-| `HERMES_CORE_TOOLS` | 用于覆盖标准核心工具列表的逗号分隔值列表（高级用法，极少需要）。 |
-| `HERMES_BUNDLED_SKILLS` | 用于覆盖启动时自动加载的技能列表的逗号分隔值列表。 |
-| `HERMES_OPTIONAL_SKILLS` | 用于指定在首次运行时自动安装的可选技能名称的逗号分隔列表。 |
-| `HERMES_DEBUG_INTERRUPT` | 设定为 `1` 时，会将详细的中断/取消操作流程记录到 `agent.log` 文件中。 |
-| `HERMES_DUMP_REQUESTS` | 是否将 API 请求的内容输出到日志文件中（`true`/`false`）。 |
-| `HERMES_dump_REQUEST_STDOUT` | 将 API 请求的内容直接输出到标准输出流，而非日志文件。 |
-| `HERMES_OAUTH_TRACE` | 设定为 `1` 时，会记录 OAuth 令牌的获取及刷新尝试过程，同时还会包含经过脱敏处理的计时信息。 |
-| `HERMES_OAUTH_FILE` | 用于指定存储 OAuth 凭证文件的路径（默认值：`~/.hermes/auth.json`）。 |
-| `HERMES_AGENT_HELP_GUIDANCE` | 为自定义部署场景的系统提示语添加额外的说明文字。 |
+| `HERMES_CORE_TOOLS` | 以逗号分隔的形式用于覆盖标准的核心工具列表（高级用法，很少需要）。 |
+| `HERMES_BUNDLED_SKILLS` | 以逗号分隔的形式用于覆盖启动时自动加载的预装技能列表。 |
+| `HERMES_OPTIONAL_SKILLS` | 以逗号分隔的列表形式，列出首次运行时应自动安装的可选技能名称。 |
+| `HERMES_DEBUG_INTERRUPT` | 设定为 `1` 可将详细的中断/取消操作跟踪信息记录到 `agent.log` 文件中。 |
+| `HERMES_DUMP_REQUESTS` | 是否将 API 请求的载荷内容输出到日志文件中（`true`/`false`）。 |
+| `HERMES_DUMP_REQUEST_STDOUT` | 将 API 请求的载荷内容直接输出到标准输出流，而非日志文件。 |
+| `HERMES_OAUTH_TRACE` | 设定为 `1` 可记录 OAuth 令牌的获取及刷新尝试过程，同时会包含经过脱敏处理的计时信息。 |
+| `HERMES_OAUTH_FILE` | 用于指定存储 OAuth 凭据的文件路径（默认值：`~/.hermes/auth.json`）。 |
+| `HERMES_AGENT_HELP_GUIDANCE` | 为自定义部署场景在系统提示语中追加额外的使用指南文本。 |
 | `HERMES_AGENT_LOGO` | 用于在 CLI 启动时替换默认的 ASCII 标语徽标。 |
-| `DELEGATION_MAX_CONCURRENT_CHILDREN` | 每批 `delegate_task` 请求允许的最大并行子智能体数量（默认值：`3`，下限为 1，无上限）。也可通过 `config.yaml` 中的 `delegation.max_concurrent_children` 参数进行设置——配置文件中的值具有优先级。 |
+| `DELEGATION_MAX_CONCURRENT_CHILDREN` | 每批 `delegate_task` 请求允许的最大并行子智能体数量（默认值：`3`，下限为 1，无上限）。同样可在 `config.yaml` 中通过 `delegation.max_concurrent_children` 参数进行设置——配置文件中的值具有优先级。 |
 
-## 接口相关参数
+## 界面相关设置
 
 | 变量名 | 描述 |
 |--------|------|
-| `HERMES_TUI` | 当其值为 `1` 时，会启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于传递了 `--tui` 参数。 |
-| `HERMES_TUI_DIR` | 预编译好的 `ui-tui/` 目录的路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 包）。发行版和 Nix 环境会使用此路径来跳过首次启动时的 `npm install` 操作。 |
-| `HERMES_TUI_RESUME` | 启动时根据标识符恢复特定的 TUI 会话。一旦设置了该参数，执行 `hermes --tui` 命令时就会跳过创建新会话的步骤，直接继续使用指定的会话——这在连接中断或终端崩溃后重新连接时非常有用。 |
-| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或是 6 位十六进制格式的背景色代码（例如 `ffffff` 或 `1a1a2e`）。如果未设置该参数，Hermes 会通过查询 `COLORFGBG` 及终端背景色来自动选择主题；而该变量则可覆盖那些未设置 `COLORFGBG` 的终端（如 Ghostty、Warp、iTerm2 等）的自动检测结果。 |
-| `HERMES_INFERENCE_MODEL` | 用于强制指定 `hermes -z` / `hermes chat` 命令所使用的模型，而无需修改 `config.yaml` 文件。该参数需与 `--provider` 参数配合使用。对于那些需要每次运行时都自定义模型的脚本化调用工具（如自动化扫描工具、CI 环境、批量处理程序）来说非常有用。 |
+| `HERMES_TUI` | 当其值为 `1` 时，将启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于传递了 `--tui` 参数。 |
+| `HERMES_TUI_DIR` | 预编译好的 `ui-tui/` 目录的路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 依赖包）。发行版及 Nix 构建工具会使用此路径来跳过首次启动时的 `npm install` 操作。 |
+| `HERMES_TUI_RESUME` | 启动时根据标识符恢复特定的 TUI 会话。一旦设置了该参数，执行 `hermes --tui` 命令时将不会新建会话，而是直接继续使用指定的会话——这在连接中断或终端崩溃后重新连接时非常有用。 |
+| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或直接输入 6 位十六进制值表示背景色（例如 `ffffff` 或 `1a1a2e`）。若未设置该参数，Hermes 会通过查询 `COLORFGBG` 及终端背景色自动选择主题；而当终端未设置 `COLORFGBG` 参数时，此变量可覆盖自动检测结果。 |
+| `HERMES_INFERENCE_MODEL` | 在不修改 `config.yaml` 的情况下，强制指定 `hermes -z` / `hermes chat` 命令所使用的模型。该参数需与 `--provider` 参数配合使用。对于需要每次运行时都指定不同默认模型的脚本化调用场景（如自动化扫描工具、CI 环境、批量处理脚本等），此功能非常实用。 |
 
 ## 会话设置
 
 | 变量名 | 描述 |
 |--------|------|
-| `SESSION_IDLE_MINUTES` | 在会话处于无活动状态达到指定分钟数后自动重置会话（默认值：1440 分钟，即 24 小时）。 |
-| `SESSION_RESET_HOUR` | 每日会话重置的时间，以 24 小时制表示（默认值：4，即凌晨 4 点）。 |
-| `HERMES_SESSION_ID` | **该值会被自动导出并传递给 Hermes 启动的每一个工具子进程**，包括 `terminal`、`execute_code`、持久化 shell、Docker/Singularity 后端以及委托运行的子智能体。智能体会将当前会话 ID 设置为此值；从工具中调用的用户脚本也可以读取该值，从而将自身的输出、性能数据或副作用与对应的 Hermes 会话关联起来。**请勿手动设置此值**——从父终端覆盖该值仅能在非智能体运行模式下生效，且一旦智能体开始新的会话，该覆盖值就会被替换。 |
+| `SESSION_IDLE_MINUTES` | 智能体处于非活跃状态达到指定分钟数后自动重置会话（默认值：1440 分钟，即 24 小时）。 |
+| `SESSION_RESET_HOUR` | 每日会话重置的时间，采用 24 小时制表示（默认值：4，即凌晨 4 点）。 |
+| `HERMES_SESSION_ID` | **会自动被嵌入到 Hermes 启动的每一个工具子进程**中——包括 `terminal`、`execute_code`、持久化终端会话、Docker/Singularity 后端环境以及派生的子智能体进程。智能体会将当前会话 ID 设置为此值；从工具中调用的用户脚本也可以读取该值，从而将其输出结果、监控数据或产生的副作用与对应的 Hermes 会话关联起来。**不建议手动设置此值**——从父终端覆盖设置的值仅在非智能体运行模式下有效，且一旦智能体开始新的会话，该覆盖值就会被立即替换。 |
 
 ## 上下文压缩（仅适用于 `config.yaml`）
 
-上下文压缩功能完全通过 `config.yaml` 文件进行配置——不存在相应的环境变量。阈值相关设置位于 `compression:` 块中，而摘要生成模型及提供者则设置在 `auxiliary.compression:` 下。
+上下文压缩功能完全通过 `config.yaml` 文件进行配置——不存在相应的环境变量。阈值相关设置位于 `compression:` 块中，而摘要生成模型及提供者则配置在 `auxiliary.compression:` 下。
 
 ```yaml
 compression:
