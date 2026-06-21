@@ -92,16 +92,16 @@ hermes auth add xai-oauth --manual-paste
 hermes model --manual-paste
 ```
 
-如需完整的操作指南，请参阅[通过 SSH/远程主机进行 OAuth 认证](./oauth-over-ssh.md#browser-only-remote-cloud-shell--codespaces--ec2-instance-connect)。此版本还修复了 [#26923](https://github.com/NousResearch/hermes-agent/issues/26923) 中的回归问题。
+如需完整的操作指南，请参阅[通过 SSH/远程主机进行 OAuth 认证](./oauth-over-ssh.md#browser-only-remote-cloud-shell--codespaces--ec2-instance-connect)。此修复针对问题[#26923](https://github.com/NousResearch/hermes-agent/issues/26923)进行了回归测试。
 
-如果授权页面直接在页面上显示授权码（这是 xAI 在基于浏览器的控制台中的当前行为），而非跳转至您的 `127.0.0.1:56121/callback` 地址，请在“回调地址：”输入框中仅粘贴**纯代码值**——Hermes 可以接受完整的 URL、仅包含 `?code=...&state=...` 的查询片段，或是纯代码形式，三者均可互换使用。
+如果授权页面直接在页面上显示授权码（这是 xAI 在基于浏览器的控制台中的当前行为），而非跳转至您的 `127.0.0.1:56121/callback` 地址，请仅在“回调 URL:” 输入框中粘贴**纯代码值**——Hermes 可以接受完整的 URL、仅包含 `?code=...&state=...` 的查询片段，或单纯的代码值，三者均可互换使用。
 
-## 登录流程说明
+## 登录流程
 
 1. Hermes 会打开您的浏览器，导航至 `accounts.x.ai`。
-2. 您进行登录（或确认现有会话）并授权访问。
+2. 您登录（或确认现有会话）并批准访问权限。
 3. xAI 会将用户重定向回 Hermes，相应的令牌会被保存到 `~/.hermes/auth.json` 文件中。
-4. 从那时起，Hermes 会在后台自动刷新访问令牌——只要您没有执行 `hermes auth remove xai-oauth` 命令或在 xAI 账户设置中撤销授权，您的账户就会保持登录状态。
+4. 从那时起，Hermes 会在后台自动刷新访问令牌——除非您执行 `hermes auth logout xai-oauth` 命令或在其 xAI 账户设置中撤销访问权限，否则您将保持登录状态。
 
 ## 检查登录状态
 
@@ -109,7 +109,7 @@ hermes model --manual-paste
 hermes doctor
 ```
 
-`◆ Auth Providers` 部分会显示包括 `xai-oauth` 在内的所有认证提供程序的当前状态。
+`◆ Auth Providers`部分会显示包括`xai-oauth`在内的所有认证提供程序的当前状态。
 
 ```bash
 hermes model
