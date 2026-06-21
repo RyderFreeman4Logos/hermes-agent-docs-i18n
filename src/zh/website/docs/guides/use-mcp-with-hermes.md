@@ -264,7 +264,58 @@ Review the project structure and identify where configuration lives.
 Check the local git state and summarize what changed recently.
 ```
 
-### 模式2：GitHub 分类处理助手
+### 模式2：结合Open Scaffold的仓库原生工作记录
+
+当您希望Hermes读取仓库中的持久化AI工作记录——包括任务信息、计划安排、证据备注、交接包以及审核/关卡结果时，可使用[Open Scaffold](https://github.com/graphanov/open-scaffold)。Hermes仍作为智能体存在，而Open Scaffold则负责存储本地仓库的记录。
+
+为某个已使用该框架的仓库添加服务器：
+
+```bash
+hermes mcp add open_scaffold --command npx --args -y open-scaffold@latest mcp serve --repo /absolute/path/to/repo
+hermes mcp test open_scaffold
+```
+
+请确保暴露的接口为只读模式。在 `hermes mcp add` 的提示符中选择 `select` 选项，或之后直接编辑 `config.yaml` 文件即可：
+
+```yaml
+mcp_servers:
+  open_scaffold:
+    command: "npx"
+    args: ["-y", "open-scaffold@latest", "mcp", "serve", "--repo", "/absolute/path/to/repo"]
+    tools:
+      include:
+        - list_plans
+        - get_plan
+        - get_mission
+        - list_evidence
+        - get_evidence
+        - get_status
+        - search_plans
+        - list_amendments
+        - get_handoff
+        - analyze_loop
+        - gate_loop
+      prompts: false
+```
+
+优质提示词：
+
+```text
+Use the Open Scaffold MCP tools to compile the current handoff packet and tell me the next legal action.
+```
+
+```text
+Inspect the active plans and evidence notes, then say whether this repo is ready for human review or needs another attempt.
+```
+
+边界说明：
+
+- Open Scaffold MCP 默认为本地优先且仅支持读取操作。
+- 其写入工具要求在启动服务器时使用 `--allow-write` 参数；除非您明确希望让 Hermes 修改 `.osc` 文件，否则请勿启用该选项。
+- Open Scaffold 支持记录与门控功能，但不会授权 Hermes 执行合并、发布、部署或生成运行时环境等操作。
+- 若需确保工具架构的稳定性，请指定 `open-scaffold@<版本号>` 而非 `@latest`。
+
+### 模式 3：GitHub 分类处理助手
 
 ```yaml
 mcp_servers:
@@ -279,7 +330,7 @@ mcp_servers:
       resources: false
 ```
 
-优秀的提示词：
+优质提示词：
 
 ```text
 List open issues about MCP, cluster them by theme, and draft a high-quality issue for the most common bug.
@@ -289,7 +340,7 @@ List open issues about MCP, cluster them by theme, and draft a high-quality issu
 Search the repo for uses of _discover_and_register_server and explain how MCP tools are registered.
 ```
 
-### 模式 3：内部 API 助手
+### 模式4：内部API助手
 
 ```yaml
 mcp_servers:
