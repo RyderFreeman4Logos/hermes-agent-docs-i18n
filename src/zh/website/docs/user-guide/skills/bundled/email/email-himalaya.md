@@ -17,7 +17,7 @@ Himalaya CLI：通过终端操作 IMAP/SMTP 邮件。
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/email/himalaya` |
 | 版本 | `1.1.0` |
-| 开发者 | 社区贡献 |
+| 开发者 | 社区 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Email`、`IMAP`、`SMTP`、`CLI`、`Communication` |
@@ -25,14 +25,16 @@ Himalaya CLI：通过终端操作 IMAP/SMTP 邮件。
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，代理程序会将此内容视为操作指令。
 :::
 
 # Himalaya 邮件 CLI
 
 Himalaya 是一款 CLI 邮件客户端，允许您通过 IMAP、SMTP、Notmuch 或 Sendmail 后端在终端中管理邮件。
 
-## 参考文档
+该技能与 Hermes 邮件网关适配器是独立的。网关适配器用于让用户向代理发送邮件，且使用 Hermes 内置的 IMAP/SMTP 适配器；而该技能则允许代理通过终端工具操作邮箱，需要外部安装 `himalaya` CLI。
+
+## 参考资料
 
 - `references/configuration.md`（配置文件设置 + IMAP/SMTP 认证）
 - `references/message-composition.md`（用于编写邮件的 MML 语法）
@@ -43,7 +45,7 @@ Himalaya 是一款 CLI 邮件客户端，允许您通过 IMAP、SMTP、Notmuch �
 2. 在 `~/.config/himalaya/config.toml` 中存在配置文件
 3. 已配置 IMAP/SMTP 凭据（密码将安全存储）
 
-### 安装方式
+### 安装方法
 
 ```bash
 # Pre-built binary (Linux/macOS — recommended)
@@ -217,13 +219,13 @@ himalaya message write -H "To:recipient@example.com" -H "Subject:Test" "Message 
 移动到文件夹：
 
 ```bash
-himalaya message move 42 "Archive"
+himalaya message move "Archive" 42
 ```
 
 复制到文件夹：
 
 ```bash
-himalaya message copy 42 "Important"
+himalaya message copy "Important" 42
 ```
 
 ### 删除邮件
@@ -271,7 +273,7 @@ himalaya attachment download 42
 保存到指定目录：
 
 ```bash
-himalaya attachment download 42 --dir ~/Downloads
+himalaya attachment download 42 --downloads-dir ~/Downloads
 ```
 
 ## 输出格式
