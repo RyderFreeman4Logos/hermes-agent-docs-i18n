@@ -303,7 +303,7 @@ hermes chat --provider novita --model moonshotai/kimi-k2.5
 hermes chat --provider novita-ai --model deepseek/deepseek-v3-0324
 ```
 
-或者可在 `config.yaml` 中将其永久设置：
+或者直接在 `config.yaml` 中永久设置该值：
 ```yaml
 model:
   provider: "novita"
@@ -451,7 +451,7 @@ hermes chat --provider nvidia --model nvidia/nemotron-3-super-120b-a12b
 NVIDIA_BASE_URL=http://localhost:8000/v1 hermes chat --provider nvidia --model nvidia/nemotron-3-super-120b-a12b
 ```
 
-或者直接在 `config.yaml` 中将其永久设置：
+或者直接在 `config.yaml` 中永久设置该值：
 ```yaml
 model:
   provider: "nvidia"
@@ -473,7 +473,7 @@ hermes chat --provider gmi --model deepseek-ai/DeepSeek-V3.2
 # Requires: GMI_API_KEY in ~/.hermes/.env
 ```
 
-或者可在 `config.yaml` 中将其永久设置：
+或者直接在 `config.yaml` 中永久设置该值：
 ```yaml
 model:
   provider: "gmi"
@@ -762,7 +762,7 @@ hermes model
 # Enter model name: meta-llama/Llama-3.1-70B-Instruct
 ```
 
-**上下文长度：** vLLM 默认会读取模型中的 `max_position_embeddings` 参数值。如果该数值超过了 GPU 的内存容量，程序将会报错，并要求用户将 `--max-model-len` 的数值设置得更低。您也可以使用 `--max-model-len auto` 选项，让系统自动检测并确定合适的最大长度。若希望将更多上下文加载到 VRAM 中，可设置 `--gpu-memory-utilization 0.95`（默认值为 0.9）。
+**上下文长度：** vLLM 默认会读取模型中的 `max_position_embeddings` 参数值。如果该数值超过了 GPU 的内存容量，系统将会报错，并要求用户将 `--max-model-len` 的数值设置得更小。您也可以使用 `--max-model-len auto` 选项，让系统自动判定适合的最大长度。若希望将更多上下文加载到 VRAM 中，可设置 `--gpu-memory-utilization 0.95`（默认值为 0.9）。
 
 **调用工具时需要指定特定参数：**
 
@@ -773,8 +773,10 @@ hermes model
 
 支持的解析器包括：`hermes`（适用于 Qwen 2.5、Hermes 2/3）、`llama3_json`（适用于 Llama 3.x）、`mistral`、`deepseek_v3`、`deepseek_v31`、`xlam`、`pythonic`。若未指定这些参数，工具调用功能将无法正常工作——模型只会以文本形式输出工具调用指令。
 
+**Qwen 推理解析器：** 当兼容 OpenAI 的服务器返回结构化的推理元数据（如 `reasoning`、`reasoning_content` 以及流式推理增量数据）时，Hermes 会保留这些数据。这类元数据被视为推理/思考过程的相关记录，而非替代助手最终展示的答案。对于通过 vLLM 提供服务的 Qwen 推理模型，请确保最终呈现给用户的响应内容仍包含在 `content` 中。如果在您的部署环境中使用 `--reasoning-parser qwen3` 后 `content` 为空，要么禁用该解析器，要么通过 `extra_body` 参数传递服务器支持的选项，例如 `chat_template_kwargs.enable_thinking: false`。
+
 :::提示
-vLLM 支持使用人类易读的尺寸单位：`--max-model-len 64k`（小写 k 表示 1000，大写 K 表示 1024）。
+vLLM 支持人类可读的大小表示方式：`--max-model-len 64k`（小写 k 表示 1000，大写 K 表示 1024）。
 :::
 
 ---
@@ -1245,6 +1247,14 @@ custom_providers:
 extra_body:
   chat_template_kwargs:
     enable_thinking: true
+```
+
+对于由 vLLM 提供支持的 Qwen 推理模型，当推理解析器将所有生成的文本分离到推理字段中，并使助手的 `content` 字段保持为空时，即可使用相同的机制来禁用思考功能。
+
+```yaml
+extra_body:
+  chat_template_kwargs:
+    enable_thinking: false
 ```
 
 现在，“Hermes 模型”→“自定义端点”向导会明确要求用户输入 `api_mode` 值，并将该值保存到 `config.yaml` 文件中。如果该字段未被填写，系统仍会以 URL 自动检测作为备用方案（例如，以 `/anthropic` 开头的路径会被识别为 `anthropic_messages` 类型）。
