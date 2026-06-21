@@ -77,21 +77,21 @@ delegation:
   api_key: ${DELEGATION_KEY}
 ```
 
-单个值中可包含多个引用，格式如下：`url: "${HOST}:${PORT}"`。若被引用的变量未设置，则该占位符将保持原样（例如 `${UNDEFINED_VAR}` 仍为原始形式）。仅支持 `${VAR}` 这种语法——单独的 `$VAR` 格式不会被解析。
+单个值中可包含多个引用，格式如下：`url: "${HOST}:${PORT}"`。若引用的变量未被设置，则该占位符将保持原样（例如 `${UNDEFINED_VAR}` 仍为原格式）。仅支持 `${VAR}` 这种语法——单独的 `$VAR` 格式不会被解析。
 
-关于 AI 提供商的配置（包括 OpenRouter、Anthropic、Copilot、自定义端点、自托管大语言模型以及备用模型等），请参阅 [AI 提供商](/integrations/providers) 部分。
+关于 AI 提供商的配置（如 OpenRouter、Anthropic、Copilot、自定义端点、自托管大型语言模型、备用模型等），请参阅 [AI 提供商](/integrations/providers)。
 
 ### 提供商超时设置
 
-您可以为整个提供商设置全局请求超时时间，即 `providers.<id>.request_timeout_seconds`；同时也可为特定模型设置单独的超时值，即 `providers.<id>.models.<model>.timeout_seconds`。此设置适用于所有传输方式下的主轮询客户端（包括 OpenAI-wire、原生 Anthropic 接口及兼容 Anthropic 的接口）、备用请求链、凭据更换后的模型重建过程，以及（针对 OpenAI-wire）每个请求的超时参数——因此配置的值会优先于旧的 `HERMES_API_TIMEOUT` 环境变量。
+您可以为整个提供商设置请求超时时间，即 `providers.<id>.request_timeout_seconds`；同时也可为特定模型设置独立的超时值，即 `providers.<id>.models.<model>.timeout_seconds`。该设置适用于所有传输方式下的主轮次客户端（包括 OpenAI-wire、原生 Anthropic 及兼容 Anthropic 的版本）、备用请求链、凭证更换后的重新构建过程，以及（针对 OpenAI-wire）每个请求的超时参数——因此配置的值会优先于旧的 `HERMES_API_TIMEOUT` 环境变量。
 
-此外，您还可以为非流式旧请求检测器设置超时时间，即 `providers.<id>.stale_timeout_seconds`；并为特定模型设置单独的超时值，即 `providers.<id>.models.<model>.stale_timeout_seconds`。此设置同样会优先于旧的 `HERMES_API_CALL_STALE_TIMEOUT` 环境变量。
+此外，您还可以为非流式过期调用检测器设置超时时间，即 `providers.<id>.stale_timeout_seconds`；并为特定模型设置独立值，即 `providers.<id>.models.<model>.stale_timeout_seconds`。此设置同样会覆盖旧的 `HERMES_API_CALL_STALE_TIMEOUT` 环境变量。
 
-若未对这些参数进行配置，则会沿用旧有的默认值（`HERMES_API_TIMEOUT=1800` 秒，`HERMES_API_CALL_STALE_TIMEOUT=300` 秒，原生 Anthropic 为 900 秒左右）。目前 AWS Bedrock 并不支持此功能（无论是 `bedrock_converse` 还是 AnthropicBedrock SDK，均使用带有独立超时配置的 boto3 库）。相关示例可见 [`cli-config.yaml.example`](https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example) 文件中的注释说明。
+若不设置这些参数，则会沿用旧有的默认值（`HERMES_API_TIMEOUT=1800`、`HERMES_API_CALL_STALE_TIMEOUT=90`，以及原生 Anthropic 的 900 秒）。对于本地端点，若未显式配置，非流式过期检测器将自动关闭；而对于处理超大上下文的情况，该检测器的阈值可相应提高。目前 AWS Bedrock 并不支持此功能（无论是 `bedrock_converse` 还是 AnthropicBedrock SDK，均使用带有独立超时配置的 boto3）。具体示例请参见 [`cli-config.yaml.example`](https://github.com/NousResearch/hermes-agent/blob/main/cli-config.yaml.example) 文件中的注释说明。
 
 ## 更新行为
 
-`hermes update` 的相关设置位于 `config.yaml` 文件的 `updates` 部分：
+`hermes update` 相关设置位于 `config.yaml` 文件的 `updates` 部分：
 
 ```yaml
 updates:
@@ -977,6 +977,13 @@ auxiliary:
   # Context compression timeout (separate from compression.* config)
   compression:
     timeout: 120               # seconds — compression summarizes long conversations, needs more time
+    # fallback_chain:           # Optional — providers to try on rate-limit / connectivity failure
+    #   - provider: nous
+    #     model: deepseek/deepseek-chat
+    #   - provider: openrouter
+    #     model: google/gemini-2.5-flash
+    #     base_url: ""
+    #     api_key: ""
 
   # Auto-generated session titles. Empty language follows the conversation;
   # set e.g. "English" or "Japanese" to pin titles to one language.
@@ -1018,16 +1025,44 @@ auxiliary:
 ```
 
 :::tip
-每个辅助任务都拥有可配置的`timeout`参数（单位：秒）。默认值分别为：视觉处理任务120秒，网页提取任务360秒，审批任务30秒，压缩任务120秒。如果使用的本地模型处理速度较慢，建议适当增加这些时间值。此外，视觉处理任务还包含一个独立的`download_timeout`参数（默认30秒），用于控制HTTP图像下载过程；在网络连接较慢或使用自托管图像服务器时，也应提高该值。
+每个辅助任务都拥有可配置的`timeout`参数（单位：秒）。默认值分别为：视觉处理任务120秒，网页提取任务360秒，审批任务30秒，压缩任务120秒。如果使用性能较慢的本地模型执行辅助任务，建议适当增加这些时间值。此外，视觉处理任务还包含一个独立的`download_timeout`参数（默认30秒），用于控制HTTP图像下载的速度；在网络连接缓慢或使用自托管图像服务器时，也应提高该数值。
 :::
 
 :::info
-上下文压缩功能拥有专门的`compression:`模块用于设置阈值，同时还设有`auxiliary.compression:`模块用于配置模型及提供方相关参数——详情请参阅上文[上下文压缩](#context-compression)部分。主回退链则通过顶级的`fallback_providers:`列表来实现回退机制——更多信息请参见[回退提供方](/integrations/providers#fallback-providers)。这三种功能均遵循相同的提供方/模型/base_url格式。
+上下文压缩功能拥有专门的`compression:`模块用于设置阈值，同时还有`auxiliary.compression:`模块用于配置模型及服务提供商的相关参数——详情请参阅上文[上下文压缩](#context-compression)部分。主备用链则通过顶级的`fallback_providers:`列表来实现切换——相关内容可参见[备用服务提供商](/integrations/providers#fallback-providers)。这三种机制均遵循相同的服务提供商/模型/base_url格式。
 :::
 
-### 辅助任务的OpenRouter路由与Pareto Code路由
+### 辅助任务的逐任务备用链配置
 
-当某个辅助任务通过显式指定或因主智能体运行在OpenRouter上而自动采用`provider: "main"`时，主智能体的`provider_routing`及`openrouter.min_coding_score`设置**不会被传递**——按设计，每个辅助任务都是独立运行的。若要为特定辅助任务设置OpenRouter提供方偏好，或使用[Pareto Code路由器](/integrations/providers#openrouter-pareto-code-router)，可通过`extra_body`参数针对该任务进行单独配置：
+每个辅助任务均可可选地定义`fallback_chain`——即一个由服务提供商/模型条目构成的列表。当主备用提供商因速率限制、连接问题或支付限制而无法正常工作时，Hermes会依次尝试使用列表中的这些选项：
+
+```yaml
+auxiliary:
+  compression:
+    provider: openrouter
+    model: openai/gpt-4o-mini
+    fallback_chain:
+      - provider: nous
+        model: deepseek/deepseek-chat
+      - provider: openrouter
+        model: google/gemini-2.5-flash
+```
+
+当主辅助提供方（如 `openrouter` / `openai/gpt-4o-mini`）返回速率限制、连接超时或需要付费的错误时，Hermes会按顺序遍历`fallback_chain`中的配置项。它会跳过与已失败提供方相同的配置项，依次尝试剩余的配置项，直到某个配置成功或遍历完所有选项为止。如果所有备用方案都失败，Hermes会最终回退到主智能体模型作为最后的安全保障。
+
+每个配置项都支持与普通辅助任务配置相同的三个参数：
+
+| 键值 | 描述 |
+|-----|-------------|
+| `provider` | 提供方名称（如 `nous`、`openrouter`、`anthropic`、`gemini`、`main` 等） |
+| `model` | 对应提供方的模型名称 |
+| `base_url` | （可选）自定义的兼容 OpenAI 的接口地址 |
+
+`fallback_chain` 功能适用于所有类型的辅助任务，包括 `compression`、`vision`、`web_extract`、`approval`、`skills_hub`、`mcp` 等。
+
+### 辅助任务的 OpenRouter 路由与 Pareto Code 设置
+
+当某个辅助任务通过显式指定或因主智能体使用 OpenRouter 而自动切换到 `provider: "main"` 时，主智能体的 `provider_routing` 和 `openrouter.min_coding_score` 设置**不会被传递**——这是出于设计考虑，因为每个辅助任务都是独立运行的。若要为特定辅助任务设置 OpenRouter 提供方偏好，或使用[Pareto Code 路由器](/integrations/providers#openrouter-pareto-code-router)，可通过 `extra_body` 参数为该任务单独配置这些设置：
 
 ```yaml
 auxiliary:
