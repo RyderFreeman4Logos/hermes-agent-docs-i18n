@@ -197,20 +197,20 @@ EOF
 himalaya message write -H "To:recipient@example.com" -H "Subject:Test" "Message body here"
 ```
 
-注意：若不通过管道传递输入内容来使用 `himalaya message write` 命令，它会直接打开 `$EDITOR` 编辑器。虽然结合 `pty=true` 和后台模式也能实现相同功能，但使用管道传输数据更为简单且可靠。
+注意：若不使用管道输入命令 `himalaya message write`，则会打开 `$EDITOR` 编辑器。虽然在开启 `pty=true` 且处于后台模式时该方式也能使用，但通过管道传输数据更为简单且可靠。
 
 ### 移动/复制邮件
 
-移动到文件夹：
+将邮件移动到指定文件夹（格式为：目标文件夹路径，后跟邮件编号）：
 
 ```bash
-himalaya message move 42 "Archive"
+himalaya message move "Archive" 42
 ```
 
-复制到文件夹：
+复制到文件夹（先输入目标文件夹路径，再输入消息编号）：
 
 ```bash
-himalaya message copy 42 "Important"
+himalaya message copy "Important" 42
 ```
 
 ### 删除邮件
@@ -258,7 +258,7 @@ himalaya attachment download 42
 保存到指定目录：
 
 ```bash
-himalaya attachment download 42 --dir ~/Downloads
+himalaya attachment download 42 --downloads-dir ~/Downloads
 ```
 
 ## 输出格式
