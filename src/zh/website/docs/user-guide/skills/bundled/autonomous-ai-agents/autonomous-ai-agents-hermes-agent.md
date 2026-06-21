@@ -347,7 +347,7 @@ hermes uninstall            Uninstall Hermes
 
 ```
 ~/.hermes/config.yaml       Main configuration
-~/.hermes/.env              API keys and secrets
+~/.hermes/.env              API keys and secrets (under $HERMES_HOME if set)
 $HERMES_HOME/skills/        Installed skills
 ~/.hermes/sessions/         Gateway routing index, request dumps, *.jsonl transcripts (and optional per-session JSON snapshots when sessions.write_json_snapshots: true)
 ~/.hermes/state.db          Canonical session store (SQLite + FTS5)
@@ -362,47 +362,47 @@ $HERMES_HOME/skills/        Installed skills
 
 可通过 `hermes config edit` 或 `hermes config set section.key value` 命令进行编辑。
 
-| 章节 | 可配置键值 |
+| 章节 | 可配置选项 |
 |------|------------|
-| `model` | `default`, `provider`, `base_url`, `api_key`, `context_length` |
-| `agent` | `max_turns`（90），`tool_use_enforcement` |
-| `terminal` | `backend`（local/docker/ssh/modal），`cwd`，`timeout`（180） |
-| `compression` | `enabled`，`threshold`（0.50），`target_ratio`（0.20） |
-| `display` | `skin`，`tool_progress`，`show_reasoning`，`show_cost` |
-| `stt` | `enabled`，`provider`（local/groq/openai/mistral） |
+| `model` | `default`、`provider`、`base_url`、`api_key`、`context_length`（可手动覆盖；设为 `""` 即让系统自动从服务器的 `/v1/models` 获取） |
+| `agent` | `max_turns`（90）、`tool_use_enforcement` |
+| `terminal` | `backend`（local/docker/ssh/modal）、`cwd`、`timeout`（180） |
+| `compression` | `enabled`、`threshold`（0.50）、`target_ratio`（0.20） |
+| `display` | `skin`、`tool_progress`、`show_reasoning`、`show_cost` |
+| `stt` | `enabled`、`provider`（local/groq/openai/mistral） |
 | `tts` | `provider`（edge/elevenlabs/openai/minimax/mistral/neutts） |
-| `memory` | `memory_enabled`，`user_profile_enabled`，`provider` |
-| `security` | `tirith_enabled`，`website_blocklist` |
-| `delegation` | `model`，`provider`，`base_url`，`api_key`，`max_iterations`（50），`reasoning_effort` |
-| `checkpoints` | `enabled`，`max_snapshots`（50） |
+| `memory` | `memory_enabled`、`user_profile_enabled`、`provider` |
+| `security` | `tirith_enabled`、`website_blocklist` |
+| `delegation` | `model`、`provider`、`base_url`、`api_key`、`max_iterations`（50）、`reasoning_effort` |
+| `checkpoints` | `enabled`、`max_snapshots`（50） |
 
 完整配置参考：https://hermes-agent.nousresearch.com/docs/user-guide/configuration
 
 ### 提供商支持
 
-目前支持20多种供应商。可通过 `hermes model` 或 `hermes setup` 命令进行设置。
+目前支持 20 多种供应商。可通过 `hermes model` 或 `hermes setup` 命令进行设置。
 
 | 提供商 | 认证方式 | 对应环境变量 |
 |--------|----------|--------------|
-| OpenRouter | API密钥 | `OPENROUTER_API_KEY` |
-| Anthropic | API密钥 | `ANTHROPIC_API_KEY` |
-| Nous Portal | OAuth认证 | `hermes auth` |
-| OpenAI Codex | OAuth认证 | `hermes auth` |
+| OpenRouter | API 密钥 | `OPENROUTER_API_KEY` |
+| Anthropic | API 密钥 | `ANTHROPIC_API_KEY` |
+| Nous Portal | OAuth | `hermes auth` |
+| OpenAI Codex | OAuth | `hermes auth` |
 | GitHub Copilot | 令牌 | `COPILOT_GITHUB_TOKEN` |
-| Google Gemini | API密钥 | `GOOGLE_API_KEY` 或 `GEMINI_API_KEY` |
-| DeepSeek | API密钥 | `DEEPSEEK_API_KEY` |
-| xAI / Grok | API密钥 | `XAI_API_KEY` |
+| Google Gemini | API 密钥 | `GOOGLE_API_KEY` 或 `GEMINI_API_KEY` |
+| DeepSeek | API 密钥 | `DEEPSEEK_API_KEY` |
+| xAI / Grok | API 密钥 | `XAI_API_KEY` |
 | Hugging Face | 令牌 | `HF_TOKEN` |
-| Z.AI / GLM | API密钥 | `GLM_API_KEY` |
-| MiniMax | API密钥 | `MINIMAX_API_KEY` |
-| MiniMax CN | API密钥 | `MINIMAX_CN_API_KEY` |
-| Kimi / Moonshot | API密钥 | `KIMI_API_KEY` |
-| Alibaba / DashScope | API密钥 | `DASHSCOPE_API_KEY` |
-| Xiaomi MiMo | API密钥 | `XIAOMI_API_KEY` |
-| Kilo Code | API密钥 | `KILOCODE_API_KEY` |
-| OpenCode Zen | API密钥 | `OPENCODE_ZEN_API_KEY` |
-| OpenCode Go | API密钥 | `OPENCODE_GO_API_KEY` |
-| Qwen OAuth | OAuth认证 | `hermes auth add qwen-oauth` |
+| Z.AI / GLM | API 密钥 | `GLM_API_KEY` |
+| MiniMax | API 密钥 | `MINIMAX_API_KEY` |
+| MiniMax CN | API 密钥 | `MINIMAX_CN_API_KEY` |
+| Kimi / Moonshot | API 密钥 | `KIMI_API_KEY` |
+| Alibaba / DashScope | API 密钥 | `DASHSCOPE_API_KEY` |
+| Xiaomi MiMo | API 密钥 | `XIAOMI_API_KEY` |
+| Kilo Code | API 密钥 | `KILOCODE_API_KEY` |
+| OpenCode Zen | API 密钥 | `OPENCODE_ZEN_API_KEY` |
+| OpenCode Go | API 密钥 | `OPENCODE_GO_API_KEY` |
+| Qwen OAuth | OAuth | `hermes auth add qwen-oauth` |
 | 自定义端点 | 配置文件 | 在 config.yaml 中设置 `model.base_url` 和 `model.api_key` |
 | GitHub Copilot ACP | 外部工具 | `COPILOT_CLI_PATH` 或 Copilot CLI |
 
@@ -410,18 +410,18 @@ $HERMES_HOME/skills/        Installed skills
 
 ### 工具集
 
-可通过 `hermes tools`（交互式命令）或 `hermes tools enable/disable NAME` 命令启用/禁用工具集。
+可通过 `hermes tools`（交互式命令）或 `hermes tools enable/disable NAME` 命令来启用/禁用工具集。
 
 | 工具集 | 功能说明 |
 |--------|----------|
 | `web` | 网页搜索与内容提取 |
 | `search` | 仅支持网页搜索（属于 `web` 的子集） |
 | `browser` | 浏览器自动化（支持 Browserbase、Camofox 或本地 Chromium） |
-| `terminal` | Shell命令执行与进程管理 |
+| `terminal` | Shell 命令执行与进程管理 |
 | `file` | 文件的读取、写入、搜索与修改 |
 | `code_execution` | 沙箱化 Python 代码执行 |
 | `vision` | 图像分析 |
-| `image_gen` | AI图像生成 |
+| `image_gen` | AI 图像生成 |
 | `video` | 视频分析与生成 |
 | `tts` | 文本转语音 |
 | `skills` | 技能浏览与管理工作 |
@@ -432,9 +432,9 @@ $HERMES_HOME/skills/        Installed skills
 | `clarify` | 向用户提问以获取更多信息 |
 | `messaging` | 跨平台消息发送 |
 | `todo` | 会话内任务规划与跟踪 |
-| `kanban` | 多代理工作队列工具（仅对工作者开放） |
+| `kanban` | 多代理工作队列工具（仅对工作节点开放） |
 | `debugging` | 额外的调试工具（默认关闭） |
-| `safe` | 为受限会话设计的简易低风险工具集 |
+| `safe` | 为受限会话提供的简易、低风险工具集 |
 | `spotify` | Spotify 播放与播放列表控制 |
 | `homeassistant` | 智能家居控制（默认关闭） |
 | `discord` | Discord 集成工具 |
@@ -442,22 +442,22 @@ $HERMES_HOME/skills/        Installed skills
 | `feishu_doc` | Feishu（Lark）文档处理工具 |
 | `feishu_drive` | Feishu（Lark）云盘工具 |
 | `yuanbao` | Yuanbao 集成工具 |
-| `rl` | 强化学习工具（默认关闭） |
-| `moa` | 混合代理模型（默认关闭） |
+| `rl` | 强化学习相关工具（默认关闭） |
+| `moa` | 混合代理技术（默认关闭） |
 
 所有工具集的完整列表存储在 `toolsets.py` 文件中的 `TOOLSETS` 字典中；`_HERMES_CORE_TOOLS` 是大多数平台默认使用的工具组合。
 
-工具更改需通过重启会话（执行 `/reset`）才能生效。为保留提示词缓存，这些更改不会在对话进行过程中即时应用。
+对工具的更改需通过 `/reset` 命令创建新会话后才会生效。为保留提示词缓存，这些更改不会在对话进行过程中立即应用。
 
 ---
 
 ## 安全与隐私相关开关
 
-介绍一些常见的“为何Hermes会对我的输出/工具调用/命令执行此类操作？”类开关，以及对应的修改命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要重启会话（在聊天界面执行 `/reset` 或重新启动 `hermes`）才能生效。
+针对“为何 Hermes 会对我的输出/工具调用/命令执行某些操作？”这类常见疑问的开关，以及对应的修改命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要通过创建新会话（在聊天中输入 `/reset` 或重新启动 `hermes`）才能生效。
 
 ### 工具输出中的敏感信息遮蔽
 
-敏感信息遮蔽功能**默认处于开启状态**——工具输出（包括终端标准输出、`read_file` 操作结果、网页内容、子代理总结等）在进入对话上下文和日志之前，会自动扫描其中可能包含的API密钥、令牌及敏感信息。日常使用建议保持该功能开启：
+敏感信息遮蔽功能**默认处于开启状态**——工具输出（终端标准输出、`read_file` 操作结果、网页内容、子代理总结等）在进入对话上下文和日志之前，会自动检测其中是否包含类似 API 密钥、令牌和敏感信息的字符串。常规使用情况下建议保持该功能开启：
 
 ```bash
 hermes config set security.redact_secrets true       # keep enabled globally
@@ -774,35 +774,49 @@ hermes config set auxiliary.vision.provider <your_provider>
 hermes config set auxiliary.vision.model <model_name>
 ```
 
-## 如何查找相关内容
+### 上下文窗口大小显示错误
+
+如果 Hermes 报告的上下文窗口大小小于本地模型所支持的容量
+（例如，当 llama-server 的参数为 `-c 262144` 时，Hermes 却显示为 128k）：
+
+**请检查是否已显式设置 `model.context_length`。** Hermes 会按照优先级从高到低使用多源确定方式：
+
+1. config.yaml 中的 `model.context_length` —— **一旦设置该值，将禁止自动检测**
+2. 每个模型的自定义提供程序设置
+3. 持久缓存（重启后依然有效）
+4. 服务器上的 `/v1/models` 接口 —— 在上述选项均未覆盖时自动检测
+
+**解决方法：** 清除该显式设置，让系统恢复自动检测功能。
+
+---
+
+## 各项功能查找位置
 
 | 需要查找的内容 | 查找位置 |
 |----------------|----------|
 | 配置选项 | `hermes config edit` 或 [配置文档](https://hermes-agent.nousresearch.com/docs/user-guide/configuration) |
-| 可用工具 | `hermes tools list` 或 [工具参考手册](https://hermes-agent.nousresearch.com/docs/reference/tools-reference) |
-| 斜杠命令 | 会话中输入 `/help` 或 [斜杠命令参考手册](https://hermes-agent.nousresearch.com/docs/reference/slash-commands) |
+| 可用工具 | `hermes tools list` 或 [工具参考文档](https://hermes-agent.nousresearch.com/docs/reference/tools-reference) |
+| 斜杠命令 | 会话中的 `/help` 或 [斜杠命令参考文档](https://hermes-agent.nousresearch.com/docs/reference/slash-commands) |
 | 技能目录 | `hermes skills browse` 或 [技能目录](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) |
-| 提供商配置 | `hermes model` 或 [提供商指南](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
+| 提供程序配置 | `hermes model` 或 [提供程序指南](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
 | 平台配置 | `hermes gateway setup` 或 [消息传递文档](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/) |
-| MCP服务器 | `hermes mcp list` 或 [MCP指南](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) |
+| MCP 服务器 | `hermes mcp list` 或 [MCP 指南](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) |
 | 配置文件 | `hermes profile list` 或 [配置文件文档](https://hermes-agent.nousresearch.com/docs/user-guide/profiles) |
 | 定时任务 | `hermes cron list` 或 [定时任务文档](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) |
 | 内存状态 | `hermes memory status` 或 [内存相关文档](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) |
-| 环境变量 | `hermes config env-path` 或 [环境变量参考手册](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
-| CLI命令 | `hermes --help` 或 [CLI参考手册](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) |
+| 环境变量 | `hermes config env-path` 或 [环境变量参考文档](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
+| CLI 命令 | `hermes --help` 或 [CLI 参考文档](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) |
 | 网关日志 | `~/.hermes/logs/gateway.log` |
-| 会话文件 | `hermes sessions browse`（读取state.db文件） |
+| 会话文件 | `hermes sessions browse`（读取 state.db 文件） |
 | 源代码 | `~/.hermes/hermes-agent/` |
 
 ---
 
 ## 贡献者快速参考指南
 
-适用于偶尔参与贡献或提交PR的用户。完整的开发者文档请参见：https://hermes-agent.nousresearch.com/docs/developer-guide/
+专为偶尔参与贡献或提交 PR 的用户准备。完整开发者文档请参阅：https://hermes-agent.nousresearch.com/docs/developer-guide/
 
 ### 项目结构
-
-<!-- ascii-guard-ignore -->
 ```
 hermes-agent/
 ├── run_agent.py          # AIAgent — core conversation loop
@@ -823,7 +837,7 @@ hermes-agent/
 ├── tests/                # ~3000 pytest tests
 └── website/              # Docusaurus docs site
 ```
-配置文件：`~/.hermes/config.yaml`（用于设置参数），`~/.hermes/.env`（用于存储 API 密钥）。
+配置文件：`~/.hermes/config.yaml`（用于设置参数），`~/.hermes/.env`（用于存储 API 密钥）——若已设置 `$HERMES_HOME`，则这两个文件均位于该路径下。
 
 ### 添加工具（需 3 个文件）
 
@@ -910,7 +924,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 ### 扩展系统提示中的执行环境模块
 
-关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示以及针对不同终端后端的检测逻辑。具体规则如下：
+关于主机操作系统、用户主目录、当前工作目录、终端后端以及 shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示及针对不同终端后端的检测逻辑。具体规则如下：
 
 - **本地终端后端** → 输出主机信息（操作系统、`$
 
