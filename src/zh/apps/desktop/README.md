@@ -77,15 +77,15 @@ npm run dist:linux   # AppImage + deb + rpm
 npm run pack         # unpacked app under release/ (no installer)
 ```
 
-安装程序是手动构建并上传到 GitHub Releases 的。当环境中存在相应的凭证（macOS 为 `CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_*`，Windows 为 `WIN_CSC_*`）时，macOS/Windows 版本的签名与公证过程会自动完成。
+安装程序是手动构建并上传到 GitHub Releases 的。当环境中存在相应的凭据（macOS 为 `CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_*`，Windows 为 `WIN_CSC_*`）时，macOS/Windows 版本的签名与公证操作会自动完成。
 
 ### 工作原理
 
-打包后的应用程序仅包含 Electron 核心框架。首次启动时，它会将 Hermes Agent 运行时安装到 `HERMES_HOME` 目录中（即 macOS 系统的 `~/.hermes`，Windows 系统的 `%LOCALAPPDATA%\hermes`）——这一路径与 CLI 安装方式相同，因此两者可以互相替代。前端渲染层（位于 `src/` 目录中的 React 应用）通过标准的网关 API 与 `hermes dashboard` 后端进行通信，并直接复用内置的文本用户界面，而无需重新实现聊天功能。安装、后端连接以及自动更新相关的逻辑均存在于 `electron/main.cjs` 文件中。
+该打包应用包含了 Electron 框架以及基于原生 React 开发的聊天界面。首次启动时，它会将 Hermes Agent 运行时安装到 `HERMES_HOME` 目录中（即 macOS 系统的 `~/.hermes`，Windows 系统的 `%LOCALAPPDATA%\hermes`）——这一路径与 CLI 安装所使用的路径相同，因此两者可以互相替代。后端检测会首先优先查找 `HERMES_DESKTOP_HERMES_ROOT` 指定的路径，其次是已完成的管理式安装路径，接着是 `PATH` 环境变量中可找到的 `hermes` 命令（除非设置了 `HERMES_DESKTOP_IGNORE_EXISTING=1`），最后则是为打包工具或故障排查而设置的显式 `HERMES_DESKTOP_HERMES` 命令覆盖值。前端界面（位于 `src/` 目录中的 React 组件）通过 `tui_gateway`/dashboard API 与 `hermes dashboard` 后端进行通信，它复用已安装的 Agent 运行时，而非直接嵌入 `hermes --tui` 命令。与安装、后端检测及自动更新相关的逻辑均存在于 `electron/main.cjs` 文件中。
 
 ### 验证步骤
 
-在提交 Pull Request 之前请先运行此脚本（虽然代码检查工具可能会显示一些现有的警告，但脚本本身必须能正常退出）：
+在提交 Pull Request 之前请先运行此验证步骤（虽然代码检查工具可能会显示一些现有的警告，但程序本身应能正常退出）：
 
 ```bash
 npm run fix
