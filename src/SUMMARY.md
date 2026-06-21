@@ -1459,6 +1459,7 @@
 
 - [为 Hermes Agent 做贡献](zh/CONTRIBUTING.md)
 - [Hermes Agent 自三月起已支持“Routines”功能](zh/hermes-already-has-routines.md)
+- [Hermes Agent ☤](zh/README.es.md)
 - [Hermes Agent ☤](zh/README.md)
 - [Hermes Agent 安全策略](zh/SECURITY.md)
 - [.Plans]()
