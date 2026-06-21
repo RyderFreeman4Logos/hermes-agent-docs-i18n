@@ -212,22 +212,22 @@ refactor/description   # Code restructuring
 
 ### 提交之前
 
-1. **运行测试**：`pytest tests/ -v`
-2. **手动测试**：启动 `hermes` 并执行您修改过的代码路径
-3. **检查跨平台兼容性**：需考虑 macOS 及不同 Linux 发行版的情况
-4. **确保 PR 内容聚焦**：每个 PR 应仅包含一个逻辑变更
+1. **运行测试**：为确保与 CI 环境一致，请使用 `scripts/run_tests.sh`。仅在封装脚本不可用或您有意在封装脚本之外进行调试时，才直接使用 `python -m pytest ...`。
+2. **手动测试**：启动 `hermes` 并执行您修改过的代码路径。
+3. **检查跨平台兼容性**：需考虑 macOS、Linux、WSL2 以及原生 Windows 环境。如果您修改了文件 I/O、进程管理、终端处理、子进程或信号相关功能，请运行 `scripts/check-windows-footguns.py`。
+4. **确保 PR 内容聚焦**：每个 PR 应仅包含一个逻辑上的变更。
 
 ### PR 描述
 
 需包含以下内容：
-- **具体更改了什么**以及**原因**
-- **如何测试**该更改
-- **在哪些平台**上进行了测试
-- 引用任何相关的 issue
+- **具体修改了什么**以及**原因**
+- **如何测试**这些更改
+- 您在哪些**平台上**进行了测试
+- 引用任何相关的 Issue
 
 ### 提交信息
 
-我们采用 [Conventional Commits](https://www.conventionalcommits.org/) 标准：
+我们遵循 [Conventional Commits](https://www.conventionalcommits.org/) 标准：
 
 ```
 <type>(<scope>): <description>
