@@ -11,104 +11,101 @@ Hermes 会从进程环境读取环境变量，而对于用户管理的机密信�
 ## 大语言模型提供方| 变量名 | 描述 |
 |--------|------|
 | `OPENROUTER_API_KEY` | OpenRouter API密钥（为提升灵活性推荐使用） |
-| `OPENROUTER_BASE_URL` | 覆盖与OpenRouter兼容的基地址 |
+| `OPENROUTER_BASE_URL` | 覆盖与OpenRouter兼容的基URL |
 | `HERMES_OPENROUTER_CACHE` | 启用OpenRouter响应缓存（值为`1`/`true`/`yes`/`on`）。会覆盖`config.yaml`中的`openrouter.response_cache`设置。详情请参阅[响应缓存](https://openrouter.ai/docs/guides/features/response-caching)。 |
 | `HERMES_OPENROUTER_CACHE_TTL` | 缓存有效期，以秒为单位（范围：1-86400）。会覆盖`config.yaml`中的`openrouter.response_cache_ttl`设置。 |
-| `NOUS_BASE_URL` | 覆盖Nous Portal的基地址（极少需要，仅用于开发/测试） |
-| `NOUS_INFERENCE_BASE_URL` | 直接覆盖Nous推理接口地址 |
-| `OPENAI_API_KEY` | 用于自定义OpenAI兼容接口的API密钥（需与`OPENAI_BASE_URL`配合使用） |
-| `OPENAI_BASE_URL` | 自定义接口的基地址（如VLLM、SGLang等） |
-| `LM_API_KEY` | LM Studio（`lmstudio`提供方）的API密钥。通常用于本地服务器场景 |
-| `LM_BASE_URL` | LM Studio的基地址（默认值：`http://localhost:1234/v1`） |
-| `COPILOT_GITHUB_TOKEN` | Copilot API对应的GitHub令牌——优先级最高（支持OAuth格式的`gho_*`令牌或细粒度PAT格式的`github_pat_*`令牌；传统的PAT格式`ghp_*`不受支持） |
+| `NOUS_BASE_URL` | 覆盖Nous Portal的基URL（极少需要，仅用于开发/测试） |
+| `NOUS_INFERENCE_BASE_URL` | 直接覆盖Nous推理接口的地址 |
+| `OPENAI_API_KEY` | 用于自定义OpenAI兼容接口的API密钥（需与`OPENAI_BASE_URL`一起使用） |
+| `OPENAI_BASE_URL` | 自定义接口的基URL（适用于VLLM、SGLang等框架） |
+| `LM_API_KEY` | LM Studio（`lmstudio`提供者）的API密钥。通常用于本地服务器场景 |
+| `LM_BASE_URL` | LM Studio的基URL（默认值：`http://localhost:1234/v1`） |
+| `COPILOT_GITHUB_TOKEN` | Copilot API所需的GitHub令牌——优先级最高（支持OAuth类型的`gho_*`令牌或细粒度PAT类型的`github_pat_*`令牌；传统的PAT类型`ghp_*`不受支持） |
 | `GH_TOKEN` | GitHub令牌——Copilot的第二优先级令牌（同时也被`gh` CLI使用） |
 | `GITHUB_TOKEN` | GitHub令牌——Copilot的第三优先级令牌 |
 | `HERMES_COPILOT_ACP_COMMAND` | 覆盖Copilot ACP CLI二进制文件的路径（默认值：`copilot`） |
 | `COPILOT_CLI_PATH` | `HERMES_COPILOT_ACP_COMMAND`的别名 |
 | `HERMES_COPILOT_ACP_ARGS` | 覆盖Copilot ACP的参数（默认值：`--acp --stdio`） |
-| `COPILOT_ACP_BASE_URL` | 覆盖Copilot ACP的基地址 |
-| `COPILOT_API_BASE_URL` | 覆盖Copilot API的基地址（`copilot`提供方） |
-| `GLM_API_KEY` | z.ai / ZhipuAI GLM API密钥（[z.ai](https://z.ai)） |
+| `COPILOT_ACP_BASE_URL` | 覆盖Copilot ACP的基URL |
+| `COPILOT_API_BASE_URL` | 覆盖Copilot API的基URL（对应`copilot`提供者） |
+| `GLM_API_KEY` | z.ai / ZhipuAI GLM API密钥（平台地址：[z.ai](https://z.ai)） |
 | `ZAI_API_KEY` | `GLM_API_KEY`的别名 |
 | `Z_AI_API_KEY` | `GLM_API_KEY`的别名 |
-| `GLM_BASE_URL` | 覆盖z.ai的基地址（默认值：`https://api.z.ai/api/paas/v4`） |
-| `KIMI_API_KEY` | Kimi / Moonshot AI API密钥（[moonshot.ai](https://platform.moonshot.ai)） |
-| `KIMI_CODING_API_KEY` | `kimi-coding`提供方对应的别名密钥，可与`KIMI_API_KEY`同时使用 |
-| `KIMI_BASE_URL` | 覆盖Kimi的基地址（默认值：`https://api.moonshot.ai/v1`） |
-| `KIMI_CN_API_KEY` | Kimi / Moonshot中国区API密钥（[moonshot.cn](https://platform.moonshot.cn)） |
-| `ARCEEAI_API_KEY` | Arcee AI API密钥（[chat.arcee.ai](https://chat.arcee.ai/)） |
-| `ARCEE_BASE_URL` | 覆盖Arcee的基地址（默认值：`https://api.arcee.ai/api/v1`） |
-| `GMI_API_KEY` | GMI Cloud API密钥（[gmicloud.ai](https://www.gmicloud.ai/)） |
-| `GMI_BASE_URL` | 覆盖GMI Cloud的基地址（默认值：`https://api.gmi-serving.com/v1`） |
-| `MINIMAX_API_KEY` | MiniMax API密钥——全球端点地址（[minimax.io](https://www.minimax.io)）。**不适用于`minimax-oauth`**（该方式通过浏览器登录） |
-| `MINIMAX_BASE_URL` | 覆盖Minimax的基地址（默认值：`https://api.minimax.io/anthropic`——Hermes使用的是Minimax兼容Anthropic Messages的端点）。**不适用于`minimax-oauth`** |
-| `MINIMAX_CN_API_KEY` | MiniMax API密钥——中国区端点地址（[minimaxi.com](https://www.minimaxi.com)）。**不适用于`minimax-oauth`**（该方式通过浏览器登录） |
-| `MINIMAX_CN_BASE_URL` | 覆盖Minimax中国区的基地址（默认值：`https://api.minimaxi.com/anthropic`）。**不适用于`minimax-oauth`** |
-| `KILOCODE_API_KEY` | Kilo Code API密钥（[kilo.ai](https://kilo.ai)） |
-| `KILOCODE_BASE_URL` | 覆盖Kilo Code的基地址（默认值：`https://api.kilo.ai/api/gateway`） |
-| `XIAOMI_API_KEY` | 小米MiMo API密钥（[platform.xiaomimimo.com](https://platform.xiaomimimo.com)） |
-| `XIAOMI_BASE_URL` | 覆盖小米MiMo的基地址（默认值：`https://api.xiaomimimo.com/v1`） |
-| `TOKENHUB_API_KEY` | 腾讯TokenHub API密钥（[tokenhub.tencentmaas.com](https://tokenhub.tencentmaas.com)） |
-| `TOKENHUB_BASE_URL` | 覆盖腾讯TokenHub的基地址（默认值：`https://tokenhub.tencentmaas.com/v1`） |
-| `AZURE_FOUNDRY_API_KEY` | Microsoft Foundry / Azure OpenAI API密钥（[ai.azure.com](https://ai.azure.com/)）。当`model.auth_mode: entra_id`时无需此参数 |
-| `AZURE_FOUNDRY_BASE_URL` | Microsoft Foundry接口地址（例如OpenAI风格的地址为`https://<resource>.openai.azure.com/openai/v1`，Anthropic风格的地址为`https://<resource>.services.ai.azure.com/anthropic`） |
-| `AZURE_ANTHROPIC_KEY` | 用于`provider: anthropic`场景的Azure Anthropic API密钥，且基地址需指向Microsoft Foundry部署的Claude服务（当同时配置了Anthropic和Azure Anthropic时，可作为`ANTHROPIC_API_KEY`的替代选项） |
+| `GLM_BASE_URL` | 覆盖z.ai的基URL（默认值：`https://api.z.ai/api/paas/v4`） |
+| `KIMI_API_KEY` | Kimi / Moonshot AI API密钥（平台地址：[moonshot.ai](https://platform.moonshot.ai)） |
+| `KIMI_CODING_API_KEY` | `kimi-coding`提供者对应的别名密钥，可与`KIMI_API_KEY`同时使用 |
+| `KIMI_BASE_URL` | 覆盖Kimi的基URL（默认值：`https://api.moonshot.ai/v1`） |
+| `KIMI_CN_API_KEY` | Kimi / Moonshot中国区API密钥（平台地址：[moonshot.cn](https://platform.moonshot.cn)） |
+| `ARCEEAI_API_KEY` | Arcee AI API密钥（平台地址：[chat.arcee.ai](https://chat.arcee.ai/)） |
+| `ARCEE_BASE_URL` | 覆盖Arcee的基URL（默认值：`https://api.arcee.ai/api/v1`） |
+| `GMI_API_KEY` | GMI Cloud API密钥（平台地址：[gmicloud.ai](https://www.gmicloud.ai/)） |
+| `GMI_BASE_URL` | 覆盖GMI Cloud的基URL（默认值：`https://api.gmi-serving.com/v1`） |
+| `MINIMAX_API_KEY` | MiniMax API密钥——全球通用接口（平台地址：[minimax.io](https://www.minimax.io)）。**`minimax-oauth`模式不会使用该密钥**（该模式通过浏览器登录即可） |
+| `MINIMAX_BASE_URL` | 覆盖Minimax的基URL（默认值：`https://api.minimax.io/anthropic`——Hermes使用的是Minimax兼容Anthropic Messages格式的接口）。**`minimax-oauth`模式也不会使用该值** |
+| `MINIMAX_CN_API_KEY` | MiniMax API密钥——中国区接口（平台地址：[minimaxi.com](https://www.minimaxi.com)）。**`minimax-oauth`模式不会使用该密钥**（该模式通过浏览器登录即可） |
+| `MINIMAX_CN_BASE_URL` | 覆盖Minimax中国区的基URL（默认值：`https://api.minimaxi.com/anthropic`）。**`minimax-oauth`模式不会使用该值** |
+| `KILOCODE_API_KEY` | Kilo Code API密钥（平台地址：[kilo.ai](https://kilo.ai)） |
+| `KILOCODE_BASE_URL` | 覆盖Kilo Code的基URL（默认值：`https://api.kilo.ai/api/gateway`） |
+| `XIAOMI_API_KEY` | 小米MiMo API密钥（平台地址：[platform.xiaomimimo.com](https://platform.xiaomimimo.com)） |
+| `XIAOMI_BASE_URL` | 覆盖小米MiMo的基URL（默认值：`https://api.xiaomimimo.com/v1`） |
+| `TOKENHUB_API_KEY` | 腾讯TokenHub API密钥（平台地址：[tokenhub.tencentmaas.com](https://tokenhub.tencentmaas.com)） |
+| `TOKENHUB_BASE_URL` | 覆盖腾讯TokenHub的基URL（默认值：`https://tokenhub.tencentmaas.com/v1`） |
+| `AZURE_FOUNDRY_API_KEY` | Microsoft Foundry / Azure OpenAI API密钥（平台地址：[ai.azure.com](https://ai.azure.com/)）。当`model.auth_mode: entra_id`时无需此密钥 |
+| `AZURE_FOUNDRY_BASE_URL` | Microsoft Foundry接口地址（例如，OpenAI风格接口为`https://<resource>.openai.azure.com/openai/v1`，Anthropic风格接口为`https://<resource>.services.ai.azure.com/anthropic`） |
+| `AZURE_ANTHROPIC_KEY` | 用于`provider: anthropic`场景的Azure Anthropic API密钥，且其对应的`base_url`需指向Microsoft Foundry部署的Claude服务——当同时配置了Anthropic和Azure Anthropic时，该密钥可作为`ANTHROPIC_API_KEY`的替代方案 |
 | `AZURE_TENANT_ID` | Entra ID租户ID（用于服务主体流程；当`model.auth_mode: entra_id`时，`azure-identity`会自动识别该值） |
-| `AZURE_CLIENT_ID` | Entra ID客户端ID（服务主体、工作负载身份或用户分配的托管身份） |
-| `AZURE_CLIENT_SECRET` | `EnvironmentCredential`使用的服务主体密钥 |
-| `AZURE_CLIENT_CERTIFICATE_PATH` | 服务主体证书（可作为`AZURE_CLIENT_SECRET`的替代选项） |
-| `AZURE_FEDERATED_TOKEN_FILE` | AKS工作负载身份/OIDC流程对应的联合令牌文件路径 |
-| `AZURE_AUTHORITY_HOST` | 主权云授权机构的地址覆盖值（例如Azure政府版地址为`https://login.microsoftonline.us`）。详情请参阅[Azure Foundry指南](/guides/azure-foundry#sovereign-clouds-government-china) |
-| `IDENTITY_ENDPOINT` / `MSI_ENDPOINT` | App Service、Functions和Container Apps对应的托管身份端点；虚拟机通常使用IMDS，无需设置这些参数 |
-| `HF_TOKEN` | 用于推理提供方的Hugging Face令牌（[huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)） |
-| `HF_BASE_URL` | 覆盖Hugging Face的基地址（默认值：`https://router.huggingface.co/v1`） |
-| `GOOGLE_API_KEY` | Google AI Studio API密钥（[aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)） |
+| `AZURE_CLIENT_ID` | Entra ID客户端ID（可为服务主体、工作负载身份或用户分配的托管身份） |
+| `AZURE_CLIENT_SECRET` | `EnvironmentCredential`所使用的服务主体密钥 |
+| `AZURE_CLIENT_CERTIFICATE_PATH` | 服务主体证书文件路径（可作为`AZURE_CLIENT_SECRET`的替代方案） |
+| `AZURE_FEDERATED_TOKEN_FILE` | AKS工作负载身份/OIDC流程所使用的联合令牌文件路径 |
+| `AZURE_AUTHORITY_HOST` | 主权云授权服务器地址的覆盖值（例如，Azure政府版为`https://login.microsoftonline.us`）。详情请参阅[Azure Foundry指南](/guides/azure-foundry#sovereign-clouds-government-china) |
+| `IDENTITY_ENDPOINT` / `MSI_ENDPOINT` | App Service、Functions及Container Apps所使用的托管身份接口地址；虚拟机通常使用IMDS机制，无需设置这些参数 |
+| `HF_TOKEN` | 用于推理提供者的Hugging Face令牌（可在[Huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)处生成） |
+| `HF_BASE_URL` | 覆盖Hugging Face的基URL（默认值：`https://router.huggingface.co/v1`） |
+| `GOOGLE_API_KEY` | Google AI Studio API密钥（生成地址：[aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)） |
 | `GEMINI_API_KEY` | `GOOGLE_API_KEY`的别名 |
-| `GEMINI_BASE_URL` | 覆盖Google AI Studio的基地址 |
-| `HERMES_GEMINI_CLIENT_ID` | 用于`google-gemini-cli` PKCE登录的OAuth客户端ID（可选；默认使用Google官方的gemini-cli客户端） |
-| `HERMES_GEMINI_CLIENT_SECRET` | `google-gemini-cli`对应的OAuth客户端密钥（可选） |
-| `HERMES_GEMINI_PROJECT_ID` | 付费版G Gemini套餐对应的GCP项目ID（免费版会自动创建项目） |
-| `ANTHROPIC_API_KEY` | Anthropic控制台API密钥（[console.anthropic.com](https://console.anthropic.com/)） |
-| `ANTHROPIC_BASE_URL` | 覆盖Anthropic API的基地址 |
+| `GEMINI_BASE_URL` | 覆盖Google AI Studio的基URL |
+| `ANTHROPIC_API_KEY` | Anthropic控制台API密钥（平台地址：[console.anthropic.com](https://console.anthropic.com/)） |
+| `ANTHROPIC_BASE_URL` | 覆盖Anthropic API的基URL |
 | `ANTHROPIC_TOKEN` | 手动设置的或旧版的Anthropic OAuth/设置令牌覆盖值 |
-| `DASHSCOPE_API_KEY` | 阿里云Qwen模型对应的Qwen Cloud（Alibaba DashScope）API密钥（[modelstudio.console.alibabacloud.com](https://modelstudio.console.alibabacloud.com/)） |
-| `DASHSCOPE_BASE_URL` | 自定义的DashScope基地址（默认值：`https://dashscope-intl.aliyuncs.com/compatible-mode/v1`；中国内地地区请使用`https://dashscope.aliyuncs.com/compatible-mode/v1`） |
-| `ALIBABA_CODING_PLAN_API_KEY` | Qwen编程计划API密钥（`alibaba-coding-plan`提供方） |
-| `ALIBABA_CODING_PLAN_BASE_URL` | 覆盖Qwen编程计划的基地址 |
-| `DEEPSEEK_API_KEY` | 直接访问DeepSeek模型所需的DeepSeek API密钥（[platform.deepseek.com](https://platform.deepseek.com/api_keys)） |
-| `DEEPSEEK_BASE_URL` | 自定义的DeepSeek API基地址 |
-| `NOVITA_API_KEY` | NovitaAI API密钥——提供Model API、Agent Sandbox和GPU Cloud服务的原生AI云平台（[novita.ai/settings/key-management](https://novita.ai/settings/key-management)） |
-| `NOVITA_BASE_URL` | 覆盖NovitaAI的基地址（默认值：`https://api.novita.ai/openai/v1`） |
-| `NVIDIA_API_KEY` | NVIDIA NIM API密钥——用于Nemotron及开源模型的接口（[build.nvidia.com](https://build.nvidia.com)） |
-| `NVIDIA_BASE_URL` | 覆盖NVIDIA的基地址（默认值：`https://integrate.api.nvidia.com/v1`；如需使用本地NIM端点，可设置为`http://localhost:8000/v1`） |
-| `STEPFUN_API_KEY` | StepFun API密钥——Step系列模型的接口（[platform.stepfun.com](https://platform.stepfun.com)） |
-| `STEPFUN_BASE_URL` | 覆盖StepFun的基地址（默认值：`https://api.stepfun.com/v1`） |
-| `OLLAMA_API_KEY` | Ollama Cloud API密钥——无需本地GPU即可使用的托管Ollama模型库（[ollama.com/settings/keys](https://ollama.com/settings/keys)） |
-| `OLLAMA_BASE_URL` | 覆盖Ollama Cloud的基地址（默认值：`https://ollama.com/v1`） |
-| `XAI_API_KEY` | xAI（Grok）API密钥，支持聊天、文本转语音及网络搜索功能（[console.x.ai](https://console.x.ai/)） |
-| `XAI_BASE_URL` | 覆盖xAI的基地址（默认值：`https://api.x.ai/v1`） |
-| `MISTRAL_API_KEY` | Mistral API密钥，用于Voxtral文本转语音及语音转文本功能（[console.mistral.ai](https://console.mistral.ai)） |
+| `DASHSCOPE_API_KEY` | 阿里云Qwen模型对应的Qwen Cloud（Alibaba DashScope）API密钥（管理地址：[modelstudio.console.alibabacloud.com](https://modelstudio.console.alibabacloud.com/)） |
+| `DASHSCOPE_BASE_URL` | 自定义的DashScope基URL（默认值：`https://dashscope-intl.aliyuncs.com/compatible-mode/v1`；中国内地地区请使用`https://dashscope.aliyuncs.com/compatible-mode/v1`） |
+| `ALIBABA_CODING_PLAN_API_KEY` | Qwen编程计划API密钥（对应`alibaba-coding-plan`提供者） |
+| `ALIBABA_CODING_PLAN_BASE_URL` | 覆盖Qwen编程计划的基URL |
+| `DEEPSEEK_API_KEY` | 直接访问DeepSeek模型所需的API密钥（平台地址：[platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)） |
+| `DEEPSEEK_BASE_URL` | 自定义的DeepSeek API基URL |
+| `NOVITA_API_KEY` | NovitaAI API密钥——专为模型API、Agent Sandbox及GPU云服务设计的原生AI云平台（密钥管理地址：[novita.ai/settings/key-management](https://novita.ai/settings/key-management)） |
+| `NOVITA_BASE_URL` | 覆盖NovitaAI的基URL（默认值：`https://api.novita.ai/openai/v1`） |
+| `NVIDIA_API_KEY` | NVIDIA NIM API密钥——用于Nemotron及开源模型的接口（生成地址：[build.nvidia.com](https://build.nvidia.com)） |
+| `NVIDIA_BASE_URL` | 覆盖NVIDIA的基URL（默认值：`https://integrate.api.nvidia.com/v1`；如需使用本地NIM接口，可设置为`http://localhost:8000/v1`） |
+| `STEPFUN_API_KEY` | StepFun API密钥——用于Step系列模型的接口（平台地址：[platform.stepfun.com](https://platform.stepfun.com)） |
+| `STEPFUN_BASE_URL` | 覆盖StepFun的基URL（默认值：`https://api.stepfun.com/v1`） |
+| `OLLAMA_API_KEY` | Ollama Cloud API密钥——无需本地GPU即可使用的托管Ollama模型库（密钥管理地址：[ollama.com/settings/keys](https://ollama.com/settings/keys)） |
+| `OLLAMA_BASE_URL` | 覆盖Ollama Cloud的基URL（默认值：`https://ollama.com/v1`） |
+| `XAI_API_KEY` | xAI（Grok）API密钥，支持聊天、文本转语音及网络搜索功能（控制台地址：[console.x.ai](https://console.x.ai/)） |
+| `XAI_BASE_URL` | 覆盖xAI的基URL（默认值：`https://api.x.ai/v1`） |
+| `MISTRAL_API_KEY` | Mistral API密钥，用于Voxtral文本转语音及语音转文本功能（控制台地址：[console.mistral.ai](https://console.mistral.ai)） |
 | `AWS_REGION` | Bedrock推理服务的AWS区域（例如`us-east-1`、`eu-central-1`）。该值由boto3自动读取 |
-| `AWS_PROFILE` | 用于Bedrock身份验证的AWS命名配置文件（会读取`~/.aws/credentials`文件）。如不设置，则使用boto3默认的凭证链 |
-| `BEDROCK_BASE_URL` | 覆盖Bedrock运行时基地址（默认值：`https://bedrock-runtime.us-east-1.amazonaws.com`；通常无需设置，直接使用`AWS_REGION`即可） |
-| `HERMES_QWEN_BASE_URL` | Qwen Portal基地址的覆盖值（默认值：`https://portal.qwen.ai/v1`） |
-| `OPENCODE_ZEN_API_KEY` | OpenCode Zen API密钥——支持按需付费使用精选模型（[opencode.ai](https://opencode.ai/auth)） |
-| `OPENCODE_ZEN_BASE_URL` | 覆盖OpenCode Zen的基地址 |
-| `OPENCODE_GO_API_KEY` | OpenCode Go API密钥——每月10美元的费用即可使用开源模型（[opencode.ai](https://opencode.ai/auth)） |
-| `OPENCODE_GO_BASE_URL` | 覆盖OpenCode Go的基地址 |
-| `CLAUDE_CODE_OAUTH_TOKEN` | 若您手动导出了Claude Code令牌，可在此处直接覆盖该令牌 |
-| `HERMES_MODEL` | 在进程层面覆盖模型名称（由cron调度器使用；常规场景下建议使用`config.yaml`配置） |
-| `VOICE_TOOLS_OPENAI_KEY` | 优先使用的OpenAI语音转文本及文本转语音提供方的API密钥 |
-| `HERMES_LOCAL_STT_COMMAND` | 可选的本地语音转文本命令模板。支持使用 `{input_path}`、`{output_dir}`、`{language}` 和 `{model}` 这些占位符 |
+| `AWS_PROFILE` | 用于Bedrock身份验证的AWS命名配置文件（会读取`~/.aws/credentials`中的设置）。如未指定该值，则使用boto3默认的凭据链 |
+| `BEDROCK_BASE_URL` | 覆盖Bedrock运行时基URL（默认值：`https://bedrock-runtime.us-east-1.amazonaws.com`；通常无需设置，直接使用`AWS_REGION`即可） |
+| `HERMES_QWEN_BASE_URL` | 覆盖Qwen Portal的基URL（默认值：`https://portal.qwen.ai/v1`） |
+| `OPENCODE_ZEN_API_KEY` | OpenCode Zen API密钥——支持按需使用精选模型的按量付费服务（平台地址：[opencode.ai](https://opencode.ai/auth)） |
+| `OPENCODE_ZEN_BASE_URL` | 覆盖OpenCode Zen的基URL |
+| `OPENCODE_GO_API_KEY` | OpenCode Go API密钥——可按月支付10美元使用开源模型的服务（平台地址：[opencode.ai](https://opencode.ai/auth)） |
+| `OPENCODE_GO_BASE_URL` | 覆盖OpenCode Go的基URL |
+| `CLAUDE_CODE_OAUTH_TOKEN` | 若您手动导出了Claude Code令牌，可在此处显式指定该令牌值 |
+| `HERMES_MODEL` | 在进程层面覆盖模型名称（主要用于cron调度器；常规使用建议通过`config.yaml`配置） |
+| `VOICE_TOOLS_OPENAI_KEY` | 用于OpenAI语音转文本及文本转语音服务的推荐OpenAI API密钥 |
+| `HERMES_LOCAL_STT_COMMAND` | 可选的本地语音转文本命令模板。支持使用 `{input_path}`、`{output_dir}`、`{language}` 和 `{model}` 等占位符 |
 | `HERMES_LOCAL_STT_LANGUAGE` | 传递给`HERMES_LOCAL_STT_COMMAND`的默认语言，或自动检测的本地`whisper` CLI默认语言（默认值：`en`） |
-| `HERMES_HOME` | 覆盖Hermes配置目录的路径（默认值：`~/.hermes`）。该参数同时决定了网关PID文件的存储位置及systemd服务名称，便于多实例并行运行 |
-| `HERMES_GIT_BASH_PATH` | **仅适用于Windows系统**。用于覆盖终端工具中`bash.exe`的查找路径。可指向任意版本的bash——包括完整版的Git-for-Windows、通过符号链接连接的WSL bash、MSYS2或Cygwin。安装程序会自动将其设置为所配置的PortableGit路径。详情请参阅[Windows（原生）指南](../user-guide/windows-native.md#how-hermes-runs-shell-commands-on-windows) |
-| `HERMES_DISABLE_WINDOWS_UTF8` | **仅适用于Windows系统**。设置为`1`可禁用UTF-8标准输入输出封装层（`configure_windows_stdio()`函数），转而使用控制台的区域设置编码页。该设置有助于定位编码相关问题；在正常运行场景下很少需要使用 |
-| `HERMES_KANBAN_HOME` | 覆盖用于存储看板数据（数据库、工作空间及 Worker日志）的共享Hermes根目录。如未设置，则默认使用`get_default_hermes_root()`函数返回的值（即当前活跃配置文件的父目录）。该参数适用于测试或特殊部署场景 |
-| `HERMES_KANBAN_BOARD` | 固定当前进程使用的看板名称。该值优先于`~/.hermes/kanban/current`的设置；调度器会将此值注入Worker子进程的环境变量中，确保Worker无法查看其他看板中的任务。默认值为`default`。名称格式要求：小写字母、数字、连字符和下划线，长度为1-64个字符 |
-| `HERMES_KANBAN_DB` | 直接指定看板数据库文件的路径（优先级最高，可覆盖`HERMES_KANBAN_BOARD`和`HERMES_KANBAN_HOME`的设置）。调度器会将此值注入Worker子进程的环境变量中，确保所有Profile Worker都使用同一数据库 |
-| `HERMES_KANBAN_WORKSPACES_ROOT` | 直接指定看板工作空间的根目录路径（针对工作空间的优先级最高，可覆盖`HERMES_KANBAN_HOME`的设置）。调度器会将此值注入Worker子进程的环境变量中 |
-| `HERMES_KANBAN_DISPATCH_IN_GATEWAY` | 对`kanban.dispatch_in_gateway`参数的运行时覆盖值。设置为`0`、`false`、`no`或`off`可阻止网关启动内置的Kanban调度器；任何非空字符串值都会启用该功能。当有独立的调度器进程负责管理看板时，可使用此参数 |## 提供商认证（OAuth）
+| `HERMES_HOME` | 覆盖Hermes配置目录的路径（默认值：`~/.hermes`）。该设置还会确定网关PID文件的位置及systemd服务名称，便于多实例同时运行 |
+| `HERMES_GIT_BASH_PATH` | **仅适用于Windows系统**。用于指定终端工具所使用的`bash.exe`路径。可指向任何版本的bash——包括完整版的Git-for-Windows、通过符号链接连接的WSL bash、MSYS2或Cygwin。安装程序会自动将此路径设置为它所配置的PortableGit版本。详情请参阅[Windows（原生）指南](../user-guide/windows-native.md#how-hermes-runs-shell-commands-on-windows) |
+| `HERMES_DISABLE_WINDOWS_UTF8` | **仅适用于Windows系统**。将其设置为`1`可禁用UTF-8标准输入输出模拟层（`configure_windows_stdio()`函数），转而使用控制台的本地代码页。该设置有助于排查编码相关问题；在正常运行时很少需要使用 |
+| `HERMES_KANBAN_HOME` | 覆盖用于存储看板数据（数据库、工作空间及 worker日志）的共享Hermes根目录。如未指定该值，则会回退到`get_default_hermes_root()`函数确定的路径（即所有活跃配置文件的父目录）。该设置适用于测试或特殊部署场景 |
+| `HERMES_KANBAN_BOARD` | 固定当前进程所使用的看板名称。该设置优先级高于`~/.hermes/kanban/current`；调度器会将此值注入worker子进程的环境变量中，从而确保worker无法查看其他看板上的任务。默认值为`default`。有效值格式：小写字母、数字、连字符及下划线组合，长度为1-64个字符 |
+| `HERMES_KANBAN_DB` | 直接指定看板数据库文件的路径——优先级最高，可覆盖`HERMES_KANBAN_BOARD`和`HERMES_KANBAN_HOME`的设置。调度器会将此值注入worker子进程的环境变量中，确保所有profile worker都使用同一数据库 |
+| `HERMES_KANBAN_WORKSPACES_ROOT` | 直接指定看板工作空间的根目录——针对工作空间而言优先级最高，可覆盖`HERMES_KANBAN_HOME`的设置。调度器会将此值注入worker子进程的环境变量中 |
+| `HERMES_KANBAN_DISPATCH_IN_GATEWAY` | 对`kanban.dispatch_in_gateway`参数的运行时覆盖值。将其设置为`0`、`false`、`no`或`off`可阻止网关启动内置的Kanban调度器；任何非空字符串值都会启用该调度器。当有独立的调度器进程负责管理看板时，可使用此设置 |## 提供商认证（OAuth）
 
 对于原生 Anthropic 认证方式，若存在 Claude Code 自带的凭据文件，Hermes 会优先使用这些文件，因为其凭据可以自动刷新。**通过 OAuth 连接 Anthropic 需要购买额外使用额度的 Claude Max 套餐**——Hermes 会以 Claude Code 的身份发起请求，仅能消耗 Max 套餐的额外/超额额度，无法使用基础 Max 配额，且不支持 Claude Pro。若没有 Max 套餐及额外额度，则应使用 API 密钥。虽然 `ANTHROPIC_TOKEN` 等环境变量仍可用于手动覆盖设置，但已不再是 Claude Max 登录的首选方式。
 
