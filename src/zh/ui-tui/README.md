@@ -68,211 +68,260 @@ npm run test:watch
 
 ## 应用模型
 
-`src/app.tsx` 是用户界面的核心所在。复杂的逻辑被拆分到 `src/app/` 目录下：
+`src/app.tsx` 是用户界面的核心。复杂的逻辑被拆分到 `src/app/` 目录下：
 
-- `createGatewayEventHandler.ts` —— 将网关事件映射为状态更新
-- `createSlashHandler.ts` —— 处理本地斜杠命令的路由
-- `useComposerState.ts` —— 处理草稿、多行缓冲区及队列编辑功能
-- `useInputHandlers.ts` —— 负责按键处理逻辑
-- `useTurnState.ts` —— 管理智能体对话轮次的全生命周期
-- `overlayStore.ts` / `uiStore.ts` —— 用于存储覆盖层状态和界面状态的 nanostores
-- `gatewayContext.tsx` —— 为网关客户端提供的 React context
-- `constants.ts`, `helpers.ts`, `interfaces.ts`
+- `src/app/createGatewayEventHandler.ts` —— 将网关事件映射为状态更新
+- `src/app/createSlashHandler.ts` —— 处理本地斜杠命令的调度
+- `src/app/useComposerState.ts` —— 负责草稿编辑、多行缓冲区以及队列编辑功能
+- `src/app/useInputHandlers.ts` —— 负责按键事件的路由处理
+- `src/app/useMainApp.ts` —— 顶层组合钩子：连接所有子钩子，管理对话记录历史、会话轮询，并为 `app.tsx` 提供所需属性
+- `src/app/useSessionLifecycle.ts` —— 处理会话的创建、恢复、激活、关闭以及可见历史记录的重置
+- `src/app/useSubmission.ts` —— 负责消息发送、Shell 命令执行（`!cmd`）、内联插值（`{!cmd}`），以及忙碌输入模式的管理（排队、引导、中断）
+- `src/app/turnController.ts` —— 一个带状态管理的类，负责驱动对话轮次生命周期：缓冲流式数据变化，管理工具与推理状态，处理中断和消息完成后的状态转换
+- `src/app/turnStore.ts` —— 用于存储对话轮次状态的 nanostore（包含流式文本、工具信息、推理内容、子智能体状态、待办事项及操作轨迹）
+- `src/app/useConfigSync.ts` —— 在会话启动时获取 `config.get full` 的配置信息，并每5秒轮询一次配置的修改时间；应用显示设置并在配置发生变化时触发 MCP 重新加载
+- `src/app/useLongRunToolCharms.ts` —— 当工具运行时间超过8秒时，触发相关活动提示消息
+- `src/app/overlayStore.ts` / `src/app/uiStore.ts` —— 用于存储覆盖层和界面状态的 nanostore
+- `src/app/delegationStore.ts` —— 用于存储子智能体生成数量上限以及覆盖层折叠状态的信息
+- `src/app/spawnHistoryStore.ts` —— 内存中的环形存储结构（最多保存最近10条），用于记录已完成的子智能体输出快照；在对话轮次结束时为 `/replay` 功能填充数据
+- `src/app/inputSelectionStore.ts` —— 用于存储当前活动文本输入选择范围的 nanostore
+- `src/app/gatewayContext.tsx` —— 用于网关客户端的 React 上下文
+- `src/app/gatewayRecovery.ts` —— 一个纯函数，用于在网关崩溃后决定是否重新启动并继续运行，最多尝试3次，每次间隔60秒
+- `src/app/setupHandoff.ts` —— 启动外部 `hermes setup` 工具，在其运行期间暂停 Ink 应用，成功后会打开新的会话
+- `src/app/scroll.ts` —— 滚动视口的同时保持文本选择位置同步
+- `src/app/interfaces.ts` —— 内部接口定义（如 ComposerActions、GatewayRpc 等）
 
-顶层的 `app.tsx` 会将这些组件整合成 Ink 树结构，从而呈现包含“静态”对话记录、实时流式助手行、提示覆盖层、队列预览、状态规则、输入行以及补全列表的界面。
+### 斜杠命令子系统（`src/app/slash/`）
+
+- `types.ts` —— 定义 `SlashCommand` 接口以及 `SlashRunCtx` 执行上下文（包含网关 RPC 调用、对话记录辅助函数、会话引用及过时保护机制）
+- `registry.ts` —— 按注册顺序从所有命令文件中汇总 `SLASH_COMMANDS`（按核心功能 → 计费功能 → 信用点管理 → 会话管理 → 操作管理 → 设置功能 → 调试功能的顺序），并提供 `findSlashCommand(name)` 方法以实现不区分大小写的查询
+- `commands/core.ts` —— 通用 TUI 命令
+- `commands/billing.ts` —— `/billing` 命令：管理 Nous 终端计费功能，包括购买信用点、自动重新加载以及额度设置
+- `commands/credits.ts` —— `/credits` 命令
+- `commands/session.ts` —— 会话及智能体相关命令
+- `commands/ops.ts` —— 操作类命令
+- `commands/setup.ts` —— `/setup` 命令
+- `commands/debug.ts` —— `/heapdump`、`/mem` 调试命令
+
+顶层 `app.tsx` 会将这些组件整合为 Ink 树结构，其中包含静态对话记录输出、实时流式助手行、提示覆盖层、队列预览、状态栏、输入行以及补全列表。
 
 在顶层管理的状态包括：
 
-- 对话记录与流式输出状态
+- 对话记录与流式内容状态
 - 队列中的消息及输入历史记录
 - 会话生命周期状态
 - 工具处理进度与推理文本
-- 用于审批、澄清、特殊权限请求及敏感信息输入的提示流程
-- 斜杠命令的路由逻辑
+- 用于请求批准、澄清问题、提升权限及输入敏感信息的提示流程
+- 斜杠命令的路由处理逻辑
 - Tab 补全与路径补全功能
 - 来自网关主题数据的主题状态
 
-最终界面会以标准的 Ink 树形式呈现，包含“静态”对话记录、实时流式助手行、提示覆盖层、队列预览、状态规则、输入行以及补全列表。
+最终渲染出的界面为标准的 Ink 树结构，包含静态对话记录输出、实时流式助手行、提示覆盖层、队列预览、状态栏、输入行以及补全列表。
 
-欢迎面板的内容由 `session.info` 提供，并通过 `branding.tsx` 进行渲染。
+欢迎面板的内容由 `session.info` 提供，并通过 `branding.tsx` 文件进行渲染。
 
 ## 快捷键与交互操作
 
-当前的输入行为由 `app.tsx`、`components/textInput.tsx` 以及各种提示/选择器组件共同负责处理。
+当前的输入行为由 `app.tsx`、`components/textInput.tsx` 以及各种提示/选择组件共同处理。
 
 ### 主要聊天输入操作
 
-| 键位                             | 功能描述                                                                                                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Enter`                         | 提交当前草稿内容                                                                                                                                |
-| 连按两次空 `Enter`             | 若队列中有消息且智能体正在处理任务，则中断当前运行；若队列中有消息且智能体处于空闲状态，则发送队列中的下一条消息 |
-| `Shift+Enter` / `Alt+Enter`     | 在当前草稿中插入换行符                                                                                                                   |
-| `\` + `Enter`                   | 将该行内容添加到多行缓冲区中（适用于不支持修饰键的终端）                                                               |
-| `Ctrl+C`                        | 中断当前运行，或清除当前草稿，若没有待处理任务则直接退出                                                                         |
-| `Ctrl+D`                        | 退出程序                                                                                                                                                    |
-| `Cmd/Ctrl+G` / `Alt+G`          | 使用当前草稿内容打开 `$EDITOR` 编辑器（在 VSCode/Cursor 中可使用 `Alt+G`——因为这些工具将主键绑定为“查找下一个”功能）                                     |
-| `Ctrl+L`                        | 开启新会话（功能与 `/clear` 相同）                                                                                                                          |
-| `Ctrl+V` / `Alt+V`              | 先粘贴文本，若适用则自动尝试插入图片或路径附件                                                                               |
-| `Tab`                           | 应用当前选中的补全内容                                                                                                                             |
-| `Up/Down`                       | 若补全列表已打开，则在选项间切换；否则先编辑队列中的消息，再查看输入历史记录                                         |
-| `Left/Right`                    | 移动光标位置                                                                                                                                         |
-| 按下修饰键后使用 `Left/Right`           | 当终端同时发送 `Ctrl` 或 `Meta` 键与方向键时，按词移动光标                                                                                |
-| `Home` / `Ctrl+A`               | 移动到行首                                                                                                                                           |
-| `End` / `Ctrl+E`                | 移动到行尾                                                                                                                                             |
-| `Backspace`                     | 删除光标左侧的字符                                                                                                          |
-| `Delete`                        | 删除光标右侧的字符                                                                                                         |
-| 按下修饰键后使用 `Backspace`            | 删除上一个单词                                                                                                                                |
-| 按下修饰键后使用 `Delete`               | 删除下一个单词                                                                                                                                    |
-| `Ctrl+W`                        | 删除上一个单词                                                                                                                                |
-| `Ctrl+U`                        | 从光标位置向左删除直至行首                                                                                                    |
-| `Ctrl+K`                        | 从光标位置向右删除直至行尾                                                                                                           |
-| `Meta+B` / `Meta+F`             | 按词移动光标                                                                                                                                            |
-| `!cmd`                          | 通过网关执行Shell命令                                                                                                                 |
-| `{!cmd}`                        | 在发送消息前进行内联Shell插值处理；队列中的草稿内容在发送前会保持原始文本形式                                                            |
+| 键位                         | 操作说明                                                                                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Enter`                      | 提交当前的草稿内容                                                                                                                                |
+| 连按两次空 `Enter`            | 若队列中有消息且智能体正在处理任务，则中断当前运行；若队列中有消息且智能体处于空闲状态，则发送队列中的下一条消息                         |
+| `Shift+Enter` / `Alt+Enter`   | 在当前草稿中插入换行符                                                                                                                             |
+| `\` + `Enter`                 | 将该行内容追加到多行缓冲区中（适用于不支持修饰键的终端作为备用方案）                                                                                               |
+| `Ctrl+C`                     | 中断当前运行，或清除当前草稿，若没有待处理任务则直接退出应用                                                                                                 |
+| `Ctrl+D`                     | 退出应用                                                                                                                                                |
+| `Cmd/Ctrl+G` / `Alt+G`        | 使用当前草稿内容打开 `$EDITOR` 编辑器（在 VSCode/Cursor 中可使用 `Alt+G` —— 它们将主键绑定为“查找下一个”功能）                 |
+| `Ctrl+L`                     | 打开新会话（功能与 `/clear` 相同）                                                                                                                          |
+| `Ctrl+V` / `Alt+V`            | 先尝试粘贴文本，若不适用则回退为图片/路径附件的插入功能                                                                                                     |
+| `Tab`                        | 应用当前选中的补全选项                                                                                                                             |
+| `Up/Down`                    | 若补全列表已打开，则在候选项之间切换；否则先编辑队列中的消息，再查看输入历史记录                                                                                     |
+| `Left/Right`                  | 移动光标位置                                                                ---------------------------------------------------------------------------- |
+| 按住修饰键后使用 `Left/Right` | 当终端发送 `Ctrl` 或 `Meta` 键与方向键组合时，按住修饰键可逐词移动光标                                                                                         |
+| `Home` / `Ctrl+A`               | 移动到行首                                                                ---------------------------------------------------------------------------- |
+| `End` / `Ctrl+E`                | 移动到行尾                                                                ---------------------------------------------------------------------------- |
+| `Backspace`                   | 删除光标左侧的字符                                                                ---------------------------------------------------------------- |
+| `Delete`                     | 删除光标右侧的字符                                                                ---------------------------------------------------------------- |
+| 按住修饰键后使用 `Backspace` | 删除上一个单词                                                                ---------------------------------------------------------------------------- |
+| 按住修饰键后使用 `Delete`   | 删除下一个单词                                                                ---------------------------------------------------------------------------- |
+| `Ctrl+W`                      | 删除上一个单词                                                                ---------------------------------------------------------------------------- |
+| `Ctrl+U`                      | 从光标位置向左删除直到行首                                                                                                                            |
+| `Ctrl+K`                      | 从光标位置向右删除直到行尾                                                                                                                            |
+| `Meta+B` / `Meta+F`             | 逐词移动光标                                                                ---------------------------------------------------------------------------- |
+| `!cmd`                        | 通过网关运行 Shell 命令                                                                ---------------------------------------------------------------- |
+| `{!cmd}`                      | 在发送消息前进行内联 Shell 插值；队列中的草稿内容会以原始文本形式保留，直到实际发送为止                                                                                 |
 
 注意事项：
 
-- 仅当存在补全选项且未处于多行输入模式时，`Tab` 键才会生效。
-- 队列/历史记录导航功能也仅在非多行模式下可用。
-- `PgUp` / `PgDn` 功能由终端模拟器处理，TUI 不会支持这些操作。
+- 仅当存在补全选项且未处于多行输入模式时，`Tab` 键才会触发补全功能。
+- 队列/历史记录导航功能也仅在非多行输入模式下有效。
+- `PgUp` / `PgDn` 操作由终端模拟器处理，TUI 层不支持这些功能。
 
-### 提示与选择器模式
+### 提示与选择模式| 场景                     | 按键                | 行为描述                                           |
+| --------------------------- | ------------------- | -------------------------------------------------- |
+| 审批提示框                 | `Up/Down`, `Enter`  | 移动并确认所选的审批选项                           |
+| 审批提示框                 | `o`, `s`, `a`, `d`  | 快速选择“一次性”、“会话有效”、“始终允许”、“拒绝”     |
+| 审批提示框                 | `Esc`, `Ctrl+C`     | 拒绝审批                                           |
+| 需选择选项的澄清提示框     | `Up/Down`, `Enter`  | 移动并确认所选选项                                 |
+| 需选择选项的澄清提示框     | 单位数              | 快速选择对应的编号选项                           |
+| 需选择选项的澄清提示框     | 输入“Other”后按 `Enter` | 切换到自由文本输入模式                             |
+| 进入自由文本输入模式       | `Enter`             | 提交已输入的答案                                   |
+| sudo/密钥输入提示框         | `Enter`             | 提交已输入的值                                     |
+| sudo/密钥输入提示框         | `Ctrl+C`            | 通过发送空响应取消操作                             |
+| 恢复选择器功能             | `Up/Down`, `Enter`  | 移动并继续选择之前的会话                           |
+| 恢复选择器功能             | `1-9`               | 快速选择前九个可见的会话之一                       |
+| 恢复选择器功能             | `Esc`, `Ctrl+C`     | 关闭选择器                                         |
 
-| 使用场景                     | 键位                | 功能描述                                          |
-| --------------------------- | ------------------- | ------------------------------------------------- |
-| 审批提示                     | `Up/Down`, `Enter`  | 在选项间切换并确认所选审批选项                     |
-| 审批提示                     | `o`, `s`, `a`, `d`  | 快速选择“仅一次”、“当前会话”、“始终允许”、“拒绝”     |
-| 审批提示                     | `Esc`, `Ctrl+C`     | 拒绝请求                                              |
-| 带选项的澄清提示             | `Up/Down`, `Enter`  | 在选项间切换并确认所选选项              |
-| 带选项的澄清提示             | 数字键              | 快速选择对应编号的选项                         |
-| 带选项的澄清提示             | 输入“Other”后按 `Enter` | 切换到自由文本输入模式                       |
-| 自由文本澄清模式             | 按 `Enter`          | 提交输入的答案                               |
-| 特殊权限/敏感信息提示        | 按 `Enter`          | 提交输入的值                                |
-| 特殊权限/敏感信息提示        | 按 `Ctrl+C`          | 通过发送空响应来取消操作                       |
-| 继续选择器操作               | `Up/Down`, `Enter`  | 在已选会话间切换并继续操作                      |
-| 继续选择器操作               | `1-9`               | 快速选择前九个可见的会话之一                 |
-| 继续选择器操作               | `Esc`, `Ctrl+C`     | 关闭选择器                                  |
+备注：
 
-注意事项：
-
-- 自由文本澄清模式及带掩码的提示框均使用 `ink-text-input` 组件，因此其文本编辑功能遵循该组件的默认绑定规则，而非 `components/textInput.tsx` 的规则。
-- 当有阻塞性提示窗口打开时，主要的聊天输入快捷键会被禁用。
-- 目前版本的客户端中，澄清模式没有专用的取消快捷键。特殊权限和敏感信息提示仅支持通过应用层的阻塞处理函数使用 `Ctrl+C` 进行取消。
+- 自由文本输入模式及掩码式提示框均使用 `ink-text-input` 组件，因此文本编辑遵循该组件的默认绑定规则，而非 `components/textInput.tsx` 的规则。
+- 当有阻塞性提示框打开时，主聊天输入的热键功能会被暂时禁用。
+- 目前该客户端中的澄清模式没有专用的取消快捷键。sudo和密钥输入提示框仅通过应用层的阻塞处理机制提供 `Ctrl+C` 取消功能。
 
 ### 交互规则
 
-- 当智能体正在处理任务时输入的纯文本会进入队列，而不会立即发送。
-- 斜杠命令和 `!cmd` 语句不会进入队列，即使智能体正在运行也会立即执行。
-- 每次智能体回复后，队列中的内容会自动清除，除非当前正在编辑某个队列项。
-- `Up/Down` 键的优先级高于历史记录编辑功能，只有当没有队列项需要编辑时，历史记录功能才会启用。
-- 在编辑队列中的草稿时，其原有的 `!cmd` 和 `{!cmd}` 格式内容会保留不变。只有当该队列项真正被发送时，Shell命令和插值功能才会生效。
-- 如果将队列中的某项内容加载到输入框并再次输入纯文本，该队列项将被替换，从队列预览中移除，并提升到优先发送位置。如果智能体仍处于忙碌状态，编辑后的内容会被移到队列最前端，在当前任务处理完成后发送。
-- 补全请求的触发会有 60 毫秒的延迟处理。以 `/` 开头的输入会使用 `complete.slash` 函数处理；以 `./`、`../`、`~/`、`/` 或 `@` 开头的后缀 token 会使用 `complete.path` 函数处理。
-- 粘贴的文本会直接作为内联内容插入到草稿中，不会被自动换行处理。
-- `Cmd/Ctrl+G`（在 VSCode/Cursor 中则为 `Alt+G`，因为这些工具会拦截“查找下一个”功能的主键）会将当前草稿内容，包括多行缓冲区中的内容，写入临时文件，暂停 Ink 框架的运行，启动 `$EDITOR` 编辑器；如果编辑器正常关闭，则恢复 TUI 界面并提交已保存的文本。
-- 输入历史记录会存储在 `~/.hermes/.hermes_history` 文件中，或 `HERMES_HOME` 指定的路径下。
+- 当智能体正在处理任务时输入的纯文本会被暂存，而非立即发送。
+- 斜杠命令及 `!cmd` 格式的指令不会被暂存，即使在智能体正在运行时也会立即执行。
+- 每次智能体回复后，队列中的内容会自动清除，除非当前有正在编辑的待处理项。
+- `Up/Down` 键优先用于编辑队列中的消息，历史记录仅在没有待编辑队列内容时才会显示。
+- 在编辑队列中的草稿时，其原有的 `!cmd` 和 `{!cmd}` 格式内容会保持不变。Shell命令及插值功能会在该草稿实际被发送时才执行。
+- 如果将队列中的某项内容调入输入框并重新输入纯文本，该队列项将被替换，从队列预览中移除，并提升到优先级以立即发送。如果智能体仍处于忙碌状态，编辑后的内容会被移到队列最前端，在当前任务处理完成后发送。
+- 补全请求的触发会有60毫秒的延迟处理。以 `/` 开头的输入会使用 `complete.slash` 机制；以 `./`、`../`、`~/`、`/` 或 `@` 开头的后缀 token 会使用 `complete.path` 机制。
+- 粘贴的文本会直接内联插入到草稿中，不会被换行符拆分。
+- `Cmd/Ctrl+G`（在VSCode/Cursor中为 `Alt+G`，该组合键会拦截“查找下一个”功能的主键输入）会将当前草稿内容，包括多行缓冲区内容，写入临时文件，暂停 Ink 组件的运行，启动 `$EDITOR` 编辑器；如果编辑器正常退出，则恢复TUI界面并提交已保存的文本。
+- 输入历史记录会存储在 `~/.hermes/.hermes_history` 目录下，或 `HERMES_HOME` 指定的路径中。
 
 ## 渲染方式
 
 智能体的输出通过以下两种方式之一进行渲染：
 
-- 如果消息内容本身已包含 ANSI 格式，`messageLine.tsx` 会直接将其打印出来；
-- 否则，`components/markdown.tsx` 会将简化的 Markdown 语法转换为 Ink 组件形式进行渲染。
+- 如果消息内容已包含ANSI格式，`messageLine.tsx` 会直接将其打印出来；
+- 否则，`components/markdown.tsx` 会将简化的Markdown语法转换为Ink组件进行渲染。
 
-该 Markdown 渲染器能够处理标题、列表、块引文、表格、代码块、差异高亮显示、内联代码、强调文本、链接以及普通网址等内容。
+该Markdown渲染器可处理标题、列表、块引文、表格、代码块、差异高亮显示、内联代码、强调文本、链接以及普通URL。
 
-工具/状态相关的活动信息会显示在实时的活动栏中，而对话记录行则始终聚焦于用户与智能体的对话轮次。
+工具/状态相关的操作会在实时活动栏中显示。对话记录行则始终聚焦在用户与智能体的轮次切换上。
 
-## 提示流程Python网关可以暂停主循环并请求结构化输入：
+## 提示流控制
 
-- `approval.request`：允许一次、允许当前会话、始终允许或拒绝
-- `clarify.request`：从选项中选择或输入自定义答案
-- `sudo.request`：遮蔽式密码输入
-- `secret.request`：为指定环境变量输入遮蔽值
-- `session.list`：供`SessionPicker`用于恢复会话
+Python网关可以暂停主循环并请求结构化输入：
 
-这些都是`app.tsx`中的状态型UI分支，并非独立的界面。
+- `approval.request`：允许一次性通过、会话有效时允许、始终允许，或拒绝；
+- `clarify.request`：从预设选项中选择，或输入自定义答案；
+- `sudo.request`：输入掩码后的密码；
+- `secret.request`：输入指定环境变量的掩码值；
+- `session.list`：供 `SessionPicker` 组件在调用 `/resume` 时使用。
 
-## 命令
+这些均为 `app.tsx` 文件中的状态驱动型UI分支，并非独立的页面。
 
-本地斜杠处理程序负责处理那些需要直接客户端操作的内置命令：
+## 命令列表
 
-- `/help`
-- `/quit`, `/exit`, `/q`
-- `/clear`
-- `/new`
-- `/compact`
-- `/resume`
-- `/copy`
-- `/paste`
-- `/details`
-- `/logs`
-- `/statusbar`, `/sb`
-- `/queue`
-- `/undo`
-- `/retry`
+以下命令由TUI客户端直接处理。未被识别的命令会通过 `slash.exec` 和 `command.dispatch` 机制传递给Python网关处理。
 
-注意事项：
+### 核心命令（`core.ts`）
+`/help`, `/quit`（别名 `/exit`）、`/update`、`/clear`（别名 `/new`）、
+`/compact`、`/copy`、`/paste`、`/details`（别名 `/detail`）、
+`/statusbar`（别名 `/sb`）、`/queue`（别名 `/q`）、`/logs`、`/history`、
+`/save`、`/undo`、`/retry`、`/steer`、`/mouse`（别名 `/scroll`）、
+`/status`、`/title`、`/fortune`、`/redraw`、`/terminal-setup`
 
-- `/copy`通过OSC 52发送选中的助手回复。
-- 不带参数的`/paste`会请求网关附上剪贴板内容图像。
-- 文本粘贴仍为内联格式；在需要使用`/paste`之前，`Cmd+V` / `Ctrl+V`会优先处理分层文本/OSC52/图像格式。
-- `/details [hidden|collapsed|expanded|cycle]`用于控制思考过程及工具详情的显示状态。
-- `/statusbar`用于切换状态栏的开启与关闭。
+### 计费相关命令（`billing.ts`）
+`/billing` —— 管理Nous终端的计费功能，包括购买额度、自动充值及设置使用限额
 
-其他所有请求都会依次传递给：
+### 会话相关命令（`session.ts`）
+`/model`、`/sessions`（别名 `/switch`、`/session`、`/resume`）、
+`/background`（别名 `/bg`、`/btw`）、`/image`、`/personality`、
+`/compress`、`/branch`（别名 `/fork`）、`/voice`、`/skin`、
+`/indicator`、`/yolo`、`/reasoning`、`/fast`、`/busy`、`/verbose`、`/usage`
+
+### 操作管理命令（`ops.ts`）
+`/stop`、`/reload-mcp`（别名 `/reload_mcp`）、`/reload`、`/browser`、
+`/rollback`、`/agents`（别名 `/tasks`）、`/replay`、`/replay-diff`、
+`/skills`、`/reload-skills`（别名 `/reload_skills`）、`/plugins`、`/tools`
+
+### 额度管理命令（`credits.ts`）
+`/credits` —— 查看Nous账户余额及为浏览器充值
+
+### 设置相关命令（`setup.ts`）
+`/setup` —— 启动外部 `hermes setup` 向导，该向导运行期间会暂停Ink组件的功能
+
+### 调试相关命令（`debug.ts`）
+`/heapdump`、`/mem` —— 提供V8内存诊断功能
+
+---
+
+以上未涵盖的指令都会依次传递给：
 
 1. `slash.exec`
 2. `command.dispatch`
 
-这样一来，Python即可拥有自己的别名、插件、技能以及基于注册表的命令，而无需在TUI中重复实现相同逻辑。
+这样一来，Python网关便可以管理别名、插件、技能以及基于注册表的命令，而无需在TUI客户端中重复实现相关逻辑。
 
 ## 事件体系
 
-目前客户端处理的主要事件类型如下：
+当前客户端处理的主要事件类型如下：
 
-| 事件类型                  | 数据内容                                         |
-| ------------------------- | ----------------------------------------------- |
-| `gateway.ready`          | `{ skin? }`                                     |
-| `session.info`           | 用于标题栏及工具/技能面板的会话元数据             |
-| `message.start`          | 启动助手流式响应                                 |
-| `message.delta`          | `{ text, rendered? }`                           |
-| `message.complete`       | `{ text, rendered?, usage, status }`            |
-| `thinking.delta`         | `{ text }`                                      |
-| `reasoning.delta`        | `{ text }`                                      |
-| `reasoning.available`    | `{ text }`                                      |
-| `status.update`          | `{ kind, text }`                                |
-| `tool.start`             | `{ tool_id, name, context? }`                   |
-| `tool.progress`          | `{ name, preview }`                             |
-| `tool.complete`          | `{ tool_id, name }`                             |
-| `clarify.request`        | `{ question, choices?, request_id }`            |
-| `approval.request`       | `{ command, description }`                      |
-| `sudo.request`           | `{ request_id }`                                |
-| `secret.request`         | `{ prompt, env_var, request_id }`               |
-| `background.complete`    | `{ task_id, text }`                             |
-| `error`                  | `{ message }`                                   |
-| `gateway.stderr`         | 由子进程的错误输出汇总而成                     |
-| `gateway.protocol_error` | 由格式错误的标准输出汇总而成                   |
+| 事件类型                     | 携带的数据内容                                                               |
+| ---------------------------- | --------------------------------------------------------------------------- |
+| `gateway.ready`               | `{ skin? }`                                                                 |
+| `skin.changed`               | `{ skin }`                                                                  |
+| `session.info`               | 用于显示横幅以及工具/技能面板的会话元数据                             |
+| `message.start`              | 开始智能体消息流式输出                                                   |
+| `message.delta`              | `{ text, rendered? }`                                                       |
+| `message.complete`            | `{ text, rendered?, usage, status }`                                        |
+| `thinking.delta`             | `{ text }`                                                                  |
+| `reasoning.delta`            | `{ text, verbose? }`                                                        |
+| `reasoning.available`         | `{ text, verbose? }`                                                        |
+| `status.update`              | `{ kind, text }`                                                            |
+| `notification.show`          | `{ id, key, kind, level, text, ttl_ms? }`                                   |
+| `notification.clear`          | `{ key }`                                                                   |
+| `tool.start`                 | `{ tool_id, name, context?, args_text? }`                                   |
+| `tool.generating`             | `{ name }`                                                                  |
+| `tool.progress`              | `{ name, preview }`                                                         |
+| `tool.complete`              | `{ tool_id, name, error?, summary?, duration_s?, inline_diff?, todos? }`    |
+| `clarify.request`            | `{ question, choices?, request_id }`                                        |
+| `approval.request`           | `{ command, description, allow_permanent? }`                                |
+| `sudo.request`               | `{ request_id }`                                                            |
+| `secret.request`             | `{ prompt, env_var, request_id }`                                           |
+| `background.complete`        | `{ task_id, text }`                                                         |
+| `billing.step_up.verification` | `{ verification_url, user_code }`                                       |
+| `review.summary`             | `{ text }`                                                                  |
+| `browser.progress`           | `{ message }`                                                               |
+| `voice.status`               | `{ state }`                                                                 |
+| `voice.transcript`            | `{ text, no_speech_limit? }`                                                |
+| `subagent.spawn_requested`    | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
+| `subagent.start`              | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
+| `subagent.thinking`          | `{ text }`                                                                  |
+| `subagent.tool`               | `{ tool_name?, tool_preview?, text? }`                                      |
+| `subagent.progress`           | `{ text }`                                                                  |
+| `subagent.complete`           | `{ status, summary?, text?, duration_seconds? }`                            |
+| `error`                     | `{ message }`                                                               |
+| `gateway.stderr`             | 由子组件的标准错误输出汇总而成                                         |
+| `gateway.protocol_error`      | 由格式错误的标准输出汇总而成                                         |
+| `gateway.start_timeout`       | `{ cwd?, python?, stderr_tail? }`                                           |
 
 ## 主题模型
 
-客户端初始使用`theme.ts`中的`DEFAULT_THEME`作为主题，随后再合并`gateway.ready`中传来的网关界面配置数据。
+客户端初始会使用 `theme.ts` 文件中定义的 `DEFAULT_THEME` 主题，随后再从 `gateway.ready` 事件中合并网关侧的主题数据。
 
-当前可覆盖的品牌元素包括：
+当前可覆盖的品牌定制项包括：
 
-- 助手名称
+- 智能体名称
 - 提示符符号
-- 欢迎语
-- 告别语
+- 欢迎文本
+- 告别文本
 
-当前可覆盖的颜色包括：
+当前可覆盖的颜色自定义项包括：
 
-- 标题栏标题、强调色、边框色、背景色、暗化效果
-- 标签、确定按钮、错误提示、警告提示的颜色
+- 横幅标题、强调色、边框颜色、背景色及暗化效果
+- 标签、确认按钮、错误提示、警告提示的颜色
 
-`branding.tsx`会利用这些值来设置日志图标、会话面板以及更新通知的样式。
+`branding.tsx` 文件会利用这些自定义值来生成logo、会话面板以及更新通知等内容。
 
-## 文件结构图
+## 文件结构映射
 
 ```text
 ui-tui/
@@ -281,56 +330,151 @@ ui-tui/
     entry.tsx            TTY gate + render()
     app.tsx              top-level Ink tree, composes src/app/*
     gatewayClient.ts     child process + JSON-RPC bridge
-    theme.ts             default palette + skin merge
-    constants.ts         display constants, hotkeys, tool labels
-    types.ts             shared client-side types
-    banner.ts            ASCII art data
+    gatewayTypes.ts      gateway event and RPC response type definitions
+    theme.ts             theme colors and skin merge
+    banner.ts            ASCII art renderer (parses Rich color tags)
+    types.ts             shared client-side types (ActiveTool, Msg, etc.)
 
     app/
       createGatewayEventHandler.ts  event → state mapping
       createSlashHandler.ts         local slash dispatch
-      useComposerState.ts           draft + multiline + queue editing
+      delegationStore.ts            nanostore for subagent spawning caps and overlay accordion state
+      gatewayContext.tsx            React context for gateway client
+      gatewayRecovery.ts            crash-recovery budget: respawn+resume capped to 3 attempts / 60 s
+      inputSelectionStore.ts        nanostore exposing the active text-input selection handle
+      interfaces.ts                 internal interfaces (ComposerActions, GatewayRpc, etc.)
+      overlayStore.ts               nanostores for overlay state
+      scroll.ts                     viewport scroll with text-selection anchor sync
+      setupHandoff.ts               launches external hermes setup, suspends Ink while it runs
+      spawnHistoryStore.ts          ring buffer of finished subagent fan-out snapshots
+      turnController.ts             stateful turn lifecycle driver (streaming, tools, reasoning)
+      turnStore.ts                  nanostore for turn state (streaming, tools, reasoning, subagents)
+      uiStore.ts                    nanostores for UI flags (busy, sid, mouseTracking, etc.)
+      useComposerState.ts           draft + multiline buffer + queue editing
+      useConfigSync.ts              config polling and MCP reload on mtime change
       useInputHandlers.ts           keypress routing
-      useTurnState.ts               agent turn lifecycle
-      overlayStore.ts               nanostores for overlays
-      uiStore.ts                    nanostores for UI flags
-      gatewayContext.tsx             React context for gateway client
-      constants.ts                  app-level constants
-      helpers.ts                    pure helpers
-      interfaces.ts                 internal interfaces
+      useLongRunToolCharms.ts       ambient activity messages for tools running longer than 8 s
+      useMainApp.ts                 top-level composition hook
+      useSessionLifecycle.ts        session create / resume / activate / close
+      useSubmission.ts              message send, shell exec, interpolation, busy-input-mode dispatch
+
+      slash/
+        types.ts                    SlashCommand interface and SlashRunCtx execution context
+        registry.ts                 SLASH_COMMANDS assembly and findSlashCommand lookup
+        commands/
+          billing.ts                /billing — manage Nous terminal billing
+          core.ts                   general TUI commands
+          credits.ts                /credits
+          debug.ts                  /heapdump, /mem
+          ops.ts                    operations commands
+          session.ts                session and agent commands
+          setup.ts                  /setup wizard
 
     components/
-      appChrome.tsx      status bar, input row, completions
-      appLayout.tsx      top-level layout composition
-      appOverlays.tsx    overlay routing (pickers, prompts)
-      branding.tsx       banner + session summary
-      markdown.tsx       Markdown-to-Ink renderer
-      maskedPrompt.tsx   masked input for sudo / secrets
-      messageLine.tsx    transcript rows
-      modelPicker.tsx    model switch picker
-      prompts.tsx        approval + clarify flows
-      queuedMessages.tsx queued input preview
-      sessionPicker.tsx  session resume picker
-      textInput.tsx      custom line editor
-      thinking.tsx       spinner, reasoning, tool activity
+      activeSessionSwitcher.tsx  active session switch overlay
+      agentsOverlay.tsx          subagent delegation overlay
+      appChrome.tsx              status bar, input row, completions
+      appLayout.tsx              top-level layout composition
+      appOverlays.tsx            overlay routing (pickers, prompts)
+      billingOverlay.tsx         billing overlay
+      branding.tsx               banner + session summary
+      fpsOverlay.tsx             FPS debug overlay
+      helpHint.tsx               contextual help hint
+      markdown.tsx               Markdown-to-Ink renderer
+      maskedPrompt.tsx           masked input for sudo / secrets
+      messageLine.tsx            transcript rows
+      modelPicker.tsx            model switch picker
+      overlayControls.tsx        shared overlay control buttons
+      pluginsHub.tsx             plugins hub overlay
+      prompts.tsx                approval + clarify flows
+      queuedMessages.tsx         queued input preview
+      skillsHub.tsx              skills hub overlay
+      streamingAssistant.tsx     live streaming assistant row
+      streamingMarkdown.tsx      streaming Markdown renderer
+      textInput.tsx              custom line editor
+      themed.tsx                 theme-aware wrapper
+      thinking.tsx               spinner, reasoning, tool activity
+      todoPanel.tsx              todo list panel
+
+    config/
+      env.ts                     environment variable resolution and Termux/mouse defaults
+      limits.ts                  paste size, live-render and history limits
+      timing.ts                  streaming batch and debounce timing constants
+
+    content/
+      charms.ts                  ambient activity strings for long-running tools
+      faces.ts                   agent face / kaomoji pool
+      fortunes.ts                /fortune quote pool
+      hotkeys.ts                 platform-aware hotkey display strings
+      placeholders.ts            rotating input placeholder strings
+      setup.ts                   setup-required panel content
+      verbs.ts                   tool activity verb map (browser → browsing, etc.)
+
+    domain/
+      blockLayout.ts             block layout and lead-gap helpers
+      details.ts                 details visibility mode resolution (hidden/collapsed/expanded)
+      messages.ts                message formatting and transcript helpers
+      paths.ts                   cwd shortening and path display helpers
+      providers.ts               provider display name helpers
+      roles.ts                   message role color and label helpers
+      slash.ts                   slash command parsing and TUI session model flag
+      usage.ts                   token usage zero value and helpers
+      viewport.ts                viewport height estimation helpers
 
     hooks/
-      useCompletion.ts   tab completion (slash + path)
-      useInputHistory.ts persistent history navigation
-      useQueue.ts        queued message management
-      useVirtualHistory.ts in-memory history for pickers
+      useCompletion.ts           tab completion (slash + path)
+      useGitBranch.ts            current git branch via child_process execFile
+      useInputHistory.ts         persistent history navigation
+      useQueue.ts                queued message management
+      useVirtualHistory.ts       virtual list scroll and height tracking
 
     lib/
-      history.ts         persistent input history
-      messages.ts        message formatting helpers
-      osc52.ts           OSC 52 clipboard copy
-      rpc.ts             JSON-RPC type helpers
-      text.ts            text helpers, ANSI detection, previews
+      circularBuffer.ts          fixed-size generic ring buffer
+      clipboard.ts               clipboard read / write via child_process
+      editor.ts                  $EDITOR launch, PATH resolution, and Ink suspend
+      emoji.ts                   emoji and variation selector width helpers
+      externalCli.ts             external CLI subprocess launcher
+      externalLink.ts            open URLs in the system browser
+      forceTruecolor.ts          24-bit truecolor override before chalk imports
+      fpsStore.ts                Ink frame FPS tracker nanostore
+      fuzzy.ts                   lightweight fuzzy subsequence scorer
+      gracefulExit.ts            clean shutdown with failsafe timeout
+      history.ts                 persistent input history (read/append to disk)
+      inputMetrics.ts            input width and wrap metrics
+      liveProgress.ts            todo helpers and tool-shelf message assembly
+      mathUnicode.ts             best-effort LaTeX → Unicode for inline math
+      memory.ts                  V8 heap snapshot and diagnostics helpers
+      memoryMonitor.ts           automatic heap-dump trigger on high usage
+      messages.ts                transcript message append helpers
+      openExternalUrl.ts         platform-aware URL opener (macOS/Linux/Windows)
+      osc52.ts                   OSC 52 terminal clipboard copy sequence
+      parentLog.ts               append-only log to ~/.hermes/tui-parent.log
+      perfPane.tsx               FPS / render perf overlay pane
+      platform.ts                platform-aware keybinding and SSH detection helpers
+      precisionWheel.ts          high-precision scroll wheel with sticky-frame budget
+      prompt.ts                  composer prompt text helpers (Termux-safe)
+      reasoning.ts               reasoning tag detection and split helpers
+      rpc.ts                     JSON-RPC result and command dispatch helpers
+      subagentTree.ts            subagent tree flattening and aggregate helpers
+      syntax.ts                  syntax token types and theme-aware highlighting
+      terminalModes.ts           terminal mode reset sequences (kitty, mouse, etc.)
+      terminalParity.ts          VSCode-like terminal detection and hint helpers
+      terminalSetup.ts           IDE keybinding config file install helpers
+      termux.ts                  Termux platform detection helpers
+      text.ts                    text helpers, ANSI detection, tool trail builders
+      todo.ts                    todo item tone and display helpers
+      viewportStore.ts           viewport height nanostore via ScrollBoxHandle
+      virtualHeights.ts          virtual list row height estimation
+      wheelAccel.ts              scroll wheel acceleration state machine
+
+    protocol/
+      interpolation.ts           {!cmd} inline shell interpolation regex and helpers
+      paste.ts                   bracketed paste snippet token regex
 
     types/
-      hermes-ink.d.ts    type declarations for @hermes/ink
+      hermes-ink.d.ts            type declarations for @hermes/ink
 
-    __tests__/           vitest suite
+    __tests__/                   vitest suite
 ```
 
 相关的 Python 方面：
