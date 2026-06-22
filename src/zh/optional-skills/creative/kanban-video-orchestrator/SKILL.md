@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [video, kanban, multi-agent, orchestration, production-pipeline]
-    related_skills: [kanban-orchestrator, kanban-worker, ascii-video, manim-video, p5js, comfyui, touchdesigner-mcp, blender-mcp, pixel-art, ascii-art, songwriting-and-ai-music, heartmula, songsee, spotify, youtube-content, claude-design, excalidraw, architecture-diagram, concept-diagrams, baoyu-comic, baoyu-infographic, humanizer, gif-search, meme-generation]
+    related_skills: [ascii-video, manim-video, p5js, comfyui, touchdesigner-mcp, blender-mcp, pixel-art, ascii-art, songwriting-and-ai-music, heartmula, songsee, spotify, youtube-content, claude-design, excalidraw, architecture-diagram, concept-diagrams, baoyu-comic, baoyu-infographic, humanizer, gif-search, meme-generation]
     credits: |
       The single-project workspace layout, profile-config patching pattern,
       SOUL.md-per-profile model, TEAM.md task-graph convention, and
@@ -101,41 +101,41 @@ hermes kanban list  --tenant <project-tenant>     # board snapshot
 hermes dashboard                                   # visual board UI
 ```
 
-从这里开始，由“导演配置文件”接管工作，它通过看板工具集将任务拆分并分配给相应的专业配置文件。
+从这里开始，将由“导演配置文件”接管工作，它通过看板工具集将任务分解并分配给相应的专业配置文件。
 
 ### 第6步 — 监控与干预
 
-保持关注——看板系统可以自主运行，但遇到卡住的任务或不良输出时，仍需人工（或人工智能）进行判断。
+保持关注——看板系统可以自主运行，但遇到卡住的任务或不良输出时，仍需人工（或AI）进行判断。
 
-监控方式包括：定期查询 `kanban list`，使用 `kanban show <id>` 检查那些持续时间超过预期的“运行中”任务，并监测任务的心跳状态。当某个工作人员的输出未通过审核时，可采取的标准干预措施包括：
+监控方式包括：定期查询 `kanban list`，使用 `kanban show <id>` 检查那些耗时超过预期的“运行中”任务，并查看任务的心跳状态。当某个工作人员的输出无法通过审核时，可采取的标准干预措施包括：
 
-1. 在该工作人员的任务上留下具体的反馈意见（使用 `kanban_comment`）；
+1. 使用 `kanban_comment` 在该工作人员的任务上留下具体反馈；
 2. 创建一个以原任务为父任务的重新执行任务；
-3. 调整任务要求的范围，让“导演”重新进行任务拆分。
+3. 调整任务要求的范围，再由“导演”重新进行任务分解。
 
-有关诊断方法、干预方案以及处理“任务卡住”情况的指南，请参阅 **[references/monitoring.md](references/monitoring.md)**。
+有关诊断方法、干预方案以及处理“任务卡住”问题的指南，请参阅 **[references/monitoring.md](references/monitoring.md)**。
 
 ## 参考：实际案例
 
-这里提供了六个涵盖不同视频风格的典型流程示例——叙事电影、产品/营销视频、音乐视频、数学/算法讲解视频、ASCII艺术视频以及实时装置艺术视频——展示了同一工作流如何针对不同的团队和任务结构产生不同的成果。详情请参见 **[references/examples.md](references/examples.md)**。
+这里展示了六个涵盖不同视频类型的典型流程——叙事电影、产品/营销视频、音乐视频、数学/算法讲解视频、ASCII视频以及实时装置艺术视频——说明同一工作流如何针对不同的团队和任务结构产生多样化的结果。详情请见 **[references/examples.md](references/examples.md)**。
 
 ## 重要规则
 
-1. **先探索，后行动。** 在创建任务描述或团队之前，务必先回答至少三个基础问题。一个糟糕的任务描述会影响到整个流程的效率。
+1. **先调研，后行动。** 在创建任务描述或团队之前，务必先回答至少三个基础问题。一份糟糕的任务描述会影响到整个流程的效率。
 
-2. **让团队与视频类型相匹配。** 不要每次都使用相同的四配置文件组合来处理不同类型的任务。例如，没有节奏分析配置文件的音乐视频很难达到预期效果；而没有编剧配置文件的叙事电影则会产生逻辑混乱的场景。详情请参阅 `references/role-archetypes.md`。
+2. **让团队与视频类型相匹配。** 不要每次都使用相同的四配置文件组合来处理不同类型的视频。如果没有节奏分析配置文件，音乐视频的制作就会出错；如果没有编剧配置文件，叙事电影则会出现逻辑混乱的场景。详情请参阅 `references/role-archetypes.md`。
 
-3. **每个项目对应一个工作空间。** 某个视频的所有相关配置文件都共享同一个 `dir:` 工作空间。任务通过共享的文件系统以及结构化的交接方式传递成果。**每次**调用 `kanban_create` 时，都会传入 `workspace_kind="dir"` 和 `workspace_path="<绝对项目路径>"` 这两个参数。
+3. **每个项目对应一个工作空间。** 同一视频的所有相关配置文件都共享同一个 `dir:` 工作空间。任务通过共享文件系统及结构化的交接方式传递成果。**每次**调用 `kanban_create` 时，都会传入 `workspace_kind="dir"` 和 `workspace_path="<绝对项目路径>"` 这两个参数。
 
-4. **为每个项目设置独立的租户。** 使用特定于项目的租户标识（`--tenant <project-slug>`）。这样可以限制控制台的显示范围，避免与其他正在进行的看板任务相互干扰。
+4. **为每个项目设置独立租户。** 使用特定于项目的租户标识（`--tenant <project-slug>`）。这样既能保证控制台的界面整洁，又能避免与其他正在进行的看板任务相互干扰。
 
-5. **充分利用现有技能。** 如果某个场景适合某种现有的技能，相关的渲染工具应通过在其任务中添加 `--skill <name>` 参数，或在其配置文件中设置 `always_load` 选项来加载该技能。无需重复开发技能已具备的功能。
+5. **充分利用现有技能。** 如果某个场景适合某种现有技能，相关的渲染工具应通过在其任务中添加 `--skill <name>` 参数，或在其配置文件中设置 `always_load` 选项来加载该技能。无需重复实现技能已具备的功能。
 
-6. **“导演”绝不直接执行任务。** 即使拥有完整的 `kanban + terminal + file` 工具集，“导演”的 `SOUL.md` 规则也禁止其直接执行任务。它的职责仅限于任务拆分与分配——每一个具体的任务都会转化为针对相应专业配置文件的 `hermes kanban create` 调用。`kanban-orchestrator` 技能对此有更详细的说明。
+6. **“导演”绝不直接执行任务。** 即使拥有完整的 `kanban + terminal + file` 工具集，“导演”的 `SOUL.md` 规则也禁止其直接执行任务。它的职责仅限于任务分解与分配——每个具体任务都会转化为针对相应专业配置文件的 `hermes kanban create` 调用。嵌入到每个看板工作工具系统提示中的编排指南对此有更详细的说明。
 
-7. **避免过度拆分任务。** 一个30秒的产品视频并不需要20个任务。应力求构建出最小的任务结构，同时确保任务能够高效并行处理，并设置合适的人工审核节点。
+7. **避免过度分解任务。** 一个30秒的产品视频并不需要20个任务。应力求构建出规模最小但仍能高效并行处理，并且具备适当人工审核节点的任务结构。
 
-8. **在启动任务前验证API密钥。** 外部API（如文本转语音、图像生成、图像转视频等功能）需要从 `${HERMES_HOME:-~/.hermes}/.env` 文件或用户的密钥存储中获取相应的密钥。如果缺少密钥，工作人员的任务就会失败，从而浪费任务资源。设置脚本中的 `check_key` 工具会在检测到缺失必要密钥时立即终止流程。
+8. **在启动任务前验证API密钥。** 外部API（如文本转语音、图像生成、图像转视频等功能）需要从 `${HERMES_HOME:-~/.hermes}/.env` 文件或用户的密钥存储中获取密钥。如果工作工具因缺少密钥而出错，就会浪费一个任务处理名额。设置脚本中的 `check_key` 辅助函数会在检测到缺失必要密钥时立即终止任务。
 
 ## 文件结构图
 
