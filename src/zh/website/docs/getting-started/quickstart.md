@@ -98,67 +98,66 @@ hermes setup --portal
 :::info 设置模式
 在全新安装时，`hermes setup` 提供三种设置模式：
 
-- **快速设置（Nous Portal）**——支持免费OAuth登录，无需API密钥；可同时设置模型及工具网关相关功能。这是推荐的快捷方式。
-- **完整设置**——需手动配置每一个服务提供商、工具及选项（需自行准备密钥）。
-- **空白起步模式**——除运行智能体所需的最低必要组件——**服务提供商与模型、文件操作工具集以及终端工具集**之外，其余所有功能均处于关闭状态。该模式下不支持网页访问、浏览器功能、代码执行、视觉处理、内存管理、任务委托、定时任务、技能调用、插件使用或MCP服务器，同时压缩功能、检查点机制、智能路由及内存捕获功能也会被禁用。在完成基础配置后，可选择两种路径之一：**从所有功能关闭的状态开始**（立即获得最简版的智能体），或**逐步配置各项功能**（选择性启用工具、技能、插件、MCP及消息功能）。当您希望创建一个功能极简且完全可控的智能体，并仅启用所需功能时，可选择此模式。
+- **快速设置（Nous Portal）**——支持免费OAuth登录，无需API密钥；可同时设置模型及工具网关相关功能。这是推荐的快速路径。
+- **完整设置**——需手动配置每个服务提供商、工具及各项选项（需自行准备密钥）。
+- **空白起步模式**——除运行智能体所需的最低必要组件外，其余所有功能均处于关闭状态：即服务提供商与模型、文件操作工具集以及终端工具集。该模式下不支持网页访问、浏览器功能、代码执行、视觉处理、内存管理、任务委托、定时任务、技能调用、插件使用或MCP服务器，同时压缩功能、检查点机制、智能路由及内存捕获功能也会被禁用。在完成这些基础配置后，可选择两种路径之一：要么从完全关闭所有功能的状态开始（立即获得最简版的智能体），要么逐步启用各项配置（按需开启工具、技能、插件、MCP及消息功能）。当您希望创建一个经过严格控制的极简智能体，并且只启用真正需要的功能时，可选用此模式。
 
-“空白起步模式”会明确生成 `platform_toolsets.cli` 列表以及 `agent.disabled_toolsets` 文件，因此任何未选中的功能都不会被加载——即便在执行 `hermes update` 后也是如此。之后可通过 `hermes tools` 重新启用所需功能，使用 `hermes skills opt-in --sync` 添加技能，或通过 `hermes setup agent` 调整相关设置。
+“空白起步模式”会明确生成 `platform_toolsets.cli` 列表以及 `agent.disabled_toolsets` 文件，因此任何未选中的功能都不会被加载——即便在运行 `hermes update` 后也不会改变。如需后续重新启用某项功能，可使用 `hermes tools` 命令；若要添加技能，可使用 `hermes skills opt-in --sync` 命令；调整设置则可通过 `hermes setup agent` 完成。
 :::
 
-推荐的默认配置如下：
+推荐的默认设置如下：
 
 | 服务提供商 | 类型 | 设置方式 |
 |----------|------|----------|
-| **Nous Portal** | 基于订阅的服务，无需额外配置 | 通过 `hermes model` 进行OAuth登录 |
-| **OpenAI Codex** | 基于ChatGPT的OAuth服务，使用Codex模型 | 通过 `hermes model` 进行设备代码认证 |
-| **Anthropic** | 直接使用Claude模型——提供Max套餐及额外使用额度（需OAuth认证），或可通过API密钥按令牌计费 | 通过 `hermes model` 进行OAuth登录（需拥有Max套餐及额外额度），或输入Anthropic API密钥 |
+| **Nous Portal** | 订阅制，无需额外配置 | 通过 `hermes model` 进行OAuth登录 |
+| **OpenAI Codex** | 基于ChatGPT的OAuth接口，使用Codex模型 | 通过 `hermes model` 进行设备代码认证 |
+| **Anthropic** | 直接使用Claude系列模型——支持Max套餐及额外使用额度（通过OAuth认证），也可使用API密钥按令牌付费 | 通过 `hermes model` 进行OAuth登录（需拥有Max套餐及额外额度），或输入Anthropic API密钥 |
 | **OpenRouter** | 支持跨多种模型进行多服务提供商路由 | 输入对应API密钥 |
 | **Z.AI** | 由GLM/Zhipu提供的模型 | 设置 `GLM_API_KEY` / `ZAI_API_KEY`（也支持 `Z_AI_API_KEY`） |
-| **Kimi / Moonshot** | 由Moonshot提供的编程及聊天模型 | 设置 `KIMI_API_KEY`（或专为Kimi-Coding设计的 `KIMI_CODING_API_KEY`） |
+| **Kimi / Moonshot** | 由Moonshot提供的编程及聊天模型 | 设置 `KIMI_API_KEY`（或专为Kimi编程功能设计的 `KIMI_CODING_API_KEY`） |
 | **Kimi / Moonshot China** | 中国地区的Moonshot接口 | 设置 `KIMI_CN_API_KEY` |
-| **Arcee AI** | Trinity模型 | 设置 `ARCEEAI_API_KEY` |
+| **Arcee AI** | Trinity系列模型 | 设置 `ARCEEAI_API_KEY` |
 | **GMI Cloud** | 支持多种模型的直接API访问 | 设置 `GMI_API_KEY` |
-| **MiniMax (OAuth)** | 通过浏览器OAuth访问Minimax前沿模型——无需API密钥（`hermes_cli/models.py`中的模型名称在不同版本中可能有所变化） | 通过 `hermes model` 选择Minimax（OAuth） |
+| **MiniMax (OAuth)** | 通过浏览器OAuth访问Minimax前沿模型——无需API密钥（`hermes_cli/models.py` 文件中的模型名称在不同版本中可能会发生变化） | 通过 `hermes model` 选择MiniMax（OAuth）模式 |
 | **MiniMax** | 国际版的Minimax接口 | 设置 `MINIMAX_API_KEY` |
 | **MiniMax China** | 中国地区的Minimax接口 | 设置 `MINIMAX_CN_API_KEY` |
-| **Alibaba Cloud** | 通过DashScope访问Qwen模型 | 设置 `DASHSCOPE_API_KEY`（Qwen Coding Plan还支持 `ALIBABA_CODING_PLAN_API_KEY`） |
+| **Alibaba Cloud** | 通过DashScope访问Qwen系列模型 | 设置 `DASHSCOPE_API_KEY`（Qwen编程套餐也支持 `ALIBABA_CODING_PLAN_API_KEY`） |
 | **Hugging Face** | 通过统一路由器访问20多种开源模型（包括Qwen、DeepSeek、Kimi等） | 设置 `HF_TOKEN` |
-| **AWS Bedrock** | 通过原生Converse API访问Claude、Nova、Llama、DeepSeek等模型 | 需配置IAM角色或使用 `aws configure`（详见[指南](../guides/aws-bedrock.md)） |
+| **AWS Bedrock** | 通过原生Converse API访问Claude、Nova、Llama、DeepSeek等模型 | 使用IAM角色或通过 `aws configure` 配置（详见[指南](../guides/aws-bedrock.md)） |
 | **Azure Foundry** | 由Azure AI Foundry提供的模型 | 设置 `AZURE_FOUNDRY_API_KEY` 及 `AZURE_FOUNDRY_BASE_URL` |
-| **Google AI Studio** | 通过直接API访问Gemini模型 | 设置 `GOOGLE_API_KEY` / `GEMINI_API_KEY` |
-| **Google Gemini (OAuth)** | 通过 `google-gemini-cli`的OAuth流程访问Gemini模型——无需密钥 | 通过 `hermes model` 选择Google Gemini（OAuth） |
-| **xAI** | 通过直接API访问Grok模型 | 设置 `XAI_API_KEY` |
-| **xAI Grok OAuth** | 适用于SuperGrok/Premium+套餐的用户，无需API密钥 | 通过 `hermes model` 选择xAI Grok OAuth |
+| **Google AI Studio** | 通过直接API访问Gemini系列模型 | 设置 `GOOGLE_API_KEY` / `GEMINI_API_KEY` |
+| **xAI** | 通过直接API访问Grok系列模型 | 设置 `XAI_API_KEY` |
+| **xAI Grok OAuth** | SuperGrok/Premium+套餐用户，无需API密钥 | 通过 `hermes model` 选择xAI Grok OAuth模式 |
 | **NovitaAI** | 多模型API网关 | 设置 `NOVITA_API_KEY` |
-| **StepFun** | Step Plan提供的模型 | 设置 `STEPFUN_API_KEY` |
+| **StepFun** | Step Plan系列模型 | 设置 `STEPFUN_API_KEY` |
 | **Xiaomi MiMo** | 由小米提供的模型 | 设置 `XIAOMI_API_KEY` |
 | **Tencent TokenHub** | 由腾讯提供的模型 | 设置 `TOKENHUB_API_KEY` |
-| **Ollama Cloud** | 由Ollama托管的模型 | 设置 `OLLAMA_API_KEY` |
+| **Ollama Cloud** | 由托管服务提供的Ollama模型 | 设置 `OLLAMA_API_KEY` |
 | **LM Studio** | 本地桌面应用，提供兼容OpenAI的API接口 | 设置 `LM_API_KEY`（如非默认地址，则还需设置 `LM_BASE_URL`） |
-| **Qwen OAuth** | 通过Qwen Portal的浏览器OAuth流程访问模型——无需API密钥 | 通过 `hermes model` 选择Qwen OAuth |
+| **Qwen OAuth** | 通过Qwen Portal的浏览器OAuth功能访问——无需API密钥 | 通过 `hermes model` 选择Qwen OAuth模式 |
 | **Kilo Code** | 由KiloCode提供的模型 | 设置 `KILOCODE_API_KEY` |
 | **OpenCode Zen** | 支持按需付费使用精选模型 | 设置 `OPENCODE_ZEN_API_KEY` |
-| **OpenCode Go** | 为开源模型提供的每月10美元的订阅服务 | 设置 `OPENCODE_GO_API_KEY` |
-| **DeepSeek** | 直接访问DeepSeek API | 设置 `DEEPSEEK_API_KEY` |
-| **NVIDIA NIM** | 通过build.nvidia.com或本地NIM访问Nemotron模型 | 设置 `NVIDIA_API_KEY`（可选：设置 `NVIDIA_BASE_URL`） |
-| **GitHub Copilot** | GitHub Copilot订阅服务（支持GPT-5.x、Claude、Gemini等模型） | 通过 `hermes model` 进行OAuth认证，或直接使用 `COPILOT_GITHUB_TOKEN` / `GH_TOKEN` |
-| **GitHub Copilot ACP** | Copilot ACP智能体后端（会生成本地 `copilot` CLI工具） | 需先通过 `hermes model` 配置（需安装 `copilot` CLI并完成登录） |
-| **自定义接口** | VLLM、SGLang、Ollama或任何兼容OpenAI的API | 需设置基础URL及API密钥 |
+| **OpenCode Go** | 以每月10美元的价格订阅使用开源模型 | 设置 `OPENCODE_GO_API_KEY` |
+| **DeepSeek** | 直接访问DeepSeek的API | 设置 `DEEPSEEK_API_KEY` |
+| **NVIDIA NIM** | 通过build.nvidia.com或本地NIM环境访问Nemotron模型 | 设置 `NVIDIA_API_KEY`（可选：设置 `NVIDIA_BASE_URL`） |
+| **GitHub Copilot** | GitHub Copilot订阅服务（支持GPT-5.x、Claude、Gemini等模型） | 通过 `hermes model` 进行OAuth登录，或直接使用 `COPILOT_GITHUB_TOKEN` / `GH_TOKEN` |
+| **GitHub Copilot ACP** | Copilot ACP智能体后端（会生成本地的 `copilot` CLI工具） | 需先通过 `hermes model` 配置，并确保已安装 `copilot` CLI并完成登录 |
+| **自定义接口** | VLLM、SGLang、Ollama或任何兼容OpenAI的API | 设置基础URL及API密钥 |
 
-对于大多数首次使用用户而言：只需选择一个服务提供商，除非有特殊需求，否则直接接受默认设置即可。完整的供应商列表、环境变量设置及配置步骤详见[服务提供商](../integrations/providers.md)页面。
+对于大多数首次使用用户而言：选择一种服务提供商后，除非有特殊需求，否则直接接受默认设置即可。完整的供应商列表、环境变量设置及配置步骤均可在 [Providers](../integrations/providers.md) 页面查看。
 :::caution 最小上下文长度：64K tokens
-Hermes Agent要求模型具备至少**64,000个tokens**的上下文容量。上下文长度过短的模型无法为多步骤工具调用流程保留足够的工作内存，因此会在启动时被拒绝。大多数托管模型（如Claude、GPT、Gemini、Qwen、DeepSeek）都轻松满足这一要求。若使用本地模型，则需将其上下文大小设置为至少64K（例如，对于lama.cpp可使用 `--ctx-size 65536`，对于Ollama则可使用 `-c 65536`）。
+Hermes Agent要求模型至少具备**64,000 tokens**的上下文容量。上下文长度过短的模型无法为多步骤工具调用流程保留足够的工作内存，因此在启动时会被拒绝。大多数托管模型（如Claude、GPT、Gemini、Qwen、DeepSeek）都很容易满足这一要求。如果使用本地模型，则需将其上下文大小设置为至少64K（例如，对于llama.cpp可使用 `--ctx-size 65536`，对于Ollama则可使用 `-c 65536`）。
 :::
 
 :::tip
-您随时可以通过 `hermes model` 更换服务提供商——不存在锁定问题。如需查看所有受支持的服务提供商的完整列表及详细配置方法，请参阅[AI服务提供商](../integrations/providers.md)。
+您可以通过 `hermes model` 命令随时更换服务提供商，无需担心被绑定。如需查看所有受支持的服务提供商列表及详细配置信息，请参阅 [AI Providers](../integrations/providers.md) 页面。
 :::
 
 ### 设置值的存储方式
 Hermes会将敏感信息与普通配置分开存储：
 
-- **敏感信息及令牌** → 保存在 `~/.hermes/.env` 文件中
-- **非敏感设置** → 保存在 `~/.hermes/config.yaml` 文件中
+- **敏感信息及令牌** → `~/.hermes/.env`
+- **非敏感设置** → `~/.hermes/config.yaml`
 
 最简便的设置方式是通过CLI命令来完成：
 
