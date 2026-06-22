@@ -40,7 +40,7 @@ fallback_providers:
 每条配置项都必须同时包含 `provider` 和 `model` 字段。缺少任一字段的配置项将被忽略。
 
 :::note `fallback_model` 与 `fallback_providers` 的区别
-`fallback_providers`（复数形式，以列表呈现）是当前的配置格式，支持按顺序尝试多个备用选项。而 `fallback_model`（单数形式）则是旧版的单一备用键——Hermes 为保持向后兼容仍会支持该键，但当使用 `hermes fallback` 命令写入配置时，将会使用新的 `fallback_providers` 键，并在写入时迁移旧版配置。若同时设置了这两个键，则以 `fallback_providers` 的优先级为准。
+`fallback_providers`（复数形式，以列表呈现）是当前的配置格式，支持按顺序尝试多个备用选项。而 `fallback_model`（单数形式）则是旧版的单一备用键——Hermes 为保持向后兼容仍会支持该键，但当使用 `hermes fallback` 命令写入配置时，系统会使用新的 `fallback_providers` 键，并在写入时迁移旧版配置。若同时设置了这两个键，则 `fallback_providers` 具有优先级。
 :::
 
 ### 支持的提供商
@@ -52,7 +52,7 @@ fallback_providers:
 | OpenAI Codex | `openai-codex` | 需通过 `hermes model` 命令配置 ChatGPT 的 OAuth 访问权限 |
 | GitHub Copilot | `copilot` | 需提供 `COPILOT_GITHUB_TOKEN`、`GH_TOKEN` 或 `GITHUB_TOKEN` |
 | GitHub Copilot ACP | `copilot-acp` | 需通过外部进程实现（与编辑器集成） |
-| Anthropic | `anthropic` | 需提供 `ANTHROPIC_API_KEY` 或 Claude Code 的认证凭证 |
+| Anthropic | `anthropic` | 需提供 `ANTHROPIC_API_KEY` 或 Claude Code 的认证信息 |
 | z.ai / GLM | `zai` | 需提供 `GLM_API_KEY` |
 | Kimi / Moonshot | `kimi-coding` | 需提供 `KIMI_API_KEY` |
 | MiniMax | `minimax` | 需提供 `MINIMAX_API_KEY` |
@@ -62,13 +62,12 @@ fallback_providers:
 | GMI Cloud | `gmi` | 需提供 `GMI_API_KEY`（可选：`GMI_BASE_URL`） |
 | StepFun | `stepfun` | 需提供 `STEPFUN_API_KEY`（可选：`STEPFUN_BASE_URL`） |
 | Ollama Cloud | `ollama-cloud` | 需提供 `OLLAMA_API_KEY` |
-| Google Gemini（OAuth 方式） | `google-gemini-cli` | 需通过 `hermes model` 命令配置 Google 的 OAuth 访问权限（可选：`HERMES_GEMINI_PROJECT_ID`） |
 | Google AI Studio | `gemini` | 需提供 `GOOGLE_API_KEY`（别名：`GEMINI_API_KEY`） |
-| xAI（Grok） | `xai`（别名：`grok`） | 需提供 `XAI_API_KEY`（可选：`XAI_BASE_URL`） |
-| xAI Grok OAuth（SuperGrok） | `xai-oauth`（别名：`grok-oauth`） | 需通过 `hermes model` 命令配置 xAI Grok OAuth 访问权限（支持浏览器登录，需订阅 SuperGrok 服务） |
+| xAI (Grok) | `xai`（别名：`grok`） | 需提供 `XAI_API_KEY`（可选：`XAI_BASE_URL`） |
+| xAI Grok OAuth（SuperGrok） | `xai-oauth`（别名：`grok-oauth`） | 需通过 `hermes model` 命令配置 xAI Grok OAuth 访问权限（通过浏览器登录，需订阅 SuperGrok 服务） |
 | AWS Bedrock | `bedrock` | 需使用标准的 boto3 认证方式（提供 `AWS_REGION`、`AWS_PROFILE` 或 `AWS_ACCESS_KEY_ID`） |
-| Qwen Portal（OAuth 方式） | `qwen-oauth` | 需通过 `hermes model` 命令配置 Qwen Portal 的 OAuth 访问权限（可选：`HERMES_QWEN_BASE_URL`） |
-| MiniMax（OAuth 方式） | `minimax-oauth` | 需通过 `hermes model` 命令配置 MiniMax 平台的 OAuth 访问权限 |
+| Qwen Portal（OAuth） | `qwen-oauth` | 需通过 `hermes model` 命令配置 Qwen Portal 的 OAuth 访问权限（可选：提供 `HERMES_QWEN_BASE_URL`） |
+| MiniMax（OAuth） | `minimax-oauth` | 需通过 `hermes model` 命令配置 MiniMax 平台的 OAuth 访问权限 |
 | OpenCode Zen | `opencode-zen` | 需提供 `OPENCODE_ZEN_API_KEY` |
 | OpenCode Go | `opencode-go` | 需提供 `OPENCODE_GO_API_KEY` |
 | Kilo Code | `kilocode` | 需提供 `KILOCODE_API_KEY` |
@@ -81,12 +80,13 @@ fallback_providers:
 | StepFun | `stepfun` | 需提供 `STEPFUN_API_KEY` |
 | Tencent TokenHub | `tencent-tokenhub` | 需提供 `TOKENHUB_API_KEY` |
 | Microsoft Foundry | `azure-foundry` | 需提供 `AZURE_FOUNDRY_API_KEY` 及 `AZURE_FOUNDRY_BASE_URL` |
-| LM Studio（本地运行） | `lmstudio` | 需提供 `LM_API_KEY`（本地运行时可无需该参数）及 `LM_BASE_URL` |
+| LM Studio（本地版） | `lmstudio` | 需提供 `LM_API_KEY`（本地运行时可无需该参数）及 `LM_BASE_URL` |
 | Hugging Face | `huggingface` | 需提供 `HF_TOKEN` |
 | 自定义端点 | `custom` | 需提供 `base_url` 及可选的 `key_env` 参数（详情见下文） |
 
 ### 自定义端点回退机制
-对于自定义的兼容 OpenAI 的端点，只需添加 `base_url` 参数，如需使用密钥则可再添加 `key_env` 参数：
+
+对于自定义的兼容 OpenAI 的端点，只需添加 `base_url`，如需额外配置则可补充 `key_env` 参数：
 
 ```yaml
 fallback_providers:
@@ -402,4 +402,4 @@ cronjob(
 )
 ```
 
-如需了解完整的配置详情，请参阅[定时任务（Cron）](/user-guide/features/cron)文档。
+如需了解完整的配置详情，请参阅[定时任务（Cron）](/user-guide/features/cron)。
