@@ -6,29 +6,29 @@ description: "How to add a new inference provider to Hermes Agent — auth, runt
 
 # 添加 Provider
 
-通过自定义 Provider 路径，Hermes 已能够与任何兼容 OpenAI 的接口端点进行通信。除非您希望为该服务提供一流的用户体验，否则无需添加内置 Provider，因为内置 Provider 需要满足以下条件：
+通过自定义 Provider 路径，Hermes 已可与任何兼容 OpenAI 的接口端点进行交互。除非您希望为该服务提供一流的用户体验，否则无需添加内置 Provider，因为内置 Provider 需要满足以下条件：
 
 - 支持针对特定 Provider 的身份验证或令牌刷新机制
 - 提供精选的模型目录
 - 包含设置选项及 `hermes model` 菜单项
-- 支持 `provider:model` 语法下的别名配置
-- 需要适配器的非 OpenAI API 格式
+- 支持 `provider:model` 语法形式的别名
+- 非 OpenAI 格式的 API，需要相应的适配器
 
-如果该 Provider 仅仅是“另一个兼容 OpenAI 的基础 URL 和 API 密钥”，那么一个命名的自定义 Provider 可能就足够了。
+如果该 Provider 仅仅是“另一个兼容 OpenAI 的基础 URL 和 API 密钥”，那么一个带名称的自定义 Provider 可能就已足够。
 
-## 工作原理
+## 思维模型
 
 内置 Provider 需要在多个层面保持一致：
 
 1. `hermes_cli/auth.py` 负责确定凭证的获取方式。
-2. `hermes_cli/runtime_provider.py` 将这些信息转换为运行时数据，包括：
+2. `hermes_cli/runtime_provider.py` 将这些信息转换为运行时数据：
    - `provider`
    - `api_mode`
    - `base_url`
    - `api_key`
    - `source`
 3. `run_agent.py` 根据 `api_mode` 决定如何构建并发送请求。
-4. `hermes_cli/models.py` 和 `hermes_cli/main.py` 负责在 CLI 中显示该 Provider。（`hermes_cli/setup.py` 会自动调用 `main.py`，无需进行任何修改。）
+4. `hermes_cli/models.py` 和 `hermes_cli/main.py` 负责在 CLI 中显示该 Provider。（`hermes_cli/setup.py` 会自动调用 `main.py`，无需对此进行修改。）
 5. `agent/auxiliary_client.py` 和 `agent/model_metadata.py` 负责处理辅助任务及令牌预算管理。
 
 其中最重要的抽象概念就是 `api_mode`：
@@ -42,29 +42,29 @@ description: "How to add a new inference provider to Hermes Agent — auth, runt
 
 ### 路径 A — 兼容 OpenAI 的 Provider
 
-当该 Provider 支持标准的聊天完成式请求时，可选择此路径。
+当该 Provider 支持标准的聊天完成式请求时，可使用此路径。
 
 典型工作内容包括：
 
 - 添加身份验证相关配置
 - 添加模型目录及别名
 - 实现运行时解析逻辑
-- 配置 CLI 菜单选项
+- 配置 CLI 菜单项
 - 设置辅助模型的默认值
-- 编写测试用例及用户文档
+- 编写测试用例和用户文档
 
 通常无需创建新的适配器或 `api_mode`。
 
 ### 路径 B — 原生 Provider
 
-当该 Provider 的行为与 OpenAI 的聊天完成式请求不同步时，可选择此路径。
+当该 Provider 的行为与 OpenAI 的聊天完成式请求不同步时，可使用此路径。
 
 当前项目中已有的示例包括：
 
 - `codex_responses`
 - `anthropic_messages`
 
-此路径除了包含路径 A 的所有内容外，还需补充：
+此路径除了包含路径 A 的所有内容外，还需额外实现：
 
 - 位于 `agent/` 目录下的 Provider 适配器
 - `run_agent.py` 中用于请求构建、分发、使用情况提取、中断处理及响应标准化的相关分支
@@ -72,7 +72,7 @@ description: "How to add a new inference provider to Hermes Agent — auth, runt
 
 ## 文件清单
 
-### 所有内置 Provider 都需包含的文件
+### 所有内置 Provider 都需要的文件
 
 1. `hermes_cli/auth.py`
 2. `hermes_cli/models.py`
@@ -80,125 +80,125 @@ description: "How to add a new inference provider to Hermes Agent — auth, runt
 4. `hermes_cli/main.py`
 5. `agent/auxiliary_client.py`
 6. `agent/model_metadata.py`
-7. 测试文件
+7. 测试用例
 8. 位于 `website/docs/` 目录下的用户文档
 
 :::提示
-`hermes_cli/setup.py` 无需进行任何修改。设置向导会将 Provider/模型选择任务委托给 `main.py` 中的 `select_provider_and_model()` 函数——在此处添加的任何 Provider 都会自动在 `hermes setup` 中可用。
+`hermes_cli/setup.py` 无需修改。设置向导会将 Provider/模型选择的任务委托给 `main.py` 中的 `select_provider_and_model()` 函数——在此处添加的任何 Provider 都会自动在 `hermes setup` 中可用。
 :::
 
-### 原生/非 OpenAI Provider 还需额外包含的文件
+### 原生/非 OpenAI Provider 还需的文件
 
 10. `agent/<provider>_adapter.py`
 11. `run_agent.py`
-12. 如果该 Provider 需要 SDK，还需添加 `pyproject.toml` 文件
+12. 如果该 Provider 需要 SDK，还需 `pyproject.toml` 文件
 
-## 简化路径：简单的 API 密钥型 Provider
+## 简化路径：简单的 API 密钥 Provider
 
 如果您的 Provider 仅仅是兼容 OpenAI 的接口端点，并且仅通过单个 API 密钥进行身份验证，那么无需修改 `auth.py`、`runtime_provider.py`、`main.py` 或下面完整清单中的其他任何文件。
 
 您只需完成以下操作：
 
 1. 在 `plugins/model-providers/<your-provider>/` 目录下创建插件目录，其中需包含：
-   - `__init__.py` 文件——在模块级别调用 `register_provider(profile)` 函数
-   - `plugin.yaml` 文件——用于定义插件信息（名称、类型：model-provider、版本号、描述）
-2. 就这样完成了。每当有代码调用 `get_provider_profile()` 或 `list_providers()` 时，这些 Provider 插件会自动加载——无论是项目自带的插件（即当前仓库中的插件），还是用户自定义的插件（位于 `$HERMES_HOME/plugins/model-providers/` 目录下），都会被识别并使用。
+   - `__init__.py` — 在模块级别调用 `register_provider(profile)` 函数
+   - `plugin.yaml` — 描述文件（包含名称、类型：model-provider、版本号及描述信息）
+2. 就这样。每当有代码调用 `get_provider_profile()` 或 `list_providers()` 时，这些 Provider 插件会自动加载——无论是内置插件（即本项目中的插件），还是用户自定义的插件（位于 `$HERMES_HOME/plugins/model-providers/` 目录下），都会被识别并加载。
 
-当您添加一个插件并且它调用了 `register_provider()` 函数后，以下功能会自动配置完成：
+当您添加一个插件且其调用了 `register_provider()` 函数后，以下功能会自动配置完成：
 
-1. 在 `auth.py` 中创建 `PROVIDER_REGISTRY` 条目——用于处理凭证获取及环境变量查询
-2. 将 `api_mode` 设置为 `chat_completions`
-3. 从配置文件或指定的环境变量中获取 `base_url`
+1. `auth.py` 中的 `PROVIDER_REGISTRY` 键值对（用于凭证解析及环境变量查找）
+2. `api_mode` 被设置为 `chat_completions`
+3. `base_url` 从配置文件或指定的环境变量中获取
 4. 按优先级顺序检查环境变量以获取 API 密钥
 5. 为该 Provider 注册 `fallback_models` 列表
-6. CLI 中的 `--provider` 参数可接受 Provider 的标识符
-7. `hermes model` 菜单中会显示该 Provider
+6. CLI 的 `--provider` 参数可接受 Provider ID
+7. `hermes model` 菜单会包含该 Provider
 8. `hermes setup` 设置向导会自动调用 `main.py`
-9. 支持 `provider:model` 这种别名语法
+9. 支持 `provider:model` 语法形式的别名
 10. 运行时解析器会返回正确的 `base_url` 和 `api_key`
-11. CLI 中的 `--provider <name>` 参数也可接受 Provider 的标识符
-12. 可以通过该机制无缝切换到备用的模型
+11. CLI 的 `--provider <name>` 参数可接受 Provider ID
+12. 可以通过备用模型机制无缝切换到该 Provider
 
-位于 `$HERMES_HOME/plugins/model-providers/<name>/` 目录下的用户自定义插件可以覆盖同名的项目自带插件（在 `register_provider()` 函数中遵循“后写入者胜”的原则）——因此第三方无需修改项目代码，即可对任何内置的 Provider 配置进行修改。
+位于 `$HERMES_HOME/plugins/model-providers/<name>/` 目录下的用户自定义插件会覆盖同名内置插件（在 `register_provider()` 函数中遵循“后写入者胜”的原则）——因此第三方无需修改项目代码，即可对任何内置配置进行修改。
 
-您可以参考 `plugins/model-providers/nvidia/` 或 `plugins/model-providers/gmi/` 目录中的示例，同时查阅完整的[模型 Provider 插件指南](/developer-guide/model-provider-plugin)，以了解相关配置方式、钩子用法及端到端示例。
+您可以参考 `plugins/model-providers/nvidia/` 或 `plugins/model-providers/gmi/` 目录中的示例，同时查阅完整的[模型 Provider 插件指南](/developer-guide/model-provider-plugin)，以了解相关细节、钩子用法及端到端示例。
 
-## 完整路径：需要 OAuth 认证或功能更复杂的 Provider
+## 完整路径：OAuth 及复杂 Provider
 
 当您的 Provider 需要满足以下任一条件时，请使用下面的完整清单：
 
-- 需要 OAuth 认证或令牌刷新功能（如 Nous Portal、Codex、Google Gemini、Qwen Portal、Copilot）
-- 需要适配器的非 OpenAI API 格式（如 Anthropic Messages、Codex Responses）
-- 需要进行自定义端点检测或多区域探测（如 z.ai、Kimi）
-- 需要精选的静态模型目录或实时从 `/models` 获取模型列表
+- 需要 OAuth 或令牌刷新功能（如 Nous Portal、Codex、Qwen Portal、Copilot）
+- 非 OpenAI 格式的 API，需要专门的适配器（如 Anthropic Messages、Codex Responses）
+- 需要检测自定义端点或进行多区域探测（如 z.ai、Kimi）
+- 需要精选的静态模型目录或能够实时获取 `/models` 中的模型列表
 - 需要针对该 Provider 的自定义 `hermes model` 菜单项及专属身份验证流程
 
-## 第一步：选择一个标准的 Provider 标识符
+## 第一步：选择一个标准化的 Provider ID
 
-请选择一个唯一的 Provider 标识符，并在所有地方统一使用它。
+请选择一个唯一的 Provider ID，并在所有地方统一使用它。
 
-项目中的示例标识符包括：
+项目中的示例包括：
 
 - `openai-codex`
 - `kimi-coding`
 - `minimax-cn`
 
-该标识符应同时出现在以下位置：
+该 ID 应同时出现在以下位置：
 
-- `hermes_cli/auth.py` 文件中的 `PROVIDER_REGISTRY` 列表中
-- `hermes_cli/models.py` 文件中的 `_PROVIDER_LABELS` 列表中
-- `hermes_cli/auth.py` 和 `hermes_cli/models.py` 两个文件中的 `_PROVIDER_ALIASES` 列表中
-- `hermes_cli/main.py` 文件中的 CLI `--provider` 参数选项中
-- 设置及模型选择相关的分支代码中
-- 辅助模型的默认配置中
-- 测试用例中
+- `hermes_cli/auth.py` 中的 `PROVIDER_REGISTRY` 键值对
+- `hermes_cli/models.py` 中的 `_PROVIDER_LABELS` 键值对
+- `hermes_cli/auth.py` 和 `hermes_cli/models.py` 中的 `_PROVIDER_ALIASES` 键值对
+- `hermes_cli/main.py` 中的 CLI `--provider` 参数选项
+- 设置/模型选择相关逻辑
+- 辅助模型的默认设置
+- 测试用例
 
-如果这些文件中的标识符不一致，该 Provider 的功能将会出现异常：虽然身份验证可能正常工作，但 `/model`、设置相关功能或运行时解析功能却可能无法识别该 Provider。
+如果这些文件中的 ID 不一致，该 Provider 的功能将会出现异常：虽然身份验证可能正常工作，但 `/model`、设置功能或运行时解析却可能无法正确识别该 Provider。
 
 ## 第二步：在 `hermes_cli/auth.py` 中添加身份验证相关配置
 
-对于基于 API 密钥的 Provider，需在 `PROVIDER_REGISTRY` 中添加一个 `ProviderConfig` 条目，其中应包含以下信息：
+对于基于 API 密钥的 Provider，需在 `PROVIDER_REGISTRY` 中添加一个 `ProviderConfig` 键值对，其中包含以下信息：
 
-- `id`：标识符
-- `name`：名称
-- `auth_type="api_key"`：身份验证类型
-- `inference_base_url`：推理请求的基础 URL
-- `api_key_env_vars`：用于存储 API 密钥的环境变量列表
-- 可选字段 `base_url_env_var`：用于存储基础 URL 的环境变量
+- `id`
+- `name`
+- `auth_type="api_key"`
+- `inference_base_url`
+- `api_key_env_vars`
+- 可选字段：`base_url_env_var`
 
-同时还需在 `_PROVIDER_ALIASES` 列表中添加该 Provider 的别名。
+同时还需在 `_PROVIDER_ALIASES` 中添加该 Provider 的别名。
 
-您可以参考现有的 Provider 作为模板：
+可以参考现有的 Provider 作为模板：
 
-- 简单的 API 密钥型 Provider：Z.AI、MiniMax
-- 需要端点检测的 API 密钥型 Provider：Kimi、Z.AI
-- 需要原生令牌解析功能的 Provider：Anthropic
-- 需要 OAuth 或认证存储服务的 Provider：Nous、OpenAI Codex
+- 简单的 API 密钥方案：Z.AI、MiniMax
+- 需要端点检测的 API 密钥方案：Kimi、Z.AI
+- 原生令牌解析方案：Anthropic
+- OAuth/身份存储方案：Nous、OpenAI Codex
 
 在此步骤中需要回答的问题包括：
 
 - Hermes 应该检查哪些环境变量，以及检查的优先级顺序是什么？
-- 该 Provider 是否需要基础 URL 的覆盖配置？
-- 是否需要进行端点探测或令牌刷新操作？
+- 该 Provider 是否需要基础 URL 的覆盖设置？
+- 是否需要进行端点探测或令牌刷新？
 - 当凭证缺失时，身份验证错误信息应如何显示？
 
-如果该 Provider 的功能不仅仅是“查找 API 密钥”，那么建议创建专门的凭证解析模块，而非将相关逻辑硬编码到其他无关的分支中。
+如果该 Provider 所需的功能不仅仅是“查找 API 密钥”，则应创建专门的凭证解析器，而非将相关逻辑硬编码到其他无关的代码分支中。
 
 ## 第三步：在 `hermes_cli/models.py` 中添加模型目录及别名
 
-需更新 Provider 目录结构，以便该 Provider 能在菜单中显示，同时也能通过 `provider:model` 语法被调用。
+需要更新 Provider 目录的相关配置，以便该 Provider 能在菜单中显示，并支持 `provider:model` 语法形式。
 
 常见的修改内容包括：
 
-- `_PROVIDER_MODELS` 列表：存储该 Provider 支持的模型信息
-- `_PROVIDER_LABELS` 列表：用于显示该 Provider 的名称标签
-- `_PROVIDER_ALIASES` 列表：包含该 Provider 的别名
-- `list_available_providers()` 函数中定义该 Provider 在列表中的显示顺序
-- 如果该 Provider 支持从 `/models` 实时获取模型列表，则需实现 `provider_model_ids()` 函数
+- `_PROVIDER_MODELS` 键值对
+- `_PROVIDER_LABELS` 键值对
+- `_PROVIDER_ALIASES` 键值对
+- `list_available_providers()` 函数中该 Provider 的显示顺序
+- 如果该 Provider 支持实时获取 `/models` 中的模型列表，则还需实现 `provider_model_ids()` 函数
 
-如果该 Provider 提供实时的模型列表，建议优先使用该实时列表，而将 `_PROVIDER_MODELS` 作为静态的备用列表。
+如果该 Provider 提供实时的模型列表，建议优先使用该列表，同时将 `_PROVIDER_MODELS` 作为静态备用选项。
 
-正是通过这个文件，类似以下的输入方式才能正常工作：
+正是这个文件使得类似以下的输入方式能够正常工作：
 
 ```text
 anthropic:claude-sonnet-4-6
