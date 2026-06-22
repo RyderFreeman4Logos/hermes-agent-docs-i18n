@@ -360,27 +360,27 @@ You → /reload
   Reloaded .env (3 var(s) updated)
 ```
 
-该功能会将 `~/.hermes/.env` 的内容重新加载到正在运行的进程环境中。当您通过控制面板添加了新的提供程序密钥并希望立即使用它时，此功能非常有用。
+该功能会将`~/.hermes/.env`中的配置重新加载到正在运行的进程环境中。当您通过控制台添加了新的提供程序密钥并希望立即使用它时，此功能非常有用。
 
 ## REST API
 
-Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也可以直接调用这些接口以实现自动化操作：
+Web控制台提供了前端所使用的REST API。您也可以直接调用这些接口以实现自动化操作：
 
 :::tip 基于配置文件的接口
-以下管理类接口 — `/api/config`、`/api/env`、`/api/skills`、`/api/tools/toolsets`、`/api/mcp` 以及 `/api/model/{info,options,auxiliary,set}` — 都支持一个可选的 `?profile=<name>` 查询参数（在写入操作时则使用 JSON 正文中的 `"profile"` 参数），该参数用于将读写操作限制在该配置文件的 `HERMES_HOME` 环境中。若未指定该参数，则使用控制面板自身的配置文件；若配置文件名不存在，则会返回 `404` 错误。`/api/pty` WebSocket 接口也支持相同的参数，用于在选定的配置文件下启动聊天功能。
+以下管理类接口——`/api/config`、`/api/env`、`/api/skills`、`/api/tools/toolsets`、`/api/mcp`以及`/api/model/{info,options,auxiliary,set}`——支持可选的`?profile=<name>`查询参数（在写入操作时则使用JSON正文中的`"profile"`字段），该参数可将读写操作限制在该配置文件的`HERMES_HOME`目录内。若未指定该参数，则使用控制台自身的配置文件；未知的配置文件名会返回`404`错误。`/api/pty` WebSocket接口也支持相同参数，用于在选定的配置文件下启动聊天功能。
 :::
 
 ### GET /api/status
 
-返回代理版本、网关状态、平台运行状况以及当前活跃会话的数量。
+返回代理版本、网关状态、平台运行状况以及当前活跃会话数量。
 
 ### GET /api/sessions
 
-返回最近 20 个会话的详细信息，包括元数据（模型类型、令牌数量、时间戳及预览内容）。
+返回最新的20个会话及其元数据（模型类型、令牌数量、时间戳、预览内容）。
 
 ### GET /api/config
 
-以 JSON 格式返回当前的 `config.yaml` 文件内容。
+以JSON格式返回当前的`config.yaml`配置内容。
 
 ### GET /api/config/defaults
 
@@ -388,23 +388,23 @@ Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也�
 
 ### GET /api/config/schema
 
-返回描述每个配置字段的架构信息 — 包括类型、描述、所属类别，以及适用时的可选值列表。前端会根据这些信息为每个字段渲染对应的输入控件。
+返回描述每个配置字段的架构信息——包括类型、描述、所属类别，以及适用时的可选值列表。前端会利用这些信息为每个字段渲染对应的输入控件。
 
 ### PUT /api/config
 
-保存新的配置。请求体格式为：`{"config": {...}}`。
+保存新的配置。请求体格式为`{"config": {...}}`。
 
 ### GET /api/env
 
-返回所有已知的环境变量，包括它们的设置/未设置状态、已脱敏的值、描述以及所属类别。
+返回所有已知的环境变量，包括它们的已设置/未设置状态、经过脱敏处理的值、描述以及所属类别。
 
 ### PUT /api/env
 
-设置一个环境变量。请求体格式为：`{"key": "VAR_NAME", "value": "secret"}`。
+设置一个环境变量。请求体格式为`{"key": "VAR_NAME", "value": "secret"}`。
 
 ### DELETE /api/env
 
-删除一个环境变量。请求体格式为：`{"key": "VAR_NAME"}`。
+删除一个环境变量。请求体格式为`{"key": "VAR_NAME"}`。
 
 ### GET /api/sessions/\{session_id\}
 
@@ -416,7 +416,7 @@ Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也�
 
 ### GET /api/sessions/search
 
-对消息内容进行全文搜索。查询参数为 `q`，返回匹配的会话 ID 及高亮显示的对应片段。
+对消息内容进行全文搜索。查询参数为`q`，返回匹配的会话ID及高亮显示的对应片段。
 
 ### DELETE /api/sessions/\{session_id\}
 
@@ -424,19 +424,19 @@ Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也�
 
 ### GET /api/logs
 
-返回日志行内容。查询参数包括：`file`（指定日志类型，如 agent、errors、gateway）、`lines`（指定要返回的日志行数）、`level`（日志级别）以及 `component`（组件名称）。
+返回日志行。查询参数包括：`file`（指定日志类型，如agent、errors、gateway）、`lines`（指定返回的日志行数）、`level`（日志级别）以及`component`（组件名称）。
 
 ### GET /api/analytics/usage
 
-返回令牌使用情况、成本数据以及会话使用统计信息。查询参数为 `days`（默认值为 30），响应结果包含按天划分的数据及各模型的汇总数据。
+返回令牌使用情况、成本数据以及会话使用分析报告。查询参数为`days`（默认值为30），响应结果包含按日统计的数据以及各模型的汇总信息。
 
 ### GET /api/cron/jobs
 
-返回所有已配置的定时任务，包括它们的当前状态、调度时间以及执行历史记录。
+返回所有已配置的定时任务，包括它们的状态、调度时间以及执行历史记录。
 
 ### POST /api/cron/jobs
 
-创建一个新的定时任务。请求体格式为：`{"prompt": "...", "schedule": "0 9 * * *", "name": "...", "deliver": "local"}`。
+创建一个新的定时任务。请求体格式为`{"prompt": "...", "schedule": "0 9 * * *", "name": "...", "deliver": "local"}`。
 
 ### POST /api/cron/jobs/\{job_id\}/pause
 
@@ -448,7 +448,7 @@ Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也�
 
 ### POST /api/cron/jobs/\{job_id\}/trigger
 
-在非预定时间立即触发某个定时任务。
+立即触发某个定时任务，使其在预定时间之外执行。
 
 ### DELETE /api/cron/jobs/\{job_id\}
 
@@ -456,105 +456,105 @@ Web 控制面板会暴露一个前端应用程序所使用的 REST API。您也�
 
 ### GET /api/skills
 
-返回所有技能信息，包括技能名称、描述、所属类别以及是否已启用状态。
+返回所有技能信息，包括名称、描述、所属类别以及是否已启用状态。
 
 ### PUT /api/skills/toggle
 
-启用或禁用某个技能。请求体格式为：`{"name": "skill-name", "enabled": true}`。
+启用或禁用某个技能。请求体格式为`{"name": "skill-name", "enabled": true}`。
 
 ### GET /api/tools/toolsets
 
-返回所有工具集的信息，包括标签、描述、所含工具列表以及当前是否处于活跃/已配置状态。
+返回所有的工具集信息，包括标签、描述、工具列表以及是否处于活跃/已配置状态。
 
 ### 管理类接口
 
-这些接口用于支持 MCP、Channels、Webhooks、Pairing 以及系统相关页面的功能。它们与 `/api/` 下的其他接口一样，都受到相同的身份验证机制保护。
+这些接口用于支持MCP、Channels、Webhooks、配对功能以及系统相关页面的运作。它们与`/api/`下的其他接口一样，都受到相同的认证机制保护。
 
 | 方法与路径 | 功能说明 |
 |---------------|---------|
-| `GET /api/mcp/servers` | 列出已配置的 MCP 服务器（环境变量值已脱敏处理） |
-| `POST /api/mcp/servers` | 添加新的服务器。请求体格式为： `{name, url?, command?, args?, env?, auth?}` |
+| `GET /api/mcp/servers` | 列出已配置的MCP服务器（环境变量值已做脱敏处理） |
+| `POST /api/mcp/servers` | 添加新的服务器。请求体格式为`{name, url?, command?, args?, env?, auth?}` |
 | `POST /api/mcp/servers/{name}/test` | 连接服务器、列出可用工具、断开连接 |
 | `PUT /api/mcp/servers/{name}/enabled` | 启用/禁用某个服务器 |
 | `DELETE /api/mcp/servers/{name}` | 删除某个服务器 |
-| `GET /api/mcp/catalog` | 浏览经过 Nous 审核通过的 MCP 产品目录 |
-| `POST /api/mcp/catalog/install` | 安装目录中的某个条目（需要提供相应的环境变量） |
+| `GET /api/mcp/catalog` | 浏览经过Nous认证的MCP插件目录 |
+| `POST /api/mcp/catalog/install` | 安装某个插件条目（需要提供相应的环境变量） |
 | `GET /api/messaging/platforms` | 列出所有消息通道，显示其状态以及各平台的配置字段 |
-| `PUT /api/messaging/platforms/{id}` | 配置某个消息通道。请求体格式为： `{enabled?, env?, clear_env?}`（环境变量信息会写入 `.env` 文件，启用状态则会被写入 `config.yaml`） |
+| `PUT /api/messaging/platforms/{id}` | 配置某个消息通道。请求体格式为`{enabled?, env?, clear_env?}`（环境变量信息会写入`.env`文件，启用状态则会被保存到`config.yaml`中） |
 | `POST /api/messaging/platforms/{id}/test` | 检查某个消息通道是否已配置、处于启用状态且已建立连接 |
-| `GET /api/pairing` | 列出待审批及已获批的消息发送用户列表 |
-| `POST /api/pairing/approve` | 批准某个代码。请求体格式为： `{platform, code}` |
-| `POST /api/pairing/revoke` | 撤销某个用户的授权。请求体格式为： `{platform, user_id}` |
-| `POST /api/pairing/clear-pending` | 删除所有待处理的代码 |
+| `GET /api/pairing` | 列出待审核及已通过审核的消息发送用户 |
+| `POST /api/pairing/approve` | 审核并批准某个代码。请求体格式为`{platform, code}` |
+| `POST /api/pairing/revoke` | 撤销某个用户的授权。请求体格式为`{platform, user_id}` |
+| `POST /api/pairing/clear-pending` | 删除所有待审核的代码 |
 | `GET /api/webhooks` | 列出所有的订阅项以及各平台的启用状态 |
-| `POST /api/webhooks` | 创建一个新的订阅项（会生成一次性的密钥） |
+| `POST /api/webhooks` | 创建一个新的订阅项（会返回一次性使用的密钥） |
 | `DELETE /api/webhooks/{name}` | 删除某个订阅项 |
-| `GET /api/credentials/pool` | 列出所有已池化的轮换密钥（已脱敏处理） |
-| `POST /api/credentials/pool` | 添加新的密钥。请求体格式为： `{provider, api_key, label?}` |
-| `DELETE /api/credentials/pool/{provider}/{index}` | 删除某个密钥（索引从 1 开始计数） |
+| `GET /api/credentials/pool` | 列出所有已集中管理的轮换密钥（相关内容已做脱敏处理） |
+| `POST /api/credentials/pool` | 添加新的密钥。请求体格式为`{provider, api_key, label?}` |
+| `DELETE /api/credentials/pool/{provider}/{index}` | 删除某个密钥（索引从1开始计数） |
 | `GET /api/memory` | 显示当前正在使用的提供程序、可用的提供程序列表以及内置存储空间的大小 |
 | `PUT /api/memory/provider` | 选择要使用的提供程序（留空则表示仅使用内置提供程序） |
-| `POST /api/memory/reset` | 重置内置存储空间。请求体格式为： `{target: all\|memory\|user}` |
+| `POST /api/memory/reset` | 重置内置存储空间。请求体格式为`{target: all\|memory\|user}` |
 | `POST /api/gateway/start` · `/stop` · `/restart` | 控制网关的生命周期操作（在后台执行） |
-| `POST /api/ops/doctor` · `/security-audit` · `/backup` · `/import` | 执行诊断与维护操作（在后台执行；可通过 `/api/actions/{name}/status` 查看操作日志） |
-| `GET /api/ops/hooks` | 显示已配置的 shell 钩子以及允许列表的状态 |
-| `GET /api/ops/checkpoints` · `POST .../prune` | 检查 `/rollback` 存储库的内容或删除其中的旧数据 |
-| `POST /api/ops/hooks` · `DELETE /api/ops/hooks` | 创建或删除 shell 钩子（需经过用户同意） |
-| `GET /api/system/stats` | 显示主机运行统计信息 — 操作系统类型、CPU 使用率、内存使用情况、磁盘使用状况以及系统运行时长 |
-| `GET /api/hermes/update/check` | 查询是否有可用的更新版本（包括对应的提交信息及安装方式），但不会自动进行安装。对于那些尚未应用最新版本的 git/pip 安装环境，该接口还会返回一个包含变更内容的 `commits` 列表（包含 `sha`、`summary`、`author`、`at` 等字段）。添加 `?force=1` 参数可强制忽略 6 小时的缓存限制 |
+| `POST /api/ops/doctor` · `/security-audit` · `/backup` · `/import` | 执行诊断与维护操作（在后台执行；可通过`/api/actions/{name}/status`查看操作日志） |
+| `GET /api/ops/hooks` | 查看已配置的shell钩子以及允许列表的状态 |
+| `GET /api/ops/checkpoints` · `POST .../prune` | 检查`/rollback`存储库的内容或删除其中的冗余数据 |
+| `POST /api/ops/hooks` · `DELETE /api/ops/hooks` | 创建或删除shell钩子（操作需经过用户同意） |
+| `GET /api/system/stats` | 获取主机运行状态统计信息——包括操作系统、CPU使用率、内存使用情况、磁盘使用状况以及系统运行时长 |
+| `GET /api/hermes/update/check` | 查询是否有可用更新（包括尚未应用的提交记录及安装方式），但不会自动进行安装。对于那些落后于最新版本的git/pip安装版本，该接口还会返回一份包含变更内容的`commits`列表，列出每个提交的`sha`值、摘要、提交者以及提交时间。使用`?force=1`参数可强制忽略6小时的缓存限制 |
 | `GET /api/curator` · `PUT .../paused` · `POST .../run` | 控制技能筛选器的状态，以及暂停/恢复和运行操作 |
-| `GET /api/portal` | 用于 Nous Portal 的身份验证以及 Tool Gateway 的路由功能（仅支持读取操作） |
+| `GET /api/portal` | 用于Nous Portal的认证功能以及工具网关的路由设置（仅支持读取操作） |
 | `POST /api/ops/prompt-size` · `/dump` · `/config-migrate` | 执行诊断相关操作（在后台执行） |
-| `PUT /api/webhooks/{name}/enabled` | 启用或禁用某个 webhook 路由 |
+| `PUT /api/webhooks/{name}/enabled` | 启用/禁用某个Webhook路由 |
 | `POST /api/skills/hub/install` · `/uninstall` · `/update` | 对技能中心进行相关操作（在后台执行） |
 | `GET /api/skills/hub/search` | 在所有来源中搜索技能中心中的技能 |
 | `GET /api/sessions/stats` | 获取会话存储库的统计信息 |
 | `PATCH /api/sessions/{id}` | 重命名或归档某个会话 |
-| `GET /api/sessions/{id}/export` | 将某个会话的完整信息（包括元数据及所有消息）以 JSON 格式导出 |
-| `POST /api/sessions/prune` | 删除那些已结束且超过 N 天的会话 |
-| `PUT /api/cron/jobs/{id}` | 修改某个定时任务的提示内容、调度时间、名称以及输出方式 |
+| `GET /api/sessions/{id}/export` | 将某个会话（包含元数据及所有消息内容）以JSON格式导出 |
+| `POST /api/sessions/prune` | 删除那些已结束且超过N天的会话 |
+| `PUT /api/cron/jobs/{id}` | 修改某个定时任务的提示语、调度时间、名称以及输出方式 |
 
-## 身份验证（受保护模式）
+## 认证（受控访问模式）
 
-当控制面板绑定到公共地址或非回环地址 — 也就是除 `127.0.0.1`/`localhost` 之外的任何地址 — 时，Hermes Agent 会启用身份验证机制。所有请求都必须携带经过验证的会话 Cookie，否则会被重定向到登录页面。系统预置了三种身份验证提供程序：
+当控制台绑定到公共地址或非回环地址——即除`127.0.0.1`/`localhost`之外的任何地址——时，Hermes Agent会启用认证机制。每个请求都必须携带经过验证的会话Cookie，否则会被重定向至登录页面。系统预装了三种认证提供程序：
 
-- **[用户名/密码](#usernamepassword-provider-no-oauth-idp)** — 这是为自托管、本地部署或家庭实验室环境中的控制面板添加身份验证的最简单方式，无需使用外部身份提供商。**仅建议在可信网络或通过 VPN 隔离的环境中使用，切勿用于公开互联网访问场景。**
-- **[OAuth（Nous Portal）](#default-provider-nous-research)** — 适用于托管部署环境以及任何可通过公共互联网访问的控制面板，也是实现[远程 Hermes Desktop 连接](#connecting-hermes-desktop-to-a-remote-backend)的推荐方案。每次登录都会通过您的 Nous 账户进行验证，因此非常适合用于面向互联网的场景。
-- **[自托管 OIDC](#self-hosted-oidc-provider)** — 允许您通过标准的 OpenID Connect 协议自行搭建身份提供商（如 Keycloak、Auth0、Okta、Google，或通过 OIDC 桥接器连接的 GitHub 等）。该方案无需使用 Nous Portal，只要在前面配置一个符合规范的 OIDC 服务器，即可用于公开互联网访问场景。
+- **[用户名/密码认证](#usernamepassword-provider-no-oauth-idp)** —— 这是为自托管、本地部署或家庭实验室环境中的控制台添加认证的最简单方式，无需外部身份验证服务。**仅建议在可信网络或VPN保护的环境下使用，切勿用于面向公共互联网的部署。**
+- **[OAuth（Nous Portal）认证](#default-provider-nous-research)** —— 适用于托管式部署以及所有可通过公共互联网访问的控制台，也是实现[远程Hermes Desktop连接](#connecting-hermes-desktop-to-a-remote-backend)的推荐方式。每次登录都会通过您的Nous账户进行验证，因此该认证提供程序非常适合用于面向公共互联网的场景。
+- **[自托管OIDC认证](#self-hosted-oidc-provider)** —— 允许您通过标准的OpenID Connect方案自行搭建身份验证服务（如Keycloak、Auth0、Okta、Google，或通过OIDC桥接器连接的GitHub等）。无需使用Nous Portal，只要在前面部署符合规范的OIDC服务器，即可用于面向公共互联网的访问场景。
 
-绑定到回环地址的运营商自有控制面板则不受此影响 — 无需身份验证，也不会出现登录页面。
+绑定到回环地址的运营商自有控制台则不受此影响——无需认证，也不会出现登录页面。
 
-### 身份验证机制的启用条件
+### 认证机制的启用条件
 
-| 标志位 | 身份验证机制 | 适用场景 |
-|-------|-------------|----------|
-| `hermes dashboard`（默认值 — 绑定到 `127.0.0.1`） | 关闭 | 本地开发环境 |
-| `hermes dashboard --host 0.0.0.0` | **开启** | 远程或生产环境 — 建议使用用户名/密码提供程序或 OAuth 进行保护 |
+| 标志参数 | 认证机制状态 | 适用场景 |
+|---------|-------------|----------|
+| `hermes dashboard`（默认值——绑定到`127.0.0.1`） | 关闭 | 本地开发环境 |
+| `hermes dashboard --host 0.0.0.0` | **开启** | 远程/生产环境——建议使用用户名/密码认证或OAuth进行保护 |
 
-身份验证机制仅在同时满足以下两个条件时才会启用：
+认证机制仅在以下两种情况下才会被启用：
 
-1. 绑定地址既不是 `127.0.0.1`、`::1`、`localhost`，也不是 `0.0.0.0`；
-2. 未设置 `--insecure` 标志位。
+1. 绑定地址既不是`127.0.0.1`、`::1`、`localhost`，也不是`0.0.0.0`；且
+2. 未设置`--insecure`标志参数。
 
-:::danger `--insecure` 参数会完全关闭身份验证功能
-使用 `--insecure` 参数可以跳过身份验证机制，直接提供无需认证的控制面板访问权限。此类控制面板可以读取/写入您的 `.env` 文件（其中包含 API 密钥和敏感信息），还能执行代理命令。**绝对不建议在远程连接场景中使用该参数。** 如果需要将控制面板暴露给其他机器，应配置 [用户名/密码提供程序](#usernamepassword-provider-no-oauth-idp)（或 OAuth）并取消设置 `--insecure` 参数。该参数仅作为在完全可信、且处于防火墙保护下的单主机网络环境中的最后应急手段而存在。
+:::danger `--insecure`参数会完全禁用认证功能
+使用`--insecure`参数可以跳过认证机制，直接提供无需认证的控制台访问权限，该控制台可读取/写入您的`.env`文件（其中包含API密钥和敏感信息），并且允许执行代理命令。**绝对不建议在远程连接场景中使用此参数。** 如果需要将控制台暴露给其他机器，应配置[用户名/密码认证](#usernamepassword-provider-no-oauth-idp)（或OAuth）方式，并且不要使用`--insecure`参数。该参数仅作为在完全可信、且受到防火墙保护的单一主机网络环境中的最后应急方案而存在。
 :::
 
 ### 失败即关闭的机制
 
-如果本应启用身份验证机制，但**没有**注册任何 `DashboardAuthProvider`（既没有安装 Nous 插件，也没有自定义插件），则 `hermes dashboard` 会直接拒绝绑定，并给出明确的错误提示。系统不会采用“默认拒绝但允许所有请求”的 fallback 策略 — 配置错误的受保护控制面板将永远无法启动。
+如果系统本应启用认证机制，但**没有**注册任何`DashboardAuthProvider`（既没有安装Nous插件，也没有自定义插件），则`hermes dashboard`会直接拒绝绑定，并显示明确的错误信息。系统不会采用“默认拒绝但允许一切”的 fallback策略——配置错误的受控访问控制台将根本无法启动。
 
-### 默认身份验证提供程序：Nous Research
+当您以**交互式方式**（即在真实的终端环境中）运行`hermes dashboard --host 0.0.0.0`，且尚未配置任何认证提供程序时，Hermes不会仅仅报错，而是会主动提示您立即设置认证方式：您可以选择**用户名和密码认证**（系统会将`dashboard.basic_auth`信息写入`config.yaml`文件，随后几秒内即可开始使用），或者选择**OAuth认证**（系统会引导您前往`hermes dashboard register`页面进行设置）。对于非交互式的调用方式——如Docker/s6容器、持续集成流程、管道式执行等——则不会出现上述提示，直接会触发前述的失败即关闭错误，因此即使在没有认证的情况下，无人值守的部署也无法启动。
 
-系统中预装的 `plugins/dashboard_auth/nous` 插件**始终处于已安装状态并会自动加载**。一旦配置了客户端 ID，该插件会自动注册一个名为 `nous` 的 `DashboardAuthProvider`。
+### 默认认证提供程序：Nous Research
 
-由于每次登录都会通过 Nous Portal 进行验证，并受到您 Nous 账户的保护，**因此 Nous 提供程序是适合将控制面板暴露到公共互联网的最佳选择。**
+系统自带的`plugins/dashboard_auth/nous`插件**始终处于已安装状态并会被自动加载**。一旦配置了客户端ID，该插件会自动注册一个名为`nous`的`DashboardAuthProvider`。
 
-#### 注册控制面板
+由于每次登录都会通过Nous Portal进行验证，并由您的Nous账户提供保护，**因此Nous认证提供程序是适合用于将控制台暴露给公共互联网的最佳选择。**
 
-要使用 Nous 提供程序，您需要一个 OAuth 客户端 ID（格式为 `agent:{id}`）。获取该 ID 的方法有两种：
+#### 注册控制台账号
 
-- **通过 CLI 命令 — `hermes dashboard register`**。在运行控制面板的主机上执行此命令。它会自动使用您已有的 Nous 登录信息（如果尚未登录，请先运行 `hermes setup` 命令），在 Portal 中注册一个自托管的 OAuth 客户端，随后会将 `HERMES_DASHBOARD_OAUTH_CLIENT_ID` 的值写入 `~/.hermes/.env` 文件中。可选参数包括：`--name`（用于设置易于识别的标签，如未指定则系统会自动生成）以及 `--redirect-uri`（用于面向互联网的主机的公共 HTTPS 回调地址）。
+要使用Nous认证提供程序，您需要一个OAuth客户端ID，其格式为`agent:{id}`。获取该客户端ID有两种方法：- **CLI — `hermes dashboard register`**：在仪表板所在的主机上运行该命令。它会自动识别您现有的 Nous 登录信息（若未登录，请先运行 `hermes setup`），将自托管的 OAuth 客户端注册到 Portal 中，并将 `HERMES_DASHBOARD_OAUTH_CLIENT_ID` 值写入 `~/.hermes/.env` 文件中。可选参数包括：`--name`（用于设置易于识别的标签，若未指定则系统会自动生成）以及 `--redirect-uri`（面向公网的主机所使用的公共 HTTPS 回调地址）。
 
   ```bash
   hermes dashboard register
