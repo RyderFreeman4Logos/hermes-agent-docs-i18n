@@ -20,52 +20,52 @@ description: "Use when a Hermes Kanban worker wants to run Codex CLI as an isola
 | 创建者 | Hermes Agent |
 | 许可协议 | MIT |
 | 标签 | `kanban`, `codex`, `worktrees`, `autonomous-agents`, `prediction-market-bot` |
-| 相关技能 | [`kanban-worker`](/docs/user-guide/skills/bundled/devops/devops-kanban-worker), [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex), [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
+| 相关技能 | [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex), [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当该技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容获取操作指令。
 :::
 
 # Kanban Codex 工作流
 
 ## 概述
 
-该技能为看板工作节点定义了一种轻量级的 Hermes+Codex 双工作流模式。Hermes 始终是任务的管理者：它负责调用 `kanban_show` 函数，判断是否适合使用 Codex，创建或选择独立的代码工作空间，启动并监控 Codex 的运行，处理任何出现的差异，执行验证操作，最终记录 `kanban_complete` 或 `kanban_block` 状态以完成任务交接。Codex 仅作为输入端工作流存在，其输出既不能视为任务完成的信号，也不能作为可信赖的审核结果，更不允许直接修改看板的持久化状态。
+该技能为看板工作节点定义了一种轻量级的 Hermes+Codex 双工作流模式。Hermes 始终是任务的主导者：它负责调用 `kanban_show` 函数，判断是否适合使用 Codex，创建或选择独立的代码工作空间，启动并监控 Codex 的运行，处理任何出现的差异，执行验证操作，最终记录 `kanban_complete` 或 `kanban_block` 状态以完成任务交接。而 Codex 仅作为输入端工作流存在——其输出既不能视为任务完成的信号，也不能被视为可信的审核结果，更不允许直接修改看板的持久化状态。
 
-设计这种模式的目的是让 Hermes 工作节点能够在不更换调度器的情况下，借助 Codex 实现有限的实现辅助功能。调度器仍需负责创建 Hermes 工作节点。工作节点可选择在自身的运行过程中启动 Codex，经过独立审核和测试后，再决定接受、部分接受或拒绝该工作流的结果。
+设计这种模式的目的是让 Hermes 工作节点能够在不更换调度器的情况下，借助 Codex 实现有限的实现辅助功能。调度器仍需负责创建 Hermes 工作节点；工作节点可选择在自己的运行过程中启动 Codex，经过独立审查和测试后，再决定接受、部分接受或拒绝该工作流的结果。
 
 ## 适用场景
 
-当同时满足以下所有条件时，可使用 Codex 工作流：
+在满足以下所有条件时，可使用 Codex 工作流：
 
-- 该看板任务属于编码、重构、文档编写、测试或机械性迁移类任务，并且有明确的验收标准。
+- 该看板任务属于编码、重构、文档编写、测试或结构迁移类任务，并且有明确的验收标准。
 - Hermes 能够在单次运行中完成对有限差异的评估。
-- 可以在独立的 git 工作树/分支中复制或检出代码仓库。
-- Codex 运行结束后，Hermes 能够自行执行相关的测试。
-- 提示词中已明确说明所有安全约束以及不可更改的文件。
+- 可以通过独立的 git 工作树/分支复制或检出代码仓库。
+- 在 Codex 运行结束后，Hermes 能够自行执行相关的测试。
+- 提示词中已明确列出了所有安全约束以及不允许修改的文件。
 
 在出现以下任何情况时，不应使用 Codex 工作流：
 
-- 任务需要人工判断，而这些判断内容并未体现在看板任务描述中。
-- 工作节点没有代码仓库访问权限、Codex 认证信息，或没有足够时间处理结果差异。
-- 所做的修改涉及机密信息、凭证存储、私人用户数据或生产环境中的订单系统。
-- 直接进行少量编辑比启动另一个代理程序更快且更安全。
+- 任务需要依赖看板描述中未涵盖的人工判断。
+- 工作节点缺乏访问代码仓库的权限、Codex 的认证信息，或没有足够时间处理差异结果。
+- 修改内容涉及机密信息、凭证存储、私人用户数据或生产环境中的订单系统。
+- 直接进行少量编辑比启动另一个智能体更快更安全。
 - 该任务仅用于研究目的，应生成书面交接文档而非差异对比结果。
 - 工作节点可能仅依据 Codex 的自我报告就轻易将任务标记为已完成。
 
-## 责任归属规则
+## 责任划分规则
 
-1. Hermes 负责看板任务的整个生命周期管理。Codex 绝不能替代工作节点，调用 `kanban_complete`、`kanban_block`、`kanban_create`、网关消息功能或任何 Hermes 看板 CLI 命令。
-2. Hermes 承担最终验收责任。在经过审核和验证之前，应将 Codex 提交的代码变更/差异视为不可信赖的补丁。
-3. Hermes 负责测试执行工作。Codex 可以运行测试，但这些测试结果仅具有参考价值；仍需由 Hermes 使用代码仓库的官方工具重新执行验证。
-4. Hermes 负责保障安全。如果 Codex 改变了安全边界、风险控制机制、实时交易行为或机密信息处理方式，即使测试通过也应拒绝该工作流。
+1. Hermes 负责整个看板任务的生命周期管理。Codex 绝不能替代工作节点，调用 `kanban_complete`、`kanban_block`、`kanban_create`、网关消息功能或任何 Hermes 看板 CLI 命令。
+2. Hermes 承担最终验收责任。在经过审查和验证之前，应将 Codex 提交的代码变更/差异视为不可信的补丁。
+3. Hermes 负责测试执行工作。虽然 Codex 可以运行测试，但这些测试结果仅具有参考价值；Hermes 需要使用代码仓库的官方工具重新执行必要的验证流程。
+4. Hermes 负责确保安全。如果 Codex 改变了安全边界、风险控制机制、实时交易行为或机密信息处理方式，即使测试通过也必须拒绝该工作流。
 5. Hermes 负责清理工作。需终止处于挂起状态的 Codex 进程，并在不再需要时删除临时创建的工作树。
 
-## 所需的工作树和分支格式
+## 所需的工作树与分支格式
 
-切勿在共享的、未清理的代码状态下直接运行 Codex。应使用能够将工作流与看板任务关联起来的分支/工作树名称，从而将不可信赖的修改内容隔离起来。
+切勿在共享的、未清理过的代码状态下直接运行 Codex。应使用能够将该工作流与对应看板任务关联起来的分支/工作树名称，从而将不可信的修改内容隔离起来。
 
 推荐使用的变量：
 
