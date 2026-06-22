@@ -572,26 +572,31 @@ def register(ctx):
 
 ### 钩子参考
 
-每个钩子的详细文档均可在 **[事件钩子参考](/user-guide/features/hooks#plugin-hooks)** 中找到——包括回调函数签名、参数表、触发时机以及示例代码。以下为概要总结：
+每个钩子的详细文档均可在 **[事件钩子参考](/user-guide/features/hooks#plugin-hooks)** 中找到——包括回调签名、参数表、触发时机以及示例代码。以下为概要总结：
 
-| 钩子名称 | 触发时机 | 回调函数签名 | 返回值 |
-|----------|----------|--------------|--------|
+| 钩子名称 | 触发时机 | 回调签名 | 返回值 |
+|----------|----------|----------|--------|
 | [`pre_tool_call`](/user-guide/features/hooks#pre_tool_call) | 任何工具执行之前 | `tool_name: str, args: dict, task_id: str` | 被忽略 |
 | [`post_tool_call`](/user-guide/features/hooks#post_tool_call) | 任何工具返回之后 | `tool_name: str, args: dict, result: str, task_id: str, duration_ms: int` | 被忽略 |
 | [`pre_llm_call`](/user-guide/features/hooks#pre_llm_call) | 每轮对话中，在工具调用循环之前触发一次 | `session_id: str, user_message: str, conversation_history: list, is_first_turn: bool, model: str, platform: str` | [上下文注入](#pre_llm_call-context-injection) |
-| [`post_llm_call`](/user-guide/features/hooks#post_llm_call) | 每轮对话中，在工具调用循环之后触发一次（仅成功完成的轮次） | `session_id: str, user_message: str, assistant_response: str, conversation_history: list, model: str, platform: str` | 被忽略 |
+| [`post_llm_call`](/user-guide/features/hooks#post_llm_call) | 每轮对话中，在工具调用循环之后触发一次（仅成功轮次） | `session_id: str, user_message: str, assistant_response: str, conversation_history: list, model: str, platform: str` | 被忽略 |
 | [`on_session_start`](/user-guide/features/hooks#on_session_start) | 创建新会话时（仅第一轮） | `session_id: str, model: str, platform: str` | 被忽略 |
-| [`on_session_end`](/user-guide/features/hooks#on_session_end) | 每次调用 `run_conversation` 以及通过 CLI 退出时 | `session_id: str, completed: bool, interrupted: bool, model: str, platform: str` | 被忽略 |
-| [`on_session_finalize`](/user-guide/features/hooks#on_session_finalize) | CLI 或网关终止当前活跃会话时 | `session_id: str \| None, platform: str` | 被忽略 |
-| [`on_session_reset`](/user-guide/features/hooks#on_session_reset) | 网关更换新的会话密钥时（通过 `/new` 或 `/reset` 指令） | `session_id: str, platform: str` | 被忽略 |
+| [`on_session_end`](/user-guide/features/hooks#on_session_end) | 每次调用 `run_conversation` 之后以及 CLI 退出时 | `session_id: str, completed: bool, interrupted: bool, model: str, platform: str` | 被忽略 |
+| [`on_session_finalize`](/user-guide/features/hooks#on_session_finalize) | CLI 或网关终止正在运行的会话时 | `session_id: str \| None, platform: str` | 被忽略 |
+| [`on_session_reset`](/user-guide/features/hooks#on_session_reset) | 网关更换新的会话密钥时（通过 `/new` 或 `/reset` 命令） | `session_id: str, platform: str` | 被忽略 |
+| `kanban_task_claimed` | 有看板任务被领取时（调度器进程，在工作进程启动之前） | `task_id: str, board: str \| None, assignee: str \| None, run_id: int \| None, profile_name: str` | 被忽略 |
+| `kanban_task_completed` | 看板任务完成时（工作进程） | `task_id, board, assignee, run_id, profile_name, summary: str \| None` | 被忽略 |
+| `kanban_task_blocked` | 看板任务被阻塞时（工作进程） | `task_id, board, assignee, run_id, profile_name, reason: str \| None` | 被忽略 |
 
-大多数钩子都属于“触发即忘”型监听器——其返回值通常会被忽略。唯一例外是 `pre_llm_call`，它可以将上下文注入到对话中。
+大多数钩子均为“触发即忘”型观察器——其返回值会被直接忽略。唯一例外是 `pre_llm_call`，它可以将上下文注入到对话中。
 
-为确保向后兼容性，所有回调函数都应支持接收 `**kwargs` 参数。如果某个钩子回调发生崩溃，系统会记录日志并跳过该回调，其余钩子及智能体仍可正常运行。
+为确保向后兼容性，所有回调都应支持接受 `**kwargs` 参数。如果某个钩子回调发生崩溃，系统会记录日志并跳过该回调，其他钩子及智能体仍可正常运行。
+
+看板生命周期钩子会在看板数据库更改提交之后触发，因此回调始终能获取持久化的状态，且不会持有 SQLite 写锁。由于看板任务工作进程是以独立的 `hermes -p <profile> chat -q` 子进程形式运行的，`kanban_task_claimed` 会在**调度器**进程中触发，而 `kanban_task_completed`/`kanban_task_blocked` 则在**工作进程**中触发——你可以在调度器进程中添加钩子以集中监控所有状态转换，或在工作进程中添加钩子以获取每项任务的会话上下文。
 
 ### `pre_llm_call` 上下文注入功能
 
-这是唯一一个返回值具有重要意义的钩子。当 `pre_llm_call` 回调函数返回包含 `"context"` 键的字典（或普通字符串）时，Hermes 会将该内容注入到**当前轮次的用户消息**中。这一机制被用于内存插件、RAG 集成、内容规范检查，以及任何需要为模型提供额外上下文的插件。
+这是唯一一个返回值具有重要意义的钩子。当 `pre_llm_call` 回调返回一个包含 `"context"` 键的字典（或普通字符串）时，Hermes 会将该文本注入到**当前轮次的用户消息**中。这一机制可用于内存插件、RAG 集成、内容过滤规则，以及任何需要向模型提供额外上下文的插件。
 
 #### 返回格式
 
@@ -800,23 +805,45 @@ def register(ctx):
 
 **签名：** `ctx.dispatch_tool(name: str, args: dict, *, parent_agent=None) -> str`
 
-| 参数 | 类型 | 描述 |
-|-----------|------|-------------|
+| 参数 | 类型 | 说明 |
+|-----------|------|------|
 | `name` | `str` | 在工具注册表中登记的工具名称（例如 `"delegate_task"`、`"file_edit"`） |
-| `args` | `dict` | 工具参数，其结构与模型发送的参数相同 |
-| `parent_agent` | `Agent \| None` | 可选覆盖值。若未指定，则从当前 CLI 代理中获取（在网关模式下会以兼容方式处理） |
+| `args` | `dict` | 工具参数，格式与模型发送的参数一致 |
+| `parent_agent` | `Agent \| None` | 可选覆盖值。若未指定，则从当前 CLI 代理获取（在网关模式下会以兼容方式处理） |
 
 **运行时行为：**
 
-- **CLI 模式：** `parent_agent` 从当前的 CLI 代理中获取，因此工作区提示、加载指示器以及模型选择功能都能按预期正常工作。
-- **网关模式：** 由于不存在 CLI 代理，相关功能会以兼容方式降级处理——工作区内容将从配置的终端工作目录中读取，且不会显示加载指示器。
+- **CLI 模式：** `parent_agent` 从当前活跃的 CLI 代理中获取，因此工作区提示、加载指示器以及模型选择功能都能按预期正常工作。
+- **网关模式：** 由于不存在 CLI 代理，相关功能会以兼容方式降级处理——工作区内容将从配置的终端工作目录读取，且不会显示加载指示器。
 - **显式覆盖：** 如果调用方明确传入 `parent_agent=`，则该值将被直接采用，不会被覆盖。
 
-这是插件命令用于调度工具的公开且稳定的接口。插件不应直接访问 `ctx._cli_ref.agent` 或类似的私有状态。
+这是插件命令用于调度工具的公开、稳定接口。插件不应尝试访问 `ctx._cli_ref.agent` 或类似的私有状态。
+
+### 在钩子函数内部执行操作（配置文件 + 工具）
+
+`ctx._cli_ref` 仅在**交互式 CLI**会话中会被填充。在网关模式、非交互式的 `hermes chat -q` 运行方式以及**看板生成的 worker 会话**中，该值为 `None`——因此任何试图通过 `_cli_ref` 访问数据的插件逻辑在这些场景下都会静默失效。实际上，有两个稳定且与会话无关的 API 可以满足钩子函数的需求：
+
+- **`ctx.profile_name`** — 当前活跃的配置文件名称（例如 `"default"`，或在看板 worker 中的负责人配置文件）。该值源自 `HERMES_HOME`，因此无需依赖 `_cli_ref`，在任何环境中都能正常使用。
+- **`ctx.dispatch_tool(name, args)`** — 调用任何已注册的工具（包括内置工具和插件工具），如 `kanban_*` 工具、`delegate_task`、`terminal`、`read_file` 等。无论钩子函数在哪个进程中被触发，均可通过该接口执行操作。
+
+通过以上两种方式，看板生命周期钩子便能够在不触及框架内部实现的情况下，观察状态变化并对看板执行相应操作。
+
+```python
+def register(ctx):
+    def on_blocked(*, task_id, reason=None, **kw):
+        # Runs in the worker process; ctx._cli_ref is None here.
+        ctx.dispatch_tool("kanban_comment", {
+            "task_id": task_id,
+            "comment": f"[{ctx.profile_name}] auto-noted block: {reason}",
+        })
+    ctx.register_hook("kanban_task_blocked", on_blocked)
+```
+
+若要运行完整的 `hermes <subcommand>` 命令（例如 `hermes kanban show`），可通过 `ctx.dispatch_tool("terminal", {"command": "hermes kanban show ..."})` 来调用 `terminal` 工具——无头工作进程会话并不支持进程内的斜杠命令桥接，而工具则是从钩子函数中启动 Hermes 的常用方式。
 
 ### 处理 Slack Block Kit 按钮点击事件
 
-那些发送包含交互元素（按钮、下拉菜单、日期选择器等）的 Block Kit 消息的插件，可以直接在 Slack 适配器中注册点击处理函数——无需对 `slack_bolt.AsyncApp` 进行任何代码篡改。
+那些能够发送包含交互元素（如按钮、下拉菜单、日期选择器等）的 Block Kit 消息的插件，可直接在 Slack 适配器中注册点击处理函数——无需对 `slack_bolt.AsyncApp` 进行任何恶意修改。
 
 ```python
 def register(ctx):
