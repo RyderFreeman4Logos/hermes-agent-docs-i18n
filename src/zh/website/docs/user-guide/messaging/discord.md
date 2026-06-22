@@ -598,66 +598,67 @@ gateway:
         slash_commands: false   # default: true
 ```
 
-在“主”网关上将此选项设置为 `true` 可保持原有行为，即使用全局 `/` 菜单来调用内置技能及已安装的技能。
+将“主”网关的此参数设置为 `true` 可保持默认行为，即通过全局 `/` 菜单来调用内置技能及已安装的技能。
 
 ## 发送媒体文件（`send_message` + `MEDIA:` 标签）
 
-Discord 适配器支持通过 `send_message` 工具以及智能体生成的内联 `MEDIA:/path/to/file` 标签，上传各类常见的媒体文件：
+Discord 适配器支持通过 `send_message` 工具以及智能体生成的内联 `MEDIA:/path/to/file` 标签，上传各类常见格式的媒体文件：
 
 | 文件类型 | 传输方式 |
 |---|---|
-| 图片（PNG/JPG/WebP） | 以 Discord 原生图片附件形式发送，并附带内联预览 |
-| 动画 GIF | 通过 `send_animation` 以 `animation.gif` 的格式上传，从而在 Discord 中以动态形式播放（而非静态缩略图） |
-| 视频（MP4/MOV） | 使用 `send_video`，调用 Discord 原生视频播放器 |
-| 音频/语音 | 尽可能使用 `send_voice` 发送原生语音消息，否则以文件附件形式发送 |
-| 文档（PDF/ZIP/docx 等） | 通过 `send_document` 作为原生附件发送，并提供下载按钮 |
+| 图片（PNG/JPG/WebP） | 以 Discord 原生图片附件形式发送，并显示内联预览 |
+| 动画 GIF | 通过 `send_animation` 以 `animation.gif` 格式上传，由 Discord 以内联播放方式展示（而非静态缩略图） |
+| 视频（MP4/MOV） | 使用 `send_video`，由 Discord 原生视频播放器播放 |
+| 音频/语音 | 尽可能使用 `send_voice` 以原生语音消息形式发送，否则作为文件附件上传 |
+| 文档（PDF/ZIP/docx 等） | 通过 `send_document` 以原生附件形式发送，并附带下载按钮 |
 
-Discord 对单次上传文件的大小限制取决于服务器的升级等级：免费账户为 25 MB，高级账户最高可达 500 MB。如果 Hermes 收到 HTTP 413 错误，适配器会回退到指向本地缓存路径的链接，而不会默默失败。
+Discord 对单次上传的文件大小限制取决于服务器的升级等级：免费账户为 25 MB，高级账户最高可达 500 MB。如果 Hermes 收到 HTTP 413 错误，适配器会自动回退为提供本地缓存路径的链接，而不会静默失败。
 
 ## 接收任意类型的文件
 
-默认情况下，机器人仅缓存符合内置允许列表的文件类型——包括图片、音频、视频、PDF、文本/Markdown/CSV/日志文件，以及 JSON/XML/YAML/TOML 格式的文件，还有 zip、docx/xlsx/pptx 文件。其他类型的文件（如 `.wav`、`.bin` 或自定义扩展名的数据文件）会被标记为“不支持的文档类型”，并在智能体处理之前被丢弃。
+用户上传的任何文件类型都会被接受。决定文件能否被智能体处理的关键在于是否拥有发送消息的授权，而非文件扩展名。所有上传的文件都会被下载并缓存到 `~/.hermes/cache/documents/` 目录中，随后以 `DOCUMENT` 类型的消息事件形式传递给智能体，使其能够使用 `terminal`（如 `ffprobe`、`unzip`、`file`、`strings` 等工具）或 `read_file` 函数来查看文件内容。
 
-若要支持任意类型的文件，请启用 `discord.allow_any_attachment`：
+- 已知的文件类型（PDF、docx/xlsx/pptx、zip、图片/音频/视频等）会保留其精确的 MIME 类型。
+- 未知类型的文件则会采用上传时标注的内容类型，若未标注则默认视为 `application/octet-stream`。
+- 小型的 UTF-8 编码文件（文本、代码、配置文件、HTML、CSS、JSON、YAML 等），其内容最多可自动插入提示词中，上限为 100 KiB。无法解码的二进制文件则仅会以指向文件路径的上下文备注形式呈现（通过 `to_agent_visible_cache_path` 功能，Docker/Modal 沙箱终端中的备注会自动翻译），从而避免占用过多上下文空间。
+
+唯一的限制条件仍是单文件大小上限（默认为 32 MiB）：
 
 ```yaml
 discord:
-  allow_any_attachment: true
   # Optional — raise/disable the per-file size cap. Default is 32 MiB.
   # The whole file is held in memory while being cached, so unlimited
   # uploads carry a real memory cost.
   max_attachment_bytes: 33554432   # bytes; 0 = unlimited
 ```
 
-当该标志处于开启状态时，所有上传的文件都会被下载并缓存到 `~/.hermes/cache/documents/` 目录下，随后以 `APPLICATION/OCTET-STREAM` MIME 类型的 `DOCUMENT` 消息事件形式呈现给智能体。智能体会收到一条包含本地路径的上下文提示（对于 Docker/Modal 沙箱终端，该路径会通过 `to_agent_visible_cache_path` 自动转换），并可使用 `terminal`（如 `ffprobe`、`unzip`、`file`、`strings` 等工具）或 `read_file` 函数来查看文件内容。文件内容**不会**被直接嵌入提示语中，仅会显示路径，因此二进制文件的上传不会导致上下文窗口溢出。
+对应的环境变量为：`DISCORD_MAX_ATTACHMENT_BYTES=33554432`（如需取消限制，则设置为 `0`）。
 
-已在允许列表中的文本格式（如 `.txt`、`.md`、`.log`）其内容仍可自动注入，最大容量为 100 KiB；开启该标志后这一行为保持不变。
+旧的 `discord.allow_any_attachment` 标志现已失效——所有文件类型都将被允许通过——保留该标志仅是为了避免现有配置出现错误。
 
-对应的环境变量为：`DISCORD_ALLOW_ANY_ATTACHMENT=true` 和 `DISCORD_MAX_ATTACHMENT_BYTES=33554432`（设置为 `0` 表示无大小限制）。
-
-:::warning 无限制带来的内存成本
-禁用大小限制（将 `max_attachment_bytes` 设置为 `0`）意味着用户可以向机器人上传数 GB 的文件，而网关会负责在将其缓存到磁盘的同时通过内存进行缓冲处理。此设置仅建议在受信任的单用户环境中使用。对于共享型机器人，建议保持默认的 32 MiB 或适度提高该数值。
+:::警告 无限制带来的内存消耗
+若禁用大小限制（将 `max_attachment_bytes` 设置为 `0`），用户即可向机器人上传数GB大小的文件，而网关将会在将其缓存到磁盘的同时，通过内存对其进行处理。此设置仅建议在可信的单用户环境中使用。对于共享型机器人，建议保持默认的32 MiB限制或适度提高该数值。
 :::
 
-## 交互式提示（clarify 功能）
+## 交互式确认提示（进一步明确需求）
 
-当智能体调用 `clarify` 工具——用于询问您偏好的方案、获取任务完成后的反馈，或在做出重要决策前进行确认时——Discord 会为每个选项生成**一个按钮**：
+当机器人调用 `clarify` 工具时——例如询问您偏好的方案、收集任务完成后的反馈，或在做出重要决策前进行确认——Discord会以**每个选项对应一个按钮**的形式展示问题：
 
-> 我应该使用哪种框架来构建仪表板？
+> 我应该为控制面板选择哪种框架？
 >
 > [1. Next.js] [2. Remix] [3. Astro] [其他（直接输入）]
 
-您可以点击带编号的按钮进行选择，或点击 **其他** 输入自由文本回复（您在该频道发送的下一条消息将作为回复）。对于没有预设选项的开放式 `clarify` 调用，则不会显示按钮，系统会直接等待您的下一条消息。
+您可以点击编号按钮进行回答，或选择 **其他** 并输入自由文本作为答复（您在该频道发送的下一条消息即视为答案）。对于没有预设选项的开放式确认请求，Discord会直接忽略按钮，等待您的下一条消息。
 
-一旦做出选择，相关按钮就会自动失效，从而避免重复点击导致提示语被多次处理。您可以通过 `~/.hermes/config.yaml` 文件中的 `agent.clarify_timeout` 参数来设置回复超时时间（默认为 600 秒）。如果您在超时时间内未作出回复，智能体会发送一条提示信息以解除阻塞，并继续正常工作而不会卡住。
+一旦用户作出选择，相应按钮就会自动失效，从而防止重复点击导致问题被多次处理。您可以通过 `~/.hermes/config.yaml` 文件中的 `agent.clarify_timeout` 参数来设置响应超时时间（默认为600秒）。若在规定时间内未收到回复，机器人会发送一条提示信息以解除阻塞，并继续正常工作而不会挂起。
 
 ## 主频道
 
-您可以指定一个“主频道”，让机器人在此频道主动发送消息（如定时任务输出、提醒及通知等）。设置主频道有两种方式：
+您可以指定一个“主频道”，让机器人向该频道发送主动消息（如定时任务执行结果、提醒及通知等）。设置主频道有两种方式：
 
 ### 使用斜杠命令
 
-在机器人所在的任意 Discord 频道中输入 `/sethome`，该频道即成为主频道。
+在机器人所在的任意Discord频道中输入 `/sethome`，该频道即会被设为主频道。
 
 ### 手动配置
 
