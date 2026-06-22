@@ -6,114 +6,112 @@ description: "Catalog of bundled skills that ship with Hermes Agent"
 
 # 内置技能目录
 
-Hermes 在安装时会将大量内置技能库复制到 `~/.hermes/skills/` 目录中。下表中的每项技能都对应一个专门页面，详细介绍其功能定义、配置方法及使用方式。
+Hermes在安装时会将大量内置技能库复制到`~/.hermes/skills/`目录中。下表中的每一项都对应着详细介绍其功能定义、设置方法及使用方式的专用页面。
 
-通过执行 `hermes update` 命令也可以同步这些内置技能，但同步机制会尊重用户本地的删除操作及自定义修改。如果此处列出的某个技能并未出现在您个人配置目录的 `~/.hermes/skills/` 中，它依然属于 Hermes 的内置功能；此时可通过命令 `hermes skills reset <name> --restore` 恢复该技能。
+通过执行`hermes update`命令，Hermes也会同步这些内置技能，但同步过程会尊重用户本地的删除操作及自定义修改。如果此处列出的某个技能未出现在您账户的`~/.hermes/skills/`目录中，它依然属于Hermes的默认配置；此时可使用`hermes skills reset <name> --restore`命令将其恢复。
 
-若某个技能未出现在此列表中，但实际存在于代码仓库中，系统会通过 `website/scripts/generate-skill-docs.py` 脚本自动重新生成相关文档。
+若某个技能未出现在此列表中，但实际存在于代码仓库中，系统会通过`website/scripts/generate-skill-docs.py`脚本自动重新生成该技能的文档。
 
 ## apple
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`apple-notes`](/docs/user-guide/skills/bundled/apple/apple-apple-notes) | 通过 memo CLI 管理 Apple Notes：创建、搜索、编辑笔记。 | `apple/apple-notes` |
-| [`apple-reminders`](/docs/user-guide/skills/bundled/apple/apple-apple-reminders) | 通过 remindctl 管理 Apple Reminders：添加、查看、标记完成任务。 | `apple/apple-reminders` |
-| [`findmy`](/docs/user-guide/skills/bundled/apple/apple-findmy) | 通过 macOS 上的 FindMy.app 跟踪 Apple 设备及 AirTags。 | `apple/findmy` |
-| [`imessage`](/docs/user-guide/skills/bundled/apple/apple-imessage) | 通过 macOS 上的 imsg CLI 发送和接收 iMessages 信息及短信。 | `apple/imessage` |
-| [`macos-computer-use`](/docs/user-guide/skills/bundled/apple/apple-macos-computer-use) | 在后台操控 macOS 桌面——支持截图、鼠标操作、键盘输入、滚动、拖动等功能，且不会占用用户的光标、焦点或快捷键。适用于所有具备相应功能的模型。每当需要使用 `computer_use` 工具时，均可加载此技能... | `apple/macos-computer-use` |
+| [`apple-notes`](/docs/user-guide/skills/bundled/apple/apple-apple-notes) | 通过memo CLI管理Apple Notes：创建、搜索、编辑笔记。 | `apple/apple-notes` |
+| [`apple-reminders`](/docs/user-guide/skills/bundled/apple/apple-apple-reminders) | 通过remindctl管理Apple Reminders：添加、查看、标记完成任务。 | `apple/apple-reminders` |
+| [`findmy`](/docs/user-guide/skills/bundled/apple/apple-findmy) | 通过macOS上的FindMy.app追踪Apple设备及AirTags。 | `apple/findmy` |
+| [`imessage`](/docs/user-guide/skills/bundled/apple/apple-imessage) | 通过macOS上的imsg CLI发送和接收iMessages及短信。 | `apple/imessage` |
+| [`macos-computer-use`](/docs/user-guide/skills/bundled/apple/apple-macos-computer-use) | 在后台控制macOS桌面操作——截图、鼠标操作、键盘输入、滚动、拖动等——且不会占用用户的光标、焦点或快捷键。适用于所有具备相应功能的模型。每当需要使用`computer_use`工具时，均可加载此技能。 | `apple/macos-computer-use` |
 
 ## autonomous-ai-agents
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code) | 将编码任务委托给 Claude Code CLI，支持处理功能开发及 Pull Request。 | `autonomous-ai-agents/claude-code` |
-| [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex) | 将编码任务委托给 OpenAI Codex CLI，支持处理功能开发及 Pull Request。 | `autonomous-ai-agents/codex` |
-| [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) | 配置、扩展 Hermes Agent，或为其贡献功能。 | `autonomous-ai-agents/hermes-agent` |
-| [`opencode`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode) | 将编码任务委托给 OpenCode CLI，支持处理功能开发及 Pull Request 审核。 | `autonomous-ai-agents/opencode` |
+| [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code) | 将编码任务委托给Claude Code CLI，支持处理功能开发及PR相关操作。 | `autonomous-ai-agents/claude-code` |
+| [`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex) | 将编码任务委托给OpenAI Codex CLI，支持处理功能开发及PR相关操作。 | `autonomous-ai-agents/codex` |
+| [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) | 对Hermes Agent进行配置、扩展或贡献代码。 | `autonomous-ai-agents/hermes-agent` |
+| [`opencode`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode) | 将编码任务委托给OpenCode CLI，支持处理功能开发及PR审核工作。 | `autonomous-ai-agents/opencode` |
 
 ## creative
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`architecture-diagram`](/docs/user-guide/skills/bundled/creative/creative-architecture-diagram) | 生成深色主题的 SVG 架构图、云架构图及基础设施图，并以 HTML 格式输出。 | `creative/architecture-diagram` |
-| [`ascii-art`](/docs/user-guide/skills/bundled/creative/creative-ascii-art) | 生成 ASCII 艺术作品：支持 pyfiglet、cowsay、图形框以及图像转 ASCII 功能。 | `creative/ascii-art` |
-| [`ascii-video`](/docs/user-guide/skills/bundled/creative/creative-ascii-video) | 生成 ASCII 视频：可将视频或音频转换为带颜色的 ASCII MP4/GIF 格式。 | `creative/ascii-video` |
-| [`baoyu-infographic`](/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic) | 生成信息图：提供 21 种布局与 21 种风格，用于可视化展示内容。 | `creative/baoyu-infographic` |
-| [`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claudesign) | 设计一次性使用的 HTML 页面，如登录页、演示文稿或原型界面。 | `creative/claude-design` |
-| [`comfyui`](/docs/user-guide/skills/bundled/creative/creative-comfyui) | 使用 ComfyUI 生成图像、视频及音频：支持安装、启动工具，管理节点与模型，以及通过参数注入方式运行工作流。该技能利用官方 comfy-cli 处理生命周期相关操作，同时通过 REST/WebSocket API 执行实际任务。 | `creative/comfyui` |
-| [`design-md`](/docs/user-guide/skills/bundled/creative/creative-design-md) | 编写、验证并导出 Google 的 DESIGN.md 令牌规范文件。 | `creative/design-md` |
-| [`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw) | 生成手绘风格的 Excalidraw JSON 图表，适用于架构图、流程图及序列图等场景。 | `creative/excalidraw` |
-| [`humanizer`](/docs/user-guide/skills/bundled/creative/creative-humanizer) | 对文本进行优化处理：去除 AI 特有的表达方式，增添真实自然的语气。 | `creative/humanizer` |
-| [`manim-video`](/docs/user-guide/skills/bundled/creative/creative-manim-video) | 生成 Manim CE 动画，类似 3Blue1Brown 的数学与算法教学视频。 | `creative/manim-video` |
-| [`p5js`](/docs/user-guide/skills/bundled/creative/creative-p5js) | 使用 p5.js 编写绘图程序：可生成艺术作品、着色器效果，实现交互式及 3D 功能。 | `creative/p5js` |
-| [`popular-web-designs`](/docs/user-guide/skills/bundled/creative/creative-popular-web-designs) | 提供 54 个真实的设计系统模板（如 Stripe、Linear、Vercel 等），以 HTML/CSS 格式呈现。 | `creative/popular-web-designs` |
-| [`pretext`](/docs/user-guide/skills/bundled/creative/creative-pretext) | 用于构建创意型浏览器演示项目，基于 @chenglou/pretext 库实现——支持无 DOM 的 ASCII 艺术文本排版、围绕障碍物的排版设计、以文本为几何元素的互动游戏、动态文字效果以及基于文本的生成艺术。可输出单文件 HTML... | `creative/pretext` |
-| [`sketch`](/docs/user-guide/skills/bundled/creative/creative-sketch) | 快速生成临时 HTML 原型：提供 2-3 种设计版本供对比参考。 | `creative/sketch` |
-| [`songwriting-and-ai-music`](/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music) | 提供歌曲创作技巧以及 Suno AI 音乐提示词相关功能。 | `creative/songwriting-and-ai-music` |
-| [`touchdesigner-mcp`](/docs/user-guide/skills/bundled/creative/creative-touchdesigner-mcp) | 通过 twozero MCP 控制正在运行的 TouchDesigner 实例：可创建操作符、设置参数、连接线路、执行 Python 代码，从而生成实时视觉效果。内置 36 种原生工具。 | `creative/touchdesigner-mcp` |
+| [`architecture-diagram`](/docs/user-guide/skills/bundled/creative/creative-architecture-diagram) | 生成深色主题的SVG架构图、云架构图及基础设施图，并以HTML格式输出。 | `creative/architecture-diagram` |
+| [`ascii-art`](/docs/user-guide/skills/bundled/creative/creative-ascii-art) | 生成ASCII艺术内容：支持pyfiglet、cowsay、图形框以及图像转ASCII功能。 | `creative/ascii-art` |
+| [`ascii-video`](/docs/user-guide/skills/bundled/creative/creative-ascii-video) | 生成ASCII视频：可将视频或音频转换为带颜色的ASCII格式的MP4/GIF文件。 | `creative/ascii-video` |
+| [`baoyu-infographic`](/docs/user-guide/skills/bundled/creative/creative-baoyu-infographic) | 生成信息图：提供21种布局与21种风格可选。 | `creative/baoyu-infographic` |
+| [`claude-design`](/docs/user-guide/skills/bundled/creative/creative-claudesign) | 设计一次性使用的HTML格式内容，如落地页、演示文稿或原型界面。 | `creative/claude-design` |
+| [`comfyui`](/docs/user-guide/skills/bundled/creative/creative-comfyui) | 使用ComfyUI生成图像、视频及音频：支持安装、启动工具，管理节点与模型，还可通过参数注入方式运行工作流。该技能利用官方的comfy-cli处理生命周期相关操作，同时通过REST/WebSocket API实现实际执行功能。 | `creative/comfyui` |
+| [`design-md`](/docs/user-guide/skills/bundled/creative/creative-design-md) | 编写、验证及导出Google的DESIGN.md标记规范文件。 | `creative/design-md` |
+| [`excalidraw`](/docs/user-guide/skills/bundled/creative/creative-excalidraw) | 生成手绘风格的Excalidraw JSON格式图表，适用于架构图、流程图及序列图等场景。 | `creative/excalidraw` |
+| [`humanizer`](/docs/user-guide/skills/bundled/creative/creative-humanizer) | 对文本进行优化处理：去除AI特有的表达方式，增添真实自然的语气。 | `creative/humanizer` |
+| [`manim-video`](/docs/user-guide/skills/bundled/creative/creative-manim-video) | 生成Manim CE动画效果，类似3Blue1Brown风格的数学及算法教学视频。 | `creative/manim-video` |
+| [`p5js`](/docs/user-guide/skills/bundled/creative/creative-p5js) | 使用p5.js编写创意作品：可生成艺术图像、着色器效果、交互式内容及3D图形。 | `creative/p5js` |
+| [`popular-web-designs`](/docs/user-guide/skills/bundled/creative/creative-popular-web-designs) | 提供54套真实的网页设计系统模板，以HTML/CSS格式呈现，涵盖Stripe、Linear、Vercel等知名平台的设计风格。 | `creative/popular-web-designs` |
+| [`pretext`](/docs/user-guide/skills/bundled/creative/creative-pretext) | 用于构建创意型浏览器演示项目，基于@chenglou/pretext框架实现——无需DOM即可实现ASCII艺术文本排版、围绕障碍物的排版布局、以文本为几何元素的互动游戏、动态字体效果以及基于文本的生成艺术。可生成单文件HTML格式的输出结果。 | `creative/pretext` |
+| [`sketch`](/docs/user-guide/skills/bundled/creative/creative-sketch) | 快速生成用于对比的HTML风格原型，通常提供2-3种不同的设计版本。 | `creative/sketch` |
+| [`songwriting-and-ai-music`](/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music) | 提供歌曲创作技巧以及基于Suno AI的音乐提示词生成功能。 | `creative/songwriting-and-ai-music` |
+| [`touchdesigner-mcp`](/docs/user-guide/skills/bundled/creative/creative-touchdesigner-mcp) | 通过twozero MCP控制正在运行的TouchDesigner实例：可创建操作符、设置参数、连接线路、执行Python代码，进而生成实时视觉效果。内置36种原生工具。 | `creative/touchdesigner-mcp` |
 
 ## data-science
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`jupyter-live-kernel`](/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel) | 通过实时运行的 Jupyter 内核（hamelnb）实现 Python 的迭代式开发。 | `data-science/jupyter-live-kernel` |
+| [`jupyter-live-kernel`](/docs/user-guide/skills/bundled/data-science/data-science-jupyter-live-kernel) | 通过实时运行的Jupyter内核（hamelnb）实现Python的迭代式开发。 | `data-science/jupyter-live-kernel` |
 
 ## devops
 
 | 技能 | 描述 | 路径 |
-|------|------|------|
-| [`kanban-orchestrator`](/docs/user-guide/skills/bundled/devops/devops-kanban-orchestrator) | 为基于 Kanban 工作流的配置文件提供任务分解方案及相关规则，帮助避免重复劳动。系统会自动将“不要亲自处理任务”这一原则以及基础工作流程注入到每个 Kanban 工作节点的系统提示词中；此技能... | `devops/kanban-orchestrator` |
-| [`kanban-worker`](/docs/user-guide/skills/bundled/devops/devops-kanban-worker) | 提供 Hermes Kanban 工作节点使用中的常见问题、示例及边缘情况说明。工作流程相关内容会以 KANBAN_GUIDANCE 的形式自动注入到每个工作节点的系统提示词中（该内容来自 agent/prompt_builder.py）；当需要更深入的了解相关细节时，可加载此技能... | `devops/kanban-worker` |
+
 
 ## dogfood
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`dogfood`](/docs/user-guide/skills/bundled/dogfood/dogfood-dogfood) | 用于对网页应用进行探索性质量检测：帮助发现漏洞、收集相关证据并生成报告。 | `dogfood` |
+| [`dogfood`](/docs/user-guide/skills/bundled/dogfood/dogfood-dogfood) | 对网页应用进行探索性质量检测：帮助发现漏洞、收集相关证据并生成检测报告。 | `dogfood` |
 
 ## email
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`himalaya`](/docs/user-guide/skills/bundled/email/email-himalaya) | Himalaya CLI：允许在终端中通过 IMAP/SMTP 协议发送和接收邮件。 | `email/himalaya` |
+| [`himalaya`](/docs/user-guide/skills/bundled/email/email-himalaya) | Himalaya CLI工具：允许在终端中通过IMAP/SMTP协议操作电子邮件。 | `email/himalaya` |
 
 ## github
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`codebase-inspection`](/docs/user-guide/skills/bundled/github/github-codebase-inspection) | 使用 pygount 工具分析代码库，统计行数、编程语言使用比例及各类指标。 | `github/codebase-inspection` |
-| [`github-auth`](/docs/user-guide/skills/bundled/github/github-github-auth) | 配置 GitHub 认证：支持 HTTPS 令牌、SSH 密钥以及 gh CLI 登录功能。 | `github/github-auth` |
-| [`github-code-review`](/docs/user-guide/skills/bundled/github/github-github-code-review) | 审核 Pull Request：可通过 gh 或 REST 接口查看代码差异并添加内联评论。 | `github/github-code-review` |
-| [`github-issues`](/docs/user-guide/skills/bundled/github/github-github-issues) | 通过 gh 或 REST 接口创建、分类、标记及分配 GitHub 问题任务。 | `github/github-issues` |
-| [`github-pr-workflow`](/docs/user-guide/skills/bundled/github/github-github-pr-workflow) | 管理 GitHub Pull Request 的完整生命周期：包括分支创建、代码提交、PR 提交、持续集成测试以及合并操作。 | `github/github-pr-workflow` |
-| [`github-repo-management`](/docs/user-guide/skills/bundled/github/github-github-repo-management) | 支持克隆、创建及 Fork 代码仓库；同时可管理远程仓库及版本发布功能。 | `github/github-repo-management` |
+| [`codebase-inspection`](/docs/user-guide/skills/bundled/github/github-codebase-inspection) | 使用pygount工具分析代码库，统计行数、编程语言使用比例及各类代码占比。 | `github/codebase-inspection` |
+| [`github-auth`](/docs/user-guide/skills/bundled/github/github-github-auth) | 配置GitHub认证：支持HTTPS令牌、SSH密钥以及通过gh CLI登录。 | `github/github-auth` |
+| [`github-code-review`](/docs/user-guide/skills/bundled/github/github-github-code-review) | 审核PR请求：可通过gh工具或REST接口查看代码差异并添加内联评论。 | `github/github-code-review` |
+| [`github-issues`](/docs/user-guide/skills/bundled/github/github-github-issues) | 通过gh工具或REST接口创建、分类、标记及分配GitHub问题任务。 | `github/github-issues` |
+| [`github-pr-workflow`](/docs/user-guide/skills/bundled/github/github-github-pr-workflow) | 管理GitHub PR的全生命周期：包括分支创建、代码提交、PR开启、持续集成测试以及合并操作。 | `github/github-pr-workflow` |
+| [`github-repo-management`](/docs/user-guide/skills/bundled/github/github-github-repo-management) | 支持克隆、创建及复制仓库；同时可管理远程仓库及版本发布功能。 | `github/github-repo-management` |
 
 ## media
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`gif-search`](/docs/user-guide/skills/bundled/media/media-gif-search) | 通过 curl 和 jq 工具从 Tenor 网站搜索并下载 GIF 图片。 | `media/gif-search` |
-| [`heartmula`](/docs/user-guide/skills/bundled/media/media-heartmula) | HeartMuLa：基于歌词和标签生成类似 Suno 的音乐作品。 | `media/heartmula` |
-| [`songsee`](/docs/user-guide/skills/bundled/media/media-songsee) | 通过 CLI 工具获取音频的频谱图及特征参数，如梅尔频率、色度值、MFCC 等。 | `media/songsee` |
-| [`youtube-content`](/docs/user-guide/skills/bundled/media/media-youtube-content) | 将 YouTube 视频的字幕转换为总结文本、主题串或博客文章。 | `media/youtube-content` |
+| [`gif-search`](/docs/user-guide/skills/bundled/media/media-gif-search) | 通过curl + jq命令从Tenor平台搜索并下载GIF图片。 | `media/gif-search` |
+| [`heartmula`](/docs/user-guide/skills/bundled/media/media-heartmula) | HeartMuLa：基于歌词及标签生成类似Suno风格的歌曲。 | `media/heartmula` |
+| [`songsee`](/docs/user-guide/skills/bundled/media/media-songsee) | 通过CLI命令获取音频的频谱图及各种特征参数，如梅尔频率、色度值、MFCC等。 | `media/songsee` |
+| [`youtube-content`](/docs/user-guide/skills/bundled/media/media-youtube-content) | 将YouTube视频的文字转录内容进一步整理为摘要、系列文章或博客内容。 | `media/youtube-content` |
 
 ## mlops
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`audiocraft-audio-generation`](/docs/user-guide/skills/bundled/mlops/mlops-models-audiocraft) | AudioCraft：支持 MusicGen 文本转音乐功能，以及 AudioGen 文本转声音功能。 | `mlops/models/audiocraft` |
-| [`huggingface-hub`](/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub) | HuggingFace hf CLI：用于搜索、下载及上传模型与数据集。 | `mlops/huggingface-hub` |
-| [`llama-cpp`](/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp) | 使用 llama.cpp 在本地运行 GGUF 格式的模型，同时支持通过 HF Hub 查找模型。 | `mlops/inference/llama-cpp` |
-| [`evaluating-llms-harness`](/docs/user-guide/skills/bundled/mlops/mlops-evaluation-lm-evaluation-harness) | lm-eval-harness：用于评估大型语言模型性能，支持 MMLU、GSM8K 等测试任务。 | `mlops/evaluation/lm-evaluation-harness` |
-| [`segment-anything-model`](/docs/user-guide/skills/bundled/mlops/mlops-models-segment-anything) | SAM：基于点、矩形框及掩码实现零样本图像分割功能。 | `mlops/models/segment-anything` |
-| [`serving-llms-vllm`](/docs/user-guide/skills/bundled/mlops/mlops-inference-vllm) | vLLM：支持高效处理大型语言模型请求，集成 OpenAI API 以及量化技术。 | `mlops/inference/vllm` |
-| [`weights-and-biases`](/docs/user-guide/skills/bundled/mlops/mlops-evaluation-weights-and-biases) | W&B：用于记录机器学习实验数据、执行参数扫描测试，同时支持模型注册及可视化仪表板展示。 | `mlops/evaluation/weights-and-biases` |
+| [`audiocraft-audio-generation`](/docs/user-guide/skills/bundled/mlops/mlops-models-audiocraft) | AudioCraft：支持使用MusicGen实现文本转音乐功能，以及通过AudioGen实现文本转声音功能。 | `mlops/models/audiocraft` |
+| [`huggingface-hub`](/docs/user-guide/skills/bundled/mlops/mlops-huggingface-hub) | HuggingFace hf CLI工具：支持搜索、下载及上传模型及数据集。 | `mlops/huggingface-hub` |
+| [`llama-cpp`](/docs/user-guide/skills/bundled/mlops/mlops-inference-llama-cpp) | llama.cpp本地GGUF格式模型推理功能，同时支持通过HF Hub查找模型。 | `mlops/inference/llama-cpp` |
+| [`evaluating-llms-harness`](/docs/user-guide/skills/bundled/mlops/mlops-evaluation-lm-evaluation-harness) | lm-eval-harness：用于对大型语言模型进行性能测试，支持MMLU、GSM8K等标准测试任务。 | `mlops/evaluation/lm-evaluation-harness` |
+| [`segment-anything-model`](/docs/user-guide/skills/bundled/mlops/mlops-models-segment-anything) | SAM模型：支持通过点、矩形框或掩码实现零样本图像分割功能。 | `mlops/models/segment-anything` |
+| [`serving-llms-vllm`](/docs/user-guide/skills/bundled/mlops/mlops-inference-vllm) | vLLM：高效的大型语言模型服务框架，支持调用OpenAI API，并具备量化优化功能。 | `mlops/inference/vllm` |
+| [`weights-and-biases`](/docs/user-guide/skills/bundled/mlops/mlops-evaluation-weights-and-biases) | W&B工具：用于记录机器学习实验过程、执行参数扫描测试，同时支持模型注册及可视化仪表板展示。 | `mlops/evaluation/weights-and-biases` |
 
 ## note-taking
 
 | 技能 | 描述 | 路径 |
 |------|------|------|
-| [`obsidian`](/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian) | 用于在 Obsidian 笔记库中读取、搜索、创建及编辑笔记。 | `note-taking/obsidian` |
+| [`obsidian`](/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian) | 支持在Obsidian笔记应用中读取、搜索、创建及编辑笔记内容。 | `note-taking/obsidian` |
 
 ## productivity| 技能 | 描述 | 路径 |
 |-------|-------------|------|
