@@ -675,9 +675,16 @@ worktree: true    # Always create a worktree (same as hermes -w)
 # worktree: false # Default — only when -w flag is passed
 ```
 
-启用该功能后，每个 CLI 会话都将在 `.worktrees/` 目录下创建一个包含独立分支的新工作树。各 Agent 可以独立编辑文件、执行提交、推送操作以及创建 Pull Request，而互不干扰。退出时会自动删除已清理的工作树；尚未处理的工作树则会被保留，以便手动恢复。
+启用该功能后，每个 CLI 会话都将在 `.worktrees/` 目录下创建一个包含独立分支的新工作树。各个 Agent 可以独立编辑文件、执行提交、推送操作以及创建 Pull Request，而互不干扰。退出时会自动删除干净的工作树，而状态未同步的工作树则会保留以便后续手动恢复。
 
-您还可以在仓库根目录中使用 `.worktreeinclude` 指定需要复制到工作树中的 gitignored 文件列表：
+默认情况下，新工作树会从**最新拉取的远程分支尖端**（即当前分支的上游分支，若不存在则使用远程仓库的默认分支）创建分支，这样它就能与项目保持同步，而非基于本地克隆中可能已过时的 `HEAD` 分支。这样一来，Pull Request 的差异对比就会仅针对实际发生的更改，而不会受到本地克隆滞后状态的影响。如需以本地 `HEAD` 分支作为基础，可设置 `worktree_sync: false`——这在离线环境下或需要以克隆版本的精确当前状态为基准时非常有用。如果无法连接到远程仓库，系统会自动回退到使用本地 `HEAD` 分支。
+
+```yaml
+worktree_sync: true    # Default — branch from the fetched remote tip
+# worktree_sync: false # Branch from local HEAD (offline / pinned base)
+```
+
+您还可以在仓库根目录中使用 `.worktreeinclude` 文件，列出需要复制到工作树的 gitignored 文件。
 
 ```
 # .worktreeinclude
@@ -701,7 +708,7 @@ compression:
   target_ratio: 0.20                                # Fraction of threshold to preserve as recent tail
   protect_last_n: 20                                # Min recent messages to keep uncompressed
   protect_first_n: 3                                # Non-system head messages pinned across compactions (0 = pin nothing)
-  hygiene_hard_message_limit: 400                   # Gateway safety valve — see below
+  hygiene_hard_message_limit: 5000                  # Gateway safety valve — see below
 
 # The summarization model/provider is configured under auxiliary:
 auxiliary:
@@ -711,21 +718,21 @@ auxiliary:
     base_url: null                                  # Custom OpenAI-compatible endpoint (overrides provider)
 ```
 
-:::info 旧配置迁移
-包含 `compression.summary_model`、`compression.summary_provider` 和 `compression.summary_base_url` 的旧配置，在首次加载时（配置版本 17）会自动迁移到 `auxiliary.compression.*` 格式，无需手动操作。
-:::
+:::info 旧配置迁移说明  
+对于包含 `compression.summary_model`、`compression.summary_provider` 和 `compression.summary_base_url` 的旧版本配置，在首次加载时（配置版本为17）会自动迁移为 `auxiliary.compression.*` 格式，无需手动操作。  
 
-`hygiene_hard_message_limit` 是仅适用于网关的**预压缩安全机制**。在某些情况下，大量消息的快速堆积可能会在达到常规上下文比例阈值之前就耗尽模型上下文容量；一旦消息数量超出此限制，Hermes 会强制进行压缩，而无需考虑当前token的使用情况。其默认值为 `400`——对于那些通常会有超长对话场景的平台，可适当提高该值；若希望更积极地实施压缩，则可降低该值。在正在运行的网关上修改此值后，变更将在处理下一条消息时生效（详见下文）。
+:::  
+`hygiene_hard_message_limit` 是仅适用于网关的**预压缩安全机制**。其存在目的是避免恶性循环：当会话数据量过大导致API调用频繁中断时，网关无法接收到令牌使用情况数据，因此基于令牌数量的阈值机制无法触发，结果就是转录内容持续增加，断连问题愈发严重。该机制仅根据消息数量来触发（这一数值始终可知，不受API故障影响），从而强制进行压缩并恢复会话。默认值为 `5000`，远高于普通会话的需求，即便是处理大量上下文（100万字符以上）且包含数千次短轮次对话的场景也是如此，因为这类场景早在达到令牌阈值之前就会自动触发压缩。对于特殊平台可适当提高该值，若需更强制的压缩效果则可降低该值。在正在运行的网关上修改此值后，变更将于下一条消息开始时生效（详见下文）。  
 
-`protect_first_n` 用于控制每次压缩过程中会保留多少**非系统**的初始消息。默认值为 `3`——即最初的用户与助手之间的对话内容会在每次摘要生成过程中都被保留，从而确保原始目标始终可见。在那些持续时间较长且初始对话已不再相关的滚动压缩场景中，可将 `protect_first_n` 设置为 `0`，这样仅会保留系统提示、摘要及最后几条消息。无论此设置如何，系统提示本身始终会被保留。
+`protect_first_n` 用于控制每次压缩操作中需要保留的**非系统**提示词数量。默认值为 `3`，即每次摘要生成后，最初的用户/助手对话内容都会被保留，以确保初始目标始终可见。在那些会话持续时间较长、初始对话已不再相关的场景中，可将 `protect_first_n` 设置为 `0`，仅保留系统提示词、摘要及最后几条消息。无论是否设置此参数，系统提示词本身始终会被保留。  
 
-:::tip 网关上压缩参数与上下文长度的热重载
-在最新版本中，只需在正在运行的网关上的 `config.yaml` 文件中修改 `model.context_length` 或任何 `compression.*` 相关键值，变更即会在处理下一条消息时生效——无需重启网关、无需执行 `/reset` 操作，也无需重新启动会话。由于缓存中的代理签名已包含这些关键值，因此网关在检测到变化时会自动重建代理实例。而 API 密钥以及工具/技能相关配置仍需通过常规的重载方式来应用。
-:::
+:::tip 网关上压缩参数与上下文长度的热重载方法  
+在最新版本中，无需重启网关、无需执行 `/reset` 操作，也无需刷新会话，只需在正在运行的网关上的 `config.yaml` 文件中修改 `model.context_length` 或任何 `compression.*` 相关参数，变更即会在下一条消息开始时生效。由于缓存中的代理签名已包含这些参数，因此网关在检测到变化时会自动重新构建代理模型。而API密钥以及工具/技能相关配置仍需通过常规的重载方式来更新。  
 
-### 常见配置方案
+:::  
+### 常见配置方案  
 
-**默认（自动检测）——无需任何配置：**
+**默认方案（自动检测）——无需任何配置：**
 ```yaml
 compression:
   enabled: true
@@ -897,14 +904,14 @@ $ hermes model
 [ ] profile_describer    currently: auto / main model
 ```
 
-选择任务，挑选提供方（OAuth流程会自动打开浏览器；使用API密钥的提供方则会弹出提示），再选定模型。这些设置将会保存到`config.yaml`文件中的`auxiliary.<task>.*`路径下。其操作逻辑与选择主模型的方式相同——无需学习额外的语法。
+选择任务，选定提供方（OAuth流程会自动打开浏览器；使用API密钥的提供方则会弹出提示），再挑选模型。这些设置会同步保存到`config.yaml`文件中的`auxiliary.<task>.*`路径下。其操作逻辑与选择主模型的方式相同——无需学习额外的语法。
 
 ### 视频教程
 
 <div style={{position: 'relative', width: '100%', aspectRatio: '16 / 9', marginBottom: '1.5rem'}}>
   <iframe
     src="https://www.youtube.com/embed/NoF-YajElIM"
-    title="Hermes Agent — 辅助模型教程"
+    title="Hermes Agent — 辅助模型使用教程"
     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0}}
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowFullScreen
@@ -913,28 +920,28 @@ $ hermes model
 
 ### 通用的配置模式
 
-Hermes中的所有模型槽位——无论是辅助任务、压缩处理还是备用方案——都使用相同的三个配置项：
+Hermes中的所有模型配置项——无论是辅助任务、压缩处理还是备用方案——都采用相同的三个参数：
 
-| 键值 | 功能说明 | 默认值 |
-|-----|-----------|---------|
+| 参数名 | 功能说明 | 默认值 |
+|-------|----------|--------|
 | `provider` | 用于身份验证和请求路由的提供方 | `"auto"` |
 | `model` | 需要调用的模型 | 对应提供方的默认模型 |
-| `base_url` | 自定义的OpenAI兼容端点（可覆盖提供方设置） | 未设置 |
+| `base_url` | 自定义的OpenAI兼容接口地址（可覆盖提供方设置的地址） | 未设置 |
 
-当设置了`base_url`后，Hermes会忽略指定的提供方，直接调用该端点（并通过`api_key`或`OPENAI_API_KEY`进行身份验证）。如果仅设置了`provider`，则Hermes会使用该提供方内置的身份验证机制及基础URL。
+当设置了`base_url`后，Hermes会忽略指定的提供方，直接调用该自定义接口（身份验证会使用`api_key`或`OPENAI_API_KEY`）。若仅设置了`provider`，则Hermes会使用该提供方内置的身份验证机制及基础地址。
 
-可用于辅助任务的提供方包括：`auto`、`main`，以及[提供方注册表](/reference/environment-variables)中的所有提供方——如`openrouter`、`nous`、`openai-codex`、`copilot`、`copilot-acp`、`anthropic`、`gemini`、`google-gemini-cli`、`qwen-oauth`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`deepseek`、`nvidia`、`xai`、`xai-oauth`、`ollama-cloud`、`alibaba`、`bedrock`、`huggingface`、`arcee`、`xiaomi`、`kilocode`、`opencode-zen`、`opencode-go`、`azure-foundry`——或是您在`custom_providers`列表中自定义的任何提供方名称（例如`provider: "beans"`）。
+可用于辅助任务的提供方包括：`auto`、`main`，以及[提供方注册表](/reference/environment-variables)中的所有提供方——如`openrouter`、`nous`、`openai-codex`、`copilot`、`copilot-acp`、`anthropic`、`gemini`、`qwen-oauth`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`deepseek`、`nvidia`、`xai`、`xai-oauth`、`ollama-cloud`、`alibaba`、`bedrock`、`huggingface`、`arcee`、`xiaomi`、`kilocode`、`opencode-zen`、`opencode-go`、`azure-foundry`——此外还包括您在`custom_providers`列表中定义的任何自定义提供方（例如`provider: "beans"`）。
 
 :::提示 MiniMax OAuth
-`minimax-oauth`通过浏览器OAuth方式登录（无需API密钥）。运行`hermes model`后选择**MiniMax (OAuth)**即可完成身份验证。辅助任务会自动使用`MiniMax-M2.7-highspeed`模型。详情请参阅[MiniMax OAuth指南](../guides/minimax-oauth.md)。
+`minimax-oauth`通过浏览器OAuth方式进行登录（无需API密钥）。运行`hermes model`后选择**MiniMax (OAuth)**即可完成身份验证。辅助任务会自动使用`MiniMax-M2.7-highspeed`模型。详情请参阅[MiniMax OAuth指南](../guides/minimax-oauth.md)。
 :::
 
 :::提示 xAI Grok OAuth
-`xai-oauth`为SuperGrok及X Premium+订阅用户提供浏览器OAuth登录功能（同样无需API密钥）。运行`hermes model`后选择**xAI Grok OAuth (SuperGrok / Premium+)**即可完成身份验证。同一个OAuth令牌可重复用于所有直接对接xAI平台的场景，包括聊天、辅助任务、文本转语音、图像生成、视频生成以及语音转文字功能。详情请参阅[xAI Grok OAuth指南](../guides/xai-grok-oauth.md)；如果Hermes运行在远程主机上，请参考[通过SSH/远程主机进行OAuth认证](../guides/oauth-over-ssh.md)。
+`xai-oauth`支持SuperGrok和X Premium+订阅用户通过浏览器OAuth登录（同样无需API密钥）。运行`hermes model`后选择**xAI Grok OAuth (SuperGrok / Premium+)**即可完成身份验证。同一个OAuth令牌可重复用于所有直接与xAI平台交互的场景，包括聊天、辅助任务、文本转语音、图像生成、视频生成以及语音转文字功能。详情请参阅[xAI Grok OAuth指南](../guides/xai-grok-oauth.md)；如果Hermes运行在远程主机上，请参考[通过SSH/远程主机进行OAuth认证](../guides/oauth-over-ssh.md)。
 :::
 
 :::警告 `"main"`仅适用于辅助任务
-`"main"`提供方选项的含义是“使用我的主智能体所使用的提供方”——该选项仅能在`auxiliary:`、`compression:`以及主要的备用方案条目（`fallback_providers:`或旧版的`fallback_model:`）中使用。它**不能**作为顶层`model.provider`设置的有效值。如果您使用自定义的OpenAI兼容端点，请在`model:`部分将`provider`设置为`custom`。所有主流模型提供方的选项详见[AI提供方列表](/integrations/providers)。
+`"main"`提供方选项的含义是“使用我的主Agent所使用的提供方”——该选项仅可在`auxiliary:`、`compression:`以及主要备用方案配置项（`fallback_providers:`或旧版的`fallback_model:`）中使用。它**不**可作为顶层`model.provider`设置的有效值。如果您使用自定义的OpenAI兼容接口地址，请在`model:`部分将`provider`设置为`custom`。所有主流模型提供方的选项可查阅[AI提供方列表](/integrations/providers)。
 :::
 
 ### 辅助任务配置完整参考手册
@@ -1568,13 +1575,14 @@ whatsapp:
   unauthorized_dm_behavior: ignore
 ```
 
-- 默认值为 `pair`。Hermes 会拒绝访问，但会在私信中回复一个一次性配对码。
-- `ignore` 模式会静默忽略未经授权的私信。
-- 各平台的相关设置可覆盖全局默认值，因此您可以在保持整体配对功能开启的同时，让某个特定平台的消息通知更安静。
+- 对于聊天式私信平台，默认设置为 `pair` 模式。Hermes 会拒绝访问，但会在私信中回复一个一次性配对码。
+- `ignore` 模式则会默默忽略未经授权的私信。
+- 对于电子邮件，除非设置了 `platforms.email.unauthorized_dm_behavior: pair`，否则默认行为为 `ignore`，因为收件箱中可能包含大量无关的未读邮件。
+- 各平台的相关设置可覆盖全局默认值，因此您可以在保持整体配对功能开启的同时，让某个特定平台的私信通知更安静。
 
 ## 快速命令
 
-您可以定义自定义命令，这些命令要么在不调用大型语言模型的情况下执行 Shell 命令，要么将一个斜杠命令别名为另一个命令。快速命令无需任何令牌即可使用，非常适合在 Telegram、Discord 等消息平台中用于快速检查服务器状态或运行实用脚本。
+您可以定义自定义命令，这些命令要么直接执行Shell命令而无需调用大语言模型，要么将一个斜杠命令别名为另一个命令。快速命令无需任何标记token，非常适合在Telegram、Discord等消息平台上用于快速检查服务器状态或运行实用脚本。
 
 ```yaml
 quick_commands:
