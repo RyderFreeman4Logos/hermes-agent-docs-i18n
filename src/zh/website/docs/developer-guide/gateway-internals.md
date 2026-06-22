@@ -133,40 +133,45 @@ if _quick_key in self._running_agents:
 
 | 来源 | 提供的内容 |
 |------|------------|
-| `~/.hermes/.env` | API密钥、机器人令牌、平台凭证 |
-| `~/.hermes/config.yaml` | 模型设置、工具配置、显示选项 |
-| 环境变量 | 可覆盖上述任意配置 |
+| `~/.hermes/.env` | API密钥、机器人令牌以及平台凭证 |
+| `~/.hermes/config.yaml` | 模型设置、工具配置以及显示选项 |
+| 环境变量 | 可用于覆盖上述任意配置 |
 
-与CLI（使用带硬编码默认值的`load_cli_config()`函数）不同，网关是通过YAML加载器直接读取`config.yaml`文件。因此，那些存在于CLI默认值字典中但未出现在用户配置文件中的配置项，在CLI和网关中的行为可能会有所不同。
+与CLI（使用带有硬编码默认值的`load_cli_config()`函数）不同，网关会通过YAML加载器直接读取`config.yaml`文件。因此，那些存在于CLI默认值字典中但未出现在用户配置文件中的配置项，在CLI和网关中的行为可能会有所差异。
 
 ## 平台适配器
 
-每个消息平台在`gateway/platforms/`目录下都对应一个适配器：
+大多数消息平台以插件适配器的形式存在，位于`plugins/platforms/<name>/adapter.py`路径下；少数旧版适配器则直接存放在`gateway/platforms/`目录中。所有这些适配器都继承自`gateway/platforms/base.py`中的`BasePlatformAdapter`类：
 
 ```text
-gateway/platforms/
-├── base.py              # BaseAdapter — shared logic for all platforms
-├── telegram.py          # Telegram Bot API (long polling or webhook)
-├── discord.py           # Discord bot via discord.py
-├── slack.py             # Slack Socket Mode
-├── whatsapp.py          # WhatsApp Business Cloud API
+plugins/platforms/                  # plugin-packaged adapters (one dir each)
+├── telegram/adapter.py     # Telegram Bot API (long polling or webhook)
+├── discord/adapter.py      # Discord bot via discord.py
+├── slack/adapter.py        # Slack Socket Mode
+├── whatsapp/adapter.py     # WhatsApp Business Cloud API
+├── matrix/adapter.py       # Matrix via mautrix (optional E2EE)
+├── mattermost/adapter.py   # Mattermost WebSocket API
+├── email/adapter.py        # Email via IMAP/SMTP
+├── sms/adapter.py          # SMS via Twilio
+├── dingtalk/adapter.py     # DingTalk WebSocket
+├── feishu/adapter.py       # Feishu/Lark WebSocket or webhook
+├── wecom/adapter.py        # WeCom (WeChat Work) callback
+├── line/adapter.py         # LINE Messaging API
+├── teams/adapter.py        # Microsoft Teams
+├── irc/adapter.py          # IRC (canonical scoped-lock example)
+├── homeassistant/adapter.py # Home Assistant conversation integration
+└── …                       # google_chat, ntfy, photon, raft, simplex, …
+
+gateway/platforms/                  # core base + legacy direct adapters
+├── base.py              # BasePlatformAdapter — shared logic for all platforms
 ├── signal.py            # Signal via signal-cli REST API
-├── matrix.py            # Matrix via mautrix (optional E2EE)
-├── mattermost.py        # Mattermost WebSocket API
-├── email.py             # Email via IMAP/SMTP
-├── sms.py               # SMS via Twilio
-├── dingtalk.py          # DingTalk WebSocket
-├── feishu.py            # Feishu/Lark WebSocket or webhook
-├── wecom.py             # WeCom (WeChat Work) callback
 ├── weixin.py            # Weixin (personal WeChat) via iLink Bot API
 ├── bluebubbles.py       # Apple iMessage via BlueBubbles macOS server
-├── qqbot/               # QQ Bot (Tencent QQ) via Official API v2 (sub-package: adapter.py, crypto.py, keyboards.py, …)
+├── qqbot/               # QQ Bot (Tencent QQ) via Official API v2 (sub-package)
 ├── yuanbao.py           # Yuanbao (Tencent) DM/group adapter
-├── feishu_comment.py    # Feishu document/drive comment-reply handler
 ├── msgraph_webhook.py   # Microsoft Graph change-notification webhook (Teams, Outlook, etc.)
 ├── webhook.py           # Inbound/outbound webhook adapter
-├── api_server.py        # REST API server adapter
-└── homeassistant.py     # Home Assistant conversation integration
+└── api_server.py        # REST API server adapter
 ```
 
 实验性的连接器支持平台会使用 `gateway/relay/` 目录下的通用中继适配器，而非直接使用平台模块。当配置了 `GATEWAY_RELAY_URL` 或 `gateway.relay_url` 后，网关会注册该 `relay` 平台，通过出站 WebSocket 连接到连接器，并通过同一个套接字接收 `descriptor`、`inbound` 以及 `interrupt_inbound` 数据帧。连接器会发布 `CapabilityDescriptor`；Hermes 可以通过该中继发送常规的出站回复、无需令牌的 `follow_up` 操作以及中断数据帧。相关的接口定义文档位于 [`docs/relay-connector-contract.md`](https://github.com/NousResearch/hermes-agent/blob/main/docs/relay-connector-contract.md)。
