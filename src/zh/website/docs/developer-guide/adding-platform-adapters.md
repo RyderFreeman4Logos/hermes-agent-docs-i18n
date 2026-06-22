@@ -475,7 +475,7 @@ class Platform(str, Enum):
 
 ### 2. 适配器文件
 
-创建 `gateway/platforms/newplat.py` 文件：
+创建 `plugins/platforms/newplat/adapter.py` 文件：
 
 ```python
 from gateway.config import Platform, PlatformConfig
@@ -681,11 +681,11 @@ async def disconnect(self):
     release_scoped_lock("newplat", self._token)
 ```
 
-## 参考实现方案
+## 参考实现
 
-| 适配器 | 架构模式 | 复杂度 | 适用场景参考 |
-|---------|----------|--------|--------------|
+| 适配器 | 模式 | 复杂度 | 适用场景参考 |
+|---------|------|--------|--------------|
 | `bluebubbles.py` | REST + webhook | 中等 | 简单的 REST API 集成 |
 | `weixin.py` | 长轮询 + CDN | 高 | 媒体处理、加密功能 |
 | `wecom_callback.py` | 回调/ webhook | 中等 | HTTP 服务器、AES 加密、多应用支持 |
-| `telegram.py` | 长轮询 + Bot API | 高 | 支持群组、聊天线程的完整功能适配器 |
+| `plugins/platforms/irc/adapter.py` | 长轮询 + IRC 协议 | 高 | 具有范围令牌锁定功能的完整插件适配器 |
