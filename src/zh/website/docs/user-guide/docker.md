@@ -107,37 +107,37 @@ docker run -d \
   nousresearch/hermes-agent gateway run
 ```
 
-该控制面板由 s6 进行监控——如果它发生崩溃，`s6-supervise` 会在短暂的延迟后自动重启它。控制面板的标准输出/标准错误会被转发到 `docker logs <container>`（无需添加前缀；而网关自身的输出则保存在每个配置文件的 s6-log 文件中——详见下文的[日志存储位置](#where-the-logs-go)——因此这两类输出不会相互冲突）。
+该控制面板由 s6 进行监控——一旦其崩溃，`s6-supervise` 会在短暂的延迟后自动重启它。控制面板的标准输出/错误输出会被转发至 `docker logs <container>`（无需添加前缀；而网关自身的输出则存储在每个配置文件的 s6-log 文件中——详见下文的[日志存储位置](#where-the-logs-go)——因此这两类流不会相互冲突）。
 
 | 环境变量 | 描述 | 默认值 |
 |---------------------|-------------|---------|
-| `HERMES_DASHBOARD` | 设置为 `1`（或 `true` / `yes`）可启用受监控的控制面板服务 | *未设置——服务虽已注册但处于关闭状态* |
+| `HERMES_DASHBOARD` | 设置为 `1`（或 `true` / `yes`）可启用受监控的控制面板服务 | *(未设置——服务虽已注册但处于关闭状态)* |
 | `HERMES_DASHBOARD_HOST` | 控制面板 HTTP 服务器的绑定地址 | `0.0.0.0` |
 | `HERMES_DASHBOARD_PORT` | 控制面板 HTTP 服务器的端口 | `9119` |
-| `HERMES_DASHBOARD_INSECURE` | 设置为 `1`（或 `true` / `yes`）可取消 OAuth 认证机制。仅建议在拥有反向代理且无需 OAuth 认证的受信任网络环境中使用——因为此时控制面板会暴露 API 密钥和会话数据 | *未设置——当注册了 `DashboardAuthProvider` 时将强制启用认证机制* |
+| `HERMES_DASHBOARD_INSECURE` | **已废弃/无作用。** 该选项曾用于绕过认证机制；在2026年6月的安全强化措施之后，它已无法禁用身份验证。非回环绑定方式始终需要配置认证提供器 | *(会被忽略——请直接配置认证提供器)* |
 
-容器内的控制面板默认绑定地址为 `0.0.0.0`——如果不这样设置，主机就无法访问通过 `-p 9119:9119` 暴露的端口。若希望将绑定限制在容器回环地址上（适用于 sidecar 或反向代理架构），请将 `HERMES_DASHBOARD_HOST` 设置为 `127.0.0.1`。
+容器内的控制面板默认绑定地址为 `0.0.0.0`——若不设置此值，则通过主机无法访问所公开的 `-p 9119:9119` 端口。如需将绑定限制在容器回环地址（适用于 sidecar 或反向代理架构），请设置 `HERMES_DASHBOARD_HOST=127.0.0.1`。
 
 当同时满足以下两个条件时，控制面板的认证机制会自动启用：
 
-1. 绑定地址不是回环地址（例如容器内的默认值 `0.0.0.0`），**且**
-2. 已注册了 `DashboardAuthProvider` 插件。
+1. 绑定地址为非回环地址（例如容器内的默认值 `0.0.0.0`），**且**
+2. 已注册 `DashboardAuthProvider` 插件。
 
-有三种内置方式可实现第二个条件：
+有三种内置方式可满足第二个条件：
 
-- **用户名/密码**——对于部署在受信任网络或 VPN 后端的自托管/本地/家庭实验室环境，这是最简单的方式：设置 `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` 和 `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD`（如需确保会话在重启后依然有效，还需设置 `HERMES_DASHBOARD_BASIC_AUTH_SECRET`）。此方式不适用于直接面向公共互联网的部署。
+- **用户名/密码**——对于运行在可信网络中或处于 VPN 后面的自托管/本地/家庭实验室容器而言，这是最简单的方式：设置 `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` 和 `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD`（如需确保会话在重启后仍保持有效，还需设置 `HERMES_DASHBOARD_BASIC_AUTH_SECRET`）。此方式不适用于直接暴露在公共互联网上的场景。
 - **OAuth（Nous Portal）**——适用于托管型/公开部署场景：一旦设置了 `HERMES_DASHBOARD_OAUTH_CLIENT_ID`，`dashboard_auth/nous` 提供器就会自动启用。
-- **自托管 OIDC**——通过标准的 OpenID Connect 方式，使用您自己的身份提供商进行认证：当设置了 `HERMES_DASHBOARD_OIDC_ISSUER` 和 `HERMES_DASHBOARD_OIDC_CLIENT_ID` 时，`dashboard_auth/self_hosted` 提供器就会自动启用。
+- **自托管 OIDC**——通过标准的 OpenID Connect 方式使用您自己的身份提供器进行认证：当设置了 `HERMES_DASHBOARD_OIDC_ISSUER` 和 `HERMES_DASHBOARD_OIDC_CLIENT_ID` 时，`dashboard_auth/self_hosted` 提供器就会自动启用。
 
-无论选择哪种方式，该认证机制都会在访问者尝试进入任何受保护路径之前将其重定向至登录页面。关于这三种提供器的详细信息，请参阅[Web 控制面板 → 认证](features/web-dashboard.md#authentication-gated-mode)。
+无论选择哪种方式，该认证机制都会在访问者尝试进入任何受保护页面之前将其重定向至登录页面。关于这三种提供器的详细信息，请参阅[Web 控制面板 → 认证](features/web-dashboard.md#authentication-gated-mode)。
 
-如果未注册任何提供器且绑定地址为非回环地址，控制面板将在启动时直接失败，并显示指出缺失环境变量的具体错误信息。设置 `HERMES_DASHBOARD_INSECURE=1` 可完全禁用该认证机制（仅绑定地址本身并不会自动等同于使用 `--insecure` 参数），但这样会导致控制面板无需认证即可访问——除非您在前面部署了自定义的认证层，否则建议还是配置相应的提供器。
+如果未注册任何提供器且绑定地址为非回环地址，控制面板将在启动时直接失败，并显示指出缺失环境变量的具体错误信息。如今已不再存在允许在公共绑定地址下无认证访问控制面板的方案：`HERMES_DASHBOARD_INSECURE=1` 已被废弃且无实际作用（仅会记录警告并被忽略）。请配置相应的认证提供器，或设置 `HERMES_DASHBOARD_HOST=127.0.0.1`，然后通过 SSH 隧道或 Tailscale 来访问控制面板。
 
-:::warning `HERMES_DASHBOARD_INSECURE=1` 会暴露 API 密钥
-取消 OAuth 认证机制意味着任何能够访问该公开端口的人都可以获取控制面板的 API 接口信息（包括模型密钥和会话数据）。仅当您在前面部署了自定义的认证层，或处于完全受控的受信任局域网环境中时，才建议使用此选项。
+:::warning 为何移除 `--insecure` 参数
+在2026年6月的 MCP配置持久化攻击事件中，未经认证的公共控制面板正是攻击者进入系统的入口：攻击者通过扫描公开的控制面板（以及 OpenAI API 服务器），迫使代理程序植入 SSH 密钥后门。如今，对于所有非回环绑定方式，认证机制已是强制要求。对于处于可信局域网或家庭实验室环境中的系统，内置的用户名/密码提供器（`HERMES_DASHBOARD_BASIC_AUTH_USERNAME` + `_PASSWORD`）则是无需额外配置即可满足该要求的方案。
 :::
 
-当控制面板所在的容器与网关共享主机进程 ID 和网络命名空间时，确实支持将其作为独立容器运行——例如使用 `network_mode: host` 模式，就像该项目的 `docker-compose.yml` 文件中所做的那样（可参考其中的 `dashboard` 服务）。由于网关的存活检测需要与网关进程共享进程 ID 命名空间，因此这一限制仅适用于那些运行在隔离的桥接网络容器中且没有共享进程 ID 命名空间的控制面板。
+当控制面板在单独的容器中运行，且该容器与主机共享进程 ID 和网络命名空间时，也是支持的（例如使用 `network_mode: host` 模式，正如该项目的 `docker-compose.yml` 文件中所做的那样——可参考其中的 `dashboard` 服务）。由于网关的存活检测需要与网关进程共享进程 ID 命名空间，因此这一限制仅适用于那些运行在隔离的桥接网络容器中且未共享进程 ID 命名空间的控制面板。
 
 ## 交互式运行（CLI 聊天模式）
 
