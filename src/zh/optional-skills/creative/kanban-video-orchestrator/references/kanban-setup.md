@@ -85,7 +85,7 @@ hermes profile create director --clone 2>/dev/null || true
 configure_profile() {
     local profile="$1"
     local toolsets_json="$2"     # JSON array, e.g. '["kanban","terminal","file"]'
-    local skills_json="$3"       # JSON array, e.g. '["kanban-worker","ascii-video"]'
+    local skills_json="$3"       # JSON array, e.g. '["ascii-video"]'
     python3 - "$profile" "$toolsets_json" "$skills_json" <<'PY'
 import json, os, sys, yaml
 profile, ts_json, sk_json = sys.argv[1:4]
@@ -100,19 +100,21 @@ PY
 }
 ```
 
-用户需在其 Python 环境中安装 PyYAML（大多数 Hermes 安装版本均已预装该库）。若未安装，请执行 `pip install pyyaml`。
+用户端的 Python 环境中必须已安装 PyYAML（大多数 Hermes 安装版本均已预装该库）。若未安装，请执行 `pip install pyyaml`。
 
-设置脚本还应通过重新读取文件并进行比对来**验证**补丁内容——具体的验证逻辑可参考 `assets/setup.sh.tmpl` 文件中的模板。
+设置脚本还应通过重新读取文件并进行比对来**验证**补丁内容——具体验证规则可参考 `assets/setup.sh.tmpl` 文件。
 
 ### 每个角色的 SOUL.md 文件
 
-每个角色都会在 `~/.hermes/profiles/<name>/SOUL.md` 目录下拥有对应的 `SOUL.md` 文件，用于定义该角色的职责、行为风格及规则。模板文件位于 `assets/soul.md.tmpl`，可根据不同角色和项目的需求进行定制。其中，负责人角色的 SOUL.md 应具备最明确的指导原则，其设定的行为风格将影响整个团队的工作方式。**负责人角色 SOUL.md 中的关键内容包括：**
+每个角色都会在 `~/.hermes/profiles/<name>/SOUL.md` 目录下拥有一个对应的 `SOUL.md` 文件，用于定义该角色的职责、语气及工作规则。模板文件位于 `assets/soul.md.tmpl`，可根据不同角色和项目的需求进行定制。
 
-- **防诱惑规则**：“切勿亲自执行任务。对于每一项具体工作，都应创建一个看板任务并分配给他人处理。通过分解任务、分配路径、添加评论及审批流程来完成工作。”（`kanban-orchestrator` 技能提供了更详细的操作指南，可予以加载使用。）
-- **任务分解步骤**：需仔细阅读 `brief.md`、`TEAM.md` 以及 `taste/` 目录下的相关文件，利用 `TEAM.md` 中的团队结构图来进一步拆分任务。
+其中，负责整体统筹的角色的 SOUL.md 应包含最明确的指导原则——其设定的语气将影响整个项目的运作风格。**该角色 SOUL.md 中的关键内容包括：**
+
+- **防懈怠规则**：“切勿亲自执行任务。对于每一项具体工作，都应创建一个看板任务并分配给他人处理。通过分解任务、转派处理、添加备注及审批等步骤来完成工作。”（看板任务管理的相关指导会自动注入到每个看板处理工具的系统提示词中，无需额外加载任何技能。）
+- **任务分解步骤**：请阅读 `brief.md`、`TEAM.md` 以及 `taste/` 目录下的相关文件，利用 `TEAM.md` 中提供的团队结构图来进一步拆分任务。
 - **workspace_path 规则**（详见下文）。
 
-其他角色的 SOUL.md 文件内容相对简短，主要涉及基础信息：如角色身份、需要阅读的资料、需输出的内容、应使用的技能/工具以及输出文件的存放位置。大多数非负责人角色的配置中应设置 `always_load: kanban-worker`，以便获得比基础设置更完善的看板任务指导。
+其他角色的 SOUL.md 文件内容相对简短，主要侧重于说明基本信息：角色身份、需要阅读的资料、需输出的内容、应使用的技能/工具以及输出文件的存放位置。由于看板任务管理的相关指导会自动注入到每个看板处理工具的系统提示词中，因此这些角色无需额外加载任何看板相关技能。
 
 ### 初始看板任务
 
