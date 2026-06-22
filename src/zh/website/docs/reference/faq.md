@@ -6,7 +6,7 @@ description: "Frequently asked questions and solutions to common issues with Her
 
 # 常见问题与故障排除
 
-针对最常见的问题和故障提供快速解答及解决方案。
+针对最常见的问题和故障，提供快速解答及解决方案。
 
 ---
 
@@ -17,14 +17,14 @@ description: "Frequently asked questions and solutions to common issues with Her
 Hermes Agent 可与任何兼容 OpenAI 的 API 配合使用。目前支持的提供商包括：
 
 - **[OpenRouter](https://openrouter.ai/)** — 通过一个 API 密钥即可访问数百种模型（灵活性最高，推荐使用）
-- **[Nous Portal](/integrations/nous-portal)** — Nous Research 的订阅平台 — 通过一次 OAuth 登录即可使用 300 多种模型以及网页/图像/TTS/浏览器相关功能（新手推荐）
+- **[Nous Portal](/integrations/nous-portal)** — Nous Research 的订阅平台 — 通过一次 OAuth 登录即可使用 300 多种模型以及网页/图像/TTS/浏览器功能（新手推荐）
 - **OpenAI** — GPT-5.4、GPT-5-codex、GPT-4.1、GPT-4o 等模型
-- **Anthropic** — Claude 系列模型（可直接通过 API 使用，也可通过 `hermes auth add anthropic`、OpenRouter 或其他兼容代理进行 OAuth 认证）
-- **Google** — Gemini 系列模型（可通过 `gemini` 提供商的直接 API、`google-gemini-cli` OAuth 提供商、OpenRouter 或兼容代理使用）
+- **Anthropic** — Claude 系列模型（可直接通过 API 调用，也可通过 `hermes auth add anthropic`、OpenRouter 或其他兼容代理进行 OAuth 认证）
+- **Google** — Gemini 系列模型（可通过 `gemini` 提供商的直接 API、OpenRouter 或兼容代理调用）
 - **z.ai / ZhipuAI** — GLM 系列模型
 - **Kimi / Moonshot AI** — Kimi 系列模型
-- **MiniMax** — 全球及中国地区的端点
-- **本地模型** — 可通过 [Ollama](https://ollama.com/)、[vLLM](https://docs.vllm.ai/)、[llama.cpp](https://github.com/ggerganov/llama.cpp)、[SGLang](https://github.com/sgl-project/sglang) 或任何兼容 OpenAI 的服务器来加载
+- **MiniMax** — 支持全球及中国地区的端点
+- **本地模型** — 可通过 [Ollama](https://ollama.com/)、[vLLM](https://docs.vllm.ai/)、[llama.cpp](https://github.com/ggerganov/llama.cpp)、[SGLang](https://github.com/sgl-project/sglang) 或任何兼容 OpenAI 的服务器来运行
 
 您可以通过 `hermes model` 命令或编辑 `~/.hermes/.env` 文件来设置对应的提供商。所有提供商的密钥信息请参考 [环境变量](./environment-variables.md) 文档。
 
