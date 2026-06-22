@@ -1,23 +1,21 @@
 ---
 sidebar_position: 16
 title: "Google Gemini"
-description: "Use Hermes Agent with Google Gemini — native AI Studio API, API-key setup, OAuth option, tool calling, streaming, and quota guidance"
+description: "Use Hermes Agent with Google Gemini — native AI Studio API, API-key setup, tool calling, streaming, and quota guidance"
 ---
 
 # Google Gemini
 
-Hermes Agent 支持将 Google Gemini 作为原生提供商使用，通过 **Google AI Studio / Gemini API** 进行连接——而非兼容 OpenAI 的接口。这样一来，Hermes 能够将其内部的 OpenAI 风格消息处理与工具调用机制转换为 Gemini 原生的 `generateContent` API，同时保留工具调用、流式处理、多模态输入以及 Gemini 特有的响应元数据功能。
+Hermes Agent 支持将 Google Gemini 作为原生提供商使用，通过 **Google AI Studio / Gemini API** 进行连接——而非兼容 OpenAI 的接口。这样一来，Hermes 能够将其内部的基于 OpenAI 的消息处理与工具调用机制转换为 Gemini 原生的 `generateContent` API，同时保留工具调用、流式处理、多模态输入以及 Gemini 特有的响应元数据功能。
 
-此外，Hermes 还支持另一种独立的 **Google Gemini (OAuth)** 提供商，该版本使用与 Google Gemini CLI 相同的 Cloud Code Assist 后端。如需风险最低的官方 API 访问方式，请使用 API 密钥提供商（`gemini`）。
+## 先决条件
 
-## 前提条件
+- **Google AI Studio API 密钥**——请在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 处创建密钥。
+- **已开启计费的 Google Cloud 项目**——推荐用于运行 Agent。由于 Hermes 在每个用户轮次中可能会多次调用模型，Gemini 的免费套餐无法支持长时间运行的 Agent 会话。
+- **已安装 Hermes**——对于此原生 Gemini 提供商，无需额外的 Python 包。
 
-- **Google AI Studio API 密钥**——可在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 处创建；
-- **已启用计费的 Google Cloud 项目**——强烈建议用于部署 Agent，因为 Gemini 的免费套餐容量有限，无法支持长时间运行的 Agent 会话，而 Hermes 在每次用户交互中可能会多次调用模型；
-- **已安装 Hermes**——对于原生 Gemini 提供商，无需额外安装任何 Python 包。
-
-:::提示 API 密钥设置方式
-请设置 `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`。Hermes 会同时检查这两个名称以识别 `gemini` 提供商。
+:::提示 API 密钥设置路径
+请设置 `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`。Hermes 会同时检查这两个名称以识别对应的 `gemini` 提供商。
 :::
 
 ## 快速入门
@@ -99,42 +97,31 @@ https://generativelanguage.googleapis.com/v1beta/openai/
 GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
 ```
 
-### OAuth 提供商
-
-Hermes 还支持 `google-gemini-cli` 这一提供商：
-
-```bash
-hermes model
-# → Choose "Google Gemini (OAuth)"
-```
-
-该功能采用浏览器 PKCE 登录方式，并依托 Cloud Code Assist 后端。对于希望使用类似 Gemini CLI 的 OAuth 功能的用户而言，这一方案颇具实用价值，但 Hermes 会给出明确警告：因为谷歌可能会将第三方软件中使用 Gemini CLI OAuth 客户端的行为视为违反政策。如需在正式环境或低风险场景下使用，建议优先选择上述 API 密钥提供方式。
-
 ## 可用模型
 
-`hermes model` 选择器会展示存储在 Hermes 提供商注册表中的 Gemini 模型。常见选项包括：
+`hermes model` 选择器会展示存储在 Hermes 提供商注册表中的 Gemini 模型。常见的可选模型包括：
 
 | 模型 | ID | 备注 |
 |-------|----|-------|
-| Gemini 3.1 Pro 预览版 | `gemini-3.1-pro-preview` | 可用时功能最强大的预览模型 |
+| Gemini 3.1 Pro 预览版 | `gemini-3.1-pro-preview` | 在可用时性能最强的预览版模型 |
 | Gemini 3 Pro 预览版 | `gemini-3-pro-preview` | 具备出色的推理与编程能力 |
-| Gemini 3 Flash 预览版 | `gemini-3-flash-preview` | 在速度与功能之间达到最佳平衡的推荐选项 |
-| Gemini 3.1 Flash Lite 预览版 | `gemini-3.1-flash-lite-preview` | 可用时速度最快且成本最低的选项 |
+| Gemini 3 Flash 预览版 | `gemini-3-flash-preview` | 在速度与性能之间取得最佳平衡的推荐默认选项 |
+| Gemini 3.1 Flash Lite 预览版 | `gemini-3.1-flash-lite-preview` | 在可用时速度最快且成本最低的选项 |
 
-模型的可用性会随时间变化。如果某个模型不再可用或未被您的密钥启用，请再次运行 `hermes model`，从当前列表中选择其他模型。
+模型的可用性会随时间变化。如果某个模型不再可用或未针对您的密钥启用，请再次运行 `hermes model`，从当前列表中选择其他模型。
 
 :::info 模型 ID
-当使用 `provider: gemini` 时，请使用 Gemini 的原生模型 ID，如 `gemini-3-flash-preview`，而非 OpenRouter 风格的 ID，如 `google/gemini-3-flash-preview`。
+当使用 `provider: gemini` 时，请使用 Gemini 的原生模型 ID，如 `gemini-3-flash-preview`，而非 OpenRouter 风格的 ID，例如 `google/gemini-3-flash-preview`。
 :::
 
 ### 最新别名
 
-谷歌会为 Pro 和 Flash 系列的 Gemini 模型发布动态更新的别名。当您希望让谷歌自动升级模型而无需修改 Hermes 配置时，`gemini-pro-latest` 和 `gemini-flash-latest` 将非常有用。
+Google 会为 Pro 和 Flash 系列的 Gemini 模型发布动态别名。当您希望让 Google 自动更新模型而无需修改 Hermes 配置时，`gemini-pro-latest` 和 `gemini-flash-latest` 非常实用。
 
 | 别名 | 当前追踪的模型 | 备注 |
 |-------|------------------|-------|
-| `gemini-pro-latest` | 最新的 Gemini Pro 模型 | 适合希望使用谷歌当前默认的 Pro 版模型的用户 |
-| `gemini-flash-latest` | 最新的 Gemini Flash 模型 | 适合希望使用谷歌当前默认的 Flash 版模型的用户 |
+| `gemini-pro-latest` | 最新的 Gemini Pro 模型 | 适合需要使用 Google 当前默认 Pro 版模型的情况 |
+| `gemini-flash-latest` | 最新的 Gemini Flash 模型 | 适合需要使用 Google 当前默认 Flash 版模型的情况 |
 
 ```yaml
 model:
@@ -191,20 +178,11 @@ hermes doctor
 医生会检查以下内容：
 
 - 是否存在 `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`
-- `google-gemini-cli` 是否已配置 Gemini OAuth 凭证
-- 已配置的提供方凭证是否能够被成功解析
-
-如需查看 OAuth 配额使用情况，请在 Hermes 会话中运行以下命令：
-
-```text
-/gquota
-```
-
-`/gquota` 命令适用于 `google-gemini-cli` OAuth 提供商，而不适用于 AI Studio API-key 提供商。
+- 配置的提供者凭证是否能够被正确解析
 
 ## 网关（消息平台）
 
-Gemini 可与所有 Hermes 网关平台（Telegram、Discord、Slack、WhatsApp、LINE、飞书等）兼容。只需将 Gemini 配置为对应的提供商，即可像平常一样启动网关：
+Gemini 支持所有 Hermes 网关平台（Telegram、Discord、Slack、WhatsApp、LINE、飞书等）。只需将 Gemini 配置为您的提供者，即可像平常一样启动网关：
 
 ```bash
 hermes gateway setup
@@ -263,17 +241,13 @@ GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
 ```
 
-### OAuth登录警告
+### 工具调用因架构错误而失败
 
-`google-gemini-cli`提供程序采用Gemini CLI/Cloud Code Assist的OAuth认证流程。由于该流程与官方AI Studio API密钥机制不同，Hermes会在启动前发出警告。如需使用官方API密钥进行集成，请同时设置`provider: gemini`和`GOOGLE_API_KEY`。
-
-### 工具调用因架构错误失败
-
-请升级Hermes版本并重新运行`hermes model`命令。内置的Gemini适配器会按照Gemini更严格的函数声明格式对工具架构进行优化处理；旧版本或自定义端点可能无法实现此功能。
+请升级 Hermes 并重新运行 `hermes model` 命令。内置的 Gemini 适配器会按照 Gemini 更严格的函数声明格式对工具架构进行规范化处理；而旧版本或自定义端点可能无法做到这一点。
 
 ## 相关内容
 
-- [AI提供程序](/integrations/providers)
-- [配置设置](/user-guide/configuration)
-- [备用提供程序](/user-guide/features/fallback-providers)
-- [AWS Bedrock](/guides/aws-bedrock) —— 基于AWS凭证实现的原生云服务集成
+- [AI 提供商](/integrations/providers)
+- [配置](/user-guide/configuration)
+- [备用提供商](/user-guide/features/fallback-providers)
+- [AWS Bedrock](/guides/aws-bedrock) —— 基于 AWS 凭证实现的内置云服务提供商集成方案
