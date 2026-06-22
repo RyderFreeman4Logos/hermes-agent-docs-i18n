@@ -175,36 +175,36 @@ register_provider(ProviderProfile(
 ))
 ```
 
-在下一个会话中，`get_provider_profile("gmi").base_url` 会返回测试环境地址。无需修改代码库，也无需重新构建。由于用户插件是在内置插件之后被检测到的，因此用户调用的 `register_provider()` 会优先生效。
+在下一个会话中，`get_provider_profile("gmi").base_url` 会返回测试环境地址。无需修改代码库，也无需重新构建。由于用户插件是在内置插件之后被发现的，因此用户调用的 `register_provider()` 方法会优先生效。
 
 ## api_mode 选择
 
-系统支持四种值，Hermes会根据以下规则进行选择：
+系统支持四种取值，Hermes会根据以下规则进行选择：
 
-1. 用户显式指定（在 `config.yaml` 中设置 `model.api_mode`）
-2. OpenCode 根据模型类型进行的判定（Zen 和 Go 模型使用 `opencode_model_api_mode`）
-3. URL 自动检测——以 `/anthropic` 结尾则对应 `anthropic_messages`，以 `api.openai.com` 结尾则对应 `codex_responses`，以 `api.x.ai` 结尾同样对应 `codex_responses`，Kimi 域名中的 `/coding` 路径则对应 `chat_completions`
-4. 当 URL 检测无结果时，作为备用方案使用配置文件中的 `api_mode` 设置
+1. 用户显式指定（当设置了 `config.yaml` 中的 `model.api_mode` 时）
+2. OpenCode 根据模型类型进行的自动分配（Zen 和 Go 模型使用 `opencode_model_api_mode`）
+3. URL 自动检测——以 `/anthropic` 结尾则对应 `anthropic_messages`，以 `api.openai.com` 结尾则对应 `codex_responses`，以 `api.x.ai` 结尾也对应 `codex_responses`，Kimi 域名中的 `/coding` 路径则对应 `chat_completions`
+4. 当 URL 检测无结果时，作为兜底方案使用配置文件中的 `api_mode` 设置
 5. 默认值为 `chat_completions`
 
-请将 `profile.api_mode` 设置为与您所使用的服务提供商默认值一致，这可作为参考。不过用户通过 URL 指定的设置仍会优先生效。
+请将 `profile.api_mode` 设置为你的服务提供商所使用的默认值——这仅作为参考。用户自定义的 URL 设置仍会优先生效。
 
 ## 认证类型
 
 | `auth_type` | 含义 | 使用场景 |
 |---|---|---|
 | `api_key` | 通过单个环境变量传递静态 API 密钥 | 大多数服务提供商 |
-| `oauth_device_code` | 设备码 OAuth 流程 | — |
-| `oauth_external` | 用户在其他平台登录，令牌存储在 `auth.json` 中 | Anthropic OAuth、MiniMax OAuth、Gemini Cloud Code、Qwen Portal、Nous Portal |
+| `oauth_device_code` | 设备代码型 OAuth 流程 | — |
+| `oauth_external` | 用户在其他平台登录，令牌存储在 `auth.json` 中 | Anthropic OAuth、MiniMax OAuth、Qwen Portal、Nous Portal |
 | `copilot` | GitHub Copilot 令牌刷新机制 | 仅适用于 `copilot` 插件 |
 | `aws_sdk` | AWS SDK 凭据链（IAM 角色、配置文件及环境变量） | 仅适用于 `bedrock` 插件 |
-| `external_process` | 由代理程序启动的子进程负责处理认证 | 仅适用于 `copilot-acp` 插件 |
+| `external_process` | 由智能体启动的子进程负责处理认证逻辑 | 仅适用于 `copilot-acp` 插件 |
 
-`auth_type` 决定了哪些代码路径会将您的服务提供商视为“简单 API 密钥提供商”——即便不是 `api_key` 类型，PluginManager 仍会记录其配置信息，但 Hermes 的 CLI 级自动化功能（如检查流程、`--provider` 参数以及设置向导）可能会跳过对该提供商的处理。
+`auth_type` 决定了哪些代码路径会将你的服务提供商视为“简单 API 密钥提供商”——即便 `auth_type` 不是 `api_key`，PluginManager 仍会记录相关配置，但 Hermes 的 CLI 级自动化功能（如校验流程、`--provider` 参数以及设置向导）可能会跳过对该提供商的处理。
 
-## 检测时机
+## 发现时机
 
-服务提供商的检测是**延迟触发**的——仅在进程中出现首次 `get_provider_profile()` 或 `list_providers()` 调用时才会进行。实际上，这一检测通常在启动阶段较早完成（`auth.py` 模块加载时会立即扩展 `PROVIDER_REGISTRY`）。如果您需要确认自己的插件已成功加载，可以运行相应命令：
+服务提供商的发现机制为**延迟触发式**——仅在进程中的首次调用 `get_provider_profile()` 或 `list_providers()` 时才会进行。实际上，这一操作会在启动阶段尽早执行（`auth.py` 模块在加载时会立即扩展 `PROVIDER_REGISTRY`）。如果你需要确认自己的插件已成功加载，可运行相应命令：
 
 ```bash
 hermes doctor
