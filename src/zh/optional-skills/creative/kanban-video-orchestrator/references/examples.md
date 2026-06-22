@@ -30,14 +30,14 @@ T7  editor           cut + transitions + audio mux            (parents: T4, T6)
 T8  reviewer         final QA                                 (parent: T7)
 ```
 
-**核心选择：**
-- 为控制成本及便于管理，建议优先使用通过 `comfyui` 技能实现的本地 ComfyUI，而非外部 API；但若未安装 ComfyUI，使用外部 API 也是可行的。
-- `editor` 模式仅依赖 ffmpeg，除 `kanban-worker` 外无需其他 Hermes 技能。
-- Storyboarder 会同时生成 markdown 文件以及 `storyboard.excalidraw` 文件。
+**关键选择：**
+- 为控制成本及便于管理，建议优先使用通过 `comfyui` 技能实现的本地 ComfyUI，而非外部 API；但如果未安装 ComfyUI，使用外部 API 也是可行的。
+- `editor` 模式仅支持 ffmpeg，无需 Hermes 技能（看板任务指南会自动注入到每个看板工作节点中）。
+- Storyboarder 会在生成 Markdown 文件的同时，一并输出 `storyboard.excalidraw` 文件。
 
 ## 示例 2 — 产品/营销预告片
 
-**需求简述：** 为某开发工具制作一段30秒的产品预告片。内容需包含代码、终端界面及UI操作录屏，搭配旁白，结尾设置行动号召。画面比例为1:1正方形。
+**需求简述：** 为某款开发者工具制作一段30秒的产品预告片。内容需包含代码、终端界面及UI界面录屏，搭配旁白，结尾设置行动号召。画面比例为1:1正方形。
 
 **团队分工：**
 - `director` — 整体策划
@@ -46,9 +46,9 @@ T8  reviewer         final QA                                 (parent: T7)
 - `renderer-motion-graphics` — 制作动画化的UI序列（使用 Remotion CLI 工具）
 - `renderer-ascii` — 制作终端风格的演示场景（使用 `ascii-video` 工具）
 - `voice-talent` — 通过 ElevenLabs 提供旁白配音
-- `editor` — 合成视频并统一品牌色彩风格
-- `audio-mixer` — 混音旁白声轨及背景音乐
-- `captioner` — 为自动播放且静音模式下使用的平台添加字幕
+- `editor` — 合成视频并统一品牌色调
+- `audio-mixer` — 混音旁白音轨及背景音乐
+- `captioner` — 为无法开启声音自动播放的平台添加字幕
 - `masterer` — 输出1:1、9:16及16:9三种比例的最终视频文件
 
 **任务流程图：**
