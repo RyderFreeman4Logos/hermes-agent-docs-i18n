@@ -2088,6 +2088,8 @@
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
     - [Opencode]()
       - [OpenCode CLI](zh/skills/autonomous-ai-agents/opencode/SKILL.md)
+  - [Computer Use]()
+    - [计算机操作功能（通用型，支持所有模型，跨平台）](zh/skills/computer-use/SKILL.md)
   - [Creative]()
     - [Description](zh/skills/creative/DESCRIPTION.md)
     - [Architecture Diagram]()
