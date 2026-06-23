@@ -421,16 +421,16 @@ mkdir -p ~/.hermes/plugins/my-plugin/dashboard/dist
     ├── dist/
     │   ├── index.js         # required — pre-built JS bundle (IIFE)
     │   └── style.css        # optional — custom CSS
-    └── plugin_api.py        # optional — backend API routes (FastAPI)
+    └── plugin_api.py        # bundled plugins only — backend API routes (FastAPI)
 ```
 
-一个插件目录可包含三种相互独立的扩展组件：
+一个插件目录最多可包含三种相互独立的扩展组件：
 
 - `plugin.yaml` + `__init__.py` — CLI/网关插件（[详见插件页面](./plugins)）。
-- `dashboard/manifest.json` + `dashboard/dist/index.js` — 控制台界面插件。
-- `dashboard/plugin_api.py` — 控制台后端路由。
+- `dashboard/manifest.json` + `dashboard/dist/index.js` — 仪表板界面插件。
+- `dashboard/plugin_api.py` — 仅用于打包后的插件；用于定义后端 API 路由。
 
-这些组件并非全部必需，只需添加您实际需要的部分即可。
+这些组件并非全部必需，只需根据实际需求选择使用即可。
 
 ### 配置文件参考
 
@@ -733,11 +733,14 @@ async def do_action(body: dict):
 - `GET  /api/plugins/my-plugin/data`
 - `POST /api/plugins/my-plugin/action`
 
-由于控制台服务器默认绑定在本地主机上，插件 API 路由无需经过会话令牌认证。**如果运行了不可信的插件，请勿使用 `--host 0.0.0.0` 将控制台暴露在公共网络接口上**——否则这些插件的路由也会被访问到。
+安全注意事项：
+
+- 内置插件 API 路由无需经过会话令牌认证。控制台服务器默认绑定在 localhost 上，这降低了此类绕过机制带来的风险。
+- 用户自行安装的插件以及项目专用控制台插件虽然仍可使用静态 JS/CSS 扩展界面，但其 Python 编写的 `api` 文件不会被控制台服务器自动导入。后端路由专为内置插件预留。
 
 #### 访问 Hermes 内部功能
 
-后端路由在控制台进程内部运行，因此可以直接从 hermes-agent 代码库中导入相关功能：
+由于后端路由在控制台进程内部运行，因此可以直接从 hermes-agent 代码库中导入相关模块：
 
 ```python
 from fastapi import APIRouter
@@ -786,20 +789,22 @@ async def config_snapshot():
 }
 ```
 
-控制面板会将每个 shadcn token 以 `--color-*` 的形式暴露出来，同时还会提供主题相关的额外参数（如 `--theme-asset-*`、`--component-<bucket>-*`、`--radius`、`--spacing-mul`）。通过使用这些参数，您的插件就能自动适配当前生效的主题风格。
+控制面板会将每个 shadcn token 以 `--color-*` 的形式暴露出来，同时还会提供主题相关参数（如 `--theme-asset-*`、`--component-<bucket>-*`、`--radius`、`--spacing-mul`）。通过使用这些参数，您的插件就能自动根据当前主题进行样式调整。
 
 ### 插件发现与重新加载
 
 控制面板会扫描三个目录以查找 `dashboard/manifest.json` 文件：
 
 | 优先级 | 目录路径 | 来源标签 |
-|----------|-----------|--------------|
-| 1（冲突时优先使用） | `~/.hermes/plugins/<name>/dashboard/` | `user` |
-| 2 | `<repo>/plugins/memory/<name>/dashboard/` | `bundled` |
-| 2 | `<repo>/plugins/<name>/dashboard/` | `bundled` |
-| 3 | `./.hermes/plugins/<name>/dashboard/` | `project` — 仅当设置了 `HERMES_ENABLE_PROJECT_PLUGINS` 时生效 |
+|--------|----------|----------|
+| 1（冲突时优先） | `<repo>/plugins/memory/<name>/dashboard/` | `bundled` |
+| 1（冲突时优先） | `<repo>/plugins/<name>/dashboard/` | `bundled` |
+| 2 | `~/.hermes/plugins/<name>/dashboard/` | `user` |
+| 3 | `./.hermes/plugins/<name>/dashboard/` | `project` — 仅当设置了 `HERMES_ENABLE_PROJECT_PLUGINS` 时有效 |
 
-插件发现结果会针对每个控制面板进程进行缓存。添加新插件后，可以：
+由于只有内置插件才能注册后端路由，因此在名称冲突的情况下，内置的仪表板插件会优先被选中。请为用户级和项目级的仪表板插件设置唯一的名称。
+
+插件发现结果会针对每个仪表板进程进行缓存。添加新插件后，可以选择以下任意一种操作：
 
 ```bash
 # Force a rescan without restart
@@ -848,9 +853,9 @@ cp hermes-example-plugins/strike-freedom-cockpit/theme/strike-freedom.yaml \
 cp -r hermes-example-plugins/strike-freedom-cockpit ~/.hermes/plugins/
 ```
 
-打开控制面板，从主题切换器中选择 **Strike Freedom**。此时控制台侧边栏会出现，页头会显示品牌标识，而页脚则会被标语取代。若再切换回 **Hermes Teal**，该插件虽仍已安装，但不会显示出来（因为 `sidebar` 插槽仅在 `cockpit` 布局模式下才会渲染）。
+打开控制面板，从主题切换器中选择 **Strike Freedom**。此时控制台侧边栏会出现，页头显示徽标，页脚则被标语取代。若切换回 **Hermes Teal**，该插件虽仍已安装，但不会显示（因为只有采用 `cockpit` 布局时才会渲染 `sidebar` 槽）。
 
-可以查看插件的源代码（位于配套仓库中的 `strike-freedom-cockpit/dashboard/dist/index.js`），了解它是如何读取 CSS 变量的、如何针对不支持插槽的旧版控制面板进行兼容处理，以及如何从一个代码包中注册三个插槽的。
+可以查看插件的源代码（位于配套仓库中的 `strike-freedom-cockpit/dashboard/dist/index.js`），了解它是如何读取 CSS 变量、如何针对不支持该槽的旧版控制面板进行兼容处理，以及如何从同一个代码包中注册三个不同功能的槽的。
 
 ---
 
@@ -867,8 +872,8 @@ cp -r hermes-example-plugins/strike-freedom-cockpit ~/.hermes/plugins/
 
 | 端点 | 方法 | 描述 |
 |------|------|------|
-| `/api/dashboard/plugins` | GET | 列出已发现的插件（包含清单文件，但不包括内部字段）。 |
-| `/api/dashboard/plugins/rescan` | GET | 在不重启的情况下强制重新扫描插件目录。 |
+| `/api/dashboard/plugins` | GET | 列出已检测到的插件（包含其清单文件，但不包括内部字段）。 |
+| `/api/dashboard/plugins/rescan` | GET | 在不重启服务的情况下强制重新扫描插件目录。 |
 | `/dashboard-plugins/<name>/<path>` | GET | 从插件的 `dashboard/` 目录中提供静态资源。系统会阻止路径遍历攻击。 |
 | `/api/plugins/<name>/*` | * | 由插件注册的后端路由。 |
 
@@ -876,9 +881,9 @@ cp -r hermes-example-plugins/strike-freedom-cockpit ~/.hermes/plugins/
 
 | 全局变量 | 类型 | 提供方 |
 |----------|------|--------|
-| `window.__HERMES_PLUGIN_SDK__` | 对象 | `registry.ts` —— 包含 React、钩子函数、UI 组件、API 客户端及实用工具。 |
-| `window.__HERMES_PLUGINS__.register(name, Component)` | 函数 | 用于注册插件的主组件。 |
-| `window.__HERMES_PLUGINS__.registerSlot(name, slot, Component)` | 函数 | 用于将组件注册到指定名称的插槽中。 |
+| `window.__HERMES_PLUGIN_SDK__` | 对象 | `registry.ts` — 包含 React、钩子函数、UI 组件、API 客户端及实用工具。 |
+| `window.__HERMES_PLUGINS__.register(name, Component)` | 函数 | 用于注册插件的主要组件。 |
+| `window.__HERMES_PLUGINS__.registerSlot(name, slot, Component)` | 函数 | 用于将组件注册到指定名称的壳层槽中。 |
 
 ---
 
@@ -888,26 +893,27 @@ cp -r hermes-example-plugins/strike-freedom-cockpit ~/.hermes/plugins/
 请确认相关文件位于 `~/.hermes/dashboard-themes/` 目录下，且文件扩展名为 `.yaml` 或 `.yml`。之后刷新页面，并执行命令 `curl http://127.0.0.1:9119/api/dashboard/themes`，您的主题应会出现在响应结果中。如果 YAML 文件存在解析错误，相关日志会记录在 `~/.hermes/logs/` 目录下的 `errors.log` 文件中。
 
 **我的插件标签页没有显示。**
-1. 确认清单文件位于 `~/.hermes/plugins/<name>/dashboard/manifest.json` 中（注意其中必须包含 `dashboard/` 子目录）。
-2. 执行命令 `curl http://127.0.0.1:9119/api/dashboard/plugins/rescan` 以强制重新发现插件。
+1. 确认清单文件位于 `~/.hermes/plugins/<name>/dashboard/manifest.json`（注意其中的 `dashboard/` 子目录）。 
+2. 执行命令 `curl http://127.0.0.1:9119/api/dashboard/plugins/rescan` 以强制重新检测插件。
 3. 打开浏览器开发者工具 → 网络标签页，确认 `manifest.json`、`index.js` 以及所有加载的 CSS 文件均未出现 404 错误。
-4. 打开浏览器开发者工具 → 控制台标签页，查看在 IIFE 执行过程中是否有错误，或者是否存在 `window.__HERMES_PLUGINS__ is undefined` 的提示（这通常表明 SDK 未能初始化，很可能是之前 React 渲染出现了问题）。
-5. 确认您的代码包确实使用了与 `manifest.json:name` **完全相同** 的名称来调用 `window.__HERMES_PLUGINS__.register(...)` 函数。
+4. 打开浏览器开发者工具 → 控制台标签页，查看在 IIFE 执行过程中是否有错误，或是否出现 `window.__HERMES_PLUGINS__ is undefined` 的提示（这通常意味着 SDK 未能正确初始化，往往是由于之前的 React 渲染出现了故障）。
+5. 确认您的代码包确实调用了 `window.__HERMES_PLUGINS__.register(...)`，且传入的名称与 `manifest.json` 中的 `name` 字段完全一致。
 
-**通过插槽注册的组件无法渲染。**
-只有当当前激活的主题的 `layoutVariant` 为 `cockpit` 时，`sidebar` 插槽才会被渲染；其他插槽则始终会显示。如果您尝试向某个没有匹配到的插槽注册组件，可以在 `registerSlot` 函数中添加 `console.log` 语句，以确认插件代码包是否成功执行。
+**注册到槽中的组件无法渲染。**
+只有当当前激活的主题的 `layoutVariant` 为 `cockpit` 时，`sidebar` 槽才会被渲染；其他类型的槽则始终会显示内容。如果您尝试将组件注册到一个从未被使用的槽中，可以在 `registerSlot` 函数内部添加 `console.log` 语句，以此确认插件代码包是否真的被执行了。
 
 **插件对应的后端路由返回 404 错误。**
-1. 确认清单文件中包含 `"api": "plugin_api.py"` 这一字段，且该值指向 `dashboard/` 目录下存在的实际文件。
-2. 重启 `hermes dashboard` 服务——插件 API 路由仅在启动时加载一次，**不会在重新扫描时自动加载**。
-3. 确认 `plugin_api.py` 文件导出了模块级的 `router = APIRouter()` 对象。其他形式的导出内容则不会被识别。
-4. 查看 `~/.hermes/logs/errors.log` 文件中的相关日志，寻找类似 “Failed to load plugin <name> API routes” 的提示——导入错误的信息会记录在此处。
+1. 确认该插件已与 Hermes 一起打包。用户自行安装的插件以及项目自带的控制面板插件虽然可以扩展界面，但其 Python 编写的后端路由不会被自动导入。
+2. 确认清单文件中包含 `"api": "plugin_api.py"` 这一字段，且该路径指向 `dashboard/` 目录下的实际文件。
+3. 重启 `hermes dashboard` 服务——插件 API 路由仅在启动时加载一次，**不会在重新扫描时自动加载**。
+4. 确认 `plugin_api.py` 文件在模块级别导出了 `router = APIRouter()` 对象。其他形式的导出则不会被识别。
+5. 查看 `~/.hermes/logs/errors.log` 文件中的内容，寻找类似 “Failed to load plugin <name> API routes” 的错误信息——导入错误都会记录在此处。
 
-**更换主题后，我自定义的颜色设置丢失了。**
-`colorOverrides` 设置是针对当前激活的主题生效的，每当切换主题时这些设置就会被清除——这是该功能的设计初衷。如果您希望自定义颜色设置能够持久保留，应将其放入主题的 YAML 文件中，而非实时主题切换器中。
+**更换主题后，我自定义的颜色设置消失了。**
+`colorOverrides` 设置是针对当前激活的主题生效的，每当切换主题时这些设置就会被清除——这是该设计的固有特性。如果您希望自定义颜色设置能够持续保留，应将其直接写入主题的 YAML 文件中，而非通过实时的主题切换器来设置。
 
 **主题中的 customCSS 内容被截断。**
-每个主题的 `customCSS` 内容长度上限为 32 KiB。对于较大的样式表，建议将其拆分到多个主题中，或者使用通过 `css` 字段注入完整样式表的插件（此类插件没有长度限制）。
+每个主题的 `customCSS` 部分的最大容量为 32 KiB。如果样式表文件过大，建议将其拆分到多个主题中；或者使用那些能够通过 `css` 字段注入完整样式表的插件，这类插件没有大小限制。
 
-**我想将插件发布到 PyPI 上。**
-控制面板插件是通过目录结构来安装的，而非通过 pip 的入口点来安装。目前最简便的发布方式是让用户将相关代码库克隆到 `~/.hermes/plugins/` 目录下。目前暂未实现针对控制面板插件的基于 pip 的安装机制。
+**我想通过 PyPI 发布插件。**
+控制面板插件是通过目录结构来安装的，而非通过 pip 的入口点来安装。目前最简便的发布方式是提供一个 Git 仓库，让用户将其克隆到 `~/.hermes/plugins/` 目录下。目前暂未实现针对控制面板插件的基于 pip 的安装机制。
