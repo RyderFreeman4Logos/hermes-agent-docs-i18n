@@ -27,46 +27,48 @@ memory:
 
 当内存提供器处于激活状态时，Hermes会自动执行以下操作：
 
-1. **将提供器上下文**注入系统提示词中（即提供器所掌握的信息）
-2. 在每个对话轮次开始前**预加载相关记忆内容**（后台进行，不会阻塞当前流程）
-3. 在每次响应后**将对话轮次信息同步给提供器**
-4. 在会话结束时**提取记忆内容**（针对支持该功能的提供器）
-5. **将内置记忆的修改内容同步到外部提供器**
-6. **添加提供器专用工具**，以便智能体能够搜索、存储和管理记忆
+1. **将提供器上下文**注入系统提示词中（即提供器所掌握的信息）；
+2. 在每轮对话开始前**预加载相关记忆内容**（后台执行，不会阻塞当前流程）；
+3. 每次生成回复后，将**对话轮次信息同步**给对应提供器；
+4. 会话结束时**提取记忆内容**（针对支持该功能的提供器）；
+5. 将内置记忆的修改操作**同步到外部提供器**；
+6. 提供**特定于提供器的工具**，以便智能体能够搜索、存储及管理记忆。
 
-内置记忆（MEMORY.md / USER.md）将继续以与之前完全相同的方式运行。外部提供器则起到补充作用。
+内置记忆（MEMORY.md / USER.md）仍会像以前一样正常工作，而外部提供器则起到补充作用。
 
 ## 可用的提供器
 
 ### Honcho
 
-这是一种原生支持跨会话用户建模的AI技术，具备辩证推理、会话级上下文注入、语义搜索以及持久化结论生成功能。当前的基础上下文除了包含用户信息与同伴卡片外，还加入了会话摘要，从而使智能体能够了解此前已讨论的内容。
+这是一种原生支持跨会话用户建模的AI技术，具备辩证推理能力、会话级上下文注入功能、语义搜索以及持久化结论生成能力。其基础上下文现在除了包含用户信息与同伴卡片外，还加入了会话摘要，从而使智能体能够了解此前已讨论过的内容。
 
 | | |
 |---|---|
-| **最适合用于** | 需要跨会话上下文及实现用户-智能体对齐的多智能体系统 |
+| **最佳适用场景** | 需要跨会话上下文传递、实现用户与智能体目标对齐的多智能体系统 |
 | **所需条件** | 安装 `pip install honcho-ai` 并获取[API密钥](https://app.honcho.dev)，或使用自托管实例 |
 | **数据存储** | Honcho云服务或自托管方式 |
-| **成本** | Honcho云服务按定价收费 / 自托管版本免费 |
+| **成本** | Honcho云服务按需收费 / 自托管版本免费 |
 
-**提供的工具（5个）：** `honcho_profile`（读取/更新同伴卡片）、`honcho_search`（语义搜索）、`honcho_context`（会话上下文——包括摘要、用户信息、同伴卡片及对话记录）、`honcho_reasoning`（由LLM生成的推理内容）、`honcho_conclude`（创建/删除结论）
+**提供的工具（5个）：** `honcho_profile`（读取/更新同伴卡片）、`honcho_search`（语义搜索）、`honcho_context`（会话上下文——包括摘要、用户描述、同伴卡片及消息内容）、`honcho_reasoning`（由大语言模型生成的推理内容）、`honcho_conclude`（创建/删除结论）
 
-**架构设计：** 采用双层上下文注入机制——基础层包含会话摘要、用户信息及同伴卡片，每隔 `contextCadence` 时间刷新一次；此外还有一层辩证补充层，用于生成LLM推理内容，每隔 `dialecticCadence` 时间刷新一次。该辩证层会根据是否存在基础上下文，自动选择适合冷启动阶段的提示词（通用用户信息）或基于会话上下文的提示词。
+**架构设计：** 采用双层上下文注入机制——基础层包含会话摘要、用户描述及同伴卡片，每隔 `contextCadence` 时间刷新一次；另外还有一层辩证补充层，包含由大语言模型生成的推理内容，每隔 `dialecticCadence` 时间刷新一次。该辩证层会根据是否存在基础上下文，自动选择适合冷启动阶段的提示词（通用用户信息）或适合会话阶段的提示词。
 
 **三个相互独立的配置参数**可分别控制成本与推理深度：**
 
-- `contextCadence`——基础层刷新的频率（即API调用频率）
-- `dialecticCadence`——辩证层LLM运行的频率（即LLM调用频率）
-- `dialecticDepth`——每次辩证层调用时进行的`.chat()`调用次数（1–3次，代表推理深度）
+- `contextCadence`——基础层刷新的频率（即API调用频率）；
+- `dialecticCadence`——辩证层大语言模型启动的频率（即大语言模型调用频率）；
+- `dialecticDepth`——每次辩证层调用时进行 `.chat()` 调用的次数（1–3次，代表推理深度）。
+
+自动注入的辩证层还会根据查询长度动态调整推理深度——查询越长，推理越深入，但最终深度会受到 `reasoningLevelCap` 的限制；详情请参阅[查询自适应推理深度](./honcho.md#query-adaptive-reasoning-level)。
 
 **设置向导：**
 ```bash
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（现在它会重定向到 `hermes memory setup`），但仅在选择 Honcho 作为活跃内存提供者之后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（它现在会重定向到 `hermes memory setup`），但仅在将 Honcho 设定为活跃的内存提供者之后才会被注册。
 
-**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置文件的优先级顺序为：`$
+**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置文件的加载优先级为：`$
 
 ```json
 {
@@ -266,60 +268,79 @@ echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.hermes/.env
 echo "OPENVIKING_API_KEY=..." >> ~/.hermes/.env
 ```
 
-**核心特性：**  
+**核心功能：**  
 - 分层上下文加载：L0（约100个标记）→ L1（约2000个标记）→ L2（完整上下文）  
 - 会话保存时自动提取内存信息（包括配置文件、偏好设置、实体、事件、案例及模式）  
-- 支持使用 `viking://` URI方案实现分层知识浏览  
+- 支持使用 `viking://` URI方案进行分层知识浏览  
 
-在本地/可信模式下，需使用 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER`；而 `OPENVIKING_AGENT` 则是Hermes在OpenViking中的对等体标识，用于实现基于对等体的内存共享。  
+在本地/可信模式下，需使用 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER`；而在对等内存共享场景中，Hermes的节点标识则为 `OPENVIKING_AGENT`。  
 
 ---
 
 ### Mem0  
 
-基于服务器端的LLM事实提取工具，具备语义搜索、重排序及自动去重功能。  
+基于服务器端的LLM事实提取工具，具备语义搜索、重排序及自动去重功能。同时支持Mem0平台版（云端）和开源版（自托管）两种模式。  
 
 | | |  
 |---|---|  
-| **最佳适用场景** | 无需手动管理内存——Mem0可自动完成数据提取 |  
-| **所需条件** | 安装 `pip install mem0ai` 及API密钥 |  
-| **数据存储** | Mem0云服务 |  
-| **费用** | 按Mem0官方定价收费 |  
+| **适用场景** | 无需手动管理内存——Mem0可自动完成信息提取 | **所需条件** | 需安装 `pip install mem0ai`，并配备API密钥（平台版）或LLM/向量存储系统（开源版） |  
+| **数据存储** | Mem0云服务（平台版）或自托管存储（开源版） | **成本** | 遵循Mem0的定价标准（平台版）/免费使用（开源版） |  
 
-**相关工具：**  
-- `mem0_profile`：查看所有已存储的内存数据  
-- `mem0_search`：支持语义搜索与结果重排序  
-- `mem0_conclude`：存储原始事实内容  
+**常用工具（5个）：** `mem0_list`（分页列出所有内存记录）、`mem0_search`（平台版支持语义搜索及结果重排序）、`mem0_add`（存储原始事实数据）、`mem0_update`（通过ID更新内容）、`mem0_delete`（通过ID删除记录）  
 
-**配置方法：**
+**平台版设置步骤：**
 ```bash
-hermes memory setup    # select "mem0"
+hermes memory setup    # select "mem0" → "Platform"
 # Or manually:
 hermes config set memory.provider mem0
 echo "MEM0_API_KEY=your-key" >> ~/.hermes/.env
 ```
 
-**配置文件路径：** `$HERMES_HOME/mem0.json`
+**设置（OSS）：**
+```bash
+hermes memory setup    # select "mem0" → "Open Source (self-hosted)"
+# Or via flags:
+hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant
+```
 
-| 键值 | 默认值 | 说明 |
+无需写入文件即可预览：
+```bash
+hermes memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
+```
+
+**配置文件：** `$HERMES_HOME/mem0.json`（用于设置行为参数）。仅密钥 `MEM0_API_KEY` 需存放于 `~/.hermes/.env` 文件中。
+
+| 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
+| `mode` | `platform` | `platform`（Mem0 Cloud）或 `oss`（自托管） |
 | `user_id` | `hermes-user` | 用户标识符 |
-| `agent_id` | `hermes` | 智能体标识符 |
+| `agent_id` | `hermes` | Agent标识符 |
+| `rerank` | `true` | 根据相关性对搜索结果进行重新排序（仅适用于platform模式） |
+
+**OSS支持的提供商：**
+
+| 组件 | 提供商 |
+|-----------|---------|
+| 大语言模型 | openai, ollama |
+| 嵌入模型 | openai, ollama |
+| 向量存储 | qdrant（本地/服务器端）、pgvector |
+
+**切换模式：** 重新运行命令 `hermes memory setup mem0 --mode <platform|oss>`，或直接编辑 `mem0.json` 文件。
 
 ---
 
 ### Hindsight
 
-具备知识图谱、实体解析及多策略检索功能的长期记忆系统。`hindsight_reflect` 工具可实现其他任何提供商都无法提供的跨内存信息整合功能，同时通过会话级文档跟踪自动保留完整的对话内容（包括工具调用记录）。
+具备知识图谱、实体解析及多策略检索功能的长期记忆系统。其 `hindsight_reflect` 工具可实现其他任何提供商都无法提供的跨内存信息整合功能。该系统还能通过会话级文档跟踪，自动保留完整的对话记录（包括工具调用信息）。
 
 | | |
 |---|---|
-| **最佳适用场景** | 基于知识图谱的检索及实体关系分析 |
-| **所需资源** | 云端：来自 [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io) 的 API 密钥；本地：LLM API 密钥（如 OpenAI、Groq、OpenRouter 等） |
-| **数据存储** | Hindsight 云服务或本地嵌入式 PostgreSQL |
-| **成本** | 遵循 Hindsight 的云端定价标准，本地版本免费 |
+| **最佳适用场景** | 基于知识图谱的检索，并需体现实体间的关联关系 |
+| **所需条件** | 云端：需从 [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io) 获取API密钥；本地：需使用大语言模型API密钥（如OpenAI、Groq、OpenRouter等） |
+| **数据存储** | Hindsight Cloud云服务或本地的嵌入式PostgreSQL数据库 |
+| **成本** | 需按Hindsight的定价标准付费（云端使用），本地部署则免费 |
 
-**相关工具：** `hindsight_retain`（带实体提取功能的存储）、`hindsight_recall`（多策略搜索）、`hindsight_reflect`（跨内存信息整合）
+**相关工具：** `hindsight_retain`（结合实体提取功能进行存储）、`hindsight_recall`（多策略搜索）、`hindsight_reflect`（跨内存信息整合）
 
 **设置方法：**
 ```bash
@@ -532,25 +553,18 @@ hermes memory setup
 
 | 提供商 | 存储方式 | 费用 | 工具数量 | 依赖项 | 独特功能 |
 |----------|---------|------|-------|-------------|----------------|
-| **Honcho** | 云存储 | 付费 | 5 | `honcho-ai` | 对话式用户建模 + 会话级上下文管理 |
+| **Honcho** | 云端 | 付费 | 5 | `honcho-ai` | 对话式用户建模 + 会话级上下文管理 |
 | **OpenViking** | 自托管 | 免费 | 5 | `openviking` + 服务器 | 文件系统层级结构 + 分层加载机制 |
-| **Mem0** | 云存储 | 付费 | 3 | `mem0ai` | 服务器端大语言模型提取功能 |
-| **Hindsight** | 云存储/本地存储 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反向合成技术 |
-| **Holographic** | 本地存储 | 免费 | 2 | 无 | HRR代数模型 + 可信度评分系统 |
-| **RetainDB** | 云存储 | 每月20美元 | 5 | `requests` | 差分压缩技术 |
-| **ByteRover** | 本地存储/云存储 | 免费/付费 | 3 | `brv` CLI工具 | 预压缩提取功能 |
-| **Supermemory** | 云存储 | 付费 | 4 | `supermemory` | 上下文隔离机制 + 会话图谱整合 + 多容器支持 |
-| **Memori** | 云存储 | 免费/付费 | 5 | `hermes-memori` | 具有工具识别能力的记忆系统 + 结构化信息检索功能 |
+| **Mem0** | 云端/自托管 | 免费/付费 | 5 | `mem0ai` | 服务器端大语言模型提取功能 + OSS模式 |
+| **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反向合成技术 |
+| **Holographic** | 本地 | 免费 | 2 | 无 | HRR代数模型 + 可信度评分系统 |
+| **RetainDB** | 云端 | 每月20美元 | 5 | `requests` | 差分压缩技术 |
+| **ByteRover** | 本地/云端 | 免费/付费 | 3 | `brv` CLI | 预压缩提取功能 |
+| **Supermemory** | 云端 | 付费 | 4 | `supermemory` | 上下文隔离机制 + 会话图谱整合 + 多容器支持 |
+| **Memori** | 云端 | 免费/付费 | 5 | `hermes-memori` | 具有工具感知能力的记忆系统 + 结构化信息检索功能 |
 
 ## 配置文件隔离
 
 每个提供商的数据都会根据[配置文件](/user-guide/profiles)实现隔离：
 
-- **本地存储型提供商**（Holographic、ByteRover）会使用 `$HERMES_HOME/` 目录路径，且不同配置文件对应不同的路径
-- **配置文件型提供商**（Honcho、Mem0、Hindsight、Supermemory）会将配置信息存储在 `$HERMES_HOME/` 目录下，因此每个配置文件拥有独立的凭证信息
-- **云存储型提供商**（RetainDB）会自动根据配置文件生成对应的项目名称
-- **环境变量型提供商**（OpenViking）则通过每个配置文件对应的 `.env` 文件来进行配置
-
-## 自定义内存提供商的构建方法
-
-如需了解如何创建自定义的内存提供商，请参阅[开发者指南：内存提供商插件](/developer-guide/memory-provider-plugin)。
+- **本地存储型提供商**（Holographic、ByteRover）会使用`$
