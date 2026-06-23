@@ -2600,7 +2600,7 @@
         - [内置插件](zh/website/docs/user-guide/features/built-in-plugins.md)
         - [代码执行（程序化工具调用）](zh/website/docs/user-guide/features/code-execution.md)
         - [Codex 应用服务器运行时](zh/website/docs/user-guide/features/codex-app-server-runtime.md)
-        - [计算机操作（macOS）](zh/website/docs/user-guide/features/computer-use.md)
+        - [计算机操作功能](zh/website/docs/user-guide/features/computer-use.md)
         - [上下文文件](zh/website/docs/user-guide/features/context-files.md)
         - [上下文引用](zh/website/docs/user-guide/features/context-references.md)
         - [凭证池](zh/website/docs/user-guide/features/credential-pools.md)
