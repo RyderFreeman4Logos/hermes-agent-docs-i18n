@@ -8,31 +8,31 @@ description: "Real-time voice conversations with Hermes Agent — CLI, Telegram,
 
 Hermes Agent 支持在命令行界面和消息平台之间实现完整的语音交互。您可以通过麦克风与智能体对话，听到其语音回复，并在 Discord 的语音频道中进行实时语音交流。
 
-如需包含推荐配置及实际使用场景的详细设置指南，请参阅 [使用 Hermes 的语音模式](/guides/use-voice-mode-with-hermes)。
+如需包含推荐配置及实际使用场景的详细设置指南，请参阅 [如何在使用 Hermes 时启用语音模式](/guides/use-voice-mode-with-hermes)。
 
 ## 先决条件
 
-在使用语音功能之前，请确保已满足以下条件：
+在使用语音功能之前，请确保满足以下条件：
 
-1. **已安装 Hermes Agent** — 使用 `pip install hermes-agent` 进行安装（详情请参见[安装指南](/getting-started/installation)）；
-2. **已配置 LLM 服务提供商** — 运行 `hermes model` 命令，或是在 `~/.hermes/.env` 文件中设置您选择的提供商凭据；
-3. **基础环境已正常运行** — 先运行 `hermes` 命令，确认智能体能够响应文本指令，之后再启用语音功能。
+1. **已安装 Hermes Agent** —— 可通过安装脚本完成（详见 [安装指南](/getting-started/installation)）
+2. **已配置 LLM 服务提供商** —— 运行 `hermes model` 命令，或是在 `~/.hermes/.env` 文件中设置您选择的提供商凭据
+3. **基础环境已正常运行** —— 先运行 `hermes` 命令确认智能体能响应文本指令，然后再启用语音功能
 
 :::提示
-首次运行 `hermes` 时，系统会自动创建 `~/.hermes/` 目录及默认的 `config.yaml` 配置文件。您只需手动创建 `~/.hermes/.env` 文件来存储 API 密钥即可。
+首次运行 `hermes` 时，系统会自动创建 `~/.hermes/` 目录及默认的 `config.yaml` 文件。您只需手动创建 `~/.hermes/.env` 文件来存储 API 密钥即可。
 :::
 
-:::提示 Nous Portal 可同时满足这两项需求
-通过付费订阅 [Nous Portal](/user-guide/features/tool-gateway)，您不仅可以获得 LLM 服务（对应步骤 2），还能通过工具网关使用 OpenAI TTS 功能——无需单独配置 OpenAI 密钥。在全新安装环境中，执行 `hermes setup --portal` 即可同时完成两项配置。
+:::提示 Nous Portal 可同时满足两项需求
+通过付费订阅 [Nous Portal](/user-guide/features/tool-gateway)，您不仅可以获得 LLM 服务（即第 2 步），还能通过工具网关使用 OpenAI TTS 功能——无需单独配置 OpenAI 密钥。在全新安装环境中，执行 `hermes setup --portal` 即可同时完成两项配置。
 :::
 
 ## 功能概览
 
-| 功能 | 支持平台 | 功能描述 |
-|------|----------|----------|
-| **交互式语音** | 命令行界面 | 按下 Ctrl+B 即可开始录音，智能体会自动检测静音并作出回应 |
+| 功能 | 支持平台 | 描述 |
+|---------|----------|-------------|
+| **交互式语音** | 命令行界面 | 按下 Ctrl+B 开始录音，智能体会自动检测静音并作出回应 |
 | **自动语音回复** | Telegram、Discord | 智能体在提供文本回复的同时，还会发送语音音频 |
-| **语音频道功能** | Discord | 机器人加入语音频道后，可聆听用户发言并回复语音内容 |
+| **语音频道功能** | Discord | 机器人会加入语音频道，聆听用户发言，并以语音形式回复 |
 
 ## 所需条件
 
@@ -40,19 +40,19 @@ Hermes Agent 支持在命令行界面和消息平台之间实现完整的语音�
 
 ```bash
 # CLI voice mode (microphone + audio playback)
-pip install "hermes-agent[voice]"
+cd ~/.hermes/hermes-agent && uv pip install -e ".[voice]"
 
 # Discord + Telegram messaging (includes discord.py[voice] for VC support)
-pip install "hermes-agent[messaging]"
+cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"
 
 # Premium TTS (ElevenLabs)
-pip install "hermes-agent[tts-premium]"
+cd ~/.hermes/hermes-agent && uv pip install -e ".[tts-premium]"
 
 # Local TTS (NeuTTS, optional)
 python -m pip install -U neutts[all]
 
 # Everything at once
-pip install "hermes-agent[all]"
+cd ~/.hermes/hermes-agent && uv pip install -e ".[all]"
 ```
 
 | 额外功能 | 所需包 | 适用场景 |
