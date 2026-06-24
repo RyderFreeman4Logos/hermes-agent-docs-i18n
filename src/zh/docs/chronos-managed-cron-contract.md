@@ -27,25 +27,27 @@ NAS mints a short-lived agent-audience JWT (purpose=cron_fire)
 agent verifies the NAS JWT → store CAS claim → run_one_job → re-arm next one-shot
 ```
 
-## 信任模型（请先阅读此部分）
+## 信任模型（请先阅读）
 
-| 跳转步骤 | 谁调用谁 | 认证机制 | 验证方 |
+| 跳数 | 谁调用谁 | 认证机制 | 验证方 |
 |---|---|---|---|
-| 1 | agent → NAS (`provision`/`cancel`/`list`) | 使用 agent 已有的 **Nous Portal 访问令牌**（Bearer 类型） | NAS（通过其常规的 agent-令牌验证流程） |
-| 2 | scheduler → NAS (`relay`) | 使用 scheduler 的请求**签名** | NAS（通过其现有的签名验证流程） |
-| 3 | NAS → agent (`/api/cron/fire`) | 使用 **NAS 生成的短期有效 JWT**（`aud=agent:{instance_id}`, `purpose=cron_fire`） | agent（通过 PyJWT 对 NAS 提供的 JWKS 进行验证） |
+| 1 | agent → NAS (`provision`/`cancel`/`list`) | agent现有的**Nous Portal访问令牌**（Bearer类型）——对于托管agent而言，该令牌为NAS植入在`auth.json`中的**bootstrap-session令牌**（客户端为`hermes-cli-vps`），而非`agent:*`类型的客户端令牌 | NAS（其常规的agent令牌验证路径） |
+| 2 | scheduler → NAS (`relay`) | scheduler请求的**签名** | NAS（其已有的签名验证路径） |
+| 3 | NAS → agent (`/api/cron/fire`) | 由NAS生成的**短有效期JWT**（`aud=agent:{instance_id}`，`purpose=cron_fire`） | agent（使用PyJWT工具结合NAS的JWKS进行验证） |
 
-为何采用 NAS 中介而非 scheduler 直接调用 agent：因为 scheduler 使用的是**NAS 的密钥**进行签名，而 agent 并不持有（也不应持有）这些密钥。Agent 只能验证由 **NAS 生成的令牌**——这是其已有的信任路径。这样一来，所有调度器的凭证都保留在 NAS 内部。（完整依据：计划中的 DQ-4 标准。）
+> **关于跳数1应使用的具体令牌。** 托管agent永远不会持有`agent:{instance_id}`格式的OAuth客户端凭证——该格式的令牌仅由交互式控制台通过auth-code授权机制（浏览器用户）生成。对于所有自身的出站Portal调用，agent都会使用在启动时植入容器中的**bootstrap-session访问令牌**（`resolve_nous_access_token`），该令牌是为专用客户端`hermes-cli-vps`生成的。因此，NAS必须从`agent:{id}`类型的客户端（自托管或控制台发起的请求）中，或者针对bootstrap令牌，从与令牌会话ID（`sid`）对应的org级`AgentInstance.bootstrapSessionId`中，确定调用agent的实例ID。无论如何，跳数3生成的fire JWT仍会携带`aud=agent:{instance_id}`字段。（仅基于`agent:*`类型的客户端进行跳数1验证会导致所有真正的托管agent配置请求被拒绝，详见`src/server/agent-cron/instance-auth.ts`。）
 
-Agent 端无需新增任何密钥：第一步重用了 agent 当前用于访问 portal 的令牌，第三步则复用了 agent 已有的 NAS-JWT 验证机制。
+之所以采用NAS中介的方式而非scheduler直接调用agent，是因为scheduler使用的是**NAS的密钥**进行签名，而agent并不持有（也不应持有）这些密钥。agent只能验证由NAS生成的令牌——这是其已有的信任路径。这样一来，所有scheduler的凭证都保留在NAS内部。（完整依据：计划中的DQ-4要求。）
+
+agent端无需引入新的密钥：跳数1重用了agent原本用于Portal访问的令牌，而跳数3则复用了agent已有的NAS-JWT验证机制。
 
 ---
 
-## 接口 1 — `POST /api/agent-cron/provision` （agent → NAS）
+## 端点1 — `POST /api/agent-cron/provision`  （agent → NAS）
 
-为某项任务启动（或重新启动，具备幂等性）一次性的执行任务。
+为某个任务启动（或重新启动，具有幂等性）一次性的执行任务。
 
-- **认证方式：** `Authorization: Bearer <agent Nous 访问令牌>`。NAS 通过其常规的 agent-令牌验证流程进行校验，并将相关权限限制在发起请求的 agent 或组织范围内。
+- **认证：** `Authorization: Bearer <agent Nous访问令牌>`。NAS通过其常规的agent令牌验证路径进行验证，并将相关记录限制在发起请求的agent或组织范围内。
 - **请求体：**
   ```json
   {
