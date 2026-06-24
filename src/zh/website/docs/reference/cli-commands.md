@@ -21,62 +21,62 @@ hermes [global-options] <command> [subcommand/options]
 | 选项 | 描述 |
 |------|------|
 | `--version`, `-V` | 显示版本信息后退出。 |
-| `--profile <name>`, `-p <name>` | 指定本次调用使用的 Hermes 配置文件。该选项会覆盖 `hermes profile use` 设置的默认值。 |
+| `--profile <name>`, `-p <name>` | 指定本次调用使用的 Hermes 配置文件。此选项会覆盖 `hermes profile use` 设置的默认值。 |
 | `--resume <session>`, `-r <session>` | 根据会话 ID 或标题恢复之前的会话。 |
 | `--continue [name]`, `-c [name]` | 恢复最近的会话，或匹配指定标题的最新会话。 |
 | `--worktree`, `-w` | 在独立的 git worktree 中启动，适用于并行 Agent 工作流。 |
 | `--yolo` | 跳过危险命令的确认提示。 |
 | `--pass-session-id` | 在 Agent 的系统提示中显示会话 ID。 |
-| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。 |
+| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，直接使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。 |
 | `--ignore-rules` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules`、内存内容以及预加载的技能。 |
-| `--tui` | 启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于设置 `HERMES_TUI=1`。该选项始终优先于 `display.interface` 的设置。 |
+| `--tui` | 启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于设置 `HERMES_TUI=1`。该选项的优先级始终高于 `display.interface`。 |
 | `--cli` | 强制使用传统的 prompt_toolkit REPL。可在单次调用时覆盖 `display.interface: tui` 的设置。 |
-| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 编译 TypeScript 源代码，而非使用预编译的打包文件（专为 TUI 贡献者设计）。 |
+| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 运行 TypeScript 源代码，而非预编译的代码包（专为 TUI 贡献者设计）。 |
 
 ## 顶层命令
 
 | 命令 | 用途 |
 |------|------|
-| `hermes chat` | 与 Agent 进行交互式或一次性聊天。 |
-| `hermes model` | 交互式选择默认的提供者和模型。 |
-| `hermes fallback` | 管理在主模型出错时尝试使用的备用提供者。 |
+| `hermes chat` | 与 Agent 进行交互式聊天或一次性对话。 |
+| `hermes model` | 交互式选择默认的提供商和模型。 |
+| `hermes fallback` | 管理在主模型出错时尝试使用的备用提供商。 |
 | `hermes gateway` | 运行或管理消息传递网关服务。 |
-| `hermes proxy` | 本地兼容 OpenAI 的代理工具，用于添加 OAuth 提供者凭据。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
-| `hermes lsp` | 管理语言服务器协议集成功能（为 write_file/patch 操作提供语义诊断支持）。 |
-| `hermes setup` | 交互式设置向导，可用于全部或部分配置的设置。 |
-| `hermes whatsapp` | 配置并连接 WhatsApp 桥接服务。 |
-| `hermes slack` | Slack 相关工具（目前功能为：每个命令都会自动生成对应的原生 slash 应用清单）。 |
+| `hermes proxy` | 本地兼容 OpenAI 的代理工具，用于附加 OAuth 提供商的凭据。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
+| `hermes lsp` | 管理语言服务器协议集成功能（为 write_file/patch 操作提供语义诊断功能）。 |
+| `hermes setup` | 交互式设置向导，可完成全部或部分配置。 |
+| `hermes whatsapp` | 配置并关联 WhatsApp 桥接服务。 |
+| `hermes slack` | Slack 相关工具（目前功能为：每次命令执行时都会生成对应的原生 slash 应用清单）。 |
 | `hermes auth` | 管理凭据——添加、列出、删除、重置、查看状态及登出。支持 Codex/Nous/Anthropic 的 OAuth 流程。 |
 | `hermes login` / `logout` | **已废弃**——请改用 `hermes auth` 命令。 |
 | `hermes send` | 向已配置的消息平台（Telegram、Discord、Slack、Signal、短信等）发送一次性消息。适用于 shell 脚本、cron 作业、CI 钩子以及监控进程——无需 Agent 循环，也不涉及 LLM。 |
-| `hermes secrets` | 管理外部密钥源（目前为 Bitwarden Secrets Manager），可在进程启动时从这些源获取 API 密钥，而非从 `~/.hermes/.env` 文件读取。 |
-| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换已淘汰的模型或过时的配置项（例如 `migrate xai`）。 |
+| `hermes secrets` | 管理外部密钥源（目前为 Bitwarden Secrets Manager），可在进程启动时从这些来源获取 API 密钥，而非依赖 `~/.hermes/.env` 文件。 |
+| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换已淘汰的模型或过时的设置引用（例如 `migrate xai`）。 |
 | `hermes status` | 显示 Agent、认证及平台的状态信息。 |
-| `hermes cron` | 查看并管理 cron 定时任务调度器。 |
-| `hermes kanban` | 多配置文件协作看板（用于管理任务、链接及任务分配者）。 |
+| `hermes cron` | 查看并触发 cron 定时任务。 |
+| `hermes kanban` | 多配置文件协作看板（包含任务、链接及任务分配功能）。 |
 | `hermes webhook` | 管理动态 webhook 订阅，实现基于事件的触发机制。 |
 | `hermes hooks` | 查看、批准或删除在 `config.yaml` 中声明的 shell 脚本钩子。 |
 | `hermes doctor` | 诊断配置及依赖问题。 |
 | `hermes security audit` | 对虚拟环境、插件需求以及固定的 MCP 服务器进行按需的供应链安全审计（由 OSV.dev 提供服务）。 |
 | `hermes dump` | 生成可复制粘贴的设置摘要，便于获取支持或进行调试。 |
-| `hermes prompt-size` | 显示系统提示信息及工具架构（技能索引、内存、配置文件）的字节分布情况。可在离线环境下运行。 |
-| `hermes debug` | 调试工具——上传日志和系统信息以获取技术支持。 |
+| `hermes prompt-size` | 显示系统提示语及工具架构（包括技能索引、内存信息、配置文件等）的字节分布情况。可在离线环境下运行。 |
+| `hermes debug` | 调试工具——上传日志和系统信息以获取支持。 |
 | `hermes backup` | 将 Hermes 的主目录备份为 zip 文件。 |
-| `hermes checkpoints` | 查看、清理或删除 `~/.hermes/checkpoints/` 目录中的内容（该目录是 `/rollback` 功能使用的隐藏存储空间）。不带参数运行可查看整体状态。 |
-| `hermes import` | 从 zip 文件恢复 Hermes 备份数据。 |
+| `hermes checkpoints` | 查看、清理或删除 `~/.hermes/checkpoints/` 目录中的内容（该目录是 `/rollback` 功能使用的隐藏存储空间）。不带参数运行可查看状态概览。 |
+| `hermes import` | 从 zip 文件恢复 Hermes 备份内容。 |
 | `hermes logs` | 查看、查看日志尾部内容以及过滤 Agent/网关/错误日志文件。 |
 | `hermes config` | 显示、编辑、迁移及查询配置文件。 |
-| `hermes pairing` | 批准或撤销消息传递配对码。 |
+| `hermes pairing` | 批准或撤销消息传递配对码的授权。 |
 | `hermes skills` | 浏览、安装、发布、审计及配置技能。 |
 | `hermes bundles` | 将多个技能整合到单个 `/<name>` 形式的命令下。详见 [技能包](../user-guide/features/skills.md#skill-bundles)。 |
-| `hermes curator` | 在后台维护技能——可查看状态、运行、暂停或固定技能。详见 [Curator 功能](../user-guide/features/curator.md)。 |
-| `hermes memory` | 配置外部内存提供者。当对应的提供者处于激活状态时，特定插件会自动注册相应的子命令（例如 `hermes honcho`）。 |
-| `hermes acp` | 以 ACP 服务器模式运行 Hermes，实现与编辑器的集成。 |
-| `hermes mcp` | 管理 MCP 服务器配置，并以 MCP 服务器模式运行 Hermes。 |
-| `hermes plugins` | 管理 Hermes Agent 插件——可执行安装、启用、禁用及删除操作。 |
+| `hermes curator` | 在后台维护技能——可查看状态、运行、暂停或固定特定技能。详见 [Curator](../user-guide/features/curator.md)。 |
+| `hermes memory` | 配置外部内存提供商。当对应的提供商处于激活状态时，特定插件会自动注册相应的子命令（例如 `hermes honcho`）。 |
+| `hermes acp` | 将 Hermes 作为 ACP 服务器运行，以便与编辑器集成。 |
+| `hermes mcp` | 管理 MCP 服务器配置，并将 Hermes 作为 MCP 服务器运行。 |
+| `hermes plugins` | 管理 Hermes Agent 插件——包括安装、启用、禁用及删除操作。 |
 | `hermes portal` | 显示 Nous Portal 的状态、订阅链接以及工具网关的路由信息。详见 [工具网关](../user-guide/features/tool-gateway.md)。 |
 | `hermes tools` | 按平台配置已启用的工具。 |
-| `hermes computer-use` | 安装或检查 cua-driver 后端（用于 macOS 的 Computer Use 功能）。 |
+| `hermes computer-use` | 安装或检查 cua-driver 后端（适用于 macOS 的 Computer Use 功能）。 |
 | `hermes sessions` | 浏览、导出、清理、重命名及删除会话。 |
 | `hermes insights` | 显示令牌使用情况、成本统计及活动分析数据。 |
 | `hermes claw` | OpenClaw 迁移辅助工具。 |
@@ -84,7 +84,7 @@ hermes [global-options] <command> [subcommand/options]
 | `hermes profile` | 管理多个独立的 Hermes 实例——即不同的配置文件。 |
 | `hermes completion` | 输出 shell 自动补全脚本（支持 bash/zsh/fish）。 |
 | `hermes version` | 显示版本信息。 |
-| `hermes update` | 下载最新代码并重新安装依赖项（通过 git 安装），或检查 PyPI 并执行 `pip install --upgrade` 进行安装（通过 pip 安装）。使用 `--check` 可预览更新内容而无需实际安装；使用 `--backup` 可在更新前创建 `HERMES_HOME` 的快照。 |
+| `hermes update` | 下载最新代码并重新安装依赖项。`--check` 选项可预览更新内容而无需实际安装；`--backup` 选项可在下载前创建 `HERMES_HOME` 的快照。 |
 | `hermes uninstall` | 从系统中卸载 Hermes。 |
 
 ## `hermes chat`
@@ -1158,7 +1158,7 @@ python -m acp_adapter
 请先安装支持组件：
 
 ```bash
-pip install -e '.[acp]'
+cd ~/.hermes/hermes-agent && uv pip install -e '.[acp]'
 ```
 
 请参阅 [ACP 编辑器集成](../user-guide/features/acp.md) 以及 [ACP 内部机制](../developer-guide/acp-internals.md)。
@@ -1331,15 +1331,15 @@ hermes claw migrate --source /home/user/old-openclaw
 hermes dashboard [options]
 ```
 
-启动网页控制面板——这是一个基于浏览器的用户界面，用于管理配置、API密钥以及监控会话。使用时需先执行 `pip install hermes-agent[web]`（依赖 FastAPI 和 Uvicorn）。内置的浏览器聊天标签页始终可用，但还需额外安装 `pty` 组件（通过 `pip install 'hermes-agent[web,pty]'` 安装），并且需要 Linux、macOS 或 WSL2 等支持 POSIX PTY 的操作系统环境。详细文档请参阅 [网页控制面板](/user-guide/features/web-dashboard)。
+启动网页控制台——这是一个基于浏览器的用户界面，用于管理配置、API密钥以及监控会话。使用前需执行命令 `cd ~/.hermes/hermes-agent && uv pip install -e ".[web]"`（依赖 FastAPI 和 Uvicorn）。内置浏览器中的聊天标签页始终可用，但还需额外安装 `pty` 组件（执行命令 `cd ~/.hermes/hermes-agent && uv pip install -e ".[web,pty]"`），并且需要 Linux、macOS 或 WSL2 等支持 POSIX PTY 的操作系统环境。详细文档请参阅 [网页控制台](/user-guide/features/web-dashboard)。
 
 | 选项 | 默认值 | 描述 |
 |------|--------|------|
 | `--port` | `9119` | 网页服务器运行的端口 |
 | `--host` | `127.0.0.1` | 绑定地址 |
 | `--no-open` | — | 不自动打开浏览器 |
-| `--insecure` | off | 允许绑定到非本地主机。此模式下控制面板的凭证会在网络中暴露，仅建议在受信任的网络环境中使用 |
-| `--isolated` | off | 当从指定配置文件（如“工作节点控制面板”）启动时，为该配置文件单独运行服务器，而非路由至全局控制面板 |
+| `--insecure` | off | 允许绑定到非本机主机。此时控制台凭证会在网络中暴露，仅建议在受信任的网络环境中使用 |
+| `--isolated` | off | 当从指定配置文件（如“工作进程控制台”）启动时，为该配置文件单独运行服务器，而非路由至全局控制台 |
 | `--stop` | — | 停止运行 `hermes dashboard` 进程并退出 |
 | `--status` | — | 列出正在运行的 `hermes dashboard` 进程后退出 |
 
@@ -1419,28 +1419,26 @@ hermes completion fish > ~/.config/fish/completions/hermes.fish
 hermes update [--gateway] [--check] [--no-backup] [--backup] [--yes]
 ```
 
-该命令会拉取最新的 `hermes-agent` 代码，并在您的虚拟环境内重新安装所有依赖项，随后再次运行安装后的钩子程序（如 MCP 服务器、技能同步及补全功能安装）。即便在正在使用的环境中执行也十分安全。
+该命令会获取最新的 `hermes-agent` 代码，并在管理的虚拟环境中重新安装依赖项，随后再次运行安装后的钩子程序（如 MCP 服务器、技能同步及补全功能安装）。即便在已实际安装的环境中运行也安全。若想在不进行实际安装的情况下查看当前版本是否落后于 `origin/main`，可使用 `--check` 参数。
 
-**通过 pip 安装的情况：** `hermes update` 会自动识别基于 pip 的安装方式——它会查询 PyPI 上的最新版本，然后执行 `pip install --upgrade hermes-agent` 而非 `git pull`。PyPI 上的版本更新仅针对已标记的版本号（主版本/次版本），而非 `main` 分支上的每一个提交。若想查看是否有更新的 PyPI 版本而无需实际安装，可使用 `--check` 选项。
+`hermes update` 会获取配置好的更新分支（默认为 `main`）。如果当前检出代码位于其他分支，Hermes 可能会在拉取之前先切换到该更新分支。若希望将某些分支上的修改排除在自动更新流程之外，建议在更新前先提交这些修改。
 
-**通过 git 安装的情况：** `hermes update` 会拉取预先配置好的更新分支（默认为 `main`）。如果当前检出的是其他分支，Hermes 可能会在拉取之前先切换到该更新分支。若希望将某些分支上的修改保留在更新流程之外，应在执行更新前先提交这些修改。
-
-| 选项 | 描述 |
+| 参数 | 描述 |
 |------|------|
-| `--gateway` | 用于消息传递 `/update` 命令的内部模式。该模式通过基于文件的进程间通信方式来传输提示信息及进度状态，而非从终端标准输入读取数据。此选项并非用于重启网关的标志。 |
-| `--check` | 无需拉取代码、安装依赖或重启任何服务，即可检查是否有可用更新。 |
-| `--no-backup` | 即使在 `config.yaml` 中启用了 `updates.pre_update_backup` 设置，也会跳过本次更新前的备份操作。 |
-| `--backup` | 在执行拉取操作之前，创建一个标记过的 `HERMES_HOME` 目录的预更新快照（包含配置、认证信息、会话记录、技能数据及配对数据等）。默认情况下此功能处于关闭状态——之前的“始终备份”模式会导致大型项目每次更新都需要花费数分钟时间。若希望永久启用该功能，可在 `config.yaml` 中将 `updates.pre_update_backup` 设置为 `true`。 |
-| `--yes`, `-y` | 对于配置迁移、快照恢复等需要用户确认的交互式操作，直接默认选择“是”。API 密钥的相关设置则会被跳过；如需单独处理这些操作，请执行 `hermes config migrate` 命令。 |
+| `--gateway` | 用于消息传递 `/update` 命令的内部模式。该模式通过基于文件的进程间通信方式来传输提示信息及进度状态，而非从终端标准输入读取数据。此参数并非用于重启网关的标志。 |
+| `--check` | 在不进行拉取、安装依赖或重启任何服务的情况下，检查是否有可用更新。 |
+| `--no-backup` | 即使在 `config.yaml` 中启用了 `updates.pre_update_backup` 功能，也跳过本次运行前的预更新备份操作。 |
+| `--backup` | 在拉取代码之前，创建一个带有标签的 `HERMES_HOME` 预更新快照（包含配置、认证信息、会话数据、技能及配对数据等）。默认值为关闭——之前的“始终备份”模式会导致大型项目每次更新时都需要花费数分钟时间。如需永久启用该功能，可在 `config.yaml` 中将 `updates.pre_update_backup` 设置为 `true`。 |
+| `--yes`, `-y` | 对于配置迁移、缓存恢复等交互式提示，直接默认选择“是”。此时不会询问 API 密钥信息；如需单独处理 API 密钥相关操作，请运行 `hermes config migrate` 命令。 |
 
 其他相关行为：
 
-- **网关重启：** 更新成功后，Hermes 会自动尝试重启所有正在运行的网关实例，以便它们能使用到最新代码。若仅需重启网关而不进行更新，可使用 `hermes gateway restart` 命令。
-- **本地源文件变更处理：** 对于通过 git 安装的情况，在切换分支或拉取代码之前，系统会自动将已修改但未暂存的文件以及未被跟踪的文件暂存起来（使用 `git stash push --include-untracked` 命令）。在交互式终端更新模式下，系统会在恢复暂存内容前询问用户确认；而在非交互式更新模式下，则默认直接恢复暂存内容。仅在对本地源文件进行修改且希望确保更新后这些修改被丢弃的托管环境中，才可将 `updates.non_interactive_local_changes` 设置为 `discard`。如果恢复暂存时出现冲突或拉取操作失败，系统会保留该暂存内容以便用户手动处理。
-- **清理 npm lockfile 的差异：** 在暂存文件或切换分支之前，Hermes 会尽力清理由 npm install/build 过程产生的 `package-lock.json` 文件的差异内容。在运行 `hermes update` 命令之前，请先将有意修改的 lockfile 内容提交或手动暂存。
-- **配对数据快照：** 即使关闭了 `--backup` 选项，`hermes update` 也仍会在执行 `git pull` 之前，对 `~/.hermes/pairing/` 目录以及飞书相关的评论规则生成一个轻量级的快照。如果拉取操作覆盖了您正在编辑的文件，可使用 `hermes backup restore --state pre-update` 命令将其恢复。
-- **针对旧版 `hermes.service` 的警告：** 如果 Hermes 检测到的是更名前的 `hermes.service` systemd 单元（而非当前的 `hermes-gateway.service`），它会给出一次性迁移提示，帮助您避免出现相关问题。
-- **退出码说明：** 成功时返回 `0`；拉取、安装或安装后步骤出现错误时返回 `1`；工作目录发生意外变化导致无法执行 `git pull` 时返回 `2`。
+- **网关重启**：成功完成更新后，Hermes 会自动尝试重启所有正在运行的网关实例，以便它们能使用到最新代码。若仅需重启网关而不进行更新，可使用 `hermes gateway restart` 命令。
+- **本地源代码变更**：对于通过 git 安装的项目，在切换分支或拉取代码之前，系统会自动将已修改但未暂存的文件以及未被跟踪的文件暂存起来（使用 `git stash push --include-untracked` 命令）。交互式终端更新会在恢复暂存内容前询问用户确认；非交互式更新则默认直接恢复暂存内容。仅在管理型安装环境中，且希望在拉取成功后丢弃所有本地修改时，才可将 `updates.non_interactive_local_changes` 设置为 `discard`。如果恢复暂存时出现冲突或拉取失败，暂存内容将保持原样，以便用户手动处理。
+- **npm lockfile 变更清理**：在暂存代码或切换分支之前，Hermes 会尽力清理由 npm install/build 过程产生的已跟踪 `package-lock.json` 文件的差异内容。在运行 `hermes update` 命令之前，请先将有意修改的 lockfile 内容提交或手动暂存。
+- **配对数据快照**：即使关闭了 `--backup` 参数，`hermes update` 也会在执行 `git pull` 之前，对 `~/.hermes/pairing/` 目录以及飞书评论规则生成轻量级的快照。如果拉取操作覆盖了您正在编辑的文件，可使用 `hermes backup restore --state pre-update` 命令将其恢复。
+- **旧版 `hermes.service` 警告**：如果 Hermes 检测到系统上存在更名前的 `hermes.service` systemd 单元（而非当前的 `hermes-gateway.service`），它会一次性提示用户进行迁移操作，以避免出现循环问题。
+- **退出码说明**：成功时返回 `0`；拉取、安装或安装后步骤出错时返回 `1`；工作目录发生意外变化导致无法执行 `git pull` 时返回 `2`。
 
 ## 维护命令
 
@@ -1448,13 +1446,13 @@ hermes update [--gateway] [--check] [--no-backup] [--backup] [--yes]
 |------|------|
 | `hermes version` | 显示版本信息。 |
 | `hermes update` | 拉取最新更改并重新安装依赖项。 |
-| `hermes postinstall` | 内部引导程序。在通过 `pip install hermes-agent` 安装完成后（或通过 pip 安装时使用 `hermes update` 后），该命令会运行一次，用于安装 pip 无法提供的非 Python 类型依赖项——如 Node.js 运行时、无头浏览器、ripgrep、ffmpeg 等——同时如果相关配置文件尚未设置，还会触发 `hermes setup` 命令。该命令可重复安全运行，具有幂等性。 |
-| `hermes uninstall [--full] [--gui] [--yes]` | 卸载 Hermes，可选择是否同时删除所有配置文件和数据。`--gui` 选项仅会删除桌面端的聊天 GUI，而保留代理程序本身；`--full` 选项则会同时删除配置文件和数据；`--yes` 选项则跳过所有确认提示。 |
+| `hermes postinstall` | 内部引导程序。在安装脚本完成 Hermes 的初始化之后（或执行 `hermes update` 之后），该命令会运行一次，用于安装 pip 无法提供的非 Python 类型依赖项，如 Node.js 运行时、无头浏览器、ripgrep、ffmpeg 等；如果相关配置文件尚未设置，还会触发 `hermes setup` 命令。该命令可重复安全运行，具有幂等性。 |
+| `hermes uninstall [--full] [--gui] [--yes]` | 卸载 Hermes，可选择是否同时删除所有配置文件和数据。`--gui` 仅删除桌面端的聊天 GUI，保留代理程序本身；`--full` 会同时删除配置文件和数据；`--yes` 会跳过所有确认提示。 |
 
 ## 参见
 
-- [Slash Commands 参考文档](./slash-commands.md)
-- [CLI 接口文档](../user-guide/cli.md)
+- [Slash 命令参考](./slash-commands.md)
+- [CLI 接口](../user-guide/cli.md)
 - [会话管理](../user-guide/sessions.md)
 - [技能系统](../user-guide/features/skills.md)
 - [皮肤与主题](../user-guide/features/skins.md)
