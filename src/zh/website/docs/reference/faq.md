@@ -435,7 +435,7 @@ cat ~/.hermes/logs/gateway.log | tail -50
 **解决方案：**
 ```bash
 # Install core messaging gateway dependencies
-pip install "hermes-agent[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
+cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"  # Telegram, Discord, Slack, and shared gateway deps
 
 # Check for port conflicts
 lsof -i :8080
