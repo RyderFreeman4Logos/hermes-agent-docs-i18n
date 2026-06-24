@@ -71,9 +71,31 @@ hermes chat --toolsets skills -q "What skills do you have?"
 hermes chat --toolsets skills -q "Show me the axolotl skill"
 ```
 
-## 逐步展示机制
+## 从各种来源学习技能（`/learn`）
 
-智能体采用高效的令牌加载模式：
+`/learn` 是一种高效的方法，无需手动编写 `SKILL.md` 文件，即可将您已掌握的知识或大量参考资料转化为可重复使用的技能。该功能具有高度灵活性：只要能描述清楚目标内容，智能体就能利用现有工具收集相关资料，进而按照[官方技能编写标准](#skillmd-format)生成技能文件（描述部分长度不超过60个字符，结构遵循标准顺序，使用Hermes工具框架，且不得创建自定义命令）。
+
+```bash
+# A local SDK or doc directory — read with read_file / search_files
+/learn the REST client in ~/projects/acme-sdk, focus on auth + pagination
+
+# An online doc page — fetched with web_extract
+/learn https://docs.example.com/api/quickstart
+
+# The workflow you just walked the agent through in this conversation
+/learn how I just deployed the staging server
+
+# Pasted notes / a described procedure
+/learn filing an expense: open the portal, New > Expense, attach the receipt, submit
+```
+
+由于实时客服会负责数据获取，因此 `/learn` 功能在 CLI、消息网关、TUI 以及控制面板中均可正常使用——无论终端后端是本地的、Docker 环境的还是远程的，因为无需单独的数据接入引擎。在**控制面板**的“技能”页面上，有一个“学习技能”按钮，点击后会弹出一个面板，其中包含目录输入框、URL 输入框以及一个开放式文本框；该功能会构建一个 `/learn` 请求，并在聊天界面中执行它。
+
+此过程不会留下任何模型工具的痕迹：`/learn` 会生成符合标准规范的提示语，然后将其作为普通对话轮次传递给客服。客服会使用 `skill_manage` 工具保存学习结果，因此如果启用了[内容审核机制](#gating-agent-skill-writes-skillswrite_approval)，该机制也会随之生效。
+
+## 逐步展示功能
+
+技能系统采用了高效节省令牌的加载方式：
 
 ```
 Level 0: skills_list()           → [{name, description, category}, ...]   (~3k tokens)
