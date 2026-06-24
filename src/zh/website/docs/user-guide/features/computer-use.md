@@ -99,21 +99,21 @@ Hermes 故意将其技能文件（`skills/computer-use/SKILL.md`）聚焦于 Her
 cua-driver skills install
 ```
 
-该命令会将该包链接到您的智能体框架的技能目录中。执行后，智能体即可访问以下内容：
+该命令会将该包链接到你的智能体框架的技能目录中。执行完成后，智能体即可访问以下内容：
 
 | 文件 | 主题 |
 |---|---|
-| `SKILL.md` | 跨平台核心机制（快照不变性、无前台契约、点击分发机制、AX树结构） |
-| `MACOS.md` | macOS专属内容：无前台契约、AXMenuBar导航、SkyLight点击分发、Apple Events JS桥接 |
-| `WINDOWS.md` | Windows专属内容：UIA树结构、UWP/`ApplicationFrameHost`托管机制、Session 0隔离机制、自动启动模式 |
-| `LINUX.md` | Linux专属内容：AT-SPI树结构、X11/Wayland显示协议、终端模拟器检测机制 |
-| `RECORDING.md` | 轨迹记录与视频录制相关规范 |
+| `SKILL.md` | 跨平台核心机制（快照不变性、无前台契约、点击分发、AX树结构） |
+| `MACOS.md` | macOS特定配置：无前台契约、AXMenuBar导航、SkyLight点击分发、Apple Events JS桥接 |
+| `WINDOWS.md` | Windows特定配置：UIA树结构、UWP/`ApplicationFrameHost`托管机制、Session 0隔离机制、自动启动模式 |
+| `LINUX.md` | Linux特定配置：AT-SPI树结构、X11/Wayland显示协议、终端模拟器检测 |
+| `RECORDING.md` | 轨迹记录与视频录制相关规则 |
 | `WEB_APPS.md` | 浏览器页面交互技巧 |
 | `TESTS.md` | 基于轨迹回放的测试流程 |
 
-这些文档属于**针对各平台的深度解析内容，并非Hermes技能文件的重复版本**——当智能体反馈“在Windows系统中，我的点击落在了错误的元素上”时，它就会查阅`WINDOWS.md`中关于UIA/UWP机制的说明，从而了解原因及应采取的替代方案。
+这些文档是**针对各平台的深度解析，并非Hermes技能文件的重复内容**——当智能体反馈“在Windows系统中，我的点击落在了错误的元素上”时，它就会查阅`WINDOWS.md`中关于UIA/UWP的说明，了解原因及对应的解决方案。
 
-`cua-driver skills status`命令可用于查看已安装的技能文件以及它们被链接到了哪些智能体框架中。目前自动检测功能已支持Claude Code、Codex、OpenCode、OpenClaw和Antigravity等平台；**Hermes的自动检测功能计划作为后续功能添加到`trycua/cua`项目中**——在此之前，只需运行一次`cua-driver skills install`命令，然后将您的智能体框架指向生成的`~/.cua-driver/skills/cua-driver`目录（或将其链接到您常用的技能目录中）即可。
+命令`cua-driver skills status`可显示已安装的技能以及它们被链接到了哪些智能体框架中。目前自动检测功能已支持Claude Code、Codex、OpenCode、OpenClaw和Antigravity；**Hermes的自动检测功能计划作为后续在`trycua/cua`项目中实现**——在此之前，只需运行一次`cua-driver skills install`，然后将你的智能体框架指向生成的`~/.cua-driver/skills/cua-driver`目录（或将其链接到常规的技能目录中即可）。
 
 ## 简单示例
 
@@ -121,64 +121,65 @@ cua-driver skills install
 
 智能体的执行计划（在macOS/Windows/Linux上的结构相同——模型会自动替换为对应平台的常用快捷方式及应用名称）如下：
 
-1. `computer_use(action="capture", mode="som", app="Mail")` ——截取邮件应用的屏幕截图，同时标注出所有侧边栏项、工具栏按钮以及每条消息的编号。
+1. `computer_use(action="capture", mode="som", app="Mail")` ——截取邮件应用的屏幕截图，同时标注出所有侧边栏项目、工具栏按钮以及每条消息的序号。
 2. `computer_use(action="click", element=14)` ——点击搜索框。
 3. `computer_use(action="type", text="from:stripe")` ——输入搜索条件。
 4. `computer_use(action="key", keys="return", capture_after=True)` ——提交搜索并再次截取屏幕截图。
 5. 点击最顶端的搜索结果，阅读邮件内容并生成总结。
 
-在整个过程中，光标会保持在用户原先的位置，且邮件应用始终不会被置于前台显示。
+在整个过程中，光标会始终停留在用户原先的位置，且邮件应用不会被置为前台显示。
 
 ## 提供商兼容性
 
 | 提供商 | 是否支持视觉识别？ | 是否可用？ | 备注 |
 |---|---|---|---|
-| Anthropic（Claude Sonnet/Opus 3+） | ✅ | ✅ | 整体性能最佳；支持SOM模式与原始坐标输入。 |
-| OpenRouter（任意视觉识别模型） | ✅ | ✅ | 支持多部分工具消息格式。 |
+| Anthropic（Claude Sonnet/Opus 3+） | ✅ | ✅ | 整体表现最佳；支持SOM与原始坐标输入。 |
+| OpenRouter（任意视觉识别模型） | ✅ | ✅ | 支持多部分工具消息。 |
 | OpenAI（GPT-4+、GPT-5） | ✅ | ✅ | 功能与上述类似。 |
 | Google（Gemini 2+） | ✅ | ✅ | 同时支持工具调用与视觉识别功能。 |
-| Local vLLM / LM Studio / Ollama（视觉识别模型） | ✅ | ✅ | 需要模型支持多部分工具内容格式。 |
-| 纯文本模型 | ❌ | ✅（性能受限） | 若需仅操作无障碍访问树结构，可使用`mode="ax"`模式。 |
+| Local vLLM / LM Studio / Ollama（视觉识别模型） | ✅ | ✅ | 需要模型支持多部分工具内容。 |
+| 纯文本模型 | ❌ | ✅（功能受限） | 若需仅操作无障碍访问树结构，可使用`mode="ax"`模式。 |
 
-屏幕截图会以OpenAI风格的`image_url`格式嵌入在工具结果中。对于Anthropic平台，适配器会将这些截图转换为原生`tool_result`图像块。图像的MIME类型由cua-driver的`mimeType`字段指定（如`image/png`或`image/jpeg`），无需通过客户端进行特殊字节检测。
+屏幕截图会以OpenAI风格的`image_url`格式嵌入在工具结果中。对于Anthropic平台，适配器会将这些截图转换为原生的`tool_result`图像块。图像的MIME类型由cua-driver的`mimeType`字段明确指定（如`image/png`或`image/jpeg`），无需通过客户端进行魔法字节检测。
 
-## 安全机制
+## 安全性
 
-Hermes采用了多层防护措施：
+Hermes采用了多层防护机制：
 
-- 破坏性操作（点击、输入、拖动、滚动、按键操作、聚焦应用等）都需要经过授权——可通过CLI对话框交互式授权，也可通过消息平台的授权按钮完成。
-- 在工具层面对某些危险操作组合进行了严格禁止：清空回收站、强制删除文件、锁屏、登出、强制登出等。
-- 也禁止了某些危险的输入模式，如`curl | bash`、`sudo rm -rf /`、分叉炸弹等命令。
+- 破坏性操作（点击、输入、拖动、滚动、按键、聚焦应用）都需要获得授权——可通过CLI对话框交互式授权，也可通过消息平台的授权按钮完成。
+- 在工具层面直接禁止某些关键组合操作：清空回收站、强制删除文件、锁定屏幕、登出账户、强制登出等。
+- 禁止使用某些危险的输入模式：如`curl | bash`、`sudo rm -rf /`、分叉炸弹等。
 - 智能体的系统提示会明确告知其：不得出现点击授权对话框，不得输入密码，也不得执行嵌入在屏幕截图中的指令。
 
-如果您希望每项操作都经过确认，可在`~/.hermes/config.yaml`文件中设置`approvals.mode: manual`。
+如果你希望每项操作都经过确认，可在`~/.hermes/config.yaml`文件中设置`approvals.mode: manual`。
 
 ## 令牌效率优化
 
-屏幕截图会消耗大量令牌。Hermes为此采用了四层优化策略：
+屏幕截图会消耗大量令牌。Hermes为此设计了四层优化策略：
 
-- **截图缓存机制**——Anthropic适配器仅保留最近3张截图在上下文内存中；较旧的截图会被替换为`[screenshot removed to save context]`的占位符。
-- **客户端压缩优化**——上下文压缩器能够识别多模态工具结果，自动移除旧截图中的图像部分。
-- **基于图像的令牌估算**——每张图片被计为约1500个令牌（按Anthropic的统一费率计算），而非其Base64编码后的字符长度。
-- **服务器端上下文清理（仅Anthropic支持）**——开启该功能后，适配器可通过`context_management`启用`clear_tool_uses_20250919`选项，从而在服务器端清除旧的工具结果。
+- **截图缓存清理**——Anthropic适配器仅保留最近3张截图在上下文中；较旧的截图会被替换为`[screenshot removed to save context]`的占位符。
+- **客户端压缩优化**——上下文压缩器能够识别多模态工具结果，并自动移除旧截图中的图像部分。
+- **基于图像大小的令牌估算**——每张图片被计为约1500个令牌（按Anthropic的统一费率计算），而非其Base64编码后的字符长度。
+- **服务器端上下文清理（仅限Anthropic）**——启用该功能后，适配器可通过`context_management`设置`clear_tool_uses_20250919`，让Anthropic的API在服务器端清除旧的工具结果。
 
-在1568×900分辨率的屏幕上执行20次操作的会话，通常仅需要约3万令牌用于存储截图相关上下文，而非之前的60万令牌。
+在1568×900分辨率的屏幕上执行20次操作的会话，通常仅需要约3万令牌用于存储截图相关上下文，而非原本预估的60万令牌。
 
 ## 局限性
 
-- **性能方面**：后台模式的速度慢于前台模式——在macOS系统中，通过无障碍访问通道发送事件的响应时间为5–20毫秒；在Windows的UIA框架下为3–10毫秒；在Linux的AT-SPI框架下为5–15毫秒，而直接通过HID接口发送事件的响应速度更快。对于普通点击操作而言影响不大，但若尝试录制高速操作流程，则会明显感受到性能瓶颈。
-- **不支持键盘输入密码**：`type`指令对命令行格式的输入内容有严格限制；如需输入密码，请使用系统自带的自动填充功能（macOS的Keychain、Windows的Credential Manager、GNOME Keyring或KWallet）。
-- **部分应用无法提供无障碍访问树结构**：Windows上的现代UWP应用、Linux上版本低于28的Electron应用，以及一些具有自定义绘图功能的macOS应用（如Logic、Final Cut Pro、某些游戏）的AX树结构可能较为简略甚至为空。此时可尝试使用像素坐标进行操作，或者直接跳过该任务。
+- **性能问题**：后台模式的速度慢于前台模式——在macOS上，通过无障碍访问通道发送事件需要约5–20毫秒；在Windows的UIA框架下约为3–10毫秒；在Linux的AT-SPI框架下则为5–15毫秒，远高于直接通过HID接口发送事件的速率。这种延迟对普通点击操作影响不大，但若尝试录制快速操作流程，则会较为明显。
+- **不支持键盘输入密码**：`type`命令对命令行格式的输入内容有严格限制；如需输入密码，应使用系统的自动填充功能（macOS的Keychain、Windows的Credential Manager、GNOME的Keyring或KWallet）。
+- **部分应用未提供无障碍访问树结构**：Windows上的现代UWP应用、Linux上版本低于28的Electron应用，以及一些具有自定义绘图功能的macOS应用（如Logic、Final Cut、某些游戏），其AX树结构可能较为简略甚至为空。此时可尝试使用像素坐标进行操作，或直接跳过该任务。
+- **Windows：普通智能体无法控制高级权限窗口**：Windows的UIPI（用户界面权限隔离）机制设置了完整性级别限制：中等完整性级别的进程（即默认的Hermes智能体）无法获取高完整性级别（管理员权限）进程所拥有的窗口的UIA树结构，也无法向该类窗口发送鼠标输入。表现为`capture(mode='som')`会返回0个元素，而`click()`虽然显示操作成功但实际上并未执行任何操作，尽管截图仍然可以正常生成（因为GDI截图操作不在完整性检查范围内）。键盘事件可部分绕过UIPI限制，因此仍可使用Tab/Enter键在高级权限对话框中导航。这是操作系统层面的限制，并非cua-driver的缺陷——所有Windows自动化框架都存在此问题。若需控制高级权限窗口，需以高完整性级别运行Hermes智能体（从具有管理员权限的终端启动），否则只能操作普通权限窗口。
 - **平台特定的部署注意事项**：
-  - **macOS**系统使用私有的SkyLight SPI接口。苹果公司可能在任何系统更新中更改这些接口规范。如果安装的cua-driver版本低于测试用版本，Hermes会发出警告。
-  - **Windows**系统的SSH会话在**Session 0**模式下运行，该模式没有交互式桌面环境。因此需要通过RDP或控制台会话来启动Hermes，或者设置cua-driver的自动启动计划任务——[windows-ssh](https://cua.ai/docs/how-to-guides/driver/windows-ssh)文档提供了相关配置方法。
-  - **Linux**系统需要可访问的显示服务器。无桌面环境的服务器在运行`computer_use`命令进行截图或发送事件之前，需要先启动Xvfb服务（如`Xvfb :99 -screen 0 1920x1080x24`）。纯Wayland会话则需要通过XWayland桥接来实现屏幕截图功能（cua-driver的Wayland注入机制可独立处理输入操作）。
+  - **macOS**使用专有的SkyLight SPI接口。苹果公司可在任何系统更新中更改这些接口，因此如果安装的cua-driver版本低于测试用版本，Hermes会发出警告。
+  - **Windows**上的SSH会话在**Session 0**模式下运行，该模式没有交互式桌面。需在RDP/控制台会话内部启动Hermes，或设置cua-driver的自动启动计划任务——[windows-ssh](https://cua.ai/docs/how-to-guides/driver/windows-ssh)文档提供了相关配置方法。
+  - **Linux**系统需要可访问的显示服务器。无桌面环境的服务器在运行`computer_use`命令进行截图或发送事件之前，需先启动Xvfb服务（如`Xvfb :99 -screen 0 1920x1080x24`）。纯Wayland会话则需要通过XWayland桥接来实现屏幕截图功能（cua-driver的Wayland输入注入机制可独立处理输入操作）。
 
-如果您需要实现跨平台的GUI自动化，但又不想承担桌面环境的开销，同时也不想处理TCC、Session 0或X11相关的配置工作，那么使用`browser`工具集——它基于真正的无头Chromium浏览器，非常适合仅处理网页相关任务的场景。
+对于无需桌面环境开销、且不涉及TCC/Session 0/X11配置的跨平台GUI自动化任务，`browser`工具集基于真正的无头Chromium浏览器，是处理纯网页任务的理想选择。
 
 ## 配置选项
 
-如需更改驱动程序的二进制路径（适用于测试、CI环境或本地构建），可进行相应配置：
+如需修改驱动程序的二进制路径（用于测试、CI环境或本地构建），可进行相应配置：
 
 ```
 HERMES_CUA_DRIVER_CMD=/path/to/your/cua-driver
