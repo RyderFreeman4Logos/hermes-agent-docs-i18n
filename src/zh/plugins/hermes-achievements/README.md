@@ -1,8 +1,8 @@
 # Hermes 成就系统
 
-> **随 Hermes Agent 一同提供。** 该功能最初由 [@PCinkusz](https://github.com/PCinkusz) 开发并发布在 https://github.com/PCinkusz/hermes-achievements，后被整合至 `plugins/hermes-achievements/` 目录中，因此仪表板可直接使用该功能，同时也能与 Hermes 的功能更新保持同步。新的徽章和界面迭代仍会在上游仓库中进行开发。
+> **随 Hermes Agent 一同提供。** 该功能最初由 [@PCinkusz](https://github.com/PCinkusz) 在 https://github.com/PCinkusz/hermes-achievements 中开发，后被整合至 `plugins/hermes-achievements/` 目录中，因此仪表板可直接自带此功能，并能同步更新以适配 Hermes 的新功能变化。上游仓库仍用于新徽章的开发和界面迭代。
 
-当通过 `pip install hermes-agent` 安装 Hermes 或从源代码克隆项目后，首次启动 `hermes dashboard` 时，此插件会自动注册为仪表板的一个标签页，无需额外安装步骤。更多详情请参阅主文档中的[内置插件 → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md)部分。
+当通过安装脚本安装或从源代码克隆 Hermes 后，首次启动 `hermes dashboard` 时，该插件会自动注册为仪表板的一个标签页，无需额外安装步骤。更多详情请参阅主文档中的[内置插件 → hermes-achievements](../../website/docs/user-guide/features/built-in-plugins.md)。
 
 Hermes 仪表板的成就系统：基于真实的本地 Hermes 会话历史记录，生成可收集的、分等级的徽章。
 
@@ -10,26 +10,26 @@ Hermes 仪表板的成就系统：基于真实的本地 Hermes 会话历史记�
 
 截图中使用的是临时演示数据，用于展示完整的视觉效果。该插件默认会读取真实的本地 Hermes 会话历史记录。
 
-> **更新通知（2026-04-29）：** 如果您是在今天之前安装的此插件，请升级到最新版本。成就扫描路径已经过重构，可显著加快加载速度（采用快照缓存与增量检查点扫描技术）。
+> **更新通知（2026-04-29）：** 如果您是在今天之前安装的此插件，请升级到最新版本。成就扫描路径已经过重构，可显著加快加载速度（采用快照缓存和增量检查点扫描技术）。
 
-> **分享卡片功能（2026-05-04，随 hermes-agent v0.4.0 版本一同推出）：** 已解锁的成就卡片现在配有“分享”按钮，可生成尺寸为 1200×630 像素的 PNG 分享卡片（基于客户端 Canvas 技术，无需后端支持，也不涉及网络传输），并提供下载和复制到剪贴板的功能。该卡片尺寸适合 X/Twitter、Discord、LinkedIn 和 Bluesky 的链接预览框。
+> **分享卡片功能（2026-05-04，随 hermes-agent v0.4.0 同步发布）：** 已解锁的成就卡片现在配有“分享”按钮，可生成尺寸为 1200×630 像素的 PNG 分享卡片（基于客户端 Canvas 技术，无需后端支持，也不涉及网络传输），并提供下载和复制到剪贴板的功能。该卡片尺寸适用于 X/Twitter、Discord、LinkedIn 和 Bluesky 的链接预览框。
 
 ## 功能说明
 
 Hermes 成就系统会扫描本地 Hermes 会话，并根据智能体的实际行为来解锁相应徽章，这些行为包括：
 
 - 自主工具链使用
-- 调试与问题恢复模式
-- vibe-coding 文件编辑操作
+- 调试与恢复操作模式
+- vibe-coding 文件编辑能力
 - Hermes 原生技能、内存管理、定时任务及插件使用情况
 - 网络研究与浏览器自动化操作
 - 模型/提供者工作流程
-- 周末或夜间使用等生活习惯模式
+- 周末或夜间使用等习惯模式
 
-成就系统有三种可见状态：
+成就系统共有三种可见状态：
 
 - **已解锁** — 已获得至少一个等级的徽章
-- **已发现** — 已知该成就，可查看进度，但尚未获得
+- **已发现** — 已知存在该成就，可查看进度，但尚未获得
 - **隐藏中** — 在 Hermes 检测到相关信号之前保持隐藏状态
 
 大多数成就都是通过逐步完成特定行为来提升等级的：
