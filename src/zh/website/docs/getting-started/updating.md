@@ -8,49 +8,32 @@ description: "How to update Hermes Agent to the latest version or uninstall it"
 
 ## 更新
 
-### 通过 Git 安装的方式
-
-只需一条命令即可升级到最新版本：
+仅需一条命令即可升级到最新版本：
 
 ```bash
 hermes update
 ```
 
-该操作会从 `main` 分支获取最新代码，更新依赖项，并提示您配置自上次更新后新增的任何选项。
+该命令会从 `main` 分支拉取最新代码，更新依赖项，并提示您配置自上次更新后新增的选项。
 
-### 使用 pip 安装
-
-PyPI 发布版本是按**标记版本**（主版本和次版本）来管理的，而非 `main` 分支中的每一个提交。如需检查更新并升级，请使用：
-
-```bash
-hermes update --check    # see if a newer release is on PyPI
-hermes update            # runs pip install --upgrade hermes-agent
-```
-
-或手动操作：
-
-```bash
-pip install --upgrade hermes-agent    # or: uv pip install --upgrade hermes-agent
-```
-
-:::提示
-`hermes update` 会自动检测新的配置选项，并提示您添加它们。如果您忽略了该提示，可以手动运行 `hermes config check` 查看缺失的选项，然后通过 `hermes config migrate` 以交互方式将其添加。
+:::tip
+`hermes update` 会自动检测新的配置选项并提示您添加它们。如果您忽略了相关提示，可以手动运行 `hermes config check` 查看缺失的选项，然后再使用 `hermes config migrate` 以交互方式将其添加。
 :::
 
-### 更新过程（基于 Git 安装）
+### 更新过程中会发生什么
 
-当您运行 `hermes update` 时，会依次执行以下步骤：
+当您运行 `hermes update` 时，将依次执行以下步骤：
 
-1. **配对数据快照**——会保存一个轻量级的更新前状态快照（涵盖 `~/.hermes/pairing/`、飞书评论规则以及运行时会被修改的其他状态文件）。您可以通过 [快照与回滚](../user-guide/checkpoints-and-rollback.md) 中描述的快照恢复流程来恢复该状态，或者直接提取 Hermes 存放在 `~/.hermes/` 目录旁边的最新快速快照压缩包。
+1. **配对数据快照**——会保存一个轻量级的更新前状态快照（涵盖 `~/.hermes/pairing/`、飞书评论规则以及运行时会被修改的其他状态文件）。您可以通过 [快照与回滚](../user-guide/checkpoints-and-rollback.md) 中介绍的快照恢复流程来恢复该状态，或者直接提取 Hermes 存放在 `~/.hermes/` 目录旁的最新快速快照压缩包。
 2. **Git 拉取**——从 `main` 分支拉取最新代码并更新子模块。
-3. **拉取后的语法验证 + 自动回滚**——拉取完成后，Hermes 会编译每次启动时 `hermes` 命令所调用的八个关键文件。如果其中有任何文件无法解析（例如存在孤立的合并冲突标记、文件被意外截断等），Hermes 会运行 `git reset --hard <pre-pull-sha>` 将安装状态回滚，确保您的 shell 能够正常启动。待上游代码修复完成后，再重新运行 `hermes update` 即可。
-4. **依赖项安装**——运行 `uv pip install -e ".[all]"` 以获取新的或已更改的依赖项。
+3. **拉取后的语法验证 + 自动回滚**——拉取完成后，Hermes 会编译每次启动时 `hermes` 命令所调用的八个关键文件。如果其中有任何文件无法解析（例如存在孤立的合并冲突标记、文件被意外截断等），Hermes 会执行 `git reset --hard <pre-pull-sha>` 将安装状态回滚，以确保您的 shell 能够正常启动。待上游代码修复完成后，再重新运行 `hermes update` 即可。
+4. **依赖项安装**——运行 `uv pip install -e ".[all]"` 以安装新添加或已变更的依赖项。
 5. **配置迁移**——检测自您当前版本之后新增的配置选项，并提示您进行设置。
-6. **网关自动重启**——更新完成后，正在运行的网关会得到刷新，从而使新代码立即生效。由系统管理的网关（Linux 系统中的 systemd，macOS 系统中的 launchd）会通过相应的服务管理器进行重启；而手动创建的网关则会在 Hermes 能够将当前运行进程 ID 对应到相应配置文件后自动重新启动。
+6. **网关自动重启**——更新完成后，正在运行的网关会得到刷新，从而使新代码立即生效。由系统管理的网关（Linux 系统中的 systemd，macOS 系统中的 launchd）会通过相应的服务管理器重启；而手动创建的网关则会在 Hermes 能够将当前运行进程 ID 对应到相应配置文件后自动重新启动。
 
 ### 基于非默认分支进行更新：`--branch`
 
-默认情况下，`hermes update` 会跟踪 `origin/main` 分支。若需基于其他分支进行更新，可传递 `--branch <名称>` 参数——这对于测试渠道、功能分支或候选版本测试非常有用。
+默认情况下，`hermes update` 会跟踪 `origin/main` 分支。如果您需要基于其他分支进行更新，可以传递 `--branch <name>` 参数——这对于测试渠道、功能分支或候选版本测试非常有用：
 
 ```bash
 hermes update --branch release-candidate
@@ -72,18 +55,18 @@ updates:
   # non_interactive_local_changes: discard  # throw local source edits away
 ```
 
-- `stash`（默认值）——自动将您的修改暂存，然后拉取最新代码，最后再自动恢复这些修改。这样不会丢失任何内容；如果恢复过程中出现冲突，这些冲突会被保存在 git 暂存区中，以便您手动处理。
-- `discard`——在拉取代码后自动暂存并丢弃暂存内容，确保更新后的代码树始终处于干净状态。仅建议在那些无需保留 Hermes 源代码本地修改的机器上使用此选项。它采用暂存后丢弃的方式（而非 `git reset --hard` + `git clean -fd`），因此不会触碰 `node_modules`、`venv` 以及构建输出等被忽略的目录。
+- `stash`（默认值）——自动将您的更改暂存，然后拉取最新代码，最后再自动恢复这些更改。这样不会丢失任何内容；如果恢复过程中出现冲突，这些冲突会被保存在 Git 暂存区中，以便您手动处理。
+- `discard`——在拉取代码后自动暂存更改，随后立即丢弃该暂存内容，确保更新后的代码库始终处于干净状态。仅建议在那些无需保留 Hermes 源代码本地修改的机器上使用此选项。它采用暂存后丢弃的方式（而非 `git reset --hard` + `git clean -fd`），因此不会触碰 `node_modules`、`venv` 以及构建输出等被忽略的目录。
 
-在桌面应用中，该选项位于 **设置 → 高级设置 → 应用内更新本地修改**。
+在桌面应用程序中，该选项位于 **设置 → 高级设置 → 应用内更新本地更改**。
 
 ### 仅预览功能：`hermes update --check`
 
-想在拉取代码之前先确认是否有可用更新？可以运行 `hermes update --check` —— 对于通过 git 安装的版本，它会获取最新代码并与 `origin/main` 进行比对；而对于通过 pip 安装的版本，则会查询 PyPI 以获取最新版本。此操作不会修改任何文件，也不会重启网关。非常适合用于那些需要根据“是否有更新”来决定是否执行的脚本和定时任务中。
+想在拉取代码之前先确认是否有可用更新？可以运行 `hermes update --check` ——该命令会获取最新代码并与 `origin/main` 进行比对。此操作不会修改任何文件，也不会重启网关。非常适合用于那些需要根据“是否有更新”来决定是否执行的脚本和定时任务中。
 
 ### 完整的更新前备份：`--backup`
 
-对于那些价值较高的配置（如生产环境网关、团队共享安装），您可以选择在拉取代码之前对 `HERMES_HOME` 目录进行完整备份，内容包括配置文件、认证信息、会话数据、技能信息以及配对状态等。
+对于那些价值较高的配置（如生产环境网关、团队共享安装环境），您可以选择在拉取代码之前对 `HERMES_HOME` 目录进行完整备份，内容包括配置文件、认证信息、会话数据、技能信息以及配对关系等。
 
 ```bash
 hermes update --backup
@@ -250,24 +233,11 @@ nix profile rollback
 
 如需了解更多详细信息，请参阅 [Nix 设置](./nix-setup.md)。
 
----
-
-## 卸载
-
-### Git 安装方式
-
 ```bash
 hermes uninstall
 ```
 
 卸载程序会为您提供一个选项，允许您保留配置文件（位于 `~/.hermes/` 目录中），以便日后重新安装时使用。
-
-### 通过 pip 安装
-
-```bash
-pip uninstall hermes-agent
-rm -rf ~/.hermes            # Optional — keep if you plan to reinstall
-```
 
 ### 手动卸载
 
