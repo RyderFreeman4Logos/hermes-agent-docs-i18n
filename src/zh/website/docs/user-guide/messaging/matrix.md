@@ -336,7 +336,7 @@ Hermes 支持 Matrix 端到端加密功能，因此您可以在加密频道中�
 pip install 'mautrix[encryption]'
 
 # Or install with hermes extras
-pip install 'hermes-agent[matrix]'
+cd ~/.hermes/hermes-agent && uv pip install -e ".[matrix]"
 ```
 
 您的系统上还需安装 `libolm`：
@@ -594,7 +594,7 @@ pip install 'mautrix[encryption]'
 或者使用 Hermes 的附加功能：
 
 ```bash
-pip install 'hermes-agent[matrix]'
+cd ~/.hermes/hermes-agent && uv pip install -e ".[matrix]"
 ```
 
 ### 加密错误 / “无法解密消息”
@@ -755,7 +755,7 @@ services:
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y libolm-dev && rm -rf /var/lib/apt/lists/*
-RUN pip install 'hermes-agent[matrix]'
+RUN cd ~/.hermes/hermes-agent && uv pip install -e ".[matrix]"
 
 CMD ["hermes", "gateway"]
 ```
