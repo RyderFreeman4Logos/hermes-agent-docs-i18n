@@ -6,29 +6,29 @@ description: "Use Hermes Agent with Amazon Bedrock — native Converse API, IAM 
 
 # AWS Bedrock
 
-Hermes Agent 支持通过 **Converse API** 将 Amazon Bedrock 作为原生提供商使用——而非兼容 OpenAI 的接口。这样一来，您便能完整利用 Bedrock 生态系统：IAM 认证、Guardrails 功能、跨区域推理配置，以及所有基础模型。
+Hermes Agent 支持通过 **Converse API** 将 Amazon Bedrock 作为原生提供方来使用——而非兼容 OpenAI 的接口。这样一来，您便能全面利用 Bedrock 生态系统：IAM 认证、Guardrails 功能、跨区域推理配置，以及所有基础模型。
 
 ## 前提条件
 
-- **AWS 凭据** — 任何 [boto3 凭据链](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) 所支持的来源：
+- **AWS 凭据**——[boto3 凭据链](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) 所支持的任何来源：
   - IAM 实例角色（EC2、ECS、Lambda——无需额外配置）
   - `AWS_ACCESS_KEY_ID` 和 `AWS_SECRET_ACCESS_KEY` 环境变量
   - 用于 SSO 或命名角色的 `AWS_PROFILE`
   - 用于本地开发的 `aws configure`
-- **boto3** — 通过 `pip install hermes-agent[bedrock]` 安装
-- **IAM 权限** — 最低需具备以下权限：
-  - `bedrock:InvokeModel` 和 `bedrock:InvokeModelWithResponseStream`（用于模型推理）
-  - `bedrock:ListFoundationModels` 和 `bedrock:ListInferenceProfiles`（用于查找模型）
+- **boto3**——通过以下命令安装：`cd ~/.hermes/hermes-agent && uv pip install -e ".[bedrock]"`
+- **IAM 权限**——至少需要：
+  - `bedrock:InvokeModel` 和 `bedrock:InvokeModelWithResponseStream`（用于推理）
+  - `bedrock:ListFoundationModels` 和 `bedrock:ListInferenceProfiles`（用于模型查询）
 
 :::提示 EC2 / ECS / Lambda
-在 AWS 计算环境中，只需为实例附加一个具有 `AmazonBedrockFullAccess` 权限的 IAM 角色即可。无需 API 密钥，也无需 `.env` 配置——Hermes 会自动检测该实例角色。
+在 AWS 计算环境中，只需为实例附加具有 `AmazonBedrockFullAccess` 权限的 IAM 角色即可。无需 API 密钥，也无需 `.env` 配置——Hermes 会自动检测该实例角色。
 :::
 
 ## 快速入门
 
 ```bash
 # Install with Bedrock support
-pip install hermes-agent[bedrock]
+cd ~/.hermes/hermes-agent && uv pip install -e ".[bedrock]"
 
 # Select Bedrock as your provider
 hermes model
