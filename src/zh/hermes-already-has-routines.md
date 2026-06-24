@@ -127,7 +127,7 @@ Hermes 则没有每日使用限额。如果您愿意，一天内甚至可以运�
 Hermes Agent 是开源且免费的。其内置的自动化基础设施——包括定时调度器、Webhook 平台、技能系统以及多平台任务分发功能——均已准备就绪。
 
 ```bash
-pip install hermes-agent
+curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 hermes setup
 ```
 
