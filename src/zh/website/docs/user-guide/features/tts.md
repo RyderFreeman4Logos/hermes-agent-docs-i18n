@@ -438,29 +438,29 @@ stt:
 
 ### 提供商详情
 
-**本地模式（faster-whisper）** — 通过 [faster-whisper](https://github.com/SYSTRAN/faster-whisper) 在本地运行 Whisper 模型。默认使用 CPU，如有 GPU 则会优先使用。各模型参数如下：
+**本地模式（faster-whisper）** — 通过 [faster-whisper](https://github.com/SYSTRAN/faster-whisper) 在本地运行 Whisper 模型。默认使用 CPU，若有 GPU 则会优先使用。各模型参数如下：
 
 | 模型 | 大小 | 速度 | 质量 |
-|------|------|------|-------|
+|------|------|------|---------|
 | `tiny` | 约 75 MB | 最快 | 基础水平 |
-| `base` | 约 150 MB | 快 | 良好（默认） |
+| `base` | 约 150 MB | 快 | 较好（默认） |
 | `small` | 约 500 MB | 中等 | 更佳 |
-| `medium` | 约 1.5 GB | 较慢 | 优秀 |
-| `large-v3` | 约 3 GB | 最慢 | 最佳 |
+| `medium` | 约 1.5 GB | 较慢 | 极佳 |
+| `large-v3` | 约 3 GB | 最慢 | 最优 |
 
-**Groq API** — 需要提供 `GROQ_API_KEY`。若希望使用免费的托管型语音转文字服务，此选项可作为良好的云端备用方案。
+**Groq API** — 需要提供 `GROQ_API_KEY`。若希望使用免费的托管语音转文字服务，这是不错的云端备选方案。
 
-**OpenAI API** — 先尝试使用 `VOICE_TOOLS_OPENAI_KEY`，若无效则 fallback 到 `OPENAI_API_KEY`。支持 `whisper-1`、`gpt-4o-mini-transcribe` 和 `gpt-4o-transcribe` 模型。
+**OpenAI API** — 先尝试使用 `VOICE_TOOLS_OPENAI_KEY`，若无效则回退至 `OPENAI_API_KEY`。支持 `whisper-1`、`gpt-4o-mini-transcribe` 和 `gpt-4o-transcribe` 模型。
 
-**Mistral API（Voxtral Transcribe）** — 需要提供 `MISTRAL_API_KEY`。使用 Mistral 的 [Voxtral Transcribe](https://docs.mistral.ai/capabilities/audio/speech_to_text/) 模型，支持 13 种语言、说话人分离以及词级时间戳功能。可通过 `pip install hermes-agent[mistral]` 进行安装。
+**Mistral API（Voxtral Transcribe）** — 需要提供 `MISTRAL_API_KEY`。使用 Mistral 的 [Voxtral Transcribe](https://docs.mistral.ai/capabilities/audio/speech_to_text/) 模型，支持 13 种语言、说话人分离以及单词级时间戳功能。可通过以下命令安装：`cd ~/.hermes/hermes-agent && uv pip install -e ".[mistral]"`。
 
-**xAI Grok STT** — 需要提供 `XAI_API_KEY`。以 multipart/form-data 格式向 `https://api.x.ai/v1/stt` 发送请求。如果您已经在使用 xAI 进行聊天或文本转语音功能，并希望用一个 API 密钥统一管理所有服务，此选项是个不错的选择。系统会按默认顺序在 Groq 之后尝试该服务——如需强制使用，可显式设置 `stt.provider: xai`。
+**xAI Grok STT** — 需要提供 `XAI_API_KEY`。以 multipart/form-data 格式将数据发送至 `https://api.x.ai/v1/stt`。如果您已经在使用 xAI 进行聊天或文本转语音功能，并希望用一个 API 密钥统一管理所有服务，这是一个不错的选择。系统会按默认顺序在 Groq 之后尝试该方案——如需强制使用，可显式设置 `stt.provider: xai`。
 
-**自定义本地 CLI 备用方案** — 若希望 Hermes 直接调用本地的转录命令，可设置 `HERMES_LOCAL_STT_COMMAND`。命令模板支持 `{input_path}`、 `{output_dir}`、 `{language}` 和 `{model}` 等占位符。您编写的命令必须将转录结果以 `.txt` 格式写入 `{output_dir}` 指定的目录中。
+**自定义本地 CLI 备选方案** — 若希望 Hermes 直接调用本地的转录命令，可设置 `HERMES_LOCAL_STT_COMMAND`。命令模板支持 `{input_path}`、 `{output_dir}`、 `{language}` 和 `{model}` 等占位符。您编写的命令必须将转录结果以 `.txt` 格式写入 `{output_dir}` 指定的目录中。
 
 #### 示例：Doubao / Volcengine ASR
 
-如果您使用 [`doubao-speech`](https://pypi.org/project/doubao-speech/) 来实现 Doubao 语音合成功能（参见上文 [示例：Doubao 中文语音合成](#example-doubao-chinese-seed-tts-20)），该软件同样可通过本地命令接口实现语音转文字功能。
+如果您使用 [`doubao-speech`](https://pypi.org/project/doubao-speech/) 来实现 Doubao 文本转语音功能（参见上文 [示例：Doubao 中文文本转语音](#example-doubao-chinese-seed-tts-20)），则同一个包也可通过本地命令接口实现语音转文字功能。
 
 ```bash
 pip install doubao-speech
