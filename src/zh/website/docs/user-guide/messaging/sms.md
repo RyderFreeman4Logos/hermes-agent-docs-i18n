@@ -7,10 +7,10 @@ description: "Set up Hermes Agent as an SMS chatbot via Twilio"
 
 # SMS 设置（Twilio）
 
-Hermes 通过 [Twilio](https://www.twilio.com/) API 实现与短信服务的连接。用户向您的 Twilio 电话号码发送短信，即可获得 AI 回复——这种对话体验与 Telegram 或 Discord 非常相似，只不过是通过标准短信实现的。
+Hermes 通过 [Twilio](https://www.twilio.com/) API 实现与短信服务的连接。用户向您的 Twilio 电话号码发送短信，即可获得 AI 回复——体验与 Telegram 或 Discord 类似，但通过标准短信实现。
 
 :::info 共享凭证
-短信网关会与可选的 [电话功能插件](/reference/skills-catalog) 共享凭证。如果您已经为语音通话或一次性短信设置了 Twilio，那么该网关同样可以使用相同的 `TWILIO_ACCOUNT_SID`、`TWILIO_AUTH_TOKEN` 和 `TWILIO_PHONE_NUMBER`。
+短信网关会与可选的 [电话功能插件](/reference/skills-catalog) 共享凭证。如果您已为语音通话或一次性短信配置过 Twilio，该网关将使用相同的 `TWILIO_ACCOUNT_SID`、`TWILIO_AUTH_TOKEN` 和 `TWILIO_PHONE_NUMBER`。
 :::
 
 ---
@@ -19,8 +19,8 @@ Hermes 通过 [Twilio](https://www.twilio.com/) API 实现与短信服务的连�
 
 - **Twilio 账户** — [在 twilio.com 注册](https://www.twilio.com/try-twilio)（提供免费试用）
 - 具备短信发送功能的 **Twilio 电话号码**
-- **可公开访问的服务器** — 当有短信到达时，Twilio 会将 webhook 发送到您的服务器
-- **aiohttp 库** — `pip install 'hermes-agent[sms]'`
+- **可公开访问的服务器** — 短信到达时，Twilio 会将 webhook 发送到您的服务器
+- **aiohttp** — `cd ~/.hermes/hermes-agent && uv pip install -e ".[sms]"`
 
 ---
 
@@ -28,13 +28,13 @@ Hermes 通过 [Twilio](https://www.twilio.com/) API 实现与短信服务的连�
 
 1. 访问 [Twilio 控制台](https://console.twilio.com/)
 2. 从控制面板复制您的 **账户 SID** 和 **认证令牌**
-3. 转到 **电话号码 → 管理 → 活动号码** — 记下您的电话号码的 E.164 格式（例如：`+15551234567`）
+3. 转到 **电话号码 → 管理 → 活动号码** — 记下您的 E.164 格式电话号码（例如：`+15551234567`）
 
 ---
 
 ## 第 2 步：配置 Hermes
 
-### 交互式设置（推荐方式）
+### 交互式设置（推荐）
 
 ```bash
 hermes gateway setup
