@@ -34,7 +34,7 @@ description: "Connect Hermes Agent to personal WeChat accounts via the iLink Bot
 ```bash
 pip install aiohttp cryptography
 # Optional: for terminal QR code display
-pip install hermes-agent[messaging]
+cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"
 ```
 
 ## 设置
@@ -173,14 +173,14 @@ WEIXIN_GROUP_ALLOWED_USERS=group_id_1,group_id_2
 ```
 
 :::note
-对于微信，默认的群组策略为`disabled`（与默认为`open`的企微不同）。这是有意为之——个人微信账号可能隶属于多个群组，而 iLink 机器人身份通常根本无法接收普通微信群消息。如果将 `WEIXIN_GROUP_POLICY` 设置为除 `disabled` 以外的值，网关在启动时会记录一条 `WARNING` 警告信息。
+对于微信，默认的群组访问策略为 `disabled`（与默认为 `open` 的企业微信不同）。这是有意为之——个人微信账号可能隶属于多个群组，而 iLink 机器人身份通常根本无法接收普通微信群消息。如果将 `WEIXIN_GROUP_POLICY` 设置为除 `disabled` 以外的值，网关在启动时会记录一条 `WARNING` 警告信息。
 :::
 
-## 媒体支持
+## 媒体文件支持
 
-### 接收端
+### 接收（入站）
 
-该适配器会从用户处接收媒体附件，将其从微信 CDN 下载并解密，随后在本地缓存以供机器人处理：
+适配器会从用户处接收媒体附件，将其从微信 CDN 下载并解密，随后在本地缓存以供机器人处理：
 
 | 类型 | 处理方式 |
 |------|----------|
@@ -189,66 +189,66 @@ WEIXIN_GROUP_ALLOWED_USERS=group_id_1,group_id_2
 | **文件** | 下载后使用 AES 解密并缓存，同时保留原始文件名。 |
 | **语音** | 若存在文本转录结果，则提取为文本；否则直接下载并缓存音频文件（SILK 格式）。 |
 
-**引用消息中的媒体**：引用（回复）消息中的媒体也会被提取出来，这样机器人就能了解用户正在回复的内容。
+**引用消息中的媒体**：对于被引用（回复）的消息中的媒体内容也会被提取出来，这样机器人就能了解用户正在回复什么内容。
 
 ### 使用 AES-128-ECB 加密的 CDN
 
 微信媒体文件是通过加密的 CDN 进行传输的。适配器会透明地处理这一过程：
 
-- **接收端**：通过包含 `encrypted_query_param` 参数的 URL 从 CDN 下载加密后的媒体，然后使用消息载荷中提供的每文件专用密钥通过 AES-128-ECB 算法进行解密。
-- **发送端**：首先在本地使用随机生成的 AES-128-ECB 密钥对文件进行加密，再将加密后的文件上传至 CDN，同时会在发送的消息中包含该加密文件的引用信息。
-- AES 密钥长度为 16 字节（128 位）。密钥可能以原始的 base64 格式或十六进制格式提供——适配器可处理这两种格式。
-- 此功能需要使用 `cryptography` 这个 Python 包。
+- **接收**：通过包含 `encrypted_query_param` 参数的 URL 从 CDN 下载已加密的媒体文件，然后使用消息载荷中提供的每文件专用密钥通过 AES-128-ECB 算法进行解密。
+- **发送**：在本地使用随机生成的 AES-128-ECB 密钥对文件进行加密，上传至 CDN，随后在发送的消息中包含该加密后的引用信息。
+- AES 密钥长度为 16 字节（128 位）。密钥可能以原始的 base64 编码或十六进制编码形式出现——适配器可处理这两种格式。
+- 此功能需要使用 `cryptography` Python 包。
 
 无需任何额外配置，加密与解密操作会自动完成。
 
-### 发送端
+### 发送（出站）
 
 | 方法 | 发送内容 |
 |------|----------|
 | `send` | 支持 Markdown 格式的文本消息 |
-| `send_image` / `send_image_file` | 通过 CDN 上传的原始图片消息 |
-| `send_document` | 通过 CDN 上传的文件附件 |
-| `send_video` | 通过 CDN 上传的视频消息 |
+| `send_image` / `send_image_file` | 原生图片消息（通过 CDN 上传） |
+| `send_document` | 文件附件（通过 CDN 上传） |
+| `send_video` | 视频消息（通过 CDN 上传） |
 
-所有要发送的媒体内容都会经过加密的 CDN 上传流程：
+所有出站的媒体文件都会经过加密的 CDN 上传流程：
 
 1. 生成一个随机的 AES-128 密钥。
-2. 使用 AES-128-ECB + PKCS#7 填充算法对文件进行加密。
+2. 使用 AES-128-ECB + PKCS#7 填充方式对文件进行加密。
 3. 通过 iLink API 的 `getuploadurl` 接口获取上传地址。
 4. 将加密后的数据上传至 CDN。
-5. 发送包含该加密媒体引用信息的消息。
+5. 发送包含加密媒体引用信息的消息。
 
 ## 上下文令牌持久化
 
-iLink 机器人 API 要求在向特定对方发送每条消息时，都将对应的 `context_token` 一并返回。适配器会使用基于磁盘的机制来存储这些上下文令牌：
+iLink 机器人 API 要求在向特定对话方发送每条消息时，都必须附上并回传一个 `context_token`。适配器会使用基于磁盘的机制来存储这些上下文令牌：
 
-- 每个账号与对方的对应令牌会被保存到 `~/.hermes/weixin/accounts/<account_id>.context-tokens.json` 文件中。
+- 每个账号与对话方的令牌会被保存到 `~/.hermes/weixin/accounts/<account_id>.context-tokens.json` 文件中。
 - 程序启动时会恢复之前保存的令牌。
-- 每条接收到的消息都会更新该发送者的存储令牌。
+- 每条接收到的消息都会更新该发送方的存储令牌。
 - 发送的消息会自动包含最新的上下文令牌。
 
-这样一来，即使网关重启，也能保证回复的连续性。
+这样一来，即便网关重启，也能保证回复的连续性。
 
 ## Markdown 格式支持
 
 通过 iLink 机器人 API 连接的微信客户端可以直接渲染 Markdown 内容，因此适配器会保留原有的 Markdown 格式而不会对其进行重写：
 
-- **标题**会保持为 Markdown 标题格式（`#`、`##` 等）。
-- **表格**会保持为 Markdown 表格格式。
-- **代码块**会保持为带边框的代码块形式。
+- **标题**仍以 Markdown 标题格式显示（如 `#`、`##` 等）。
+- **表格**保持为 Markdown 表格形式。
+- **代码块**依旧以代码块格式呈现。
 - 代码块外的多余空行会被合并为两个换行符。
 
-## 消息分块传输
+## 消息分片传输
 
-只要消息长度在平台允许范围内，就会作为一条完整的聊天消息发送。只有超过长度限制的消息才会被拆分后发送：
+只要消息长度在平台允许范围内，就会作为一条完整的聊天消息发送。只有超过限制的大体积消息才会被拆分后发送：
 
-- 消息最大长度：**4000 个字符**。
-- 即使包含多个段落或换行符，长度在限制以内的消息也会保持完整。
-- 超过长度限制的消息会在逻辑分隔点（如段落、空行、代码块）处被拆分。
-- 只要可能，代码块会保持完整（除非代码块本身的内容超过了长度限制，否则不会被拆分）。
-- 对于过长的单个代码块，则会采用基础适配器的截断逻辑。
-- 在发送多个分块消息时，系统会设置 0.3 秒的分块间隔，以避免触发微信的速率限制。
+- 消息最大长度为 **4000 个字符**。
+- 即使包含多个段落或换行符，长度在限制内的消息也会保持完整。
+- 超出限制的消息会在合理的边界处（如段落、空行、代码块之间）被拆分。
+- 只要可能，代码块会保持完整（除非代码块本身的内容超出了限制，否则不会被拆分）。
+- 对于过大的单个代码块，则会采用基础适配器的截断逻辑。
+- 在发送多个分片时，设置 0.3 秒的分片间隔，可避免因频繁请求导致微信端的速率限制。
 
 ## 输入中状态指示器
 
@@ -268,7 +268,7 @@ iLink 机器人 API 要求在向特定对方发送每条消息时，都将对应
 1. **连接**：验证凭据后开始轮询循环。
 2. **轮询**：以 35 秒为超时时间调用 `getupdates` 接口；服务器会一直保留该请求，直到有新消息到达或超时时间结束。
 3. **分发**：接收到的消息会通过 `asyncio.create_task` 同步分发处理。
-4. **同步缓冲区**：一个持续的同步游标（`get_updates_buf`）会被保存到磁盘上，这样适配器在重启后可以从正确的位置继续处理消息。
+4. **同步缓冲区**：一个持续的同步游标（`get_updates_buf`）会被保存到磁盘上，这样适配器在重启后就能从正确的位置继续处理消息。
 
 ### 重试策略
 
@@ -276,31 +276,31 @@ iLink 机器人 API 要求在向特定对方发送每条消息时，都将对应
 
 | 错误情况 | 处理方式 |
 |----------|----------|
-| 短暂性错误（第1–2次） | 2 秒后重新尝试。 |
-| 连续出现错误（第3次及以上） | 暂停 30 秒，然后重置重试计数器。 |
-| 会话过期（`errcode=-14`） | 暂停 10 分钟（可能需要重新登录）。 |
+| 临时性错误（第1–2次） | 2秒后重新尝试。 |
+| 连续错误（第3次及以上） | 暂停30秒，然后重置重试计数器。 |
+| 会话过期（`errcode=-14`） | 暂停10分钟（可能需要重新登录）。 |
 | 超时 | 立即再次轮询（属于正常的长轮询行为）。 |
 
 ### 冗余消除
 
-适配器会通过消息 ID，并在 5 分钟的时间窗口内对接收到的消息进行去重处理。这样可以避免在网络故障或轮询响应重叠的情况下出现重复处理的情况。
+适配器会通过消息 ID，并在5分钟的窗口期内对接收到的消息进行去重处理，从而避免在网络故障或轮询响应重叠时出现重复处理的情况。
 
 ### 令牌锁定
 
-同一时间只有一个微信网关实例可以使用某个特定的令牌。适配器会在启动时获取该令牌的锁定权限，并在关闭时释放它。如果已有其他网关正在使用同一个令牌，启动将会失败，并显示相应的错误信息。
+同一时间只有一个微信网关实例可以使用某个特定的令牌。适配器在启动时会获取该令牌的锁，在关闭时再释放。如果已有其他网关正在使用该令牌，启动将会失败，并显示相关的错误信息。
 
 ## 所有环境变量
 
-| 变量名 | 是否必填 | 默认值 | 描述 |
+| 变量名 | 是否必填 | 默认值 | 说明 |
 |--------|----------|---------|------|
 | `WEIXIN_ACCOUNT_ID` | ✅ | — | iLink 机器人账号 ID（通过二维码登录获取）。 |
-| `WEIXIN_TOKEN` | ✅ | — | iLink 机器人令牌（通过二维码登录后会自动保存）。 |
+| `WEIXIN_TOKEN` | ✅ | — | iLink 机器人令牌（通过二维码登录自动保存）。 |
 | `WEIXIN_BASE_URL` | — | `https://ilinkai.weixin.qq.com` | iLink API 的基础地址。 |
-| `WEIXIN_CDN_BASE_URL` | — | `https://novac2c.cdn.weixin.qq.com/c2c` | 用于传输媒体的 CDN 基础地址。 |
+| `WEIXIN_CDN_BASE_URL` | — | `https://novac2c.cdn.weixin.qq.com/c2c` | 用于传输媒体文件的 CDN 基础地址。 |
 | `WEIXIN_DM_POLICY` | — | `open` | 私信访问策略：`open`、`allowlist`、`disabled`、`pairing`。 |
 | `WEIXIN_GROUP_POLICY` | — | `disabled` | 群组访问策略：`open`、`allowlist`、`disabled`。 |
 | `WEIXIN_ALLOWED_USERS` | — | _(空)_ | 用于私信白名单的、以逗号分隔的用户 ID 列表。 |
-| `WEIXIN_GROUP_ALLOWED_USERS` | — | _(空)_ | 用于群组白名单的、以逗号分隔的**群聊 ID**列表（而非群成员的用户 ID）。该变量名属于旧版本用法，实际应使用群聊 ID 而非用户 ID。 |
+| `WEIXIN_GROUP_ALLOWED_USERS` | — | _(空)_ | 用于群组白名单的、以逗号分隔的**群聊 ID**列表（而非群成员用户 ID）。该变量名是旧版本遗留的，实际应使用群聊 ID 而非用户 ID。 |
 | `WEIXIN_HOME_CHANNEL` | — | — | 用于定时任务/通知输出的聊天频道 ID。 |
 | `WEIXIN_HOME_CHANNEL_NAME` | — | `Home` | 主频道显示名称。 |
 | `WEIXIN_ALLOW_ALL_USERS` | — | — | 网关级标志，用于允许所有用户访问（由设置向导使用）。 |
@@ -309,17 +309,17 @@ iLink 机器人 API 要求在向特定对方发送每条消息时，都将对应
 
 | 问题现象 | 解决方案 |
 |----------|----------|
-| `Weixin startup failed: aiohttp and cryptography are required` | 需要安装这两个包：`pip install aiohttp cryptography`。 |
+| `Weixin startup failed: aiohttp and cryptography are required` | 需要安装这两个包：`pip install aiohttp cryptography` |
 | `Weixin startup failed: WEIXIN_TOKEN is required` | 运行 `hermes gateway setup` 完成二维码登录，或手动设置 `WEIXIN_TOKEN`。 |
 | `Weixin startup failed: WEIXIN_ACCOUNT_ID is required` | 在 `.env` 文件中设置 `WEIXIN_ACCOUNT_ID`，或运行 `hermes gateway setup`。 |
-| `Another local Hermes gateway is already using this Weixin token` | 先停止另一个网关实例——每个令牌只能对应一个轮询程序。 |
-| 会话过期（`errcode=-14`） | 您的登录会话已过期。请重新运行 `hermes gateway setup` 并扫描新的二维码。 |
-| 设置过程中二维码失效 | 二维码最多会自动刷新 3 次。如果仍然失效，请检查您的网络连接。 |
-| 机器人不回复私信 | 检查 `WEIXIN_DM_POLICY` 的设置——如果设置为 `allowlist`，则发送方必须存在于 `WEIXIN_ALLOWED_USERS` 列表中。 |
-| 机器人忽略群消息 | 群组策略默认为 `disabled`。可将 `WEIXIN_GROUP_POLICY` 设置为 `open` 或 `allowlist`——但请注意，通过二维码登录的 iLink 机器人身份（格式为 `...@im.bot`）通常根本无法接收普通微信群消息。如果网关日志中未显示任何群消息的原始接收事件，说明问题出在 iLink 端，而非 Hermes 端。 |
-| 媒体下载/上传失败 | 确保已安装 `cryptography` 包。同时检查能否访问 `novac2c.cdn.weixin.qq.com`。 |
-| `Blocked unsafe URL (SSRF protection)` | 发送的媒体 URL 指向了私有或内部地址。仅允许公共 URL。 |
+| `Another local Hermes gateway is already using this Weixin token` | 先停止另一个网关实例——每个令牌只能对应一个轮询器。 |
+| 会话过期（`errcode=-14`） | 您的登录会话已过期。请重新运行 `hermes gateway setup` 扫描新的二维码。 |
+| 设置过程中二维码失效 | 二维码最多会自动刷新3次。如果仍频繁失效，请检查网络连接。 |
+| 机器人不回复私信 | 检查 `WEIXIN_DM_POLICY` 的设置——如果设置为 `allowlist`，则发送方必须位于 `WEIXIN_ALLOWED_USERS` 列表中。 |
+| 机器人忽略群消息 | 群组访问策略默认为 `disabled`。可将 `WEIXIN_GROUP_POLICY` 设置为 `open` 或 `allowlist`——但请注意，通过二维码登录的 iLink 机器人身份（格式为 `...@im.bot`）通常根本无法接收普通微信群消息。如果网关日志中未显示任何群消息的原始入站事件，说明问题出在 iLink 端，而非 Hermes 端。 |
+| 媒体文件下载/上传失败 | 确保已安装 `cryptography` 包。检查能否访问 `novac2c.cdn.weixin.qq.com`。 |
+| `Blocked unsafe URL (SSRF protection)` | 发送的媒体文件 URL 指向了私有或内部地址。仅允许公共 URL。 |
 | 语音消息显示为文本 | 如果微信提供了转录结果，适配器会使用该文本内容。这是正常现象。 |
 | 消息出现重复 | 适配器是通过消息 ID 进行去重处理的。如果仍看到重复消息，请检查是否有多个网关实例正在运行。 |
-| `iLink POST ... HTTP 4xx/5xx` | iLink 服务返回了 API 错误。请检查令牌的有效性以及网络连接状况。 |
-| 终端中的二维码无法显示 | 使用包含消息处理功能的版本重新安装：`pip install hermes-agent[messaging]`。或者直接打开二维码上方显示的网址。 |
+| `iLink POST ... HTTP 4xx/5xx` | iLink 服务返回 API 错误。请检查令牌的有效性及网络连接状况。 |
+| 终端中的二维码无法显示 | 使用包含消息处理功能的版本重新安装：`cd ~/.hermes/hermes-agent && uv pip install -e ".[messaging]"`。或者，直接打开二维码上方显示的网址。 |
