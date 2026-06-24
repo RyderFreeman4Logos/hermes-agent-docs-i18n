@@ -2629,6 +2629,7 @@
         - [持久内存](zh/website/docs/user-guide/features/memory.md)
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
         - [性格与 SOUL.md](zh/website/docs/user-guide/features/personality.md)
+        - [宠物插件](zh/website/docs/user-guide/features/pets.md)
         - [插件](zh/website/docs/user-guide/features/plugins.md)
         - [提供商路由](zh/website/docs/user-guide/features/provider-routing.md)
         - [技能系统](zh/website/docs/user-guide/features/skills.md)
