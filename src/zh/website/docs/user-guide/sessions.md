@@ -448,7 +448,7 @@ session_search()
 group_sessions_per_user: false
 ```
 
-这会将群组/频道恢复为每个房间一个共享会话的模式，从而保留对话的上下文信息，同时也能共享令牌成本、中断状态以及上下文数据量。
+这会将群组/频道恢复为每个房间一个共享会话的模式，从而保留对话上下文的同时，也能共享令牌成本、中断状态及上下文数据量。
 
 ### 会话重置策略
 
@@ -456,32 +456,40 @@ group_sessions_per_user: false
 
 - **idle** — 静止 N 分钟后重置
 - **daily** — 每天固定时间点重置
-- **both** — 以先满足的条件为准（静置或每日定时）
+- **both** — 以先满足的条件为准（静置或每日）
 - **none** — 不会自动重置
 
 在会话自动重置之前，智能体会有机会保存对话中的重要记忆或技能信息。
 
-无论采用何种策略，只要存在**正在运行的后台进程**，该会话就绝不会被自动重置。
+无论采用何种策略，只要存在**正在运行的后台进程**，相关会话就绝不会被自动重置。
 
 ## 存储位置
 
 | 内容 | 路径 | 说明 |
 |------|------|------|
-| SQLite 数据库 | `~/.hermes/state.db` | 所有会话元数据及消息，采用 FTS5 进行索引 |
-| 网关消息 | `~/.hermes/state.db` | SQLite —— 所有会话消息的标准化存储方式 |
-| 网关路由索引 | `~/.hermes/sessions/sessions.json` | 将会话键映射到对应的活跃会话 ID（包含来源元数据及过期标志） |
+| SQLite 数据库 | `~/.hermes/state.db` | 所有会话元数据及使用 FTS5 索引存储的消息 |
+| 网关消息 | `~/.hermes/state.db` | SQLite — 所有会话消息的标准化存储库 |
+| 网关路由索引 | `~/.hermes/sessions/sessions.json` | 将会话键映射到活跃会话 ID（包含来源元数据及过期标志） |
 
 SQLite 数据库采用 WAL 模式，支持多个读取进程和单个写入进程，非常适合网关的多平台架构。
 
+:::warning `sessions.json` 并非会话列表
+`~/.hermes/sessions/sessions.json` 是**网关路由索引**——它将消息会话键（`agent:main:<platform>:...`）映射到活跃会话 ID。该文件仅包含网关/消息相关的条目，因此如果你运行的是消息平台，其中只会显示相关条目（例如 `agent:main:whatsapp:dm:...`）。
+
+这是**正常现象**，并不表示你的 CLI 会话丢失了。`hermes sessions list`、`/sessions` 以及控制面板均读取 `state.db` 文件，而该文件中保存着**所有**会话（包括 CLI、TUI 和网关会话）。`~/.hermes/sessions/saved/*.json` 下的 `/save` 快照仅是便于导出的内容，并非索引文件。
+
+如果 CLI 会话确实未出现在 `hermes sessions list` 中，原因可能是 `state.db` 未接收到这些会话——请运行 `hermes sessions repair`，并留意 CLI 启动时是否出现“⚠ Session store unavailable”的警告，这说明该次运行时 SQLite 持久化操作失败了。
+:::
+
 :::note 旧版 JSONL 转录文件
-在 `state.db` 成为标准存储格式之前创建的会话，可能在 `~/.hermes/sessions/` 目录下留下一些 `*.jsonl` 文件。Hermes 已不再读取或写入这些文件。在确认对应的会话已存在于 `state.db` 中后，可安全删除它们。
+在 `state.db` 成为标准存储格式之前创建的会话，可能在 `~/.hermes/sessions/` 目录下留下一些 `*.jsonl` 文件。Hermes 已不再读取或写入这些文件。在确认对应会话确实存在于 `state.db` 中后，可安全删除它们。
 :::
 
 ### 数据库结构
 
 `state.db` 中的关键表包括：
 
-- **sessions** — 会话元数据（ID、来源、用户 ID、模型类型、标题、时间戳、令牌计数）。标题具有唯一索引（允许为空，但非空标题必须唯一）。
+- **sessions** — 会话元数据（id、来源、user_id、模型类型、标题、时间戳、令牌计数）。标题具有唯一索引（允许为空，但非空标题必须唯一）。
 - **messages** — 完整的消息历史记录（发送方角色、内容、工具调用信息、工具名称、令牌计数）
 - **messages_fts** — 用于对消息内容进行全文搜索的 FTS5 虚拟表
 
@@ -490,12 +498,12 @@ SQLite 数据库采用 WAL 模式，支持多个读取进程和单个写入进�
 ### 自动清理机制
 
 - 网关会话会根据配置的策略自动重置
-- 在重置之前，智能体会先保存即将过期的会话中的记忆和技能信息
-- 可选的自动清理功能：当 `sessions.auto_prune` 设置为 `true` 时，那些已结束且超过 `sessions.retention_days`（默认为 90 天）的会话，会在 CLI 或网关启动时被自动删除
-- 在实际删除了相关记录后，系统会对 `state.db` 执行 `VACUUM` 操作以释放磁盘空间（SQLite 在普通 DELETE 操作时不会自动缩小文件大小）
-- 自动清理最多每 `sessions.min_interval_hours`（默认为 24 小时）执行一次；最近一次清理的时间戳会存储在 `state.db` 中，因此同一 `HERMES_HOME` 下的所有 Hermes 进程都能共享该信息
+- 重置前，智能体会先保存即将过期的会话中的记忆和技能信息
+- 可选自动清理功能：当 `sessions.auto_prune` 设为 `true` 时，超过 `sessions.retention_days`（默认为 90 天）的已结束会话会在 CLI/网关启动时被自动删除
+- 实际删除行数后，系统会对 `state.db` 执行 `VACUUM` 操作以释放磁盘空间（SQLite 在普通 DELETE 操作时不会自动压缩文件大小）
+- 自动清理最多每 `sessions.min_interval_hours`（默认为 24 小时）执行一次；上次清理的时间戳会存储在 `state.db` 内，因此同一 `HERMES_HOME` 下的所有 Hermes 进程都能共享该信息
 
-默认情况下此功能是**关闭**的——会话历史对于 `session_search` 检索功能非常重要，若擅自删除可能会让用户感到意外。如需启用该功能，请在 `~/.hermes/config.yaml` 中进行设置：
+默认情况下此功能是**关闭的**——会话历史对于 `session_search` 检索功能非常重要，若擅自删除可能会让用户感到意外。如需启用该功能，请在 `~/.hermes/config.yaml` 中进行配置：
 
 ```yaml
 sessions:
