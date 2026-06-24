@@ -115,13 +115,14 @@ Hermes在安装时会将大量内置技能库复制到`~/.hermes/skills/`目录�
 
 ## productivity| 技能 | 描述 | 路径 |
 |-------|-------------|------|
-| [`airtable`](/docs/user-guide/skills/bundled/productivity/productivity-airtable) | 通过 curl 调用 Airtable REST API，支持记录的创建、读取、更新、删除操作，以及数据筛选与合并更新功能。 | `productivity/airtable` |
-| [`google-workspace`](/docs/user-guide/skills/bundled/productivity/productivity-google-workspace) | 通过 gws CLI 或 Python 工具，实现对 Gmail、日历、云端硬盘、文档及表格等服务的操作。 | `productivity/google-workspace` |
-| [`maps`](/docs/user-guide/skills/bundled/productivity/productivity-maps) | 基于 OpenStreetMap/OSRM 数据，提供地址地理编码、兴趣点查询、路线规划以及时区查询功能。 | `productivity/maps` |
+| [`airtable`](/docs/user-guide/skills/bundled/productivity/productivity-airtable) | 通过 curl 调用 Airtable REST API，支持记录的创建、读取、更新、删除操作，以及过滤、插入或更新数据功能。 | `productivity/airtable` |
+| [`google-workspace`](/docs/user-guide/skills/bundled/productivity/productivity-google-workspace) | 通过 gws CLI 或 Python 工具，实现对 Gmail、日历、云盘、文档和表格的功能操作。 | `productivity/google-workspace` |
+| [`maps`](/docs/user-guide/skills/bundled/productivity/productivity-maps) | 基于 OpenStreetMap/OSRM，提供地址地理编码、兴趣点查询、路线规划以及时区信息查询功能。 | `productivity/maps` |
 | [`nano-pdf`](/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf) | 通过 nano-pdf CLI（支持自然语言指令），对 PDF 文件中的文本、拼写错误及标题进行编辑。 | `productivity/nano-pdf` |
-| [`notion`](/docs/user-guide/skills/bundled/productivity/productivity-notion) | 结合 Notion API 与 ntn CLI，可实现对页面、数据库、Markdown 内容以及 Workers 的操作。 | `productivity/notion` |
-| [`ocr-and-documents`](/docs/user-guide/skills/bundled/productivity/productivity-ocr-and-documents) | 使用 pymupdf、marker-pdf 等工具，从 PDF 文件或扫描图片中提取文本。 | `productivity/ocr-and-documents` |
-| [`powerpoint`](/docs/user-guide/skills/bundled/productivity/productivity-powerpoint) | 支持创建、读取及编辑 .pptx 格式的演示文稿、幻灯片、备注内容以及模板。 | `productivity/powerpoint` |
+| [`notion`](/docs/user-guide/skills/bundled/productivity/productivity-notion) | 结合 Notion API 与 ntn CLI，可实现对 Notion 中页面、数据库、Markdown 内容以及工作流的各类操作。 | `productivity/notion` |
+| [`ocr-and-documents`](/docs/user-guide/skills/bundled/productivity/productivity-ocr-and-documents) | 使用 pymupdf、marker-pdf 等工具，从 PDF 文件或扫描图片中提取文本内容。 | `productivity/ocr-and-documents` |
+| [`petdex`](/docs/user-guide/skills/bundled/productivity/productivity-petdex) | 用于在 Hermes 中安装并选择各种动画风格的 Petdex 模型。 | `productivity/petdex` |
+| [`powerpoint`](/docs/user-guide/skills/bundled/productivity/productivity-powerpoint) | 支持创建、读取、编辑 .pptx 格式的演示文稿、幻灯片、备注以及模板。 | `productivity/powerpoint` |
 | [`teams-meeting-pipeline`](/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline) | 通过 Hermes CLI 管理 Teams 会议摘要生成流程，可完成会议总结、流程状态查看、任务重放以及 Microsoft Graph 订阅管理等功能。 | `productivity/teams-meeting-pipeline` |
 
 ## 研究领域
@@ -129,34 +130,34 @@ Hermes在安装时会将大量内置技能库复制到`~/.hermes/skills/`目录�
 | 技能 | 描述 | 路径 |
 |-------|-------------|------|
 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv) | 可按关键词、作者、分类或编号等方式搜索 arXiv 上的学术论文。 | `research/arxiv` |
-| [`blogwatcher`](/docs/user-guide/skills/bundled/research/research-blogwatcher) | 通过 blogwatcher-cli 工具，实现对博客以及 RSS/Atom 订阅源的内容监控。 | `research/blogwatcher` |
-| [`llm-wiki`](/docs/user-guide/skills/bundled/research/research-llm-wiki) | 基于 Karpathy 编写的 LLM 维基，可用于构建和查询相互关联的 Markdown 形式知识库。 | `research/llm-wiki` |
-| [`polymarket`](/docs/user-guide/skills/bundled/research/research-polymarket) | 可查询 Polymarket 平台上的市场信息、价格数据、订单簿内容以及历史交易记录。 | `research/polymarket` |
+| [`blogwatcher`](/docs/user-guide/skills/bundled/research/research-blogwatcher) | 通过 blogwatcher-cli 工具，对博客以及 RSS/Atom 订阅源进行监控。 | `research/blogwatcher` |
+| [`llm-wiki`](/docs/user-guide/skills/bundled/research/research-llm-wiki) | 基于 Karpathy 创建的 LLM 维基平台，可用于构建和查询相互关联的 Markdown 格式知识库。 | `research/llm-wiki` |
+| [`polymarket`](/docs/user-guide/skills/bundled/research/research-polymarket) | 可用于查询 Polymarket 平台上的市场信息、价格数据、订单簿内容以及历史交易记录。 | `research/polymarket` |
 | [`research-paper-writing`](/docs/user-guide/skills/bundled/research/research-research-paper-writing) | 提供从研究设计到论文提交的完整流程，帮助用户撰写适用于 NeurIPS、ICML、ICLR 等会议的机器学习论文。 | `research/research-paper-writing` |
 
 ## 智能家居
 
 | 技能 | 描述 | 路径 |
 |-------|-------------|------|
-| [`openhue`](/docs/user-guide/skills/bundled/smart-home/smart-home-openhue) | 通过 OpenHue CLI 工具，可对 Philips Hue 灯具、场景模式以及房间进行控制。 | `smart-home/openhue` |
+| [`openhue`](/docs/user-guide/skills/bundled/smart-home/smart-home-openhue) | 通过 OpenHue CLI 工具，可对 Philips Hue 灯光系统、场景设置以及不同房间进行控制。 | `smart-home/openhue` |
 
 ## 社交媒体
 
 | 技能 | 描述 | 路径 |
 |-------|-------------|------|
-| [`xurl`](/docs/user-guide/skills/bundled/social-media/social-media-xurl) | 通过 xurl CLI 工具操作 X/Twitter 平台，支持发布内容、搜索信息、发送私信、上传媒体文件以及使用 v2 API。 | `social-media/xurl` |
+| [`xurl`](/docs/user-guide/skills/bundled/social-media/social-media-xurl) | 通过 xurl CLI 工具，可对 X/Twitter 平台进行操作，包括发布内容、搜索信息、发送私信、上传媒体文件以及使用 v2 API。 | `social-media/xurl` |
 
 ## 软件开发
 
 | 技能 | 描述 | 路径 |
 |-------|-------------|------|
-| [`hermes-agent-skill-authoring`](/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring) | 指导用户如何在仓库中编写 SKILL.md 文件，包括设置前置信息、验证规则以及规划文件结构。 | `software-development/hermes-agent-skill-authoring` |
+| [`hermes-agent-skill-authoring`](/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring) | 用于编写仓库内的 SKILL.md 文件，涵盖前端元数据、验证规则以及文件结构等相关内容。 | `software-development/hermes-agent-skill-authoring` |
 | [`node-inspect-debugger`](/docs/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger) | 通过 --inspect 参数结合 Chrome DevTools Protocol CLI，实现对 Node.js 程序的调试功能。 | `software-development/node-inspect-debugger` |
-| [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) | 计划模式：允许用户将任务规划为结构化的 Markdown 文本并保存到 .hermes/plans/ 目录中，目前仅用于任务规划，不支持自动执行。该模式要求任务分解细致、路径明确且包含完整代码。 | `software-development/plan` |
+| [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) | 计划模式：允许用户将可执行的操作步骤以 Markdown 格式写入 .hermes/plans/ 目录中，该模式仅用于规划而不实际执行任务，内容包含简短的任务项、精确的操作路径以及完整的代码示例。 | `software-development/plan` |
 | [`python-debugpy`](/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy) | 提供 Python 调试功能，包括使用 pdb REPL 以及通过 debugpy 实现远程调试（DAP）。 | `software-development/python-debugpy` |
-| [`requesting-code-review`](/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review) | 实现预提交代码审查功能，可自动执行安全扫描、质量检查并给出修复建议。 | `software-development/requesting-code-review` |
-| [`simplify-code`](/docs/user-guide/skills/bundled/software-development/software-development-simplify-code) | 调用三个智能代理并行处理最近的代码变更，帮助简化代码结构。 | `software-development/simplify-code` |
-| [`spike`](/docs/user-guide/skills/bundled/software-development/software-development-spike) | 用于在正式开发之前通过快速实验来验证某个想法的可行性。 | `software-development/spike` |
+| [`requesting-code-review`](/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review) | 实现预提交代码审查功能，可进行安全扫描、质量检查以及自动修复错误。 | `software-development/requesting-code-review` |
+| [`simplify-code`](/docs/user-guide/skills/bundled/software-development/software-development-simplify-code) | 利用三个智能体并行处理最近的代码更改，帮助简化代码结构。 | `software-development/simplify-code` |
+| [`spike`](/docs/user-guide/skills/bundled/software-development/software-development-spike) | 用于在正式开发之前，通过快速实验来验证某个想法的可行性。 | `software-development/spike` |
 | [`systematic-debugging`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging) | 提供四阶段根本原因调试方法，帮助用户在解决问题前先深入理解问题本质。 | `software-development/systematic-debugging` |
 | [`test-driven-development`](/docs/user-guide/skills/bundled/software-development/software-development-test-driven-development) | 实现测试驱动开发模式，要求遵循 RED-GREEN-REFACTOR 原则，确保在编写代码之前先完成测试。 | `software-development/test-driven-development` |
 
@@ -164,4 +165,4 @@ Hermes在安装时会将大量内置技能库复制到`~/.hermes/skills/`目录�
 
 | 技能 | 描述 | 路径 |
 |-------|-------------|------|
-| [`yuanbao`](/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao) | 支持在元宝群组中@提及用户，以及查询群组内成员信息与相关内容。 | `yuanbao` |
+| [`yuanbao`](/docs/user-guide/skills/bundled/yuanbao/yuanbao-yuanbao) | 用于管理元宝群组，支持@提及群组成员、查询群组信息及成员列表等功能。 | `yuanbao` |
