@@ -77,7 +77,7 @@ ln -s ~/hermes-achievements ~/.hermes/plugins/hermes-achievements
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-当作为用户插件安装时，虽然仪表板界面可以正常加载，但 Python 后端 API 路由不会被自动导入。只有将该插件与 Hermes 一起打包时，后端路由才会可用。
+如果后端 API 返回 404 错误，请重启 `hermes dashboard`；插件 API 会在仪表板启动时被加载。
 
 ## 更新
 
@@ -89,13 +89,16 @@ git pull --ff-only
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```
 
-对于安装在 `~/.hermes/plugins/hermes-achievements` 目录下的用户自定义插件，只需重新扫描插件即可，因为 Python 后端路由不会被自动导入。如果您通过拉取 hermes-agent 仓库中的更新来升级内置插件，且该更新改变了后端路由或 `plugin_api.py` 文件，那么在拉取更新后需要重启 `hermes dashboard`。
+如果更新改变了后端路由或 `plugin_api.py` 文件，建议在拉取代码后重启 `hermes dashboard`。
 
-截至 2026 年 4 月 29 日，强烈建议进行更新，因为扫描性能有了显著提升：去除了重复的 `/overview` 扫描路径；增加了 `/achievements` 的缓存快照；并对未发生变化的会话实现了增量检查点复用功能。
+截至 2026 年 4 月 29 日，强烈建议进行更新，因为扫描性能有了显著提升：
+- 移除了重复的 `/overview` 扫描路径；
+- 增加了对 `/achievements` 的缓存快照功能；
+- 对未发生变化的会话引入了增量检查点复用机制。
 
-成就解锁状态存储在本地的 `state.json` 文件中，不会被 git 更新所覆盖。新成就会根据您现有的 Hermes 会话历史进行评估。成就 ID 是稳定的，不应随意更改，因为它们是用于标识解锁状态的键值。
+成就解锁状态会存储在本地的 `state.json` 文件中，不会被 git 更新所覆盖。新成就的判定会基于您现有的 Hermes 会话历史记录。成就 ID 是固定不变的，不应随意更改，因为它们正是用于标识解锁状态的键值。
 
-Git 仓库中的版本发布会带有标签，例如：
+版本更新会在 git 中添加标签，例如：
 
 ```bash
 git fetch --tags
@@ -115,9 +118,7 @@ dashboard/
 
 ## API
 
-这些后端路由是为内置插件准备的。用户自行安装的版本虽然会加载其控制台界面，但不会自动导入 Python 后端路由。
-
-相关路由位于以下路径下：
+路由地址位于：
 
 ```text
 /api/plugins/hermes-achievements/
