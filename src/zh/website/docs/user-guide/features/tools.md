@@ -49,7 +49,7 @@ hermes tools
 hermes tools
 ```
 
-常见的工具集包括 `web`、`search`、`terminal`、`file`、`browser`、`vision`、`image_gen`、`moa`、`skills`、`tts`、`todo`、`memory`、`session_search`、`cronjob`、`code_execution`、`delegation`、`clarify`、`homeassistant`、`messaging`、`spotify`、`discord`、`discord_admin`、`debugging` 以及 `safe`。
+常见的工具集包括 `web`、`search`、`terminal`、`file`、`browser`、`vision`、`image_gen`、`skills`、`tts`、`todo`、`memory`、`session_search`、`cronjob`、`code_execution`、`delegation`、`clarify`、`homeassistant`、`messaging`、`spotify`、`discord`、`discord_admin`、`debugging` 以及 `safe`。
 
 如需查看完整的工具集列表，包括诸如 `hermes-cli`、`hermes-telegram` 这样的平台预设，以及 `mcp-<server>` 这类动态 MCP 工具集，请参阅 [工具集参考文档](/reference/toolsets-reference)。
 
@@ -59,12 +59,12 @@ hermes tools
 
 | 后端 | 描述 | 使用场景 |
 |---------|-------------|----------|
-| `local` | 在您的本地机器上运行（默认） | 开发、处理可信任务 |
-| `docker` | 孤立容器环境 | 确保安全性与任务可重复性 |
-| `ssh` | 远程服务器 | 沙箱隔离，防止智能体访问自身代码 |
-| `singularity` | 高性能计算容器 | 集群计算、无根运行 |
-| `modal` | 云端执行环境 | 无服务器架构、弹性扩展 |
-| `daytona` | 云端沙箱工作空间 | 创建持久化的远程开发环境 |
+| `local` | 在您的本地机器上运行（默认） | 开发、需要高度信任的任务 |
+| `docker` | 孤立式容器 | 确保安全性与任务可重复性 |
+| `ssh` | 远程服务器 | 沙箱环境，防止智能体直接访问自身代码 |
+| `singularity` | 高性能计算容器 | 集群计算、无根运行环境 |
+| `modal` | 云端执行 | 无服务器架构、弹性扩展 |
+| `daytona` | 云端沙箱工作区 | 持久的远程开发环境 |
 
 ### 配置选项
 
