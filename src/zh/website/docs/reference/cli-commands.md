@@ -24,67 +24,68 @@ hermes [global-options] <command> [subcommand/options]
 | `--profile <name>`, `-p <name>` | 指定本次调用使用的 Hermes 配置文件。此选项会覆盖 `hermes profile use` 设置的默认值。 |
 | `--resume <session>`, `-r <session>` | 根据会话 ID 或标题恢复之前的会话。 |
 | `--continue [name]`, `-c [name]` | 恢复最近的会话，或匹配指定标题的最新会话。 |
-| `--worktree`, `-w` | 在独立的 git worktree 中启动，适用于并行 Agent 工作流。 |
+| `--worktree`, `-w` | 为并行 Agent 工作流在独立的 git worktree 中启动。 |
 | `--yolo` | 跳过危险命令的确认提示。 |
 | `--pass-session-id` | 在 Agent 的系统提示中显示会话 ID。 |
-| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，直接使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。 |
+| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，直接使用内置默认值。不过 `.env` 文件中的凭证仍会被加载。 |
 | `--ignore-rules` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules`、内存内容以及预加载的技能。 |
-| `--tui` | 启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于设置 `HERMES_TUI=1`。该选项的优先级始终高于 `display.interface`。 |
+| `--tui` | 启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于设置 `HERMES_TUI=1`。该选项始终优先于 `display.interface` 的设置。 |
 | `--cli` | 强制使用传统的 prompt_toolkit REPL。可在单次调用时覆盖 `display.interface: tui` 的设置。 |
-| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 运行 TypeScript 源代码，而非预编译的代码包（专为 TUI 贡献者设计）。 |
+| `--dev` | 与 `--tui` 结合使用时：直接通过 `tsx` 编译 TypeScript 源代码，而非使用预编译的包（适用于 TUI 开发者）。 |
 
 ## 顶层命令
 
 | 命令 | 用途 |
 |------|------|
-| `hermes chat` | 与 Agent 进行交互式聊天或一次性对话。 |
+| `hermes chat` | 与 Agent 进行交互式或一次性聊天。 |
 | `hermes model` | 交互式选择默认的提供商和模型。 |
+| `hermes moa` | 配置 `/moa` 命令所使用的命名化混合 Agent 预设。 |
 | `hermes fallback` | 管理在主模型出错时尝试使用的备用提供商。 |
 | `hermes gateway` | 运行或管理消息传递网关服务。 |
-| `hermes proxy` | 本地兼容 OpenAI 的代理工具，用于附加 OAuth 提供商的凭据。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
-| `hermes lsp` | 管理语言服务器协议集成功能（为 write_file/patch 操作提供语义诊断功能）。 |
-| `hermes setup` | 交互式设置向导，可完成全部或部分配置。 |
+| `hermes proxy` | 本地兼容 OpenAI 的代理工具，用于添加 OAuth 提供商凭证。详见 [订阅代理](../user-guide/features/subscription-proxy.md)。 |
+| `hermes lsp` | 管理语言服务器协议集成（为 write_file/patch 操作提供语义诊断功能）。 |
+| `hermes setup` | 交互式设置向导，可用于全部或部分配置的设置。 |
 | `hermes whatsapp` | 配置并关联 WhatsApp 桥接服务。 |
-| `hermes slack` | Slack 相关工具（目前功能为：每次命令执行时都会生成对应的原生 slash 应用清单）。 |
-| `hermes auth` | 管理凭据——添加、列出、删除、重置、查看状态及登出。支持 Codex/Nous/Anthropic 的 OAuth 流程。 |
+| `hermes slack` | Slack 相关工具（目前功能为：每个命令都会生成对应的原生 slash 应用清单）。 |
+| `hermes auth` | 管理凭证——添加、列出、删除、重置凭证状态以及退出登录。支持 Codex/Nous/Anthropic 的 OAuth 流程。 |
 | `hermes login` / `logout` | **已废弃**——请改用 `hermes auth` 命令。 |
-| `hermes send` | 向已配置的消息平台（Telegram、Discord、Slack、Signal、短信等）发送一次性消息。适用于 shell 脚本、cron 作业、CI 钩子以及监控进程——无需 Agent 循环，也不涉及 LLM。 |
-| `hermes secrets` | 管理外部密钥源（目前为 Bitwarden Secrets Manager），可在进程启动时从这些来源获取 API 密钥，而非依赖 `~/.hermes/.env` 文件。 |
-| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换已淘汰的模型或过时的设置引用（例如 `migrate xai`）。 |
-| `hermes status` | 显示 Agent、认证及平台的状态信息。 |
-| `hermes cron` | 查看并触发 cron 定时任务。 |
-| `hermes kanban` | 多配置文件协作看板（包含任务、链接及任务分配功能）。 |
+| `hermes send` | 向已配置的消息平台（Telegram、Discord、Slack、Signal、短信等）发送一次性消息。适用于 shell 脚本、cron 作业、CI 钩子以及监控进程——无需 Agent 循环，也不涉及大语言模型。 |
+| `hermes secrets` | 管理外部密钥源（目前为 Bitwarden Secrets Manager），可在进程启动时从这些来源获取 API 密钥，而非从 `~/.hermes/.env` 文件读取。 |
+| `hermes migrate` | 诊断并（可选）重写 `config.yaml` 文件，替换掉已废弃模型或过时设置的引用（例如 `migrate xai`）。 |
+| `hermes status` | 显示 Agent、认证以及平台的状态信息。 |
+| `hermes cron` | 查看并管理 cron 定时任务调度器。 |
+| `hermes kanban` | 多配置文件协作看板（用于管理任务、链接及任务分配者）。 |
 | `hermes webhook` | 管理动态 webhook 订阅，实现基于事件的触发机制。 |
 | `hermes hooks` | 查看、批准或删除在 `config.yaml` 中声明的 shell 脚本钩子。 |
 | `hermes doctor` | 诊断配置及依赖问题。 |
 | `hermes security audit` | 对虚拟环境、插件需求以及固定的 MCP 服务器进行按需的供应链安全审计（由 OSV.dev 提供服务）。 |
-| `hermes dump` | 生成可复制粘贴的设置摘要，便于获取支持或进行调试。 |
-| `hermes prompt-size` | 显示系统提示语及工具架构（包括技能索引、内存信息、配置文件等）的字节分布情况。可在离线环境下运行。 |
-| `hermes debug` | 调试工具——上传日志和系统信息以获取支持。 |
+| `hermes dump` | 生成可复制粘贴的设置摘要，便于寻求支持或进行调试。 |
+| `hermes prompt-size` | 显示系统提示语及工具架构（技能索引、内存、配置文件）的字节大小分布情况。可在离线环境下运行。 |
+| `hermes debug` | 调试工具——上传日志和系统信息以获取支持帮助。 |
 | `hermes backup` | 将 Hermes 的主目录备份为 zip 文件。 |
-| `hermes checkpoints` | 查看、清理或删除 `~/.hermes/checkpoints/` 目录中的内容（该目录是 `/rollback` 功能使用的隐藏存储空间）。不带参数运行可查看状态概览。 |
-| `hermes import` | 从 zip 文件恢复 Hermes 备份内容。 |
+| `hermes checkpoints` | 查看、清理或删除 `~/.hermes/checkpoints/` 目录中的内容（该目录是 `/rollback` 命令使用的隐藏存储空间）。不带参数运行可查看整体状态。 |
+| `hermes import` | 从 zip 文件恢复 Hermes 备份数据。 |
 | `hermes logs` | 查看、查看日志尾部内容以及过滤 Agent/网关/错误日志文件。 |
 | `hermes config` | 显示、编辑、迁移及查询配置文件。 |
-| `hermes pairing` | 批准或撤销消息传递配对码的授权。 |
-| `hermes skills` | 浏览、安装、发布、审计及配置技能。 |
+| `hermes pairing` | 批准或撤销消息传递配对码。 |
+| `hermes skills` | 浏览、安装、发布、审计以及配置技能。 |
 | `hermes bundles` | 将多个技能整合到单个 `/<name>` 形式的命令下。详见 [技能包](../user-guide/features/skills.md#skill-bundles)。 |
-| `hermes curator` | 在后台维护技能——可查看状态、运行、暂停或固定特定技能。详见 [Curator](../user-guide/features/curator.md)。 |
+| `hermes curator` | 在后台维护技能——可查看技能状态、运行技能、暂停技能或固定特定技能。详见 [Curator 工具](../user-guide/features/curator.md)。 |
 | `hermes memory` | 配置外部内存提供商。当对应的提供商处于激活状态时，特定插件会自动注册相应的子命令（例如 `hermes honcho`）。 |
 | `hermes acp` | 将 Hermes 作为 ACP 服务器运行，以便与编辑器集成。 |
 | `hermes mcp` | 管理 MCP 服务器配置，并将 Hermes 作为 MCP 服务器运行。 |
-| `hermes plugins` | 管理 Hermes Agent 插件——包括安装、启用、禁用及删除操作。 |
-| `hermes portal` | 显示 Nous Portal 的状态、订阅链接以及工具网关的路由信息。详见 [工具网关](../user-guide/features/tool-gateway.md)。 |
+| `hermes plugins` | 管理 Hermes Agent 插件（安装、启用、禁用或删除插件）。 |
+| `hermes portal` | 查看 Nous Portal 的状态、订阅链接以及工具网关的路由信息。详见 [工具网关](../user-guide/features/tool-gateway.md)。 |
 | `hermes tools` | 按平台配置已启用的工具。 |
-| `hermes computer-use` | 安装或检查 cua-driver 后端（适用于 macOS 的 Computer Use 功能）。 |
+| `hermes computer-use` | 安装或检查 cua-driver 后端（用于 macOS 的 Computer Use 功能）。 |
 | `hermes sessions` | 浏览、导出、清理、重命名及删除会话。 |
-| `hermes insights` | 显示令牌使用情况、成本统计及活动分析数据。 |
+| `hermes insights` | 显示令牌使用情况、成本统计以及活动日志分析信息。 |
 | `hermes claw` | OpenClaw 迁移辅助工具。 |
 | `hermes dashboard` | 启动网页控制面板，用于管理配置、API 密钥及会话信息。 |
 | `hermes profile` | 管理多个独立的 Hermes 实例——即不同的配置文件。 |
 | `hermes completion` | 输出 shell 自动补全脚本（支持 bash/zsh/fish）。 |
 | `hermes version` | 显示版本信息。 |
-| `hermes update` | 下载最新代码并重新安装依赖项。`--check` 选项可预览更新内容而无需实际安装；`--backup` 选项可在下载前创建 `HERMES_HOME` 的快照。 |
+| `hermes update` | 下载最新代码并重新安装依赖项。`--check` 选项可预览更新内容而无需实际安装；`--backup` 选项可在更新前创建 `HERMES_HOME` 的快照。 |
 | `hermes uninstall` | 从系统中卸载 Hermes。 |
 
 ## `hermes chat`
@@ -1060,7 +1061,7 @@ hermes bundles delete backend-dev
 hermes curator <subcommand>
 ```
 
-Curator是一个辅助模型后台任务，它会定期检查由智能体创建的技能，删除过时的技能，合并重复的技能，并将不再使用的技能归档。已打包或通过Hub安装的技能则不会被修改。归档的技能可以恢复，且绝不会被自动删除。
+Curator是一个辅助模型后台任务，它会定期检查由Agent生成的技能，删除过时的技能，合并重复的技能，并将不再使用的技能归档。已打包或通过Hub安装的技能则不会被修改。归档的技能可以恢复，绝不会被自动删除。
 
 | 子命令 | 描述 |
 |----------|------|
@@ -1068,23 +1069,35 @@ Curator是一个辅助模型后台任务，它会定期检查由智能体创建�
 | `run` | 立即触发Curator的检查流程（会阻塞直到LLM处理完成） |
 | `run --background` | 在后台线程中启动LLM处理并立即返回 |
 | `run --dry-run` | 仅进行预览——生成检查报告但不做任何修改 |
-| `backup` | 手动创建`~/.hermes/skills/`目录的tar.gz备份文件（Curator在每次实际运行前也会自动创建备份） |
-| `rollback` | 从备份文件中恢复`~/.hermes/skills/`目录的内容（默认恢复最新的备份） |
-| `rollback --list` | 列出所有可用的备份文件 |
-| `rollback --id <ts>` | 根据编号恢复特定的备份文件 |
+| `backup` | 手动对`~/.hermes/skills/`目录创建tar.gz格式的快照（Curator在每次实际运行前也会自动创建快照） |
+| `rollback` | 从快照中恢复`~/.hermes/skills/`目录的内容（默认恢复最新的快照） |
+| `rollback --list` | 列出所有可用的快照 |
+| `rollback --id <ts>` | 根据ID恢复特定的快照 |
 | `rollback -y` | 跳过确认提示 |
 | `pause` | 暂停Curator的运行，直到手动恢复 |
 | `resume` | 恢复已暂停的Curator运行 |
-| `pin <skill>` | 固定某个技能，使其不会被Curator自动移除 |
+| `pin <skill>` | 固定某个技能，使其不会被Curator自动转移 |
 | `unpin <skill>` | 取消固定某个技能 |
 | `restore <skill>` | 恢复已被归档的技能 |
 | `archive <skill>` | 手动将某个技能归档 |
-| `prune` | 手动删除Curator通常会处理的过期技能 |
+| `prune` | 手动删除Curator通常会清理的技能 |
 | `list-archived` | 列出所有已归档的技能（可通过`restore`命令恢复） |
 
-在首次安装后，第一次 scheduled的检查任务会被延迟一个完整的`interval_hours`时间（默认为7天）——在执行`hermes update`后的第一个定时周期内，Gateway不会立即进行技能检查。您可以使用`hermes curator run --dry-run`来提前预览这一流程。
+在首次安装后，第一次定时的检查流程会被推迟一个完整的`interval_hours`时间（默认为7天）——在执行`hermes update`后的第一个计时周期内，Gateway不会立即进行技能检查。您可以使用`hermes curator run --dry-run`来提前预览这一流程。
 
-有关其运行机制及配置选项，请参阅[Curator文档](../user-guide/features/curator.md)。
+有关其运行机制及配置选项，请参阅[Curator](../user-guide/features/curator.md)文档。
+
+## `hermes moa`
+
+用于配置 `/moa` 命令所使用的命名化混合Agent预设。
+
+```bash
+hermes moa list
+hermes moa configure [name]
+hermes moa delete <name>
+```
+
+`hermes moa configure` 会复用 Hermes 的提供者→模型选择器，用于处理各个参考模型以及聚合器。预设仅属于执行模式配置，并非核心模型或提供者。
 
 ## `hermes fallback`
 
