@@ -372,7 +372,7 @@ $HERMES_HOME/skills/        Installed skills
 
 ### 提供商支持
 
-目前支持20多种提供商，可通过 `hermes model` 或 `hermes setup` 命令进行配置。
+目前支持20多种供应商，可通过 `hermes model` 或 `hermes setup` 命令进行配置。
 
 | 提供商 | 认证方式 | 对应环境变量 |
 |----------|------|-------------|
@@ -398,7 +398,7 @@ $HERMES_HOME/skills/        Installed skills
 | 自定义接口端点 | 配置文件 | 在 config.yaml 中设置 `model.base_url` 和 `model.api_key` |
 | GitHub Copilot ACP | 外部工具 | `COPILOT_CLI_PATH` 或 Copilot CLI |
 
-完整提供商文档：https://hermes-agent.nousresearch.com/docs/integrations/providers
+完整供应商文档：https://hermes-agent.nousresearch.com/docs/integrations/providers
 
 ### 工具集
 
@@ -407,72 +407,71 @@ $HERMES_HOME/skills/        Installed skills
 | 工具集 | 功能说明 |
 |---------|----------|
 | `web` | 网页搜索与内容提取 |
-| `search` | 仅支持网页搜索（属于 `web` 的子集） |
-| `browser` | 浏览器自动化操作（支持 Browserbase、Camofox 或本地 Chromium） |
+| `search` | 仅网页搜索（属于 `web` 的子集） |
+| `browser` | 浏览器自动化（支持 Browserbase、Camofox 或本地 Chromium） |
 | `terminal` | Shell命令执行与进程管理 |
-| `file` | 文件读写、搜索与修补操作 |
+| `file` | 文件读写、搜索与修改 |
 | `code_execution` | 沙箱环境下的 Python 代码执行 |
-| `vision` | 图像分析功能 |
-| `image_gen` | AI图像生成功能 |
-| `video` | 视频分析与生成功能 |
-| `tts` | 文本转语音功能 |
-| `skills` | 技能浏览与管理工作 |
-| `memory` | 跨会话持久化内存功能 |
+| `vision` | 图像分析 |
+| `image_gen` | AI图像生成 |
+| `video` | 视频分析与生成 |
+| `tts` | 文本转语音 |
+| `skills` | 技能浏览与管理 |
+| `memory` | 跨会话持久内存 |
 | `session_search` | 搜索历史对话内容 |
 | `delegation` | 向子智能体分配任务 |
-| `cronjob` | 定时任务管理功能 |
+| `cronjob` | 定时任务管理 |
 | `clarify` | 向用户提问以获取更多信息 |
-| `messaging` | 跨平台消息发送功能 |
-| `todo` | 会话内任务规划与跟踪功能 |
-| `kanban` | 多智能体工作队列工具（仅对工作节点开放） |
-| `debugging` | 额外的调试与检查工具（默认关闭） |
-| `safe` | 为受限会话设计的简易、低风险工具集 |
-| `spotify` | Spotify 播放与播放列表控制功能 |
-| `homeassistant` | 智能家居控制功能（默认关闭） |
+| `messaging` | 跨平台消息发送 |
+| `todo` | 会话内任务规划与跟踪 |
+| `kanban` | 多智能体工作队列工具（仅对工作者可见） |
+| `debugging` | 额外的调试工具（默认关闭） |
+| `safe` | 为受限会话设计的简化型低风险工具集 |
+| `spotify` | Spotify 播放与播放列表控制 |
+| `homeassistant` | 智能家居控制（默认关闭） |
 | `discord` | Discord 集成工具 |
 | `discord_admin` | Discord 管理与审核工具 |
 | `feishu_doc` | Feishu（Lark）文档处理工具 |
-| `feishu_drive` | Feishu（Lark）云盘操作工具 |
+| `feishu_drive` | Feishu（Lark）云盘工具 |
 | `yuanbao` | Yuanbao 集成工具 |
 | `rl` | 强化学习相关工具（默认关闭） |
-| `moa` | 混合智能体技术相关工具（默认关闭） |
 
 所有工具集的完整列表存储在 `toolsets.py` 文件中的 `TOOLSETS` 字典中；`_HERMES_CORE_TOOLS` 是大多数平台默认使用的工具组合。
 
-对工具的更改需通过 `/reset` 命令启动新会话后才会生效。为保留提示词缓存，这些更改不会在当前对话进行中生效。
+工具变更仅在重新启动会话（执行 `/reset` 命令）时生效，不会在当前对话过程中应用，以此保留提示词缓存。
 
 ---
 
 ## 项目上下文文件
 
-Hermes 会从工作目录读取上下文文件，将项目级配置指令注入系统提示词中。文件的加载遵循**首次匹配原则**——每个会话仅加载一个项目上下文来源。
+Hermes 会从工作目录读取上下文文件，将项目级配置注入系统提示词中。文件的加载遵循“首次匹配优先”原则——每个会话仅加载一个项目上下文来源。
 
-| 文件（按优先级顺序） | 加载方式 | 适用场景 |
+| 文件（按优先级排序） | 加载方式 | 适用场景 |
 |---|---|---|
-| `.hermes.md` / `HERMES.md` | 从当前目录向上遍历至 Git 根目录，仅在 Git 根目录停止 | 需要分层项目规则配置（根目录规则及各包的覆盖规则） |
-| `AGENTS.md` / `agents.md` | **仅考虑当前工作目录**——子目录及父目录的副本将被忽略 | 需要编写可在 Hermes、Claude Code、Codex 等工具中通用的语法简洁的智能体配置 |
-| `CLAUDE.md` / `claude.md` | 仅考虑当前工作目录 | 与 `AGENTS.md` 功能类似，但针对 Claude 工具优化 |
+| `.hermes.md` / `HERMES.md` | 从当前目录向上遍历至 Git 根目录，停止在根目录 | 需要分层级的项目规则配置（根目录规则及各包的覆盖规则） |
+| `AGENTS.md` / `agents.md` | **仅考虑当前工作目录**——子目录和父目录的副本将被忽略 | 需要可在 Hermes、Claude Code、Codex 等不同工具中通用且保持一致的智能体配置 |
+| `CLAUDE.md` / `claude.md` | 仅考虑当前工作目录 | 与 `AGENTS.md` 类似，但针对 Claude 平台优化 |
 | `.cursorrules` / `.cursor/rules/*.mdc` | 仅考虑当前工作目录 | 从 Cursor 平台迁移过来的用户使用 |
 
-位于 `$HERMES_HOME` 目录下的 `SOUL.md` 文件独立存在，只要存在就会始终被加载——它用于设置智能体的身份信息，而非项目规则。
+位于 `$HERMES_HOME` 目录下的 `SOUL.md` 文件是独立的，只要存在就会始终被加载——它用于设置智能体的身份信息，而非项目规则。
 
 ### 如何选择合适的文件
 
-- **选择 `.hermes.md`**：当需要定义适用于整个项目（包括根目录及所有子目录）的、针对 Hermes 的特殊规则，或希望规则能从父目录继承时使用。由于遍历会在 Git 根目录停止，因此位于用户主目录下的 `.hermes.md` 文件不会影响其他项目（Git 仓库的根目录即为分隔边界）。
-- **选择 `AGENTS.md`**：当同一项目还需要由其他智能体工具（如 Codex、Claude Code、OpenCode）处理时使用。这些工具对 `AGENTS.md` 都有各自的格式规范，而“仅考虑当前工作目录”的设计使得该文件具备跨平台兼容性。
-- **不要将项目规则放在 `~/.hermes/AGENTS.md`（或其他用户主目录下的位置）**。当 Hermes 以该目录作为当前工作目录运行时，虽然该文件会被加载，但仅对该目录有效。如需实现跨项目上下文共享，可使用位于 `$HERMES_HOME` 的 `SOUL.md` 文件（仅用于设置身份信息），或通过 `hermes skills install` 命令安装技能。
+- **选择 `.hermes.md`**：当你需要适用于整个项目（包括根目录及所有子目录）的 Hermes 特有配置，或希望规则能从父目录继承时使用。由于遍历会在 Git 根目录停止，因此位于用户主目录下的 `.hermes.md` 文件不会影响到其他项目（Git 仓库的根目录即为分隔边界）。
+- **选择 `AGENTS.md`**：当同一个项目还需要由其他智能体（如 Codex、Claude Code、OpenCode）处理时使用。这些工具对 `AGENTS.md` 都有各自的格式要求，而“仅考虑当前工作目录”的设计保证了该文件的通用性。
+- **不要将项目规则放在 `~/.hermes/AGENTS.md`（或任何其他用户主目录下的位置）**。当 Hermes 以该目录作为当前工作目录运行时，虽然该文件会被加载，但仅对该目录有效。对于跨项目上下文配置，建议使用位于 `$HERMES_HOME` 的 `SOUL.md`（仅用于设置身份信息），或通过 `hermes skills install` 命令安装技能。
 
 ### 文件大小与截断处理
 
-每个上下文文件的字符上限为20,000个。超过此限制的文件会被**截取开头和结尾部分**（中间内容将被删除，并显示 `[...truncated...]` 标记）。对于内容较多的项目规则，建议将其拆分为多个独立技能，而非试图将所有内容塞入一个文件中。
+每个上下文文件的字符长度上限为20,000个字符。超过此限制的文件会被截取开头和结尾部分（中间内容将被删除，并显示 `[...truncated...]` 标记）。对于内容较多的项目规则，建议将其拆分为多个技能，而非将所有内容塞入一个文件中。
 
 ### 安全性
 
-所有上下文文件在进入系统提示词之前都会经过威胁模式扫描器检测。凡是匹配到提示词注入或恶意提示词技术的内容，都会被替换为 `[BLOCKED: ...]` 占位符。这意味着，即使 `AGENTS.md` 文件中包含明显的注入尝试，相关内容也不会传递给模型——扫描器会拦截内容本身，而不会阻止整个文件的加载。
+所有上下文文件在进入系统提示词之前都会经过威胁模式扫描。检测到可能用于提示词注入或恶意脚本的模式会被替换为 `[BLOCKED: ...]` 占位符。这意味着即使 `AGENTS.md` 文件中包含明显的注入尝试，内容也不会传递给模型——扫描器会拦截相关内容，但文件本身仍可被加载。
 
 ### 临时禁用上下文加载
 
-可通过 `hermes --ignore-rules` 命令跳过所有项目上下文文件（`.hermes.md`、`AGENTS.md`、`CLAUDE.md`、`.cursorrules`）以及 `SOUL.md` 中的身份信息，同时还会忽略用户自定义配置、插件和 MCP 服务器。该命令可用于判断问题出在用户设置还是 Hermes 本身。
+可使用 `hermes --ignore-rules` 命令跳过所有项目上下文文件（`.hermes.md`、`AGENTS.md`、`CLAUDE.md`、`.cursorrules`）以及 `SOUL.md` 中的身份信息，同时也会忽略用户自定义配置、插件和 MCP 服务器。该命令可用于判断问题出在用户设置还是 Hermes 本身。
 
 ### 示例：一个简短的 `.hermes.md` 文件
 
@@ -951,7 +950,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 ### 扩展系统提示中的执行环境模块
 
-关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统中的 bash 与 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示及针对不同终端后端的检测逻辑。具体规则如下：
+关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统中的 bash 与 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。WSL 相关提示及针对不同后端的检测逻辑也位于该函数中。其规则如下：
 
 - **本地终端后端** → 输出主机信息（操作系统、`$
 
