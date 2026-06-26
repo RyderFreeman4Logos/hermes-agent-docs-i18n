@@ -355,15 +355,15 @@ $HERMES_HOME/skills/        Installed skills
 ~/.hermes/hermes-agent/     Source code (if git-installed)
 ```
 
-配置文件采用相同的结构，存储路径为 `~/.hermes/profiles/<name>/`。
+配置文件采用相同的结构，路径为 `~/.hermes/profiles/<name>/`。
 
 ### 配置章节
 
-可通过 `hermes config edit` 或 `hermes config set section.key value` 命令进行编辑。
+可通过 `hermes config edit` 或 `hermes config set section.key value` 进行编辑。
 
 | 章节 | 可配置选项 |
 |------|------------|
-| `model` | `default`、`provider`、`base_url`、`api_key`、`context_length`（可手动覆盖；设为 `""` 即让系统自动从服务器的 `/v1/models` 获取） |
+| `model` | `default`、`provider`、`base_url`、`api_key`、`context_length`（可手动覆盖；设为 `""` 即让服务器从 `/v1/models` 自动检测） |
 | `agent` | `max_turns`（90）、`tool_use_enforcement` |
 | `terminal` | `backend`（local/docker/ssh/modal）、`cwd`、`timeout`（180） |
 | `compression` | `enabled`、`threshold`（0.50）、`target_ratio`（0.20） |
@@ -377,9 +377,9 @@ $HERMES_HOME/skills/        Installed skills
 
 完整配置参考：https://hermes-agent.nousresearch.com/docs/user-guide/configuration
 
-### 提供商支持
+### 提供商
 
-目前支持 20 多种供应商。可通过 `hermes model` 或 `hermes setup` 命令进行设置。
+支持 20 多种供应商。可通过 `hermes model` 或 `hermes setup` 进行设置。
 
 | 提供商 | 认证方式 | 对应环境变量 |
 |--------|----------|--------------|
@@ -409,31 +409,31 @@ $HERMES_HOME/skills/        Installed skills
 
 ### 工具集
 
-可通过 `hermes tools`（交互式命令）或 `hermes tools enable/disable NAME` 命令来启用/禁用工具集。
+可通过 `hermes tools`（交互式方式）或 `hermes tools enable/disable NAME` 来启用/禁用工具集。
 
 | 工具集 | 功能说明 |
 |--------|----------|
 | `web` | 网页搜索与内容提取 |
-| `search` | 仅支持网页搜索（属于 `web` 的子集） |
+| `search` | 仅网页搜索（属于 `web` 的子集） |
 | `browser` | 浏览器自动化（支持 Browserbase、Camofox 或本地 Chromium） |
 | `terminal` | Shell 命令执行与进程管理 |
-| `file` | 文件的读取、写入、搜索与修改 |
-| `code_execution` | 沙箱化 Python 代码执行 |
+| `file` | 文件的读取、写入、搜索和修改 |
+| `code_execution` | 沙箱环境下的 Python 执行 |
 | `vision` | 图像分析 |
 | `image_gen` | AI 图像生成 |
 | `video` | 视频分析与生成 |
 | `tts` | 文本转语音 |
-| `skills` | 技能浏览与管理工作 |
-| `memory` | 跨会话持久化记忆 |
+| `skills` | 技能浏览与管理 |
+| `memory` | 跨会话持久内存 |
 | `session_search` | 搜索历史对话内容 |
 | `delegation` | 向子代理分配任务 |
 | `cronjob` | 定时任务管理 |
 | `clarify` | 向用户提问以获取更多信息 |
 | `messaging` | 跨平台消息发送 |
 | `todo` | 会话内任务规划与跟踪 |
-| `kanban` | 多代理工作队列工具（仅对工作节点开放） |
+| `kanban` | 多代理工作队列工具（仅对工作者开放） |
 | `debugging` | 额外的调试工具（默认关闭） |
-| `safe` | 为受限会话提供的简易、低风险工具集 |
+| `safe` | 为受限会话提供的简化、低风险工具集 |
 | `spotify` | Spotify 播放与播放列表控制 |
 | `homeassistant` | 智能家居控制（默认关闭） |
 | `discord` | Discord 集成工具 |
@@ -441,22 +441,21 @@ $HERMES_HOME/skills/        Installed skills
 | `feishu_doc` | Feishu（Lark）文档处理工具 |
 | `feishu_drive` | Feishu（Lark）云盘工具 |
 | `yuanbao` | Yuanbao 集成工具 |
-| `rl` | 强化学习相关工具（默认关闭） |
-| `moa` | 混合代理技术（默认关闭） |
+| `rl` | 强化学习工具（默认关闭） |
 
 所有工具集的完整列表存储在 `toolsets.py` 文件中的 `TOOLSETS` 字典中；`_HERMES_CORE_TOOLS` 是大多数平台默认使用的工具组合。
 
-对工具的更改需通过 `/reset` 命令创建新会话后才会生效。为保留提示词缓存，这些更改不会在对话进行过程中立即应用。
+工具更改需通过 `/reset`（启动新会话）才能生效。为保留提示词缓存，这些更改不会在对话进行中即时应用。
 
 ---
 
-## 安全与隐私相关开关
+## 安全与隐私开关
 
-针对“为何 Hermes 会对我的输出/工具调用/命令执行某些操作？”这类常见疑问的开关，以及对应的修改命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要通过创建新会话（在聊天中输入 `/reset` 或重新启动 `hermes`）才能生效。
+常见的一些“为何 Hermes 会对我的输出/工具调用/命令执行此类操作？”相关的开关，以及用于修改它们的具体命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要重新启动会话（在聊天中输入 `/reset` 或重新调用 `hermes`）才能生效。
 
-### 工具输出中的敏感信息遮蔽
+### 工具输出中的敏感信息屏蔽
 
-敏感信息遮蔽功能**默认处于开启状态**——工具输出（终端标准输出、`read_file` 操作结果、网页内容、子代理总结等）在进入对话上下文和日志之前，会自动检测其中是否包含类似 API 密钥、令牌和敏感信息的字符串。常规使用情况下建议保持该功能开启：
+敏感信息屏蔽功能**默认处于开启状态**——工具输出（终端标准输出、`read_file` 操作结果、网页内容、子代理总结等）在进入对话上下文和日志之前，会先被扫描是否存在类似 API 密钥、令牌和敏感信息的字符串。日常使用建议保持此功能开启：
 
 ```bash
 hermes config set security.redact_secrets true       # keep enabled globally
@@ -923,7 +922,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 ### 扩展系统提示中的执行环境模块
 
-关于主机操作系统、用户主目录、当前工作目录、终端后端以及 shell（Windows 系统中的 bash 与 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示以及针对不同终端后端的检测逻辑。具体规则如下：
+关于主机操作系统、用户主目录、当前工作目录、终端后端以及 Shell（Windows 系统为 bash 或 PowerShell）的详细信息，均由 `agent/prompt_builder.py::build_environment_hints()` 函数生成。该函数还负责处理 WSL 相关提示以及针对不同终端后端的检测逻辑。其规则如下：
 
 - **本地终端后端** → 输出主机信息（操作系统、`$
 
