@@ -538,11 +538,11 @@ cronjob(action="create", name="weekly-news-summary",
         prompt="Summarize this week's AI news: ...")
 ```
 
-当任务中设置了 `enabled_toolsets` 时，该设置将起决定性作用；否则，则以 `hermes tools` 的 cron-platform 配置为准；若仍无法确定，Hermes 会回退到内置的默认设置。这一点对于成本控制至关重要：如果在每一个简单的“获取新闻”任务中都启用 `moa`、`browser`、`delegation` 等工具，就会导致每次调用大型语言模型时工具结构提示信息变得臃肿。
+当任务中设置了 `enabled_toolsets` 时，该设置将优先生效；否则，则以 `hermes tools` 的 cron-platform 配置为准；若仍无对应配置，Hermes 将回退到内置的默认设置。这一点对于成本控制至关重要：如果在每一个简单的“获取新闻”任务中都启用 `browser`、`delegation` 等工具，就会导致每次调用大型语言模型时，工具结构提示信息都会变得冗长。
 
 ### 完全跳过智能体：使用 `wakeAgent`
 
-如果您的定时任务通过 `script=` 参数指定了预检查脚本，该脚本可以在运行时决定是否需要调用 Hermes 智能体。只需在脚本的输出中添加一行符合以下格式的最终内容即可：
+如果您的定时任务通过 `script=` 参数指定了预检查脚本，该脚本便可以在运行时决定是否需要调用 Hermes 智能体。只需在脚本中输出一行符合特定格式的最终标准输出即可：
 
 ```text
 {"wakeAgent": false}
