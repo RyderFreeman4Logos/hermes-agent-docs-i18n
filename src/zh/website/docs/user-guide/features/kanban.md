@@ -200,21 +200,21 @@ hermes kanban unblock  t_abc t_def
 hermes kanban block    t_abc "need input" --ids t_def t_hij
 ```
 
-## 工作节点如何与看板交互
+## 工作节点与看板之间的交互方式
 
-**工作节点无需直接调用 `hermes kanban` 命令行工具。** 当调度器启动一个工作节点时，它会将 `HERMES_KANBAN_TASK=t_abcd` 设置在子进程的环境变量中，该环境变量会激活模型架构中的专用**看板工具集**。对于那些在工具集配置中启用了 `kanban` 功能的协调器角色，同样可以使用这套工具集。这些工具通过与 CLI 相同的方式，直接通过 Python 的 `kanban_db` 层来读取和修改看板数据。正在运行的工作节点会像使用其他工具一样调用这些函数，它无需知晓也无需使用 `hermes kanban` CLI。
+**工作节点无需直接调用 `hermes kanban` 命令行工具。** 当调度器启动一个工作节点时，它会将 `HERMES_KANBAN_TASK=t_abcd` 设置在子进程的环境变量中，该环境变量会激活模型架构中的专用**看板工具集**。对于那些在工具集配置中启用了 `kanban` 功能的协调者角色，同样可以使用这套工具集。这些工具与命令行工具一样，通过 Python 的 `kanban_db` 层直接读取和修改看板数据。正在运行的工作节点会像使用其他工具一样调用这些函数，它无需了解也不需要访问 `hermes kanban` 命令行工具。
 
 | 工具 | 功能 | 必需参数 |
 |---|---|---|
-| `kanban_show` | 读取当前任务的信息（标题、内容、之前的尝试记录、上级分配记录、评论以及完整格式化的 `worker_context`）。默认使用环境变量中的任务 ID。 | — |
-| `kanban_list` | 根据“负责人”、“状态”、“租户”、“归档可见性”等条件列出任务摘要，并可设置查询上限。适用于协调器查看看板上的任务情况。 | — |
-| `kanban_complete` | 通过结构化的 `summary` 和 `metadata` 完成任务交接。 | 必须提供 `summary` 或 `result` 中的至少一个参数 |
-| `kanban_block` | 因特殊原因需要人工干预时，用于阻塞任务并说明原因。 | `reason` |
+| `kanban_show` | 读取当前任务的信息（标题、内容、之前的尝试记录、上级任务链接、评论以及完整格式化的 `worker_context`）。默认使用环境变量中的任务 ID。 | — |
+| `kanban_list` | 根据 `assignee`、`status`、`tenant`、归档可见性以及数量限制等条件列出任务摘要。适用于协调者查看看板上的任务情况。 | — |
+| `kanban_complete` | 以结构化的 `summary` 和 `metadata` 形式完成任务并移交处理权。 | 必须提供 `summary` 或 `result` 中的至少一个参数 |
+| `kanban_block` | 暂停任务处理，并指定暂停原因：`kind=dependency`（任务进入待办状态，可自动恢复）、`needs_input`/`capability`/`transient`（需人工介入）。同一类型的重复暂停会自动升级为 `triage` 状态。 | `reason` 参数 |
 | `kanban_heartbeat` | 在执行耗时操作时发送存活信号。仅具有副作用。 | — |
-| `kanban_comment` | 在任务讨论线程中添加持久性备注。 | `task_id`, `body` |
-| `kanban_create` | （协调器使用）创建子任务，可指定负责人、上级任务、所需技能等信息。 | `title`, `assignee` |
-| `kanban_link` | （协调器使用）事后添加 `parent_id → child_id` 的依赖关系。 | `parent_id`, `child_id` |
-| `kanban_unblock` | （协调器使用）将被阻塞的任务恢复为“待处理”状态。 | `task_id` |
+| `kanban_comment` | 在任务讨论线程中添加持久性备注。 | `task_id`、`body` 参数 |
+| `kanban_create` | （协调者专用）创建子任务，可指定负责人、父任务链接、所需技能等信息。 | `title`、`assignee` 参数 |
+| `kanban_link` | （协调者专用）事后添加 `parent_id → child_id` 的依赖关系链路。 | `parent_id`、`child_id` 参数 |
+| `kanban_unblock` | （协调者专用）将被暂停的任务恢复为可处理状态。 | `task_id` 参数 |
 
 一个典型工作节点的处理流程如下：
 
@@ -800,65 +800,67 @@ hermes kanban runs t_abcd
 #        → implemented token bucket, keys on user_id with IP fallback
 ```
 
-运行记录会显示在控制面板中（抽屉内的“运行历史”板块，每次尝试对应一行彩色条目），也会通过 REST API 提供（`GET /api/plugins/kanban/tasks/:id` 会返回 `runs[]` 数组）。通过 `PATCH /api/plugins/kanban/tasks/:id` 并传入 `{status: "done", summary, metadata}` 可同时将这些信息传递给内核，因此控制面板中的“标记为已完成”按钮功能等同于 CLI 操作。`task_events` 行会包含所属的 `run_id`，以便界面按尝试次数对事件进行分组；而 `completed` 事件会在其负载中嵌入简短摘要（长度限制为 400 字符），这样网关通知器无需再次发起 SQL 查询即可呈现结构化的任务交接信息。
+运行记录会显示在控制面板中（抽屉内的“运行历史”板块，每次尝试都会对应一行彩色条目），也会通过 REST API 提供（`GET /api/plugins/kanban/tasks/:id` 会返回一个 `runs[]` 数组）。通过 `PATCH /api/plugins/kanban/tasks/:id` 并传入 `{status: "done", summary, metadata}` 可同时将信息发送给内核，因此控制面板上的“标记完成”按钮功能与 CLI 命令等效。`task_events` 行中会包含所属的 `run_id`，便于界面按尝试次数对事件进行分组；而 `completed` 事件会在其负载中嵌入简短摘要（长度上限为 400 字符），这样网关通知组件无需再次发起 SQL 查询即可直接呈现结构化信息。
 
-**批量关闭的注意事项。** 命令 `hermes kanban complete a b c --summary X` 会被拒绝——因为结构化交接是针对单次运行的，所以将同一摘要复制到多个任务上几乎总是错误的。不过，在常见的“我已完成一批管理任务”场景下，不使用 `--summary`/`--metadata` 参数的批量关闭仍然有效。
+**批量关闭注意事项。** 命令 `hermes kanban complete a b c --summary X` 会被拒绝——因为结构化信息是针对单次运行的，所以将同一摘要复制到多个任务上几乎总是错误的。不过，在常见“我已完成一批行政任务”的场景下，不使用 `--summary` / `--metadata` 参数的批量关闭仍然有效。
 
-**因状态变化而回收的运行记录。** 如果你在控制面板中将正在运行的任务从“运行中”状态拖动回“待处理”或直接移至“待办”，或者归档了仍在运行的任务，该正在处理的运行记录将以 `outcome='reclaimed'` 的状态关闭，而不会成为孤立记录。当 `tasks.current_run_id` 为 `NULL` 时，`task_runs` 行始终处于终止状态，反之亦然——这一规则在 CLI、控制面板、调度器及通知器中均保持一致。
+**因状态变更而回收的运行记录。** 如果你在控制面板中将正在运行的任务从 “running” 状态拖动回 “ready” 或直接拖到 “todo” 状态，或者归档了仍在运行的任务，该正在处理的运行记录将以 `outcome='reclaimed'` 的状态关闭，而不会成为孤立记录。当 `tasks.current_run_id` 为 `NULL` 时，`task_runs` 行始终处于终止状态，反之亦然——这一规则在 CLI、控制面板、调度器及通知组件中均保持一致。
 
-**针对从未被认领的已完成任务的合成运行记录。** 如果完成或阻塞了一个从未被认领的任务（例如，有人通过控制面板为“待处理”状态的任务添加摘要后将其标记为已完成，或是 CLI 用户执行 `hermes kanban complete <ready-task> --summary X`），否则任务交接信息就会丢失。此时内核会插入一条时长为零的运行记录（`started_at == ended_at`），其中包含摘要、元数据及原因，从而确保尝试历史记录的完整性。`completed`/`blocked` 事件的 `run_id` 即指向该条记录。
+**针对从未被认领的完成任务的虚拟运行记录。** 如果完成或阻止了一个从未被认领的任务（例如，用户通过控制面板为 “ready” 状态的任务添加摘要并完成它，或 CLI 用户执行 `hermes kanban complete <ready-task> --summary X`），否则该任务的信息传递就会丢失。此时内核会插入一条持续时间为零的运行记录（`started_at == ended_at`），其中包含摘要、元数据及原因，从而确保尝试历史完整保留。`completed` / `blocked` 事件中的 `run_id` 即指向这条虚拟记录。
 
-**实时抽屉刷新功能。** 当控制面板的 WebSocket 事件流报告用户当前查看的任务有新事件时，抽屉会自动重新加载（通过在其 `useEffect` 依赖列表中加入针对每个任务的事件计数器实现）。无需再次关闭和打开抽屉，即可查看运行记录的新行或更新后的状态。
+**实时抽屉刷新功能。** 当控制面板的 WebSocket 事件流为用户当前查看的任务报告新事件时，抽屉会自动重新加载（通过在其 `useEffect` 依赖列表中加入针对该任务的事件计数器实现）。无需再次关闭并打开抽屉，即可查看运行记录的新行或更新后的状态。
 
 ### 向前兼容性
 
-在 `tasks` 表中预留了两列可为空的字段，用于 v2 工作流路由：`workflow_template_id`（表示该任务所属的模板）和 `current_step_key`（表示该模板中当前处于激活状态的步骤）。v1 内核在路由时会忽略这些字段，但允许客户端写入它们，因此 v2 版本可以在无需再次修改表结构的情况下添加路由功能。
+在 `tasks` 表中预留了两列可为空的字段，用于 v2 工作流路由：`workflow_template_id`（表示该任务所属的模板）和 `current_step_key`（表示该模板中当前处于活跃状态的步骤）。v1 内核在路由时会忽略这些字段，但允许客户端自行填写，因此 v2 版本可以在无需再次修改表结构的情况下添加路由功能。
 
 ## 事件参考
 
-每次状态变更都会在 `task_events` 表中新增一行记录。每行记录可选地包含 `run_id`，以便界面按尝试次数对事件进行分组。事件类型可分为三类，便于过滤（例如：`hermes kanban watch --kinds completed,gave_up,timed_out`）：
+每次状态变化都会在 `task_events` 表中新增一行记录。每行记录可选地包含 `run_id`，便于界面按尝试次数对事件进行分组。事件类型被分为三类，方便筛选（例如：`hermes kanban watch --kinds completed,gave_up,timed_out`）：
 
 **生命周期事件**（描述任务作为逻辑单元的状态变化）：
 
 | 类型 | 载荷内容 | 触发时机 |
 |---|---|---|
 | `created` | `{assignee, status, parents, tenant}` | 任务被创建时。此时 `run_id` 为 `NULL`。 |
-| `promoted` | — | 当所有父任务都标记为“已完成”时，任务从“待处理”转为“待处理”。此时 `run_id` 为 `NULL`。 |
-| `claimed` | `{lock, expires, run_id}` | 调度器原子性地认领了一个“待处理”任务以启动工作进程。 |
-| `completed` | `{result_len, summary?}` | 工作进程通过 `--result`/`--summary` 参数提交结果且任务状态变为“已完成”。`summary` 为简短交接信息（长度限制 400 字符）；完整版本存储在对应运行记录行中。如果对从未被认领且包含交接字段的任务调用 `complete_task`，系统会生成一条时长为零的运行记录，确保 `run_id` 仍有指向。 |
-| `blocked` | `{reason}` | 工作进程或人工将任务状态改为“已阻塞”。若对从未被认领的任务并传入 `--reason` 参数，系统也会生成一条时长为零的运行记录。 |
-| `unblocked` | — | 任务从“已阻塞”转为“待处理”，可能是手动操作或通过 `/unblock` 命令实现。此时 `run_id` 为 `NULL`。 |
-| `archived` | — | 该任务在默认看板中不可见。如果任务仍在运行，其 `run_id` 将指向因状态变化而被回收的对应运行记录。 |
+| `promoted` | — | 当所有父任务都标记为 “done” 时，任务从 “todo” 提升为 “ready” 状态。此时 `run_id` 为 `NULL`。 |
+| `claimed` | `{lock, expires, run_id}` | 调度器原子性地认领一个 “ready” 状态的任务以启动处理流程。 |
+| `completed` | `{result_len, summary?}` | 工作进程通过 `--result` / `--summary` 参数提交结果且任务状态变为 “done” 时。`summary` 为简短摘要（长度上限 400 字符）；完整版本存储在对应的运行记录行中。如果对从未被认领且包含传递信息的任务调用 `complete_task`，系统会生成一条持续时间为零的虚拟运行记录，以确保 `run_id` 仍有对应值。 |
+| `blocked` | `{reason, kind, recurrences}` | 工作进程或用户将任务状态设置为 “blocked” 时。`kind` 为具体的阻塞原因类型（如 `needs_input`、`capability`、`transient`，或通用阻塞时的 `null`）；`recurrences` 为解除阻塞的循环计数器。如果对从未被认领的任务且指定了 `--reason` 参数调用此事件，系统也会生成一条持续时间为零的虚拟运行记录。 |
+| `dependency_wait` | `{reason, kind}` | 工作进程因依赖其他任务而处于阻塞状态（`kind=dependency`）——此时任务仅等待其他任务处理完成，因此会被路由到 “todo” 状态（由父任务触发自动提升），而非直接进入 “blocked” 状态。此情况无需人工干预。 |
+| `block_loop_detected` | `{reason, kind, recurrences, limit}` | 一个任务因相同原因（即 `BLOCK_RECURRENCE_LIMIT` 次，默认为 2 次）被解除阻塞后又再次被阻塞。为了避免陷入无限循环，系统不会让其再次进入 “blocked” 状态（因为定时任务会不断尝试解除阻塞），而是将其路由到 “triage” 状态，由人工进行决策。 |
+| `unblocked` | — | 当任务从 “blocked” 状态恢复为 “ready”（或如果父任务仍处于未完成状态则保持 “todo”）时，可能是手动操作或通过 `/unblock` 命令实现。此操作会重置调度器的 `consecutive_failures` 计数器，但会刻意保留 `block_recurrences` 计数器，以便循环中断机制记住此次解除阻塞的情况。此时 `run_id` 为 `NULL`。 |
+| `archived` | — | 该任务在默认看板中不可见。如果任务仍在运行，此字段会包含因状态变更而被回收的运行记录的 `run_id`。 |
 
-**编辑事件**（由人工发起的非状态变更操作）：
+**编辑事件**（由用户手动触发、但并非状态变化的操作）：
 
 | 类型 | 载荷内容 | 触发时机 |
 |---|---|---|
-| `assigned` | `{assignee}` | 任务负责人发生变化（包括解除分配）。 |
+| `assigned` | `{assignee}` | 任务负责人发生变化（包括取消分配）。 |
 | `edited` | `{fields}` | 任务的标题或内容被修改。 |
 | `reprioritized` | `{priority}` | 任务的优先级发生改变。 |
-| `status` | `{status}` | 通过控制面板的拖放操作直接修改了任务状态（例如从“待处理”转为“待处理”）。在从“运行中”状态拖动任务时，该行的 `run_id` 将指向被回收的运行记录；否则为 `NULL`。 |
+| `status` | `{status}` | 通过控制面板的拖放操作直接更改任务状态（例如从 “todo” 更改为 “ready”）。如果任务是从 “running” 状态拖动而来，此字段会包含被回收的运行记录的 `run_id`；否则为 `NULL`。 |
 
-**工作进程遥测事件**（描述执行过程，而非任务本身的逻辑状态）：
+**工作进程遥测事件**（反映执行过程的信息，而非任务本身的逻辑状态）：
 
 | 类型 | 载荷内容 | 触发时机 |
 |---|---|---|
 | `spawned` | `{pid}` | 调度器成功启动了一个工作进程。 |
 | `heartbeat` | `{note?}` | 在长时间运行的操作期间，工作进程会调用 `hermes kanban heartbeat $TASK` 以报告自身仍在运行。 |
-| `reclaimed` | `{stale_lock}` | 任务认领的超时时间到期且未完成，此时任务状态将恢复为“待处理”。 |
+| `reclaimed` | `{stale_lock}` | 由于任务未完成，其锁定超时后被回收；任务状态恢复为 “ready”。 |
 | `crashed` | `{pid, claimer}` | 工作进程的 PID 已失效，但其超时时间尚未到期。 |
-| `timed_out` | `{pid, elapsed_seconds, limit_seconds, sigkill}` | 任务运行时间超过了 `max_runtime_seconds` 的限制；调度器首先发送 SIGTERM 信号（5 秒宽限期后发送 SIGKILL），然后将该任务重新加入队列。 |
-| `stale` | `{elapsed_seconds, last_heartbeat_at, heartbeat_age_seconds, timeout_seconds, pid, terminated}` | 任务运行时间超过了 `kanban.dispatch_stale_timeout_seconds` 的默认值（4 小时），且过去一小时内没有收到任何 `kanban_heartbeat` 信号。调度器会终止本地工作进程（如果存在），并将任务状态重置为“待处理”以重新调度。该事件不会增加失败计数——它属于调度器端的缺失检测，而非工作进程故障。执行长时间操作的进程应至少每小时调用一次 `kanban_heartbeat` 以避免此问题。 |
-| `respawn_guarded` | `{reason}` | 调度器决定暂不重新启动该“待处理”任务。原因可能包括：`blocker_auth`（上一次失败是由于配额/认证/429 错误——需等待速率限制窗口重置）、`recent_success`（过去一小时内已有任务完成——需先进行审核后再尝试重新运行）、`active_pr`（最近有评论中提到了 GitHub PR 链接——已有工作进程在处理该 PR）。此时任务仍保持“待处理”状态，下次调度时将获得再次启动的机会。如果导致该状态的条件持续存在，正常的“连续失败”断路器机制将在出现 `failure_limit` 次失败后自动触发 `gave_up` 状态。 |
-| `spawn_failed` | `{error, failures}` | 一次启动尝试失败（例如路径缺失、工作区无法挂载等）。失败计数器会增加，任务将返回“待处理”状态以便重新尝试。 |
-| `protocol_violation` | `{pid, claimer, exit_code}` | 任务仍处于“运行中”状态时，工作进程已正常退出，通常是因为它在没有调用 `kanban_complete` 或 `kanban_block` 的情况下就结束了操作。调度器也会立即触发 `gave_up` 状态并自动阻止该任务，而不会尝试重新启动。 |
-| `gave_up` | `{failures, effective_limit, limit_source, error}` | 在连续 N 次非成功尝试后，断路器被触发。任务将携带最后一次出现的错误自动进入阻塞状态。有效的限制顺序为：先考虑任务的 `max_retries` 值，其次是调度器的 `failure_limit`/`kanban.failure_limit` 值，最后才是默认值。 |
+| `timed_out` | `{pid, elapsed_seconds, limit_seconds, sigkill}` | 任务运行时间超过了 `max_runtime_seconds` 的限制；调度器首先发送 SIGTERM 信号（5 秒宽限期后发送 SIGKILL），随后将任务重新加入队列。 |
+| `stale` | `{elapsed_seconds, last_heartbeat_at, heartbeat_age_seconds, timeout_seconds, pid, terminated}` | 任务运行时间超过了 `kanban.dispatch_stale_timeout_seconds` 的默认值（4 小时），且在过去一小时内没有收到任何 `kanban_heartbeat` 信号。调度器会终止本地的工作进程（如果存在），并将任务状态重置为 “ready” 以重新调度。此事件不会增加失败计数器——因为“陈旧”只是调度器端的检测机制，并非工作进程出现故障。执行长时间操作的工作进程应至少每小时调用一次 `kanban_heartbeat` 以避免此类情况。 |
+| `respawn_guarded` | `{reason}` | 调度器决定在当前周期不重新启动该处于 “ready” 状态的任务。原因可能包括：`blocker_auth`（上一次失败是由于配额、认证或 429 错误——需等待速率限制窗口重置）、`recent_success`（过去一小时内已有任务完成——需先进行审核后再尝试重新启动）、`active_pr`（最近有评论提到了 GitHub PR 链接——已有工作进程在处理该 PR）。此时任务仍保持 “ready” 状态，下一个周期将有机会再次被启动。如果导致该状态的条件持续存在，正常的 `consecutive_failures` 电路断路器会在达到 `failure_limit` 次失败后自动触发 `gave_up` 状态进行阻断。 |
+| `spawn_failed` | `{error, failures}` | 一次启动尝试失败（如路径缺失、工作空间无法挂载等）。失败计数器加 1，任务状态恢复为 “ready” 以便重新尝试。 |
+| `protocol_violation` | `{pid, claimer, exit_code}` | 工作进程在任务仍处于 “running” 状态时正常退出，通常是因为它在没有调用 `kanban_complete` 或 `kanban_block` 的情况下就响应了请求。调度器也会立即触发 `gave_up` 状态并自动阻断，而不会尝试重新启动。 |
+| `gave_up` | `{failures, effective_limit, limit_source, error}` | 在连续 N 次非成功尝试后，电路断路器被触发。任务会带着最后一次出现的错误自动进入阻断状态。有效的限制顺序为：首先考虑任务的 `max_retries` 设置，其次是调度器的 `failure_limit` / `kanban.failure_limit`，最后才是内置的默认值。 |
 
-命令 `hermes kanban tail <id>` 可查看单个任务的这些事件记录。而命令 `hermes kanban watch` 则可实时监控整个看板中的所有事件。
+命令 `hermes kanban tail <id>` 可查看单个任务的这些事件记录。而命令 `hermes kanban watch` 则可实时获取整个看板中的所有事件流。
 
-## 不支持的功能
+## 范围外内容
 
-Kanban 系统刻意设计为单主机运行模式。`~/.hermes/kanban.db` 是一个本地的 SQLite 文件，调度器也在同一台机器上启动工作进程。目前不支持在多台主机之间共享看板——因为该系统没有用于协调“主机 A 上的工作进程 X、主机 B 上的工作进程 Y”这种场景的机制，且崩溃检测逻辑也假设 PID 是主机本地唯一的。如果需要多主机部署，建议为每台主机单独运行一个看板，并通过 `delegate_task` 或消息队列来实现各看板之间的数据交互。
+Kanban 系统刻意设计为单主机运行模式。`~/.hermes/kanban.db` 是一个本地的 SQLite 数据文件，调度器也在同一台机器上启动工作进程。系统不支持在多台主机之间共享看板——因为不存在用于协调“主机 A 上的工作进程 X、主机 B 上的工作进程 Y”之间关系的机制，且崩溃检测逻辑也假设 PID 是主机本地唯一的。如果需要多主机部署，建议为每台主机单独运行一个看板，并通过 `delegate_task` 或消息队列来实现它们之间的数据交互。
 
 ## 设计规范
 
