@@ -66,9 +66,9 @@ memory:
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（它现在会重定向到 `hermes memory setup`），但仅在将 Honcho 设定为活跃的内存提供者之后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（现在它会重定向到 `hermes memory setup`），但仅在将 Honcho 选为默认内存提供者后才会被注册。
 
-**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置文件的加载优先级为：`$
+**配置文件位置：** `$HERMES_HOME/honcho.json`（针对当前用户配置）或 `~/.honcho/config.json`（全局配置）。配置文件的加载优先级为：`$
 
 ```json
 {
@@ -460,26 +460,26 @@ hermes config set memory.provider byterover
 **核心功能：**  
 - 自动预压缩提取（在上下文压缩导致信息丢失之前保存关键洞察）  
 - 知识树存储于 `$HERMES_HOME/byterover/` 目录下（基于用户配置文件）  
-- 支持通过 SOC2 Type II 认证的云同步功能（可选）  
+- 支持经过 SOC2 Type II 认证的云同步功能（可选）  
 
 ---
 
 ### Supermemory  
 
-这是一种具备语义长期记忆功能的工具，支持通过用户配置文件进行语义检索、显性记忆管理，还可通过 Supermemory 图形 API 实现会话结束后的对话数据导入。  
+这是一种具备语义长期记忆功能的工具，支持通过用户配置文件进行语义检索、显式记忆管理，还可通过 Supermemory 图谱 API 实现会话结束后的对话信息整合。  
 
 | | |  
 |---|---|  
-| **最佳适用场景** | 基于用户配置文件的语义检索及会话级图形结构构建 |  
-| **所需条件** | 安装 `pip install supermemory` + 获取 [API 密钥](https://supermemory.ai) |  
-| **数据存储** | Supermemory 云平台 |  
-| **费用** | 参见 Supermemory 的定价标准 |  
+| **最佳适用场景** | 基于用户配置文件的语义检索及会话级图谱构建 |  
+| **所需条件** | 安装 `pip install supermemory` + 获取 [API 密钥](http://app.supermemory.ai/integrations?connect=hermes) |  
+| **数据存储方式** | Supermemory 云平台 |  
+| **费用** | 按 Supermemory 的定价标准收取 |  
 
-**相关工具：**  
-- `supermemory_store`（用于保存显性记忆）  
-- `supermemory_search`（基于语义相似度的检索功能）  
+**可用工具：**  
+- `supermemory_store`（用于保存显式记忆）  
+- `supermemory_search`（支持语义相似度搜索）  
 - `supermemory_forget`（可通过 ID 或最匹配查询来删除记忆）  
-- `supermemory_profile`（用于维护持久化用户配置文件及近期上下文信息）  
+- `supermemory_profile`（用于管理持久化配置文件及近期上下文信息）  
 
 **设置方法：**
 ```bash
@@ -553,7 +553,7 @@ hermes memory setup
 
 | 提供商 | 存储方式 | 费用 | 工具数量 | 依赖项 | 独特功能 |
 |----------|---------|------|-------|-------------|----------------|
-| **Honcho** | 云端 | 付费 | 5 | `honcho-ai` | 对话式用户建模 + 会话级上下文管理 |
+| **Honcho** | 云端 | 付费 | 5 | `honcho-ai` | 辩证式用户建模 + 会话级上下文管理 |
 | **OpenViking** | 自托管 | 免费 | 5 | `openviking` + 服务器 | 文件系统层级结构 + 分层加载机制 |
 | **Mem0** | 云端/自托管 | 免费/付费 | 5 | `mem0ai` | 服务器端大语言模型提取功能 + OSS模式 |
 | **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反向合成技术 |
@@ -561,10 +561,10 @@ hermes memory setup
 | **RetainDB** | 云端 | 每月20美元 | 5 | `requests` | 差分压缩技术 |
 | **ByteRover** | 本地/云端 | 免费/付费 | 3 | `brv` CLI | 预压缩提取功能 |
 | **Supermemory** | 云端 | 付费 | 4 | `supermemory` | 上下文隔离机制 + 会话图谱整合 + 多容器支持 |
-| **Memori** | 云端 | 免费/付费 | 5 | `hermes-memori` | 具有工具感知能力的记忆系统 + 结构化信息检索功能 |
+| **Memori** | 云端 | 免费/付费 | 5 | `hermes-memori` | 具有工具识别功能的记忆系统 + 结构化信息检索 |
 
 ## 配置文件隔离
 
-每个提供商的数据都会根据[配置文件](/user-guide/profiles)实现隔离：
+各提供商的数据均根据[配置文件](/user-guide/profiles)实现隔离：
 
 - **本地存储型提供商**（Holographic、ByteRover）会使用`$
