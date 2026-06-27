@@ -424,77 +424,77 @@ Hermes 会从进程环境读取环境变量，而对于用户管理的机密信�
 | `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在定时任务前的预执行脚本的超时时间（单位：秒，默认值：`120`）。对于需要更长时间执行的脚本（例如为防止机器人检测而设置的随机延迟），可调整此参数。该参数也可通过 `config.yaml` 文件中的 `cron.script_timeout_seconds` 进行配置。 |
 | `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可同时运行的定时任务数量（默认值：`4`）。 |
 
-## 智能体行为| 变量名 | 描述 |
+## 智能体行为| 参数名 | 描述 |
 |--------|------|
 | `HERMES_MAX_ITERATIONS` | 每次对话中调用工具的最大迭代次数（默认值：90） |
-| `HERMES_INFERENCE_MODEL` | 在进程层面强制指定模型名称（对该会话而言，其优先级高于 `config.yaml` 中的设置）。也可通过 `-m`/`--model` 参数进行设置。 |
-| `HERMES_YOLO_MODE` | 设定为 `1` 可绕过危险命令的审批提示。相当于 `--yolo` 参数。 |
-| `HERMES_ACCEPT_HOOKS` | 在无终端提示的情况下，自动批准 `config.yaml` 中声明的所有未见过的全局 shell 钩子。相当于 `--accept-hooks` 或 `hooks_auto_accept: true`。 |
-| `HERMES_IGNORE_USER_CONFIG` | 跳过 `~/.hermes/config.yaml` 文件，使用内置默认设置（但 `.env` 文件中的凭据仍会被加载）。相当于 `--ignore-user-config`。 |
-| `HERMES_IGNORE_RULES` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules` 文件、内存内容以及预加载的技能。相当于 `--ignore-rules`。 |
-| `HERMES_SAFE_MODE` | 故障排查模式：禁用所有自定义设置——跳过插件发现及 MCP 服务器加载流程。该模式会由 `--safe-mode` 参数自动启用（同时也会设置上述两个参数）。 |
-| `HERMES_MD_NAMES` | 以逗号分隔的规则文件名列表，系统将自动注入这些文件（默认值：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
-| `HERMES_TOOL_PROGRESS` | 用于显示工具处理进度的过时兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress`。 |
-| `HERMES_TOOL_PROGRESS_MODE` | 用于控制工具进度显示模式的过时兼容性变量。建议在 `config.yaml` 中使用 `display.tool_progress`。 |
+| `HERMES_INFERENCE_MODEL` | 在进程层面指定模型名称（该设置会优先于会话中的 `config.yaml` 配置）。也可通过 `-m`/`--model` 参数进行设置。 |
+| `HERMES_YOLO_MODE` | 设定为 `1` 可绕过危险命令的审批提示。功能等同于 `--yolo`。 |
+| `HERMES_ACCEPT_HOOKS` | 在无终端提示的情况下，自动批准 `config.yaml` 中声明的所有未见过的全局 shell hook。功能等同于 `--accept-hooks` 或 `hooks_auto_accept: true`。 |
+| `HERMES_IGNORE_USER_CONFIG` | 跳过 `~/.hermes/config.yaml` 文件，使用内置默认配置（但 `.env` 文件中的凭证仍会被加载）。功能等同于 `--ignore-user-config`。 |
+| `HERMES_IGNORE_RULES` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules` 文件、内存内容以及预加载的技能。功能等同于 `--ignore-rules`。 |
+| `HERMES_SAFE_MODE` | 故障排查模式：禁用所有自定义配置——跳过插件发现和 MCP 服务器加载流程。该模式会由 `--safe-mode` 参数自动启用（同时也会设置上述两个参数）。 |
+| `HERMES_MD_NAMES` | 以逗号分隔的规则文件名列表，系统会自动注入这些文件（默认值：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
+| `HERMES_TOOL_PROGRESS` | 用于显示工具处理进度的过时兼容参数。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
+| `HERMES_TOOL_PROGRESS_MODE` | 用于控制工具进度显示模式的过时兼容参数。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
 | `HERMES_HUMAN_DELAY_MODE` | 响应节奏控制：`off`/`natural`/`custom` |
-| `HERMES_HUMAN_DELAY_MIN_MS` | 自定义延迟范围的最小值（单位：毫秒） |
-| `HERMES_HUMAN_DELAY_MAX_MS` | 自定义延迟范围的最大值（单位：毫秒） |
+| `HERMES_HUMAN_DELAY_MIN_MS` | 自定义延迟的最小值（单位：毫秒） |
+| `HERMES_HUMAN_DELAY_MAX_MS` | 自定义延迟的最大值（单位：毫秒） |
 | `HERMES_QUIET` | 是否抑制非必要输出（`true`/`false`） |
-| `CODEX_HOME` | 当启用 [Codex 应用服务器运行时环境](../user-guide/features/codex-app-server-runtime) 时，用于指定 Codex CLI 读取配置及认证信息的目录路径（默认值：`~/.codex`）。Hermes 的迁移功能会将相关配置写入 `<CODEX_HOME>/config.toml` 文件中。 |
-| `HERMES_KANBAN_TASK` | 由看板调度器在启动工作进程时设置的任务 UUID。各个工作进程以及由此生成的 `hermes-tools` MCP 子进程都会继承该值，以便看板工具能够正确进行权限控制。请勿手动设置此值。 |
+| `CODEX_HOME` | 当启用 [Codex 应用服务器运行时环境](../user-guide/features/codex-app-server-runtime) 时，用于指定 Codex CLI 读取配置及认证信息的目录路径（默认值：`~/.codex`）。Hermes 的迁移机制会将相关配置写入 `<CODEX_HOME>/config.toml` 文件中。 |
+| `HERMES_KANBAN_TASK` | 由看板调度器在启动工作进程时设置的任务 UUID。各个工作进程以及由此生成的 `hermes-tools` MCP 子进程都会继承该值，以便看板工具能够正确进行权限控制。请勿手动设置此参数。 |
 | `HERMES_API_TIMEOUT` | LLM API 调用的超时时间（单位：秒）（默认值：`1800`） |
-| `HERMES_API_CALL_STALE_TIMEOUT` | 非流式调用中的旧请求超时时间（单位：秒）（默认值：`90`）。若未设置该值，本地提供商将自动禁用此功能；对于上下文规模极大的场景，该超时时间也可能会相应增加。同样可在 `config.yaml` 中通过 `providers.<id>.stale_timeout_seconds` 或 `providers.<id>.models.<model>.stale_timeout_seconds` 参数进行配置。 |
-| `HERMES_STREAM_READ_TIMEOUT` | 流式套接字读取的超时时间（单位：秒）（默认值：`120`）。对于本地提供商，该值会自动调整为 `HERMES_API_TIMEOUT`。如果在长时间代码生成过程中出现本地 LLM 超时情况，可适当提高此值。 |
-| `HERMES_STREAM_STALE_TIMEOUT` | 检测流式数据过时的超时时间（单位：秒）（默认值：`180`）。本地提供商将自动禁用此功能。若在该时间段内没有新的数据块到达，系统会主动断开连接。 |
-| `HERMES_STREAM_RETRIES` | 遇到短暂网络故障时，在流式通信过程中尝试重新连接的次数（默认值：`3`）。 |
-| `HERMES_AGENT_TIMEOUT` | 运行中的智能体处于非活跃状态时的超时时间（单位：秒）（默认值：`1800`，即 30 分钟）。每次调用工具或处理流式数据时，该计时器都会重置。将其设为 `0` 可禁用此功能。 |
-| `HERMES_AGENT_TIMEOUT_WARNING` | 当智能体处于非活跃状态达到指定时间后，网关会发送警告信息（默认值为 `HERMES_AGENT_TIMEOUT` 的 75%）。 |
+| `HERMES_API_CALL_STALE_TIMEOUT` | 非流式请求的超时时间（单位：秒）（默认值：`90`）。若未设置该参数，本地提供商的此功能将自动关闭；对于上下文规模极大的场景，该超时时间也可能会相应增加。同样可在 `config.yaml` 中通过 `providers.<id>.stale_timeout_seconds` 或 `providers.<id>.models.<model>.stale_timeout_seconds` 参数进行配置。 |
+| `HERMES_STREAM_READ_TIMEOUT` | 流式连接的读取超时时间（单位：秒）（默认值：`120`）。对于本地提供商，该值会自动设置为 `HERMES_API_TIMEOUT`。如果在长时间代码生成过程中出现本地 LLM 超时的情况，可适当增加此值。 |
+| `HERMES_STREAM_STALE_TIMEOUT` | 检测流式连接数据过时的超时时间（单位：秒）（默认值：`180`）。对于本地提供商，此功能将自动关闭。若在该时间内没有新的数据块传入，系统会主动断开连接。 |
+| `HERMES_STREAM_RETRIES` | 遇到短暂网络故障时，在流式连接过程中尝试重新连接的次数（默认值：`3`） |
+| `HERMES_AGENT_TIMEOUT` | 运行中的智能体处于非活跃状态时的超时时间（单位：秒）（默认值：`1800`，即 30 分钟）。每次调用工具或发送流式 token 后，该计时器都会重置。将其设置为 `0` 即可禁用此功能。 |
+| `HERMES_AGENT_TIMEOUT_WARNING` | 当智能体处于非活跃状态达到指定时间后，网关会发送警告信息（默认值：`HERMES_AGENT_TIMEOUT` 的 75%）。 |
 | `HERMES_AGENT_NOTIFY_INTERVAL` | 对于长时间运行的智能体轮次，网关在发送进度通知之间的间隔时间（单位：秒）。 |
-| `HERMES_CHECKPOINT_TIMEOUT` | 创建文件系统检查点的超时时间（单位：秒）（默认值：`30`）。 |
-| `HERMES_EXEC_ASK` | 在网关模式下是否启用执行操作前的审批提示（`true`/`false`）。 |
-| `HERMES_ENABLE_PROJECT_PLUGINS` | 是否允许智能体加载器及控制台 Web 服务器自动发现位于 `./.hermes/plugins/` 目录中的项目级插件。该参数接受所有表示“真”的值：`1` / `true` / `yes` / `on`（不区分大小写）。其余所有值——包括 `0`、`false`、`no`、`off` 以及空字符串——均视为**禁用**状态（默认值）。注意：从 GHSA-5qr3-c538-wm9j (#29156) 版本开始，即使启用了此参数，控制台 Web 服务器仍不会自动导入项目插件的 Python `api` 文件——项目插件虽然可以通过静态 JS/CSS 扩展界面功能，但其后台路由仅当被放置在 `~/.hermes/plugins/` 目录下时才会被加载。 |
-| `HERMES_PLUGINS_DEBUG` | 设定为 `1`/`true` 可在标准错误流中输出详细的插件发现过程日志——包括扫描的目录、解析的清单文件、跳过某些文件的理由，以及解析或 `register()` 操作失败时的完整堆栈跟踪信息。该功能主要面向插件开发者。 |
-| `HERMES_BACKGROUND_NOTIFICATIONS` | 网关模式下的后台进程通知方式：`all`（默认）、`result`、`error`、`off`。 |
-| `HERMES_EPHEMERAL_SYSTEM_PROMPT` | 在调用 API 时注入的临时系统提示语——此类提示语不会被保存到会话记录中。 |
+| `HERMES_CHECKPOINT_TIMEOUT` | 创建文件系统检查点的超时时间（单位：秒）（默认值：`30`） |
+| `HERMES_EXEC_ASK` | 在网关模式下是否启用执行操作前的审批提示（`true`/`false`） |
+| `HERMES_ENABLE_PROJECT_PLUGINS` | 是否允许智能体加载器及控制台网页服务器自动发现位于 `./.hermes/plugins/` 目录中的项目级插件。该参数接受所有表示“真”的值：`1` / `true` / `yes` / `on`（不区分大小写）。其余所有值——包括 `0`、`false`、`no`、`off` 以及空字符串——均被视为**禁用**状态（默认值）。注意：从 GHSA-5qr3-c538-wm9j (#29156) 版本开始，即使启用了此参数，控制台网页服务器仍不会自动导入项目插件的 Python `api` 文件——项目插件虽然可以通过静态 JS/CSS 扩展界面功能，但其后台路由仅当被放置在 `~/.hermes/plugins/` 目录下时才会被加载。 |
+| `HERMES_PLUGINS_DEBUG` | 设定为 `1`/`true` 时，会在标准错误流中输出详细的插件发现过程日志——包括扫描的目录、解析的清单文件、跳过某些文件的理由，以及解析或 `register()` 操作失败时的完整堆栈跟踪信息。该功能主要面向插件开发者。 |
+| `HERMES_BACKGROUND_NOTIFICATIONS` | 网关模式下的后台进程通知方式：`all`（默认值）、`result`、`error`、`off` |
+| `HERMES_EPHEMERAL_SYSTEM_PROMPT` | 在调用 API 时注入的临时系统提示语——此类提示语不会被保存到会话中。 |
 | `HERMES_PREFILL_MESSAGES_FILE` | 包含临时预填提示语的 JSON 文件路径，这些提示语会在调用 API 时被注入。 |
 | `HERMES_ALLOW_PRIVATE_URLS` | `true`/`false`——决定是否允许工具访问本地主机或私有网络中的 URL。在网关模式下默认为关闭状态。 |
 | `HERMES_REDACT_SECRETS` | `true`/`false`——控制是否在工具输出、日志及聊天回复中隐藏敏感信息（默认值：`true`）。 |
-| `HERMES_WRITE_SAFE_ROOT` | 可选目录前缀，用于限制 `write_file`/`patch` 操作的写入范围；位于该前缀之外的路径将需要额外审批才能写入。 |
-| `HERMES_DISABLE_LAZY_INSTALLS` | 官方 Docker 镜像中自动设置的内部桥接变量，旨在防止在不可变的 `/opt/hermes` 目录树中安装运行时依赖项。在用户配置文件 `config.yaml` 中，对应的设置值为 `security.allow_lazy_installs: false`；请勿在 `.env` 文件中设置此参数。 |
-| `HERMES_DISABLE_FILE_STATE_GUARD` | 设定为 `1` 可关闭 `patch`/`write_file` 操作中的“自上次读取后文件已被修改”检测功能。 |
-| `HERMES_CORE_TOOLS` | 以逗号分隔的形式用于覆盖标准的核心工具列表（高级用法，很少需要）。 |
-| `HERMES_BUNDLED_SKILLS` | 以逗号分隔的形式用于覆盖启动时自动加载的预装技能列表。 |
-| `HERMES_OPTIONAL_SKILLS` | 以逗号分隔的列表形式，列出首次运行时应自动安装的可选技能名称。 |
-| `HERMES_DEBUG_INTERRUPT` | 设定为 `1` 可将详细的中断/取消操作跟踪信息记录到 `agent.log` 文件中。 |
-| `HERMES_DUMP_REQUESTS` | 是否将 API 请求的载荷内容输出到日志文件中（`true`/`false`）。 |
-| `HERMES_DUMP_REQUEST_STDOUT` | 将 API 请求的载荷内容直接输出到标准输出流，而非日志文件。 |
-| `HERMES_OAUTH_TRACE` | 设定为 `1` 可记录 OAuth 令牌的获取及刷新尝试过程，同时会包含经过脱敏处理的计时信息。 |
-| `HERMES_OAUTH_FILE` | 用于指定存储 OAuth 凭据的文件路径（默认值：`~/.hermes/auth.json`）。 |
-| `HERMES_AGENT_HELP_GUIDANCE` | 为自定义部署场景在系统提示语中追加额外的使用指南文本。 |
-| `HERMES_AGENT_LOGO` | 用于在 CLI 启动时替换默认的 ASCII 标语徽标。 |
+| `HERMES_WRITE_SAFE_ROOT` | 用于限制 `write_file`/`patch` 操作的目录前缀；位于该前缀之外的路径将需要额外审批。支持使用 `os.pathsep` 符号分隔多个目录（Unix 系统用 `:`，Windows 系统用 `;`）。 |
+| `HERMES_DISABLE_LAZY_INSTALLS` | 官方 Docker 镜像中会自动设置此内部桥接参数，以防止在不可修改的 `/opt/hermes` 目录树下运行时安装依赖项。在用户配置文件 `config.yaml` 中，对应的参数为 `security.allow_lazy_installs: false`；请勿在 `.env` 文件中设置该参数。 |
+| `HERMES_DISABLE_FILE_STATE_GUARD` | 设定为 `1` 可关闭 `patch`/`write_file` 操作中的“自上次读取后文件已被修改”检测机制。 |
+| `HERMES_CORE_TOOLS` | 用于以逗号分隔的形式覆盖默认的核心工具列表（高级功能，通常无需使用）。 |
+| `HERMES_BUNDLED_SKILLS` | 用于以逗号分隔的形式覆盖启动时自动加载的预装技能列表。 |
+| `HERMES_OPTIONAL_SKILLS` | 以逗号分隔的可选技能名称列表，系统会在首次运行时自动安装这些技能。 |
+| `HERMES_DEBUG_INTERRUPT` | 设定为 `1` 时，会将详细的中断/取消操作流程记录到 `agent.log` 文件中。 |
+| `HERMES_DUMP_REQUESTS` | 是否将 API 请求的完整内容输出到日志文件中（`true`/`false`）。 |
+| `HERMES_dump_REQUEST_STDOUT` | 将 API 请求的完整内容直接输出到标准输出流，而非日志文件。 |
+| `HERMES_OAUTH_TRACE` | 设定为 `1` 时，会记录 OAuth 令牌的交换及刷新操作过程，同时还会包含经过脱敏处理的操作时间信息。 |
+| `HERMES_OAUTH_FILE` | 用于指定存储 OAuth 凭证文件的路径（默认值：`~/.hermes/auth.json`）。 |
+| `HERMES_AGENT_HELP_GUIDANCE` | 为自定义部署场景的系统提示语添加额外的指导文本。 |
+| `HERMES_AGENT_LOGO` | 用于在 CLI 启动时替换默认的 ASCII 标识徽标。 |
 | `DELEGATION_MAX_CONCURRENT_CHILDREN` | 每批 `delegate_task` 请求允许的最大并行子智能体数量（默认值：`3`，下限为 1，无上限）。同样可在 `config.yaml` 中通过 `delegation.max_concurrent_children` 参数进行设置——配置文件中的值具有优先级。 |
 
-## 界面相关设置
+## 界面相关参数
 
-| 变量名 | 描述 |
+| 参数名 | 描述 |
 |--------|------|
-| `HERMES_TUI` | 当其值为 `1` 时，将启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。相当于传递了 `--tui` 参数。 |
-| `HERMES_TUI_DIR` | 预编译好的 `ui-tui/` 目录的路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 依赖包）。发行版及 Nix 构建工具会使用此路径来跳过首次启动时的 `npm install` 操作。 |
-| `HERMES_TUI_RESUME` | 启动时根据标识符恢复特定的 TUI 会话。一旦设置了该参数，执行 `hermes --tui` 命令时将不会新建会话，而是直接继续使用指定的会话——这在连接中断或终端崩溃后重新连接时非常有用。 |
-| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或直接输入 6 位十六进制值表示背景色（例如 `ffffff` 或 `1a1a2e`）。若未设置该参数，Hermes 会通过查询 `COLORFGBG` 及终端背景色自动选择主题；而当终端未设置 `COLORFGBG` 参数时，此变量可覆盖自动检测结果。 |
-| `HERMES_INFERENCE_MODEL` | 在不修改 `config.yaml` 的情况下，强制指定 `hermes -z` / `hermes chat` 命令所使用的模型。该参数需与 `--provider` 参数配合使用。对于需要每次运行时都指定不同默认模型的脚本化调用场景（如自动化扫描工具、CI 环境、批量处理脚本等），此功能非常实用。 |
+| `HERMES_TUI` | 当该参数设置为 `1` 时，将启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。功能等同于传递 `--tui` 参数。 |
+| `HERMES_TUI_DIR` | 预编译好的 `ui-tui/` 目录的路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 依赖包）。发行版和 Nix 构建工具会使用此路径来跳过首次启动时的 `npm install` 安装步骤。 |
+| `HERMES_TUI_RESUME` | 启动时根据 ID 恢复特定的 TUI 会话。设置该参数后，执行 `hermes --tui` 命令时将不会创建新的会话，而是直接继续使用指定的会话——这在连接中断或终端崩溃后重新连接时非常有用。 |
+| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或直接输入 6 位十六进制值表示背景色（例如 `ffffff` 或 `1a1a2e`）。若未设置该参数，Hermes 会通过查询 `COLORFGBG` 及终端背景色来自动选择主题；对于那些未设置 `COLORFGBG` 参数的终端（如 Ghostty、Warp、iTerm2 等），此参数可覆盖自动检测的结果。 |
+| `HERMES_INFERENCE_MODEL` | 用于强制指定 `hermes -z` / `hermes chat` 命令所使用的模型，而无需修改 `config.yaml` 文件。该参数需与 `--provider` 参数一起使用。对于需要每次运行时都覆盖默认模型的脚本化调用场景（如自动化扫描工具、CI 环境、批量处理脚本等），此功能非常实用。 |
 
-## 会话设置
+## 会话设置参数
 
-| 变量名 | 描述 |
+| 参数名 | 描述 |
 |--------|------|
-| `SESSION_IDLE_MINUTES` | 智能体处于非活跃状态达到指定分钟数后自动重置会话（默认值：1440 分钟，即 24 小时）。 |
-| `SESSION_RESET_HOUR` | 每日会话重置的时间，采用 24 小时制表示（默认值：4，即凌晨 4 点）。 |
-| `HERMES_SESSION_ID` | **会自动被嵌入到 Hermes 启动的每一个工具子进程**中——包括 `terminal`、`execute_code`、持久化终端会话、Docker/Singularity 后端环境以及派生的子智能体进程。智能体会将当前会话 ID 设置为此值；从工具中调用的用户脚本也可以读取该值，从而将其输出结果、监控数据或产生的副作用与对应的 Hermes 会话关联起来。**不建议手动设置此值**——从父终端覆盖设置的值仅在非智能体运行模式下有效，且一旦智能体开始新的会话，该覆盖值就会被立即替换。 |
+| `SESSION_IDLE_MINUTES` | 智能体处于非活跃状态达到指定分钟数后，自动重置会话（默认值：1440 分钟，即 24 小时）。 |
+| `SESSION_RESET_HOUR` | 每日会话重置的时间，以 24 小时制表示（默认值：4，即凌晨 4 点）。 |
+| `HERMES_SESSION_ID` | **此参数会自动被嵌入到 Hermes 启动的每一个工具子进程**中——包括 `terminal`、`execute_code`、持久化 shell、Docker/Singularity 后端环境，以及通过委托方式运行的子智能体。智能体会将当前会话 ID 设置为此值；从工具中调用的用户脚本也可以读取该值，从而将其输出结果、监控数据或相关副作用与最初的 Hermes 会话关联起来。**不建议手动设置此参数**——从父终端覆盖该值仅能在非智能体运行模式下生效，且一旦智能体开始新的会话，该覆盖值就会被立即替换。 |
 
-## 上下文压缩（仅适用于 `config.yaml`）
+## 上下文压缩功能（仅通过 `config.yaml` 配置）
 
-上下文压缩功能完全通过 `config.yaml` 文件进行配置——不存在相应的环境变量。阈值相关设置位于 `compression:` 块中，而摘要生成模型及提供者则配置在 `auxiliary.compression:` 下。
+上下文压缩功能完全通过 `config.yaml` 文件进行配置，不存在对应的环境变量。阈值相关设置位于 `compression:` 块中，而摘要生成模型及提供者则配置在 `auxiliary.compression:` 下。
 
 ```yaml
 compression:
