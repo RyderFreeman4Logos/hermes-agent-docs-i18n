@@ -114,22 +114,22 @@ scripts/run_tests.sh
 ## 代码风格
 
 - 遵循 **PEP 8** 规范，但允许适当例外（不强制限制行长度）
-- **注释**：仅用于解释那些不太直观的设计意图、权衡方案或 API 的特殊行为
+- **注释**：仅用于解释那些不直观的设计意图、权衡方案或 API 的特殊行为
 - **错误处理**：捕获具体的异常。对于意外错误，使用 `logger.warning()`/`logger.error()` 并设置 `exc_info=True` 以记录异常详细信息
 - **跨平台兼容性**：切勿假设代码仅在 Unix 系统上运行（详见下文）
-- **与配置文件路径无关的写法**：切勿硬编码 `~/.hermes` 路径。在编写代码时，应使用 `hermes_constants` 模块中的 `get_hermes_home()` 函数获取路径；在向用户展示信息时，则使用 `display_hermes_home()` 函数。完整规则请参阅 [AGENTS.md](https://github.com/NousResearch/hermes-agent/blob/main/AGENTS.md#profiles-multi-instance-support) 文档。
+- **配置文件安全路径**：绝不要硬编码 `~/.hermes` 路径。在编写代码时，请使用 `hermes_constants` 模块中的 `get_hermes_home()` 函数获取路径，而在向用户显示信息时则使用 `display_hermes_home()` 函数。完整规则请参阅 [AGENTS.md](https://github.com/NousResearch/hermes-agent/blob/main/AGENTS.md#profiles-multi-instance-support) 文档。
 
 ## 跨平台兼容性
 
-Hermes 官方支持 **Linux、macOS、WSL2 以及通过 PowerShell 安装的原生 Windows 系统**。在原生 Windows 上，shell 命令需通过 [Git for Windows](https://git-scm.com/download/win) 提供的 Git Bash 来执行。部分功能依赖于 POSIX 内核接口，因此暂不支持：例如控制面板中的嵌入式 PTY 终端面板（位于 `/chat` 标签页）仅适用于 WSL2 环境。如果主要在 Windows 上进行开发，建议在提交代码前运行 Windows 版的代码检查工具 `scripts/check-windows-footguns.py`。
+详情请参见 **[平台支持](../getting-started/platform-support.md)**。在原生 Windows 环境下，Shell 命令需通过 [Git for Windows](https://git-scm.com/download/win) 提供的 Git Bash 来执行。部分功能依赖于 POSIX 内核接口，因此仅在特定平台上可用：例如，控制面板中的嵌入式 PTY 终端面板（位于 `/chat` 标签页）需要 POSIX PTY 环境（Linux、macOS 或 WSL2）。如果主要在 Windows 上进行开发，建议在提交代码前运行 Windows 版的代码检查工具 `scripts/check-windows-footguns.py`。
 
 在贡献代码时，请牢记以下规则：
 
-- **避免直接使用未加保护的 `signal.SIGKILL`**。该信号在 Windows 上并不存在。应通过 `gateway.status.terminate_pid(pid, force=True)` 函数来处理（该函数会在 Windows 上执行 `taskkill /T /F` 指令，在 POSIX 系统上则发送 SIGKILL 信号），或者使用 `getattr(signal, "SIGKILL", signal.SIGTERM)` 作为替代方案。
-- **在调用 `os.kill(pid, 0)` 进行检测时，同时捕获 `OSError` 和 `ProcessLookupError`**。在 Windows 上，若目标进程已退出，系统会抛出 `OSError`（错误代码为 WinError 87，提示“参数不正确”），而非 `ProcessLookupError`。
-- **不要强制让终端遵循 POSIX 规范**。函数 `os.setsid`、`os.killpg`、`os.getpgid` 和 `os.fork` 在 Windows 上都会抛出异常，应通过 `if sys.platform != "win32":` 或 `if os.name != "nt":` 这样的条件语句来限制其使用。
-- **以显式的 `encoding="utf-8"` 参数打开文件**。Windows 环境下 Python 的默认编码为系统区域设置编码（通常是 cp1252），这种编码在处理非拉丁文字时会导致乱码或程序崩溃。
-- **始终使用 `pathlib.Path` 或 `os.path.join` 构建路径，切勿手动用 `/` 连接字符串**。对于操作系统返回的字符串，这一要求相对不那么重要；但对于我们自己构建后要传递给子进程的字符串，则必须遵循此规则。
+- **避免使用未经处理的 `signal.SIGKILL` 引用**。该信号在 Windows 上并不存在。应通过 `gateway.status.terminate_pid(pid, force=True)` 方法来处理（该函数会在 Windows 上执行 `taskkill /T /F` 指令，在 POSIX 系统上则发送 SIGKILL 信号），或者使用 `getattr(signal, "SIGKILL", signal.SIGTERM)` 作为替代方案。
+- **在调用 `os.kill(pid, 0)` 进行检测时，需同时捕获 `OSError` 和 `ProcessLookupError`**。在 Windows 上，若目标进程已终止，系统会抛出 `OSError`（错误代码为 WinError 87，提示“参数不正确”），而非 `ProcessLookupError`。
+- **不要强制终端遵循 POSIX 规范**。函数 `os.setsid`、`os.killpg`、`os.getpgid` 和 `os.fork` 在 Windows 上均会抛出异常，应通过 `if sys.platform != "win32":` 或 `if os.name != "nt":` 这样的条件语句来限制其使用。
+- **以显式的 `encoding="utf-8"` 参数打开文件**。Windows 环境下 Python 的默认编码为系统区域设置编码（通常为 cp1252），这种编码在处理非拉丁文字时会导致乱码或程序崩溃。
+- **始终使用 `pathlib.Path` / `os.path.join` 构建路径，切勿手动用 `/` 连接字符串**。这一规则对于操作系统返回的字符串影响较小，但对于我们主动构造并传递给子进程的字符串则非常重要。
 
 常见处理模式：
 
