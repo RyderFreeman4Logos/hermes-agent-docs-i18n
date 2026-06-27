@@ -4,72 +4,76 @@ title: "Nix & NixOS Setup"
 description: "Install and deploy Hermes Agent with Nix — from quick `nix run` to fully declarative NixOS module with container mode"
 ---
 
-# Nix 与 NixOS 部署指南
+# Nix 与 NixOS 配置
 
-Hermes Agent 提供了三种集成级别的 Nix flake，以满足不同用户的需求：
+:::warning 第二级平台
+Nix 和 NixOS 属于[第二级平台](./platform-support.md#tier-2)。此处文档中的 flake 与 NixOS 模块仅以尽力维护的方式提供。对 `main` 分支的任何修改都可能随时导致这些包出现故障。
 
-| 集成级别 | 目标用户 | 功能亮点 |
-|---------|----------|----------|
-| **`nix run` / `nix profile install`** | 所有 Nix 用户（macOS、Linux） | 提供包含所有依赖项的预编译二进制文件，可直接使用标准 CLI 工作流程 |
-| **NixOS 模块（原生版）** | NixOS 服务器部署用户 | 基于声明式配置，具备加固版的 systemd 服务支持，同时提供密钥管理功能 |
-| **NixOS 模块（容器版）** | 需要能够自行修改代码的 Agent | 包含上述所有功能，另提供一个持久化的 Ubuntu 容器，Agent 可在其中通过 `apt`/`pip`/`npm install` 安装依赖 |
+如需获得官方支持的配置方式，请使用标准的[安装](./installation.md)路径——即 Docker 环境或 FHS 环境。
+:::
+
+Hermes Agent 提供了 Nix flake 与 NixOS 模块。
+
+| 级别 | 目标用户 | 提供功能 |
+|-------|---------|----------|
+| **`nix run` / `nix profile install`** | 所有 Nix 用户（macOS、Linux） | 已预编译好的二进制文件，包含所有依赖项——随后即可使用常规的 CLI 工作流程 |
+| **NixOS 模块（原生版）** | NixOS 服务器部署场景 | 声明式配置、加固过的 systemd 服务、受管理的机密信息 |
+| **NixOS 模块（容器版）** | 需要能够自行修改的 Agent | 包含上述所有功能，此外还提供一个持久化的 Ubuntu 容器，Agent 可在此通过 `apt`/`pip`/`npm install` 安装依赖 |
 
 :::info 与标准安装方式的区别
-传统的 `curl | bash` 安装方式会自行管理 Python、Node 及其依赖项。而 Nix flake 则完全取代了这一机制——所有的 Python 依赖项都由 [uv2nix](https://github.com/pyproject-nix/uv2nix) 生成为 Nix 衍生包，运行时工具（如 Node.js、git、ripgrep、ffmpeg）则会被整合到二进制文件的 PATH 环境中。因此无需额外运行 pip，也不需要激活虚拟环境或执行 `npm install` 命令。
+传统的 `curl | bash` 安装方式会自行管理 Python、Node 及其依赖项。而 Nix flake 则完全替代了这一机制——所有的 Python 依赖项都由 [uv2nix](https://github.com/pyproject-nix/uv2nix) 生成为 Nix 衍生包，运行时工具（Node.js、git、ripgrep、ffmpeg）则会被整合到二进制文件的 PATH 环境中。这种方式无需运行时的 pip，也不需要激活 venv 或执行 `npm install` 命令。
 
-**对于非 NixOS 用户**，这种方式仅改变了安装步骤，之后的操作（如 `hermes setup`、`hermes gateway install` 以及配置编辑）与标准安装方式完全一致。
+**对于非 NixOS 用户**，这一变化仅体现在安装步骤上。之后的操作（如 `hermes setup`、`hermes gateway install`、配置编辑等）与标准安装方式完全一致。
 
-**对于使用 NixOS 模块的用户**，整个使用流程会有所不同：配置文件存储在 `configuration.nix` 中，密钥管理通过 sops-nix/agenix 实现，服务以 systemd 单元的形式运行，同时 CLI 配置命令也被限制使用。你可以像管理其他 NixOS 服务一样来管理 Hermes Agent。
+**对于使用 NixOS 模块的用户**，整个使用流程会有所不同：配置信息存储在 `configuration.nix` 文件中，机密信息会通过 sops-nix/agenix 进行管理，服务以 systemd 单元的形式存在，同时 CLI 配置命令也被禁用。你可以像管理其他 NixOS 服务一样来管理 Hermes Agent。
 :::
 
 ## 先决条件
 
-- 已启用 flake 特性的 Nix 环境——推荐使用 [Determinate Nix](https://install.determinate.systems)（该版本默认已开启 flake 支持）
-- 所需服务的 API 密钥（至少需要 OpenRouter 或 Anthropic 的密钥）
+- **已启用 flakes 功能的 Nix**——推荐使用 [Determinate Nix](https://install.determinate.systems)（默认即可启用 flakes 功能）
+- 所需服务的**API 密钥**（至少需要 OpenRouter 或 Anthropic 的密钥）
 
 ---
 
 ## 快速入门（适用于所有 Nix 用户）
 
-无需克隆代码，Nix 会自动完成所有内容的获取、构建和运行：
+无需克隆代码。Nix 会自动完成所有内容的获取、构建与运行：
 
 ```bash
-# Run directly (builds on first use, cached after)
-nix run github:NousResearch/hermes-agent -- setup
-nix run github:NousResearch/hermes-agent -- chat
+# Run the desktop app
+nix run github:NousResearch/hermes-agent#desktop
 
 # Or install persistently
+nix profile install github:NousResearch/hermes-agent#desktop
+
+# run the tui
+nix run github:NousResearch/hermes-agent -- setup
+nix run github:NousResearch/hermes-agent -- --tui
+
+# or install it in your profile
 nix profile install github:NousResearch/hermes-agent
 hermes setup
-hermes chat
+hermes --tui
 ```
 
-执行 `nix profile install` 后，`hermes`、`hermes-agent` 以及 `hermes-acp` 将会被添加到用户的 PATH 环境变量中。此后的操作流程与[标准安装方式](./installation.md)完全相同——`hermes setup` 会引导用户选择对应的 provider，`hermes gateway install` 会配置 launchd（macOS系统）或 systemd 用户服务，而所有配置文件则存储在 `~/.hermes/` 目录下。
+执行 `nix profile install` 后，`hermes`、`hermes-agent` 以及 `hermes-acp` 将会被添加到您的 PATH 环境变量中。此后的操作流程与[标准安装方式](./installation.md)完全一致——`hermes setup` 会引导您完成提供程序的选择，`hermes gateway install` 会配置相应的启动服务（macOS 系统使用 launchd，其他系统使用 systemd 用户服务），而所有配置文件则存储在 `~/.hermes/` 目录下。
 
-:::warning 消息平台（Discord、Telegram、Slack）
-默认安装包中并不包含用于连接消息平台的库文件——这些库被设置为按需安装，而 Nix 的只读环境无法支持按需安装机制。如果您希望将代理连接到 Discord、Telegram 或 Slack，需安装 `messaging` 变体：
+:::warning 消息传递平台（Discord、Telegram、Slack）
+默认安装包中已包含 `hermes-agent` 所需的所有库。如果您希望使用更轻量的版本，可以查看其他 flake 输出选项。
 
-```bash
-nix profile install github:NousResearch/hermes-agent#messaging
-```
+`default` 安装包会使程序包大小增加约 700 MB。而如果您仅需要支持消息传递平台，选择 `#messaging` 选项则仅需额外增加约 33 MB 的体积。
 
-对于所有可选功能（语音功能、所有提供商支持、所有平台兼容）：
-
-```bash
-nix profile install github:NousResearch/hermes-agent#full
-```
-
-`full` 版本会为该闭包增加约 700 MB 的大小。如果您仅需要消息传递功能，使用 `#messaging` 版本则仅需额外约 33 MB。
 :::
 
 <details>
-<summary><strong>基于本地克隆版本进行构建</strong></summary>
+<summary><strong>从本地克隆的仓库运行</strong></summary>
+</details>
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
 cd hermes-agent
-nix build
-./result/bin/hermes setup
+nix develop
+hermes setup
 ```
 
 </details>
