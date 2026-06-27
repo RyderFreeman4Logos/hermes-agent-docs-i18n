@@ -6,7 +6,7 @@ description: "Frequently asked questions and solutions to common issues with Her
 
 # 常见问题与故障排除
 
-针对最常见的问题和故障，提供快速解答及解决方案。
+针对最常见的问题和故障，提供快速解答与解决方案。
 
 ---
 
@@ -17,70 +17,43 @@ description: "Frequently asked questions and solutions to common issues with Her
 Hermes Agent 可与任何兼容 OpenAI 的 API 配合使用。目前支持的提供商包括：
 
 - **[OpenRouter](https://openrouter.ai/)** — 通过一个 API 密钥即可访问数百种模型（灵活性最高，推荐使用）
-- **[Nous Portal](/integrations/nous-portal)** — Nous Research 的订阅平台 — 通过一次 OAuth 登录即可使用 300 多种模型以及网页/图像/TTS/浏览器功能（新手推荐）
+- **[Nous Portal](/integrations/nous-portal)** — Nous Research 的订阅服务入口——通过一次 OAuth 登录即可使用 300 多种模型以及网页/图像/TTS/浏览器功能（新手推荐）
 - **OpenAI** — GPT-5.4、GPT-5-codex、GPT-4.1、GPT-4o 等模型
-- **Anthropic** — Claude 系列模型（可直接通过 API 调用，也可通过 `hermes auth add anthropic`、OpenRouter 或其他兼容代理进行 OAuth 认证）
-- **Google** — Gemini 系列模型（可通过 `gemini` 提供商的直接 API、OpenRouter 或兼容代理调用）
+- **Anthropic** — Claude 系列模型（可直接通过 API 使用，也可通过 `hermes auth add anthropic`、OpenRouter 或其他兼容代理进行 OAuth 认证）
+- **Google** — Gemini 系列模型（可通过 `gemini` 提供商的直接 API、OpenRouter 或兼容代理使用）
 - **z.ai / ZhipuAI** — GLM 系列模型
 - **Kimi / Moonshot AI** — Kimi 系列模型
-- **MiniMax** — 支持全球及中国地区的端点
-- **本地模型** — 可通过 [Ollama](https://ollama.com/)、[vLLM](https://docs.vllm.ai/)、[llama.cpp](https://github.com/ggerganov/llama.cpp)、[SGLang](https://github.com/sgl-project/sglang) 或任何兼容 OpenAI 的服务器来运行
+- **MiniMax** — 全球及中国地区的接口端点
+- **本地模型** — 可通过 [Ollama](https://ollama.com/)、[vLLM](https://docs.vllm.ai/)、[llama.cpp](https://github.com/ggerganov/llama.cpp)、[SGLang](https://github.com/sgl-project/sglang) 或任何兼容 OpenAI 的服务器来使用
 
 您可以通过 `hermes model` 命令或编辑 `~/.hermes/.env` 文件来设置对应的提供商。所有提供商的密钥信息请参考 [环境变量](./environment-variables.md) 文档。
 
-### 它能在 Windows 系统上运行吗？
+### 它在 Windows/Android/Termux 或我的平台上能运行吗？
+完整的平台支持情况请参见 **[平台支持列表](../getting-started/platform-support.md)**。
 
-**可以，原生支持。** Hermes 通过 PowerShell 安装程序即可原生支持 Windows 系统，无需使用 WSL。只需在 PowerShell 中运行即可：
+### 我在 WSL2 中运行 Hermes，如何最有效地控制 Windows 上的普通 Chrome 浏览器？
 
-```powershell
-iex (irm https://hermes-agent.nousresearch.com/install.ps1)
-```
-
-安装程序会配置一个用于支持终端工具壳层的 PortableGit。详情请参阅[Windows（原生版）指南](../user-guide/windows-native.md)。
-
-WSL2 依然是备受支持的另一种选择。若要在 WSL2 环境中运行 Hermes，需先安装[WSL2](https://learn.microsoft.com/en-us/windows/wsl/install)，然后使用标准的安装命令即可：
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-```
-
-### 我在 WSL2 中运行 Hermes，如何最有效地控制我的普通 Windows Chrome 浏览器？
-
-建议使用 MCP 桥接方式，而非 `/browser connect`。
+建议使用 MCP 桥接方式，而非 `/browser connect` 方法。
 
 推荐方案如下：
-- 在 WSL2 内部运行 Hermes；
-- 继续使用 Windows 上已登录的普通 Chrome 浏览器；
-- 通过 `cmd.exe` 或 `powershell.exe` 添加 `chrome-devtools-mcp` 作为 MCP 服务器；
-- 让 Hermes 使用由此生成的 MCP 浏览器工具。
+1. 在 WSL2 环境中运行 Hermes
+2. 继续在 Windows 上使用您已登录的普通 Chrome 浏览器
+3. 通过 `cmd.exe` 或 `powershell.exe` 将 `chrome-devtools-mcp` 添加为 MCP 服务器
+4. 让 Hermes 调用该 MCP 服务器提供的浏览器工具
 
-相比强行让 Hermes 核心浏览器传输直接在 WSL2 和 Windows 之间建立连接，这种方式更为可靠。
+相比试图强制让 Hermes 的核心浏览器传输功能直接在 WSL2 和 Windows 环境之间建立连接，这种方式更为可靠。
 
-相关文档：
+相关参考文档：
 - [在 Hermes 中使用 MCP](../guides/use-mcp-with-hermes.md#wsl2-bridge-hermes-in-wsl-to-windows-chrome)
 - [浏览器自动化](../user-guide/features/browser.md#wsl2--windows-chrome-prefer-mcp-over-browser-connect)
 
-### 这在 Android/Termux 上也能使用吗？
-
-可以——Hermes 现已为安卓手机提供了经过测试的 Termux 安装路径。
-
-快速安装步骤：
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-```
-
-如需了解完整的手动操作步骤、支持的插件以及当前的局限性，请参阅[Termux指南](../getting-started/termux.md)。
-
-重要提示：由于`voice`插件依赖于`faster-whisper`→`ctranslate2`，而`ctranslate2`并未为Android平台提供预编译版本，因此目前无法在Android上使用完整的`.[all]`插件。建议改用经过测试的`.[termux]`插件。
-
 ### 我的数据会被发送到其他地方吗？
 
-API调用**仅会发送到您配置的LLM提供商**（例如OpenRouter或您本地的Ollama实例）。Hermes Agent不会收集任何遥测数据、使用情况统计或分析信息。您的对话记录、记忆内容及技能信息均会存储在`~/.hermes/`目录中。
+API 调用**仅会发送到您配置的大语言模型提供商**（例如 OpenRouter 或您本地的 Ollama 实例）。Hermes Agent 不会收集任何遥测数据、使用情况记录或分析信息。您的对话内容、记忆数据及技能信息都会存储在 `~/.hermes/` 目录中。
 
-### 可以离线使用或搭配本地模型吗？
+### 可以离线使用或搭配本地模型使用吗？
 
-可以。运行`hermes model`，选择**自定义端点**，然后输入您服务器的URL即可：
+可以。运行 `hermes model` 命令，选择 **“自定义端点”**，然后输入您服务器的 URL 即可。
 
 ```bash
 hermes model
