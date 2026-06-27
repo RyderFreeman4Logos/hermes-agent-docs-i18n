@@ -70,19 +70,19 @@ curl http://localhost:8644/health
 
 ## 配置路由 {#configuring-routes}
 
-路由用于定义如何处理不同的 webhook 来源。在您的 `config.yaml` 文件中，每个路由都是 `platforms.webhook.extra.routes` 下的一个命名条目。
+路由用于定义如何处理不同的 webhook 来源。在您的 `config.yaml` 文件中，每个路由都是 `platforms.webhook.extra.routes` 下的一个带名称的条目。
 
 ### 路由属性
 
 | 属性 | 是否必填 | 描述 |
 |------|----------|------|
-| `events` | 否 | 需要接收的事件类型列表（例如 `["pull_request"]`）。如果为空，则接收所有事件。事件类型可从 `X-GitHub-Event`、`X-GitLab-Event` 或负载数据中的 `event_type` 中获取。 |
-| `secret` | **是** | 用于签名验证的 HMAC 密钥。如果未在路由中设置，则会回退到全局 `secret` 值。仅用于测试时，可将其设置为 `"INSECURE_NO_AUTH"`（跳过验证）。 |
-| `prompt` | 否 | 采用点号表示法访问负载数据的模板字符串（例如 `{pull_request.title}`）。如果省略此参数，则会将完整的 JSON 负载直接输出到提示信息中。 |
+| `events` | 否 | 需要接收的事件类型列表（例如 `["pull_request"]`）。如果为空，则接收所有事件。事件类型可从 `X-GitHub-Event`、`X-GitLab-Event` 或请求负载中的 `event_type` 获取。 |
+| `secret` | **是** | 用于签名验证的 HMAC 密钥。如果未在路由中设置，将回退到全局 `secret` 值。如需仅用于测试，可将其设置为 `"INSECURE_NO_AUTH"`（跳过验证）。 |
+| `prompt` | 否 | 采用点号表示法访问负载字段的模板字符串（例如 `{pull_request.title}`）。如果省略此参数，则会将完整的 JSON 负载原样放入提示信息中。请注意，负载中的字段是不可信的——详见 [“已认证不代表可信”](#authenticated-does-not-mean-trusted)。 |
 | `skills` | 否 | 为 Agent 运行加载的技能名称列表。 |
 | `deliver` | 否 | 响应的发送目标：`github_comment`、`telegram`、`discord`、`slack`、`signal`、`sms`、`whatsapp`、`matrix`、`mattermost`、`homeassistant`、`email`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot` 或默认值 `log`。 |
 | `deliver_extra` | 否 | 额外的发送配置——键值取决于 `deliver` 的类型（例如 `repo`、`pr_number`、`chat_id`）。其值支持与 `prompt` 相同的 `{dot.notation}` 模板。 |
-| `deliver_only` | 否 | 如果设置为 `true`，则完全跳过 Agent 运行——此时渲染后的 `prompt` 模板将直接作为要发送的实际消息。这种方式无需消耗 LLM 资源，响应速度可达亚秒级。有关使用场景，请参阅 [直接发送模式](#direct-delivery-mode)。此功能要求 `deliver` 必须是真实的目标地址（不能为 `log`）。 |
+| `deliver_only` | 否 | 如果设置为 `true`，则完全跳过 Agent 运行——此时渲染后的 `prompt` 模板将直接作为要发送的实际消息。这种方式无需消耗 LLM 资源，响应速度可在几分之一秒内完成。具体使用场景请参阅 [直接发送模式](#direct-delivery-mode)。此功能要求 `deliver` 必须是真实的目标地址（不能为 `log`）。 |
 
 ### 完整示例
 
@@ -420,53 +420,60 @@ platforms:
       max_body_bytes: 2097152  # 2 MB
 ```
 
-### 提示注入风险
+### 已通过验证并不等同于可被信任
 
 :::warning
-Webhook 请求体中包含攻击者控制的数据——Pull Request 标题、提交信息、问题描述等均可能含有恶意指令。在将网关暴露于互联网时，建议在沙箱环境（如 Docker、虚拟机）中运行它。为确保隔离性，也可考虑使用 Docker 或 SSH 终端后端。
+**HMAC 验证用于确认 _发送方_ 的身份，而非 _内容_ 的真实性。** 一个有效的签名仅能证明请求来自掌握该路由密钥的机构（例如 GitHub），但无法说明负载中的 _业务字段* 是由谁编写的——拉取请求标题、提交信息、问题描述以及任何其他上游文本都可能由第三方撰写，因此必须视为不可信内容。
+
+这一信任模型同样适用于代理程序读取的所有内容：网页、文件和工具输出都属于不可信输入。Hermes 无法——也难以通过黑名单机制——可靠地过滤这些不可信文本；因为措辞、编码和翻译方式都可以轻易绕过此类防护。**真正的信任边界在于代理程序的功能范围，而非输入渠道。** 应从以下方面加强安全措施：
+
+- **为运行环境设置沙箱。** 当网关暴露在互联网上时，应通过 Docker 或 SSH 终端后端（或在虚拟机中）来运行它，从而防止被劫持的请求影响到主机。
+- **限制可使用的工具集。** 如果某路由仅需要读取和汇总信息，就应禁用 webhook 触发的会话中的 `terminal`、`file` 以及外部操作类工具。功能越少，一旦负载字段中包含恶意指令，其影响范围也就越小。
+- **对任何具有破坏性或外部操作功能的请求保持审批机制**，防止恶意指令在无人监督的情况下被执行。
+- **精简提示模板设计。** 尽量使用带有命名字段的特定 `prompt`（如 `{pull_request.title}`），而非使用 `{__raw__}` 或会输出整个负载的空白模板，这样只有你预期的字段才会传递给提示系统。
 :::
 
 ---
 
 ## 故障排除 {#troubleshooting}
 
-### Webhook 未送达
+### Webhook 无法送达
 
-- 确认端口已开放，并且从 Webhook 发送端可以访问该端口
-- 检查防火墙规则——端口 `8644`（或您配置的端口）必须处于开放状态
-- 确认 URL 路径正确：`http://your-server:8644/webhooks/<route-name>`
-- 使用 `/health` 接口确认服务器正在运行
+- 确认端口已开放，并且从 webhook 发送端可以访问该端口。
+- 检查防火墙规则——端口 `8644`（或你配置的其他端口）必须处于开放状态。
+- 确认 URL 路径正确：`http://your-server:8644/webhooks/<route-name>`。
+- 使用 `/health` 接口确认服务器正在运行。
 
 ### 签名验证失败
 
-- 确保路由配置中的密钥与 Webhook 发送端配置的密钥完全一致
-- 对于 GitHub，该密钥基于 HMAC 算法——请检查 `X-Hub-Signature-256` 字段
-- 对于 GitLab，该密钥为普通令牌匹配——请检查 `X-Gitlab-Token` 字段
-- 查看网关日志中是否有“签名无效”的警告信息
+- 确保路由配置中的密钥与 webhook 发送端配置的密钥完全一致。
+- 对于 GitHub，其签名基于 HMAC 算法——请检查 `X-Hub-Signature-256` 字段。
+- 对于 GitLab，其签名则是普通令牌匹配——请检查 `X-Gitlab-Token` 字段。
+- 查看网关日志，寻找“无效签名”相关的警告信息。
 
 ### 事件被忽略
 
-- 确认事件类型存在于路由的 `events` 列表中
-- GitHub 的事件类型包括 `pull_request`、`push`、`issues`（对应 `X-GitHub-Event` 请求头值）
-- GitLab 的事件类型包括 `merge_request`、`push`（对应 `X-GitLab-Event` 请求头值）
-- 如果 `events` 列表为空或未设置，则会接收所有类型的事件
+- 确认该事件类型存在于路由的 `events` 列表中。
+- GitHub 的事件类型包括 `pull_request`、`push`、`issues`（对应 `X-GitHub-Event` 标头值）。
+- GitLab 的事件类型包括 `merge_request`、`push`（对应 `X-GitLab-Event` 标头值）。
+- 如果 `events` 列表为空或未设置，则所有事件都会被接收。
 
-### Agent 无响应
+### 代理程序无响应
 
-- 在前台运行网关以查看日志：`hermes gateway run`
-- 确认提示模板能够正确渲染
-- 验证交付目标已配置且连接正常
+- 在前台运行网关以查看日志：`hermes gateway run`。
+- 检查提示模板是否能够正确渲染。
+- 确认交付目标已配置且连接正常。
 
 ### 出现重复响应
 
-- 冲突处理缓存本应能避免此问题——请检查 Webhook 发送端是否设置了交付 ID 请求头（如 `X-GitHub-Delivery` 或 `X-Request-ID`）
-- 交付 ID 的缓存有效期为 1 小时
+- 冲突处理缓存本应能避免此问题——请检查 webhook 发送端是否设置了交付 ID 标头（如 `X-GitHub-Delivery` 或 `X-Request-ID`）。
+- 交付 ID 的缓存有效期为 1 小时。
 
 ### `gh` CLI 错误（GitHub 评论发送相关）
 
-- 在网关主机上运行 `gh auth login` 命令
-- 确保已登录的 GitHub 用户具有该仓库的写入权限
-- 检查 `gh` 工具是否已安装且其路径已在系统环境变量中设置
+- 在网关主机上运行 `gh auth login` 命令进行登录。
+- 确保已登录的 GitHub 用户拥有该仓库的写入权限。
+- 检查 `gh` 工具是否已安装，并且其路径已在系统环境变量中配置。
 
 ---
 
@@ -474,6 +481,6 @@ Webhook 请求体中包含攻击者控制的数据——Pull Request 标题、�
 
 | 变量名 | 描述 | 默认值 |
 |--------|------|--------|
-| `WEBHOOK_ENABLED` | 是否启用 Webhook 平台适配器 | `false` |
-| `WEBHOOK_PORT` | 用于接收 Webhook 的 HTTP 服务器端口 | `8644` |
+| `WEBHOOK_ENABLED` | 是否启用 webhook 平台适配器 | `false` |
+| `WEBHOOK_PORT` | 用于接收 webhook 的 HTTP 服务器端口 | `8644` |
 | `WEBHOOK_SECRET` | 全局 HMAC 密钥（当路由未指定自身密钥时作为备用） | _(无)_ |
