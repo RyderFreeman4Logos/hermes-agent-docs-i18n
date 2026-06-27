@@ -1,13 +1,13 @@
 # Supermemory 内存提供器
 
-这款语义长期记忆系统具备档案检索、语义搜索、显性记忆工具等功能，同时支持整场对话的导入（每场对话仅可导入一次），从而帮助构建更丰富的用户档案。
+该功能具备语义长期记忆能力，支持个人资料检索、语义搜索、显性记忆工具，以及整个会话对话的导入（每个会话仅可导入一次），从而帮助构建更丰富的个人资料。
 
 ## 前提条件
 
-- 安装 `pip install supermemory` 工具
-- 获取来自 [supermemory.ai](https://supermemory.ai) 的 Supermemory API 密钥
+- 需先执行命令 `pip install supermemory` 安装该库。
+- 需从 [app.supermemory.ai/integrations?connect=hermes](http://app.supermemory.ai/integrations?connect=hermes) 获取 Supermemory API 密钥。
 
-## 设置步骤
+## 设置方法
 
 ```bash
 hermes memory setup    # select "supermemory"
