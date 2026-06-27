@@ -6,20 +6,26 @@ description: "Run Hermes Agent directly on an Android phone with Termux"
 
 # 使用 Termux 在 Android 上运行 Hermes
 
-这是通过 [Termux](https://termux.dev/) 直接在 Android 手机上运行 Hermes Agent 的经过验证的方案。该方案可在手机上提供可正常使用的本地 CLI，同时还包含目前已知可在 Android 上顺利安装的所有核心功能。
+:::warning 二级平台
+Termux（Android）属于[二级平台](./platform-support.md#tier-2)。此处的安装脚本和文档仅以尽力维护的方式提供。对 `main` 分支的任何修改都可能随时导致这些软件包出现故障。
+:::
 
-## 该验证方案支持哪些功能？
+通过 [Termux](https://termux.dev/)，Hermes Agent 可直接在 Android 手机上运行。
+
+它不仅能在手机上提供可用的本地 CLI，还支持目前已知可在 Android 上顺利安装的所有核心功能。
+
+## 已测试的配置方案支持哪些功能？
 
 经过测试的 Termux 安装包包含以下功能：
 - Hermes CLI
-- cron 定时任务支持
+- cron 任务支持
 - PTY/后台终端支持
-- Telegram 网关支持（手动触发/尽力而为式后台运行）
+- Telegram 网关支持（手动触发/尽力保障后台运行）
 - MCP 支持
 - Honcho 内存管理支持
 - ACP 支持
 
-具体对应的功能如下：
+具体对应关系如下：
 
 ```bash
 python -m pip install -e '.[termux]' -c constraints-termux.txt
@@ -48,13 +54,14 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 ```
 
 在 Termux 环境中，安装程序会自动执行以下操作：
+
 - 使用 `pkg` 命令来安装系统软件包；
 - 通过 `python -m venv` 创建虚拟环境；
-- 首先尝试使用范围更广的 `.[termux-all]` 插件集，若失败则回退到范围较小的 `.[termux]` 插件集（最后再进行基础安装）——curl 安装工具会自动遵循这一顺序；
-- 将 `hermes` 程序链接到 `$PREFIX/bin` 目录中，以确保其始终位于 Termux 的路径搜索范围内；
+- 首先尝试使用内容更全面的 `.[termux-all]` 扩展包，若失败则回退到内容较少的 `.[termux]` 扩展包（最后再进行基础安装）——curl 安装工具会自动遵循这一顺序；
+- 将 `hermes` 命令链接到 `$PREFIX/bin` 目录中，从而确保其始终位于 Termux 的路径搜索范围内；
 - 跳过尚未经过测试的浏览器及 WhatsApp 启动程序。
 
-如果您需要具体的命令或想要调试安装失败的问题，请使用下方的手动安装路径。
+如果您需要具体的命令或想要调试安装失败的问题，可参考下方的手动安装方式。
 
 ---
 
@@ -68,12 +75,13 @@ pkg install -y git python clang rust make pkg-config libffi openssl nodejs ripgr
 ```
 
 为何选择这些软件包？
-- `python` — 提供运行时环境及虚拟环境支持
-- `git` — 用于克隆或更新代码仓库
-- `clang`、`rust`、`make`、`pkg-config`、`libffi`、`openssl` — 用于在 Android 上构建部分 Python 依赖项
-- `nodejs` — 作为可选的 Node 运行时环境，用于测试核心路径之外的其他功能实验
-- `ripgrep` — 快速文件搜索工具
-- `ffmpeg` — 用于媒体文件处理及文本转语音操作
+
+- `python` — 提供运行时环境及虚拟环境支持；
+- `git` — 用于克隆或更新代码仓库；
+- `clang`、`rust`、`make`、`pkg-config`、`libffi`、`openssl` — 用于在 Android 环境下构建部分 Python 依赖项；
+- `nodejs` — 作为可选的 Node 运行时环境，用于测试核心功能之外的实验场景；
+- `ripgrep` — 实现快速文件搜索功能；
+- `ffmpeg` — 用于媒体文件处理及文本转语音操作。
 
 ### 2. 克隆 Hermes
 
@@ -165,14 +173,15 @@ npm install
 python -m pip install -e '.[termux]' -c constraints-termux.txt
 ```
 
-目前造成问题的核心是 `voice` 这一附加组件：
+目前造成问题的组件是 `voice` 插件：
+
 - `voice` 会调用 `faster-whisper`；
 - `faster-whisper` 又依赖于 `ctranslate2`；
 - 而 `ctranslate2` 并不提供适用于 Android 的预编译包。
 
 ### 在 Android 设备上使用 `uv pip install` 会失败
 
-请改用 Termux 环境下的标准库虚拟环境搭配 `pip` 来执行安装：
+请改用 Termux 环境下的 stdlib venv 配合 `pip` 命令来安装：
 
 ```bash
 python -m venv venv
@@ -213,16 +222,17 @@ pkg install clang rust make pkg-config libffi openssl
 python -m pip install -e '.[termux]' -c constraints-termux.txt
 ```
 
-## 手机设备上的已知限制
+## 手机端已知的限制
 
 - 不支持 Docker 后端
 - 在测试环境中无法通过 `faster-whisper` 进行本地语音转录
-- 安装程序会刻意跳过浏览器自动化相关配置
-- 部分可选插件或功能可能可用，但目前仅有 `.[termux]` 和 `.[termux-all]` 被记录为经过测试的 Android 版本包
+- 安装程序会刻意跳过浏览器自动化相关的配置步骤
+- 虽然部分附加组件可能仍可使用，但目前仅有 `.[termux]` 和 `.[termux-all]` 被列为经过测试的 Android 版本包
 
-如果您遇到新的与 Android 相关的问题，请在 GitHub 上创建问题报告，并附上以下信息：
+如果您遇到新的与 Android 环境相关的问题，请在 GitHub 上创建一个问题报告，并附上以下信息：
+
 - 您的 Android 系统版本
 - `termux-info` 的输出结果
 - `python --version` 的输出结果
-- `hermes doctor` 的输出结果
-- 完整的安装命令及全部错误信息
+- `hermes doctor` 的检测结果
+- 完整的安装命令及错误日志
