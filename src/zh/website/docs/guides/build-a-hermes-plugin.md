@@ -1181,11 +1181,15 @@ pip install hermes-plugin-calculator
 # Plugin auto-discovered on next hermes startup
 ```
 
-## 在 NixOS 上进行分发
+## 在 NixOS 上部署
 
-如果您提供了包含入口点的 `pyproject.toml` 文件，NixOS 用户便可以以声明式方式安装您的插件：
+:::warning Nix 已不再获得明确支持  
+Nix/NixOS 不再是官方明确支持的安装路径（仅提供尽力支持）——详情请参阅 [Nix 设置](/getting-started/nix-setup)。保留本部分内容是为了方便已在 NixOS 上部署的用户使用。  
+:::
 
-**入口点插件**（推荐用于分发）：
+如果您提供了包含入口点的 `pyproject.toml` 文件，NixOS 用户即可以声明式方式安装您的插件：
+
+**入口点插件**（推荐用于部署）：
 ```nix
 # User's configuration.nix
 services.hermes-agent.extraPythonPackages = [
