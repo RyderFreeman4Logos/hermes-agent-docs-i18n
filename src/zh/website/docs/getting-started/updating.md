@@ -210,12 +210,12 @@ uv pip install -e ".[all]"
 ```
 
 :::warning
-如果新增了配置选项，回滚操作可能会导致配置不兼容。请在回滚后运行 `hermes config check`，若出现错误，请从 `config.yaml` 中删除所有未被识别的选项。
+如果新增了配置选项，回滚操作可能会导致配置不兼容。请在回滚后运行 `hermes config check`，如遇到错误，请从 `config.yaml` 中删除所有未被识别的选项。
 :::
 
-### 面向 Nix 用户的说明
+### Nix 用户注意事项
 
-如果您是通过 Nix flake 安装的，更新将通过 Nix 包管理器来处理：
+Nix 已不再作为官方明确支持的安装方式（仅提供尽力支持）——详情请参阅 [Nix 设置指南](./nix-setup.md)。如果您是通过 Nix flake 进行安装的，更新将通过 Nix 包管理器来处理：
 
 ```bash
 # Update the flake input
@@ -231,7 +231,11 @@ Nix 的安装结果是不可变的——回滚操作由 Nix 的生成系统来�
 nix profile rollback
 ```
 
-如需了解更多详细信息，请参阅 [Nix 设置](./nix-setup.md)。
+如需了解更多详细信息，请参阅 [Nix 设置](./nix-setup.md)。 
+
+---
+
+## 卸载
 
 ```bash
 hermes uninstall
