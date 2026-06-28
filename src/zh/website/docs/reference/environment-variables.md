@@ -385,44 +385,46 @@ Hermes 会从进程环境读取环境变量，而对于用户管理的机密信�
 
 在将不受信任的主题用于生产环境之前，请先仔细阅读[ntfy消息指南](/user-guide/messaging/ntfy)，尤其是**身份模型**相关章节。
 
-### 高级消息配置调优用于控制出站消息批量处理功能的各平台高级配置项。大多数用户无需调整这些参数；系统默认设置已能确保在不过度降低性能的前提下遵守各平台的速率限制。
+### 高级消息配置调优用于调控外出消息批量处理功能的各平台高级参数。大多数用户无需调整这些设置；系统默认已针对各平台的速率限制进行了优化，从而确保运行流畅。
 
 | 参数名 | 描述 |
 |--------|------|
-| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | 清除队列中的 Telegram 文本消息块之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当单条 Telegram 消息长度超出限制时，分割消息块之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | 清除队列中的 Telegram 媒体文件之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | 在智能体处理完成后发送后续消息前的延迟时间，以避免与最后一条消息块的处理发生冲突。 |
-| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | 覆盖底层的 `python-telegram-bot` HTTP 相关超时时间（单位：秒）。 |
+| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | 打包待发送的 Telegram 文本内容前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当单条 Telegram 消息长度超过限制时，拆分内容之间的延迟时间（默认值：`2.0` 秒）。 |
+| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | 打包待发送的 Telegram 媒体内容前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | 在智能体处理完成后，发送后续消息之前的延迟时间，以避免与最后一批流式数据发生冲突。 |
+| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | 覆盖底层的 `python-telegram-bot` HTTP 连接超时时间（单位：秒）。 |
 | `HERMES_TELEGRAM_HTTP_POOL_SIZE` | 连接到 Telegram API 的最大并发 HTTP 连接数。 |
-| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | 禁用在 DNS 解析失败时使用的硬编码 Cloudflare 备用 IP 地址（取值：`true`/`false`）。 |
-| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 清除队列中的 Discord 文本消息块之前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当 Discord 消息长度超出限制时，分割消息块之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Matrix 平台的对应批量处理配置项。 |
-| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu 平台的批量处理参数——包括延迟时间、分割延迟、单条消息的最大字符数以及每批消息的最大数量。 |
-| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu 平台的媒体文件清除延迟时间。 |
+| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | 禁用在 DNS 解析失败时使用的硬编码 Cloudflare 备用 IP（值：`true`/`false`）。 |
+| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 打包待发送的 Discord 文本内容前的缓冲时间（默认值：`0.6` 秒）。 |
+| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当 Discord 消息长度超过限制时，拆分内容之间的延迟时间（默认值：`2.0` 秒）。 |
+| `HERMES_DISCORD_LIVENESS_INTERVAL_SECONDS` | 对应 `config.yaml` 中 `discord.liveness_interval_seconds` 的内部参数。用于向 Discord 发送 REST 活性检测请求的间隔时间，该请求可识别位于失效代理或 NAT 后端的“僵尸”客户端（默认值：`60` 秒；设为 `0` 即禁用）。建议优先在 `config.yaml` 中设置 `discord.liveness_interval_seconds`。 |
+| `HERMES_DISCORD_LIVENESS_FAILURE_THRESHOLD` | 对应 `config.yaml` 中 `discord.liveness_failure_threshold` 的内部参数。在连续多次检测失败后强制重新连接 Discord 的阈值（默认值：`3` 次）。建议优先在 `config.yaml` 中设置 `discord.liveness_failure_threshold`。 |
+| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Telegram 批量处理参数在 Matrix 平台上的对应设置。 |
+| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu 平台的批量处理参数——包括延迟时间、拆分延迟、单条消息的最大字符数以及每批的最大消息数。 |
+| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu 媒体内容的发送延迟时间。 |
 | `HERMES_FEISHU_DEDUP_CACHE_SIZE` | Feishu webhook 冗余检测缓存的大小（默认值：`1024`）。 |
-| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom 平台的批量处理配置项。 |
-| `HERMES_VISION_DOWNLOAD_TIMEOUT` | 在将图像传递给视觉分析模型之前，下载该图像的超时时间（单位：秒，默认值：`30`）。 |
-| `HERMES_RESTART_DRAIN_TIMEOUT` | 网关功能：在强制重启之前，等待正在运行的任务完成的时间长度（单位：秒，默认值：`900`）。 |
+| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom 平台的批量处理参数。 |
+| `HERMES_VISION_DOWNLOAD_TIMEOUT` | 在将图像传递给视觉模型之前，下载该图像的超时时间（单位：秒，默认值：`30` 秒）。 |
+| `HERMES_RESTART_DRAIN_TIMEOUT` | 网关在接收到 `/restart` 命令后，等待正在运行的任务完成所需的等待时间（默认值：`900` 秒），之后才会强制重启。 |
 | `HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT` | 网关启动时针对不同平台的连接超时时间（单位：秒）。 |
 | `HERMES_GATEWAY_BUSY_INPUT_MODE` | 网关在处理任务繁忙时的默认输入处理方式：`queue`、`steer` 或 `interrupt`。可通过 `/busy` 命令针对特定聊天单独设置。 |
-| `HERMES_GATEWAY_BUSY_ACK_ENABLED` | 当用户在智能体忙碌时发送输入信息，网关是否会发送确认消息（⚡/⏳/⏩）（默认值：`true`）。设置为 `false` 可完全隐藏这些消息——输入信息仍会按常规方式被排队、引导或中断处理，仅不会显示聊天回复的确认状态。该参数继承自 `config.yaml` 文件中的 `display.busy_ack_enabled` 设置。 |
-| `HERMES_GATEWAY_NO_SUPERVISE` | 在 s6-overlay Docker 镜像中使用时，运行 `hermes gateway run` 命令时可选择关闭自动监控功能，从而使用 s6 之前的前台进程模式（无自动重启功能，网关成为容器的主进程）。有效值为：`1`、`true`、`yes`。该参数相当于 CLI 中的 `--no-supervise` 选项。在非 s6 镜像环境中此参数无效。 |
-| `HERMES_GATEWAY_BOOTSTRAP_STATE` | 在 s6-overlay Docker 镜像中使用时，用于指定新卷上网关的**初始**监控状态。由于空白卷上不存在持久化的 `gateway_state.json` 文件，因此启动时协调器会创建 `gateway-default` 名称的配置项，但将其状态设置为**关闭**（仅当上次记录的状态为“运行中”时才会自动启动）。将此参数设置为 `running` 后，首次启动时的设置钩子会在协调器运行之前生成 `gateway_state.json` 文件，从而使网关在首次启动时就处于运行状态。仅接受字符串值 `running`。该功能仅在首次启动时生效：已存在的 `gateway_state.json` 文件不会被覆盖，因此手动停止的网关在重启后仍会保持停止状态。在非 s6 镜像环境中此参数无效。 |
-| `GATEWAY_RELAY_URL` | 实验性的中继连接器 WebSocket 基础地址。设置该参数后，网关会注册通用的 `relay` 适配器，并向外连接该中继服务。该参数对应 `config.yaml` 文件中的 `gateway.relay_url`。 |
-| `GATEWAY_RELAY_ID` | 由 `hermes gateway enroll` 命令分配或通过自主配置管理的中继网关标识符。该参数对应 `gateway.relay_id`。 |
-| `GATEWAY_RELAY_SECRET` | 用于验证 WebSocket 连接的、针对每个网关的唯一密钥。如果已配置此密钥，则无需进行自主配置管理。该参数对应 `gateway.relay_secret`。 |
-| `GATEWAY_RELAY_DELIVERY_KEY` | 由中继服务生成的交付密钥，用于确保兼容中继/直通模式下的身份验证机制。目前的中继服务入站消息是通过出站 WebSocket 而非网关端的 HTTP 接收器传递的。 |
-| `GATEWAY_RELAY_ENROLL_TOKEN` | 当未明确指定 `--token` 参数时，`hermes gateway enroll` 命令会使用的注册令牌。 |
+| `HERMES_GATEWAY Busy_ACK_ENABLED` | 当用户在智能体忙碌时发送输入，网关是否发送确认消息（⚡/⏳/⏩）（默认值：`true`）。设为 `false` 可完全隐藏这些消息——输入仍会按常规被排队、引导或中断，仅取消聊天回复的确认提示。该参数源自 `config.yaml` 中的 `display.busy_ack_enabled`。 |
+| `HERMES_GATEWAY_NO_SUPERVISE` | 在 s6-overlay Docker 镜像中，运行 `hermes gateway run` 时取消自动监控功能，采用 s6 之前的前台进程机制（无自动重启，网关为容器的主进程）。有效值为：`1`、`true`、`yes`。相当于 CLI 参数 `--no-supervise`。在 s6 镜像之外此参数无效。 |
+| `HERMES_GATEWAY_BOOTSTRAP_STATE` | 在 s6-overlay Docker 镜像中，用于指定新卷上网关的**初始**监控状态。由于空白卷上不存在持久化的 `gateway_state.json` 文件，因此启动时协调器会注册 `gateway-default` 选项，但将其状态设为**关闭**（仅当上次记录的状态为“运行中”时才会自动启动）。将此参数设为 `running`，则首次启动时的设置钩子会在协调器运行之前生成 `gateway_state.json`，从而使网关在首次启动时就处于运行状态。仅接受字面值 `running`。该功能仅适用于首次启动：已存在的 `gateway_state.json` 文件不会被覆盖，因此故意停止的网关在重启后仍会保持停止状态。在 s6 镜像之外此参数无效。 |
+| `GATEWAY_RELAY_URL` | 实验性的中继连接器 WebSocket 基础地址。设置该参数后，网关会注册通用的 `relay` 适配器，并向外连接该中继。对应 `config.yaml` 中的 `gateway.relay_url`。 |
+| `GATEWAY_RELAY_ID` | 由 `hermes gateway enroll` 指定或通过自主配置管理的中继网关标识符。对应 `gateway.relay_id`。 |
+| `GATEWAY_RELAY_SECRET` | 用于验证 WebSocket 连接的、针对每个网关的专用密钥。如果已配置此参数，则无需进行自主配置管理。对应 `gateway.relay_secret`。 |
+| `GATEWAY_RELAY_DELIVERY_KEY` | 由连接器生成的传递密钥，用于确保中继/直通模式的认证兼容性。当前的中继入站消息是通过 outbound WebSocket 而非网关端的 HTTP 接收器送达的。 |
+| `GATEWAY_RELAY_ENROLL_TOKEN` | 当未明确指定 `--token` 参数时，`hermes gateway enroll` 功能所使用的注册令牌。 |
 | `GATEWAY_RELAY_PLATFORM` | 中继功能描述中可选的平台名称。 |
 | `GATEWAY_RELAY_BOT_ID` | 中继功能描述中可选的机器人标识符。 |
-| `GATEWAY_RELAY_ENDPOINT` | 针对需要回调/直通 URL 的连接器模式而可选的网关端点地址；对于默认的仅支持 WebSocket 的入站中继路径而言并非必需。该参数对应 `gateway.relay_endpoint`。 |
-| `GATEWAY_RELAY_ROUTE_KEYS` | 向连接器公布的、以逗号分隔的中继路由键值对。该参数对应 `gateway.relay_route_keys`。 |
-| `HERMES_FILE_MUTATION_VERIFIER` | 是否启用每轮对话的文件修改验证功能（默认值：`true`）。启用该功能后，Hermes 会在对话记录中附加提示信息，列出本轮对话中所有失败且未被后续成功写入操作覆盖的 `write_file`/`patch` 操作。如需禁用此功能，可将其设置为 `0`、`false`、`no` 或 `off`。该参数对应 `config.yaml` 文件中的 `display.file_mutation_verifier`；如果环境变量已设置，则以环境变量值为准。 |
-| `HERMES_CRON_TIMEOUT` | 定时任务智能体运行时的空闲超时时间（单位：秒，默认值：`600`）。只要智能体仍在主动调用工具或接收流式数据，就可以无限期运行——只有处于空闲状态时才会触发超时。设置为 `0` 表示无超时限制。 |
-| `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在定时任务前的预执行脚本的超时时间（单位：秒，默认值：`120`）。对于需要更长时间执行的脚本（例如为防止机器人检测而设置的随机延迟），可调整此参数。该参数也可通过 `config.yaml` 文件中的 `cron.script_timeout_seconds` 进行配置。 |
-| `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可同时运行的定时任务数量（默认值：`4`）。 |
+| `GATEWAY_RELAY_ENDPOINT` | 对于需要回调/直通 URL 的连接器模式，可选的网关端点地址；对于默认的仅支持 WS 的入站中继路径则无需此参数。对应 `gateway.relay_endpoint`。 |
+| `GATEWAY_RELAY_ROUTE_KEYS` | 向连接器声明的、以逗号分隔的中继路由键值对。对应 `gateway.relay_route_keys`。 |
+| `HERMES_FILE_MUTATION_VERIFIER` | 启用每轮对话后的文件变更验证脚注功能（默认值：`true`）。启用后，Hermes 会附加一条提示信息，列出在该轮对话中所有失败且未被后续成功写入操作覆盖的 `write_file`/`patch` 操作。设为 `0`、`false`、`no` 或 `off` 可关闭此功能。对应 `config.yaml` 中的 `display.file_mutation_verifier`；若环境变量已设置，则以环境变量为准。 |
+| `HERMES_CRON_TIMEOUT` | 定时任务智能体运行时的空闲超时时间（单位：秒，默认值：`600` 秒）。只要智能体仍在主动调用工具或接收流式数据，就可以无限期运行——此超时仅在智能体处于空闲状态时触发。设为 `0` 表示无限制。 |
+| `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在定时任务前的预执行脚本的超时时间（单位：秒，默认值：`120` 秒）。对于需要更长时间执行的脚本（例如为防止机器人检测而设置的随机延迟），可对此参数进行覆盖。也可通过 `config.yaml` 中的 `cron.script_timeout_seconds` 进行配置。 |
+| `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可并行运行的定时任务数量（默认值：`4` 个）。 |
 
 ## 智能体行为| 参数名 | 描述 |
 |--------|------|
