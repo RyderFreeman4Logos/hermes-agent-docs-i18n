@@ -156,17 +156,31 @@ SearXNG 默认处于禁用 JSON 输出的状态。请复制生成的配置文件
 docker cp searxng:/etc/searxng/settings.yml ~/searxng/searxng/settings.yml
 ```
 
-打开 `~/searxng/searxng/settings.yml` 文件，找到 `formats` 部分（大约在第 84 行附近）：
+打开 `~/searxng/searxng/settings.yml` 文件。如果其中存在 `use_default_settings: true` 这一选项，那么该文件将仅包含您自定义的设置，其余所有设置都会沿用内置的默认值。若希望为 Hermes 启用 JSON 格式的响应，需添加以下自定义设置：
 
 ```yaml
-# Before (default — JSON disabled):
-formats:
-  - html
+search:
+  formats:
+    - html
+    - json
+```
 
-# After (enable JSON for Hermes):
-formats:
-  - html
-  - json
+您的 `settings.yml` 文件应类似于以下结构：
+
+```yaml
+# Read the documentation before extending the defaults:
+# https://docs.searxng.org/admin/settings/
+
+use_default_settings: true
+
+server:
+  secret_key: "abcdef12345678"
+  image_proxy: true
+
+search:
+  formats:
+    - html
+    - json
 ```
 
 **5. 重启以应用更改：**
