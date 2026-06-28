@@ -7,12 +7,12 @@ description: "Step-by-step guide to building a complete Hermes plugin with tools
 
 # 构建 Hermes 插件
 
-本指南将引导您从零开始构建一个功能完备的 Hermes 插件。完成之后，您将拥有一个具备多种工具、生命周期钩子、预置数据文件以及内置技能的可用插件——涵盖插件系统支持的所有功能。
+本指南将指导您从零开始构建一个功能完备的 Hermes 插件。完成后，您将拥有一个包含多种工具、生命周期钩子、预置数据文件以及内置技能的可用插件——涵盖插件系统支持的所有功能。
 
 :::info 不确定需要哪份指南？
-Hermes 提供了多种不同的可插接接口——有些使用 Python 的 `register_*` API，而另一些则采用配置驱动或直接放入目录的方式。请先参考此对照表：
+Hermes 提供了多种不同的可插件化接口——有些使用 Python 的 `register_*` API，有些则基于配置驱动或直接放入指定目录。请先参考此对照表：
 
-| 您想要添加的功能 | 需阅读的指南 |
+| 您想要添加的功能 | 对应指南 |
 |---|---|
 | 自定义工具、钩子、斜杠命令、技能或 CLI 子命令 | **本指南**（通用插件开发指南） |
 | **LLM/推理后端**（新类型的提供者） | [模型提供者插件](/developer-guide/model-provider-plugin) |
@@ -21,18 +21,22 @@ Hermes 提供了多种不同的可插接接口——有些使用 Python 的 `reg
 | **上下文压缩引擎** | [上下文引擎插件](/developer-guide/context-engine-plugin) |
 | **图像生成后端** | [图像生成提供者插件](/developer-guide/image-gen-provider-plugin) |
 | **视频生成后端** | [视频生成提供者插件](/developer-guide/video-gen-provider-plugin) |
-| **TTS 后端**（任何 CLI 工具——Piper、VoxCPM、Kokoro、语音克隆等） | [TTS 自定义命令提供者](/user-guide/features/tts#custom-command-providers) ——采用配置驱动，无需 Python |
-| **STT 后端**（自定义 whisper/ASR CLI 工具） | [语音消息转写](/user-guide/features/tts#voice-message-transcription-stt) ——在配置文件中设置 `HERMES_LOCAL_STT_COMMAND` 指向 shell 模板 |
-| **通过 MCP 调用外部工具**（文件系统、GitHub、Linear 以及任何 MCP 服务器） | [MCP](/user-guide/features/mcp) ——在 `config.yaml` 中声明 `mcp_servers.<name>` |
-| **网关事件钩子**（在启动时、会话事件发生时或接收到命令时触发） | [事件钩子](/user-guide/features/hooks#gateway-event-hooks) ——将 `HOOK.yaml` 和 `handler.py` 文件放入 `~/.hermes/hooks/<name>/` 目录中 |
-| **Shell 钩子**（在特定事件发生时运行 Shell 命令） | [Shell 钩子](/user-guide/features/hooks#shell-hooks) ——在 `config.yaml` 的 `hooks:` 部分进行配置 |
-| **额外的技能来源**（自定义 GitHub 仓库、私有技能索引） | [技能管理](/user-guide/features/skills) ——使用命令 `hermes skills tap add <repo>` · [发布自定义技能接入点](/user-guide/features/skills#publishing-a-custom-skill-tap) |
-| 一级核心推理提供者（不属于插件类型） | [添加提供者](/developer-guide/adding-providers) |
+| **TTS 后端**（任何 CLI 工具——Piper、VoxCPM、Kokoro、语音克隆等） | [TTS 自定义命令提供者](/user-guide/features/tts#custom-command-providers) ——基于配置驱动，无需 Python |
+| **STT 后端**（自定义 whisper/ASR CLI 工具） | [语音消息转录](/user-guide/features/tts#voice-message-transcription-stt) ——需在配置文件中设置 `HERMES_LOCAL_STT_COMMAND` 指向相应的 shell 模板 |
+| **通过 MCP 调用外部工具**（文件系统、GitHub、Linear 以及任何 MCP 服务器） | [MCP](/user-guide/features/mcp) ——需在 `config.yaml` 文件中声明 `mcp_servers.<名称>` |
+| **网关事件钩子**（在启动时、会话事件发生时或接收到命令时触发） | [事件钩子](/user-guide/features/hooks#gateway-event-hooks) ——需将 `HOOK.yaml` 和 `handler.py` 文件放入 `~/.hermes/hooks/<名称>/` 目录 |
+| **Shell 钩子**（在特定事件发生时执行 Shell 命令） | [Shell 钩子](/user-guide/features/hooks#shell-hooks) ——需在 `config.yaml` 的 `hooks:` 部分进行配置 |
+| **额外的技能来源**（自定义 GitHub 仓库、私有技能索引） | [技能管理](/user-guide/features/skills) ——可使用命令 `hermes skills tap add <仓库地址>`，也可参考[发布自定义技能接入点](/user-guide/features/skills#publishing-a-custom-skill-tap)的指南 |
+| 一级核心推理提供者（不属于插件范畴） | [添加提供者](/developer-guide/adding-providers) |
 
-如需查看包含所有扩展接口的完整列表，包括配置驱动型（TTS、STT、MCP、Shell 钩子）和直接放入目录型（网关钩子）的接口，可参阅完整的[可插接接口表](/user-guide/features/plugins#pluggable-interfaces--where-to-go-for-each)。
+如需查看包含所有扩展接口的完整列表，包括基于配置驱动的类型（TTS、STT、MCP、Shell 钩子）以及直接放入目录的类型（网关钩子），请参阅[可插件化接口对照表](/user-guide/features/plugins#pluggable-interfaces--where-to-go-for-each)。
 :::
 
-## 您将构建的内容
+:::caution 第三方产品插件为独立包形式分发——不会合并到核心代码库中
+那些集成**第三方产品或项目**的插件——如监控/指标后端、供应商 SaaS 连接器、分析仪表板、付费服务集成等——都是作为**独立的插件仓库**进行开发和分发的，不会被合并进 `NousResearch/hermes-agent` 项目。用户需将这类插件安装到 `~/.hermes/plugins/` 目录中，或通过 pip 安装；本指南中的所有操作在独立插件仓库中同样适用。这一做法是基于耦合度与维护效率的考量（核心代码更新速度快，且我们并不掌控第三方后端），而非质量标准——一个优秀的插件完全可以选择独立存在。欢迎在 Nous Research 的 Discord 频道 `#plugins-skills-and-skins` 中推荐此类插件。相关规则详见 [CONTRIBUTING.md](https://github.com/NousResearch/hermes-agent/blob/main/CONTRIBUTING.md) 文件。
+:::
+
+## 您将要构建的内容
 
 一个包含两种工具的**计算器**插件：
 - `calculate` —— 计算数学表达式（如 `2**16`、`sqrt(144)`、`pi * 5**2`）
