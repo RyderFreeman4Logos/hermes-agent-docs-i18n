@@ -152,21 +152,21 @@ hermes gateway status       # Check default service status
 hermes gateway status --system         # Linux only: inspect the system service explicitly
 ```
 
-## 聊天指令（消息内部使用）
+## 聊天命令（消息内部使用）
 
-| 指令 | 描述 |
-|------|------|
-| `/new` 或 `/reset` | 开始新的对话 |
-| `/model [provider:model]` | 显示或更改模型（支持 `provider:model` 语法） |
-| `/personality [name]` | 设置人格设定 |
-| `/retry` | 重发上一条消息 |
-| `/undo` | 删除上一次的交流内容 |
+| 命令 | 描述 |
+|---------|-------------|
+| `/new` 或 `/reset` | 开始全新对话 |
+| `/model [provider:model]` | 显示或更换模型（支持 `provider:model` 语法） |
+| `/personality [name]` | 设置角色性格 |
+| `/retry` | 重新发送上一条消息 |
+| `/undo` | 删除上一次的对话内容 |
 | `/status` | 显示会话信息 |
-| `/whoami` | 显示您在此范围内的指令使用权限（管理员 / 用户 / 无限制） |
+| `/whoami` | 显示当前范围内可使用的斜杠命令权限（管理员 / 用户 / 无限制） |
 | `/stop` | 停止正在运行的智能体 |
-| `/approve` | 批准待处理的危险指令 |
-| `/deny` | 拒绝待处理的危险指令 |
-| `/sethome` | 将当前聊天设为主频道 |
+| `/approve` | 批准待处理的危险命令 |
+| `/deny` | 拒绝待处理的危险命令 |
+| `/sethome` | 将当前聊天设置为主频道 |
 | `/compress` | 手动压缩对话上下文 |
 | `/title [name]` | 设置或显示会话标题 |
 | `/resume [name]` | 恢复之前命名的会话 |
@@ -178,26 +178,28 @@ hermes gateway status --system         # Linux only: inspect the system service 
 | `/background <prompt>` | 在独立的后台会话中运行提示词 |
 | `/reload-mcp` | 根据配置重新加载 MCP 服务器 |
 | `/update` | 将 Hermes Agent 更新到最新版本 |
-| `/help` | 显示可用指令列表 |
+| `/help` | 显示可用命令列表 |
 | `/<skill-name>` | 调用已安装的任意技能 |
 
 ## 会话管理
 
 ### 会话持久性
 
-会话会在消息之间持续存在，直到被重置。智能体会记住您的对话上下文。
+会话会在消息之间持续保留，直到被手动重置。智能体会记住您的对话上下文。
 
 ### 重置策略
 
 会话会根据可配置的策略进行重置：
 
 | 策略 | 默认值 | 描述 |
-|------|--------|------|
-| 每日 | 每天凌晨 4:00 | 在每日固定时间重置 |
-| 静止 | 1440 分钟 | 在 N 分钟无操作后重置 |
-| 两者皆有 | （同时生效） | 以先触发的条件为准 |
+|--------|--------|-------------|
+| 每日 | 凌晨 4:00 | 每天在指定时间重置 |
+| 静止 | 1440 分钟 | 闲置 N 分钟后重置 |
+| 双重触发 | 同时满足两种条件 | 以先触发的条件为准 |
 
-可在 `~/.hermes/gateway.json` 中配置各平台的自定义规则：
+通过 `terminal(background=true)` 启动的实时后台进程通常会防止会话被重置，从而避免丢失输出内容。为防止被遗忘的进程（如预览服务器）使会话永久保持打开状态，超过 `bg_process_max_age_hours`（默认值为 **24** 小时）的老旧后台进程将不再阻止会话重置。此类进程不会被终止，仅会被重置机制忽略。若要将此限制关闭（恢复旧行为，即任何运行中的进程都会阻止重置），可将其值设为 `0`；如果需要让某些合法的多日任务保持会话开启状态，可适当提高该数值。
+
+可在 `~/.hermes/gateway.json` 中配置针对不同平台的自定义设置：
 
 ```json
 {
@@ -426,12 +428,17 @@ sudo hermes gateway status --system
 journalctl -u hermes-gateway -f
 ```
 
-在笔记本电脑及开发测试机上，请使用用户服务；而在需要在上电后自动启动且无需依赖 systemd linger 功能的 VPS 或无头主机上，则应使用系统服务。
+在笔记本电脑和开发机上请使用用户服务；而在需要开机后自动恢复且无需依赖 systemd linger 的 VPS 或无头主机上，则应使用系统服务。
 
-:::提示 无头虚拟机：结合用户服务与 linger 功能可避免出现root权限提示
-系统服务每次重启都需要root权限——包括在 `hermes update` 命令执行完毕后自动重启网关的操作。当以非root用户身份运行 `hermes update` 时，它会尝试无需输入密码即可执行 `sudo systemctl` 命令；如果该方式不可用，它就会跳过重启操作，并输出手动执行的 `sudo systemctl restart hermes-gateway` 命令（而不会在交互式密码输入环节卡住）。
+:::danger 禁止添加自定义的 `ExecStopPost` 杀进程脚本
+Hermes 安装的单元已通过 `KillMode=mixed` + `KillSignal=SIGTERM` 实现了干净的网关关闭机制，同时结合 `Restart=always` 与 `RestartForceExitStatus` 确保更新或执行 `/restart` 指令后能正确重新启动。**切勿**添加诸如 `ExecStopPost=/bin/kill -9 $MAINPID` 这样的 systemd 替代脚本——因为 `ExecStopPost` 会在*每次*停止操作时触发，包括正常重启的情况，这会导致新生成的实例在稳定之前就被强制终止，而 `Restart=always` 又会立即使其重新启动，从而形成无限循环重启（在 Telegram 上还会出现大量重启消息）。如果您已添加了此类脚本，请将其删除：执行 `systemctl --user edit hermes-gateway`（系统服务则使用 `sudo systemctl edit hermes-gateway`），删除 `ExecStopPost` 这一行，随后执行 `systemctl --user daemon-reload`。
 
-对于那些从不登录的无头虚拟机，启用 linger 功能的用户服务同样能让其在系统启动时自动运行，且完全无需涉及root权限。
+:::
+
+:::tip 无头虚拟机：启用 linger 的用户服务可避免需要 root 权限
+系统服务每次重启都需要 root 权限——包括在 `hermes update` 完成后自动重启网关时。当以非 root 用户运行 `hermes update` 时，它会尝试使用无需密码的 `sudo systemctl` 命令；如果该功能不可用，它就会跳过重启操作，并显示手动执行的 `sudo systemctl restart hermes-gateway` 命令（而不会在交互式密码输入处阻塞）。
+
+对于那些从不登录的无头虚拟机，启用 linger 功能的用户服务同样能在开机时自动启动，且完全无需 root 权限参与。
 
 ```bash
 hermes gateway install          # user service
