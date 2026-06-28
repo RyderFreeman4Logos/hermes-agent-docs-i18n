@@ -256,52 +256,58 @@ DISCORD_ALLOWED_USERS=284102345871466496
 hermes gateway
 ```
 
-该机器人应在几秒钟内出现在 Discord 中。您可以向其发送消息——无论是私信还是发送到它能看到的频道——以此进行测试。
+该机器人应在几秒内出现在 Discord 中。你可以向其发送消息——无论是私信还是发送到它能看到的频道——来进行测试。
 
 :::提示
-您可以将 `hermes gateway` 在后台运行或作为 systemd 服务启动，以实现持续运行。详情请参阅部署文档。
+你可以在后台运行 `hermes gateway`，或将其设置为 systemd 服务以实现持续运行。详情请参阅部署文档。
 :::
 
 ## 配置参考
 
-Discord 的行为通过两个文件来控制：**`~/.hermes/.env`** 用于存储凭证及环境级开关选项，而 **`~/.hermes/config.yaml`** 则用于存放结构化配置。当两者同时被设置时，环境变量始终优先于 config.yaml 中的数值。
+Discord 的行为通过两个文件进行控制：**`~/.hermes/.env`** 用于存储凭证和环境级开关，而 **`~/.hermes/config.yaml`** 则用于存储结构化设置。当两者都设置时，环境变量始终优先于 config.yaml 中的数值。
 
 ### 环境变量（`.env`）
 
 | 变量 | 是否必填 | 默认值 | 描述 |
 |------|----------|--------|------|
 | `DISCORD_BOT_TOKEN` | **是** | — | 来自 [Discord 开发者门户](https://discord.com/developers/applications) 的机器人令牌。 |
-| `DISCORD_ALLOWED_USERS` | **是** | — | 以逗号分隔的、允许与机器人交互的 Discord 用户 ID。若未设置此变量或 `DISCORD_ALLOWED_ROLES`，网关将拒绝所有用户访问。 |
-| `DISCORD_ALLOWED_ROLES` | 否 | — | 以逗号分隔的 Discord 角色 ID。拥有这些角色之一的成员即具备权限——该规则与 `DISCORD_ALLOWED_USERS` 具有优先级。连接时会自动启用 **Server Members Intent**。当管理团队人员变动时非常有用：新管理员一旦被授予相应角色即可立即获得权限，无需再次配置。 |
-| `DISCORD_HOME_CHANNEL` | 否 | — | 机器人用于发送主动消息（如定时任务结果、提醒、通知等）的频道 ID。 |
-| `DISCORD_HOME_CHANNEL_NAME` | 否 | `"Home"` | 日志及状态输出中该主频道的显示名称。 |
-| `DISCORD_COMMAND_SYNC_POLICY` | 否 | `"safe"` | 控制原生斜杠命令的启动同步方式。`"safe"` 模式会对比现有的全局命令，仅更新有变动的部分；当 Discord 元数据变更无法通过补丁应用时，会重新生成命令。`"bulk"` 模式则保持原有的 `tree.sync()` 行为。`"off"` 模式则完全跳过启动同步。 |
-| `DISCORD_REQUIRE_MENTION` | 否 | `true` | 当该值为 `true` 时，机器人仅在被@提及时才会在服务器频道中回复。设置为 `false` 可让机器人在所有频道的所有消息中都做出回应。 |
-| `DISCORD_THREAD_REQUIRE_MENTION` | 否 | `false` | 当该值为 `true` 时，会禁用线程内的@提及快捷方式——此时线程的访问规则与普通频道相同，即便机器人已参与对话，也必须通过@提及才能触发响应。适用于多个机器人共享同一线程的场景，可确保每个机器人仅在收到明确@提及时才采取行动。 |
-| `DISCORD_FREE_RESPONSE_CHANNELS` | 否 | — | 以逗号分隔的频道 ID，机器人可在这些频道中无需@提及即可回复，即便 `DISCORD_REQUIRE_MENTION` 设为 `true` 也是如此。 |
-| `DISCORD_IGNORE_NO_MENTION` | 否 | `true` | 当该值为 `true` 时，如果消息@提及了其他用户但未提及机器人，机器人将保持沉默。这可避免机器人介入针对其他人的对话。此选项仅适用于服务器频道，不适用于私信。 |
-| `DISCORD_AUTO_THREAD` | 否 | `true` | 当该值为 `true` 时，机器人会在文本频道中每出现一次@提及自动创建一个新线程，从而使每段对话相互隔离（类似 Slack 的行为）。已存在于线程或私信中的消息则不受影响。 |
-| `DISCORD_ALLOW_BOTS` | 否 | `"none"` | 控制机器人如何处理来自其他 Discord 机器人的消息。`"none"` 表示忽略所有其他机器人；`"mentions"` 表示仅接受@提及 Hermes 的机器人消息；`"all"` 表示接受所有机器人消息。 |
-| `DISCORD_REACTIONS` | 否 | `true` | 当该值为 `true` 时，机器人会在处理消息时添加表情符号反应（启动时为👀，成功时为✅，失败时为❌）。设置为 `false` 可完全禁用反应功能。 |
-| `DISCORD_IGNORED_CHANNELS` | 否 | — | 以逗号分隔的频道 ID，机器人**永远**不会在这些频道中做出回应，即便被@提及。该选项的优先级高于所有其他频道设置。 |
-| `DISCORD_ALLOWED_CHANNELS` | 否 | — | 以逗号分隔的频道 ID。一旦设置，机器人将**仅**在这些频道中回应（若允许的话也会在私信中回应）。该设置会覆盖 `config.yaml` 中的 `discord.allowed_channels`。可结合 `DISCORD_IGNORED_CHANNELS` 来设定允许/拒绝规则。 |
-| `DISCORD_NO_THREAD_CHANNELS` | 否 | — | 以逗号分隔的频道 ID，机器人会在这些频道中直接回复，而不会创建新线程。该选项仅在 `DISCORD_AUTO_THREAD` 设为 `true` 时才有意义。 |
-| `DISCORD_HISTORY_BACKFILL` | 否 | `true` | 当该值为 `true` 时，当有人@提及机器人时，机器人会在用户消息前补充最近的频道滚动记录（即自上次回复以来的内容）。这有助于恢复在“必须@提及”规则下可能丢失的上下文。私信和自由回复频道中此功能会被跳过。设置为 `false` 可禁用该功能。 |
-| `DISCORD_HISTORY_BACKFILL_LIMIT` | 否 | `50` | 在生成补充内容时，向后扫描的消息数量上限。实际上，扫描通常会在机器人自己在该频道的最新消息处提前停止。 |
-| `DISCORD_REPLY_TO_MODE` | 否 | `"first"` | 控制回复引用行为：`"off"` 表示从不回复原始消息；`"first"` 表示仅在第一个消息块中添加回复引用（默认值）；`"all"` 表示在每个消息块中都添加回复引用。 |
-| `DISCORD_ALLOW_MENTION_EVERYONE` | 否 | `false` | 当该值为 `false`（默认值）时，即使机器人回复内容中包含 `@everyone` 或 `@here`，它也无法发送相关提及。设置为 `true` 可重新启用此功能。详情请参见下文的[提及控制](#mention-control)部分。 |
-| `DISCORD_ALLOW_MENTION_ROLES` | 否 | `false` | 当该值为 `false`（默认值）时，机器人无法处理 `@role` 类型的提及。设置为 `true` 可允许此类提及。 |
-| `DISCORD_ALLOW_MENTION_USERS` | 否 | `true` | 当该值为 `true`（默认值）时，机器人可以通过用户 ID 直接@提及特定用户。 |
-| `DISCORD_ALLOW_MENTION_REPLIED_USER` | 否 | `true` | 当该值为 `true`（默认值）时，回复消息时会自动@提及原发消息的用户。 |
-| `DISCORD_PROXY` | 否 | — | 用于连接 Discord 的代理服务器 URL（支持 HTTP、WebSocket、REST 协议）。该设置会覆盖 `HTTPS_PROXY`/`ALL_PROXY` 的值。支持 `http://`、`https://` 和 `socks5://` 协议格式。 |
-| `DISCORD_ALLOW_ANY_ATTACHMENT` | 否 | `false` | 当该值为 `true` 时，机器人可接受任何类型的附件（不仅限于内置的 PDF、文本、ZIP、Office 文件类型）。未知类型的附件会被缓存到磁盘，并以 `application/octet-stream` 的 MIME 类型作为本地路径呈现给代理，以便其通过 `terminal`、`read_file`、`ffprobe` 等工具进行查看。 |
-| `DISCORD_MAX_ATTACHMENT_BYTES` | 否 | `33554432` | 网关下载并缓存每个附件的最大字节数。默认值为 32 MiB。设置为 `0` 表示无限制（由于附件在写入时会保留在内存中，因此无限制会带来实际的内存消耗）。 |
+| `DISCORD_ALLOWED_USERS` | **是** | — | 允许与机器人交互的 Discord 用户 ID，以逗号分隔。若未设置此变量或 `DISCORD_ALLOWED_ROLES`，网关将拒绝所有用户访问。 |
+| `DISCORD_ALLOWED_ROLES` | 否 | — | 允许的 Discord 角色 ID，以逗号分隔。拥有这些角色之一的成员即获得授权——该规则与 `DISCORD_ALLOWED_USERS` 具有优先级。连接时会自动启用 **Server Members Intent**。当管理团队频繁变动时非常有用：新管理员一旦被授予相应角色即可立即获得权限，无需重新配置。 |
+| `DISCORD_HOME_CHANNEL` | 否 | — | 机器人用于发送主动消息（如定时任务输出、提醒、通知）的频道 ID。 |
+| `DISCORD_HOME_CHANNEL_NAME` | 否 | `"Home"` | 日志和状态输出中显示的频道名称。 |
+| `DISCORD_COMMAND_SYNC_POLICY` | 否 | `"safe"` | 控制原生斜杠命令的启动同步方式。`"safe"` 模式会对比现有的全局命令，仅更新发生变化的部分；当 Discord 元数据变更无法通过补丁应用时，会重新生成命令。`"bulk"` 模式保留旧的 `tree.sync()` 行为。`"off"` 模式则完全跳过启动同步。 |
+| `DISCORD_REQUIRE_MENTION` | 否 | `true` | 当设置为 `true` 时，机器人仅在被@提及时才会在服务器频道中回复。设置为 `false` 可让机器人在所有频道的所有消息中都作出回复。 |
+| `DISCORD_THREAD_REQUIRE_MENTION` | 否 | `false` | 当设置为 `true` 时，将禁用线程内的@提及快捷方式——此时线程的访问规则与普通频道相同，即使机器人已参与对话，也必须通过@提及才能触发响应。适用于多个机器人共享同一个线程，且希望每个机器人仅在明确被@提及时才响应的场景。 |
+| `DISCORD_FREE_RESPONSE_CHANNELS` | 否 | — | 机器人可在其中无需@提及即可回复的频道 ID，即使 `DISCORD_REQUIRE_MENTION` 设为 `true` 也适用。 |
+| `DISCORD_IGNORE_NO_MENTION` | 否 | `true` | 当设置为 `true` 时，如果消息@提及了其他用户但未提及机器人，机器人将保持沉默。这可避免机器人介入针对其他人的对话。该设置仅适用于服务器频道，不适用于私信。 |
+| `DISCORD_AUTO_THREAD` | 否 | `true` | 当设置为 `true` 时，机器人会在文本频道中每个@提及都自动创建一个新线程，从而使每段对话相互隔离（类似 Slack 的行为）。已存在于线程或私信中的消息不受影响。 |
+| `DISCORD_ALLOW_BOTS` | 否 | `"none"` | 控制机器人如何处理来自其他 Discord 机器人的消息。`"none"` ——忽略所有其他机器人；`"mentions"` ——仅接受@提及 Hermes的机器人消息；`"all"` ——接受所有机器人消息。 |
+| `DISCORD_REACTIONS` | 否 | `true` | 当设置为 `true` 时，机器人会在处理消息时添加表情符号反应（启动时为👀，成功时为✅，失败时为❌）。设置为 `false` 可完全禁用反应功能。 |
+| `DISCORD_IGNORED_CHANNELS` | 否 | — | 机器人**永远**不会回复的频道 ID，即使被@提及也不例外。该设置优先于其他所有频道相关配置。 |
+| `DISCORD_ALLOWED_CHANNELS` | 否 | — | 允许机器人回复的频道 ID，以逗号分隔。一旦设置，机器人将**仅**在这些频道中回复（若允许的话也可回复私信）。该设置会覆盖 `config.yaml` 中的 `discord.allowed_channels`。可结合 `DISCORD_IGNORED_CHANNELS` 来定义允许/拒绝规则。 |
+| `DISCORD_NO_THREAD_CHANNELS` | 否 | — | 机器人直接在频道中回复而非创建线程的频道 ID。仅在 `DISCORD_AUTO_THREAD` 设为 `true` 时适用。 |
+| `DISCORD_HISTORY_BACKFILL` | 否 | `true` | 当设置为 `true` 时，当机器人被提及时，会在用户消息前补充最近的频道滚动内容（即自机器人上次回复以来的内容）。这有助于恢复在“必须@提及”模式下可能丢失的上下文。私信和自由回复频道中不会执行此功能。设置为 `false` 可禁用该功能。 |
+| `DISCORD_HISTORY_BACKFILL_LIMIT` | 否 | `50` | 在生成补充内容时，向后扫描的消息数量上限。实际上，扫描通常会在机器人自己在该频道的最后一条消息处提前停止。 |
+| `DISCORD_REPLY_TO_MODE` | 否 | `"first"` | 控制回复引用行为：`"off"` ——从不回复原始消息；`"first"` ——仅对第一个消息块进行回复引用（默认值）；`"all"` ——对每个消息块都进行回复引用。 |
+| `DISCORD_ALLOW_MENTION_EVERYONE` | 否 | `false` | 当设置为 `false`（默认值）时，即使机器人回复中包含 `@everyone` 或 `@here`，它也无法发送这些提及。设置为 `true` 可重新启用该功能。详情请参见下文的[提及控制](#mention-control)。 |
+| `DISCORD_ALLOW_MENTION_ROLES` | 否 | `false` | 当设置为 `false`（默认值）时，机器人无法处理 `@role` 类型的提及。设置为 `true` 可允许该功能。 |
+| `DISCORD_ALLOW_MENTION_USERS` | 否 | `true` | 当设置为 `true`（默认值）时，机器人可以根据用户 ID 进行提及。 |
+| `DISCORD_ALLOW_MENTION_REPLIED_USER` | 否 | `true` | 当设置为 `true`（默认值）时，回复消息时会同时@提及原始发件人。 |
+| `DISCORD_PROXY` | 否 | — | 用于连接 Discord 的代理服务器 URL（支持 HTTP、WebSocket、REST 协议）。该设置会覆盖 `HTTPS_PROXY`/`ALL_PROXY`。支持 `http://`、`https://` 和 `socks5://` 协议。 |
+| `DISCORD_ALLOW_ANY_ATTACHMENT` | 否 | `false` | 当设置为 `true` 时，机器人可接受任何类型的附件（不仅限于内置的 PDF、文本、ZIP、Office 文件类型）。未知类型的附件会被缓存到磁盘，并以 `application/octet-stream` 的 MIME 类型作为本地路径呈现给代理，以便其使用 `terminal`、`read_file`、`ffprobe` 等工具进行查看。 |
+| `DISCORD_MAX_ATTACHMENT_BYTES` | 否 | `33554432` | 网关下载并缓存每个附件的最大字节数。默认值为 32 MiB。设置为 `0` 表示无限制（虽然附件在写入时会暂存在内存中，但无限制会带来较高的内存消耗）。 |
 | `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 否 | `0.6` | 适配器在刷新已排队的文本块之前等待的缓冲时间。有助于平滑流式输出。 |
-| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 否 | `2.0` | 当单条消息超过 Discord 的长度限制时，分割各部分之间的延迟时间。 |
+| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 否 | `2.0` | 当单条消息超过 Discord 的长度限制时，分割不同块之间的延迟时间。 |
+
+:::警告 不支持机器人之间的对话
+设置 `DISCORD_ALLOW_BOTS` 是为了允许来自特定可信机器人的输入（例如中继机器人或 webhook 机器人），而非让两个 Hermes 账户之间互相通信。默认值 `"none"` 会忽略所有其他机器人，是较为安全的设置。
+
+通过为多个 Hermes 账户分别设置 `"mentions"` 或 `"all"`，使其在同一个共享频道中互相回复，这种拓扑结构是不被支持的。Discord 会在每次回复时自动@提及被回复的发件人，因此在 `"mentions"` 模式下，两个机器人会无限循环地满足对方的提及条件，从而形成确认循环。由于支持的配置仅是将 `DISCORD_ALLOW_BOTS` 设为 `"none"`，因此不存在相应的断路器机制。如果你必须允许某个特定机器人，应将其权限范围限定得尽可能窄，且绝不能让其与其他自动回复的代理交互。
+:::
 
 ### 配置文件（`config.yaml`）
 
-`~/.hermes/config.yaml` 文件中的 `discord` 部分与上述环境变量对应。config.yaml 中的设置会作为默认值应用——如果相应的环境变量已被设置，则环境变量的值会优先生效。
+`~/.hermes/config.yaml` 文件中的 `discord` 部分与上述环境变量对应。config.yaml 中的设置会被作为默认值应用——如果已有相同的环境变量被设置，那么环境变量的值将优先生效。
 
 ```yaml
 # Discord-specific settings
