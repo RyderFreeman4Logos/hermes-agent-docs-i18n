@@ -807,39 +807,50 @@ agent:
   api_max_retries: 3           # Retries per provider before fallback engages (default: 3)
 ```
 
-默认情况下，系统会启用预算限制机制。智能体会将警告视为工具输出的一部分，从而促使它整合工作内容，并在迭代次数耗尽前给出响应。
+默认情况下，预算限制是开启的。智能体会将警告视为工具输出结果的一部分，从而促使它整合工作内容，在迭代次数耗尽之前给出回应。
 
-当迭代预算完全用尽时，CLI会向用户显示如下通知：`⚠ 迭代预算已达上限（90/90）——响应可能不完整`。如果在执行任务过程中预算就用完了，智能体会在停止之前生成一份已完成工作的总结。
+当迭代预算完全用尽时，CLI会向用户显示如下通知：`⚠ 迭代预算已用完（90/90）——回应可能不完整`。如果在执行任务过程中预算就用尽了，智能体会在停止之前生成一份已完成工作的总结。
 
-`agent.api_max_retries`参数用于控制Hermes在出现临时性错误（如速率限制、连接中断、5xx错误）时，在切换备用提供者之前会重试多少次。默认值为`3`，即总共尝试4次。如果您已配置[备用提供者](/user-guide/features/fallback-providers)并希望更快地进行故障转移，可将该值设置为`0`，这样主提供者遇到首次临时错误时就会立即切换到备用提供者，而无需继续对出现问题的端点进行重试。
+`agent.api_max_retries`用于控制Hermes在切换备用提供者之前，针对临时性错误（如速率限制、连接中断、5xx错误）对提供者API调用进行重试的次数。默认值为`3`，即总共尝试4次。如果您已配置[备用提供者](/user-guide/features/fallback-providers)并希望更快地切换，可将其设置为`0`，这样主提供者出现第一个临时性错误时就会立即转而使用备用提供者，而无需继续向不可靠的端点发送重试请求。
 
-### API超时设置
+## 持续目标（`/goal`）
 
-Hermes为流式调用设置了独立的超时机制，同时针对非流式调用还配备了过时检测功能。只有当您不手动修改设置时，过时检测功能才会针对本地提供者自动调整参数。
+当某个持续目标处于激活状态时，Hermes会判断每个助手的回应是否满足该目标。如果未满足，它会将延续提示重新输入到同一会话中，并持续处理，直到目标完成、轮次预算耗尽，或用户暂停/取消该目标。轮次预算才是真正的最后保障——一旦判定失败，系统会选择“继续处理”，从而避免因某个不可靠的判断机制而阻碍进度。
 
-| 超时类型 | 默认值 | 本地提供者 | 配置/环境变量 |
+```yaml
+goals:
+  max_turns: 20   # Max continuation turns before Hermes auto-pauses the goal (default: 20)
+```
+
+`max_turns` 参数用于限制目标在 Hermes 自动暂停并要求用户执行 `/goal resume` 前可以进行的连续回复轮数。该设置可避免判定错误（即目标实际上已完成，但系统仍指示继续处理），同时防止模型在处理模糊或无法实现的目标时过度消耗资源。如需了解完整功能信息，请参阅 [目标管理](/user-guide/features/goals)。
+
+### API 超时设置
+
+Hermes 为流式请求设置了独立的超时机制，同时针对非流式请求提供了过期检测功能。当您将相关参数设置为默认值时，仅本地提供商会自动适用这些过期检测机制。
+
+| 超时类型 | 默认值 | 本地提供机 | 配置/环境变量 |
 |---------|--------|------------|--------------|
-| Socket读取超时 | 120秒 | 自动延长至1800秒 | `HERMES_STREAM_READ_TIMEOUT` |
-| 流式数据过时检测 | 180秒 | 自动禁用 | `HERMES_STREAM_STALE_TIMEOUT` |
-| 非流式数据过时检测 | 300秒 | 保持默认值即自动禁用 | `providers.<id>.stale_timeout_seconds` 或 `HERMES_API_CALL_STALE_TIMEOUT` |
-| API调用（非流式） | 1800秒 | 不变 | `providers.<id>.request_timeout_seconds` / `timeout_seconds` 或 `HERMES_API_TIMEOUT` |
+| Socket 读取超时 | 120秒 | 自动延长至1800秒 | `HERMES_STREAM_READ_TIMEOUT` |
+| 流式数据过期检测 | 180秒 | 自动关闭 | `HERMES_STREAM_STALE_TIMEOUT` |
+| 非流式数据过期检测 | 300秒 | 默认情况下自动关闭 | `providers.<id>.stale_timeout_seconds` 或 `HERMES_API_CALL_STALE_TIMEOUT` |
+| API 调用（非流式） | 1800秒 | 不变 | `providers.<id>.request_timeout_seconds` / `timeout_seconds` 或 `HERMES_API_TIMEOUT` |
 
-**Socket读取超时**决定了httpx等待从提供者处接收下一组数据的时长。对于本地LLM，由于需要先加载大量上下文才能生成第一个token，因此可能需要数分钟时间，Hermes在检测到是本地端点时会将此超时值设置为30分钟。如果您明确设置了`HERMES_STREAM_READ_TIMEOUT`，则无论是否检测到端点类型，都将始终使用该值。
+**Socket 读取超时**决定了 httpx 需要等待提供方发送下一批数据的时长。由于本地大语言模型在生成第一个token之前可能需要数分钟时间来预加载大量上下文，因此当检测到是本地端点时，Hermes 会将此超时值设置为30分钟。如果您明确设置了 `HERMES_STREAM_READ_TIMEOUT`，则无论是否检测到端点类型，都将始终使用该自定义值。
 
-**流式数据过时检测**用于断开那些收到SSE保持连接信号但未收到实际数据的连接。由于本地提供者在预加载阶段不会发送保持连接信号，因此此功能对本地提供者是完全禁用的。
+**流式数据过期检测**用于终止那些收到 SSE 保持连接信号但未收到实际数据的连接。由于本地提供机在预加载过程中不会发送保持连接信号，因此此功能对本地提供机完全无效。
 
-**非流式数据过时检测**用于终止那些长时间没有响应的非流式调用。默认情况下，Hermes会在本地端点上禁用此功能，以避免在长时间预加载过程中出现误报。如果您明确设置了`providers.<id>.stale_timeout_seconds`、`providers.<id>.models.<model>.stale_timeout_seconds`或`HERMES_API_CALL_STALE_TIMEOUT`，则即使在本地端点上也会优先使用这些自定义值。
+**非流式数据过期检测**用于终止长时间无响应的非流式请求。默认情况下，Hermes 会在本地端点上关闭此功能，以避免在长时间预加载过程中出现误判。如果您明确设置了 `providers.<id>.stale_timeout_seconds`、`providers.<id>.models.<model>.stale_timeout_seconds` 或 `HERMES_API_CALL_STALE_TIMEOUT`，则即使在本地端点上也会优先使用这些自定义值。
 
 ## 上下文压力警告
 
-与迭代预算限制不同，上下文压力监控的是对话内容距离**压缩阈值**的接近程度——即触发上下文压缩以总结旧消息的临界点。这一功能有助于您和智能体了解对话何时变得过长。
+除了迭代预算限制外，上下文压力还会监控对话内容距离**压缩阈值**的接近程度——即触发上下文压缩以总结旧消息的临界点。这一功能有助于您和智能体及时了解对话是否已变得过长。
 
-| 进度 | 等级 | 后果 |
-|------|------|------|
-| 距离阈值**≥ 60%** | 信息提示 | CLI会显示青色进度条；网关也会发送一条提示信息 |
-| 距离阈值**≥ 85%** | 警告提示 | CLI会显示加粗的黄色进度条；网关会警告即将进行上下文压缩 |
+| 进度占比 | 等级 | 后果 |
+|----------|------|------|
+| 距离阈值 **≥ 60%** | 信息提示 | CLI界面显示青色进度条；网关会发送提示信息 |
+| 距离阈值 **≥ 85%** | 警告提示 | CLI界面显示加粗的黄色进度条；网关会警告即将进行上下文压缩 |
 
-在CLI中，上下文压力会以进度条的形式显示在工具输出中：
+在CLI界面中，上下文压力会以进度条的形式显示在工具输出中：
 
 ```
   ◐ context ████████████░░░░░░░░ 62% to compaction  48k threshold (50%) · approaching compaction
@@ -869,25 +880,34 @@ credential_pool_strategies:
 
 ## 提示词缓存
 
-当当前使用的服务提供商支持时，Hermes会自动开启跨会话提示词缓存功能——无需用户进行任何配置。
+当当前使用的提供方支持跨会话提示词缓存时，Hermes会自动启用该功能——无需用户进行任何配置。
 
-对于运行在**原生Anthropic平台**、**OpenRouter**以及**Nous Portal**上的Claude，Hermes会在系统提示词及技能模块中添加`cache_control`缓存控制标记，设置1小时的过期时间（`ttl: "1h"`）。在当前小时内的首次发送将按全额输入费用计费；而在同一小时内的后续任何会话发送，则会从缓存中读取内容，按较低的缓存读取费率收费。这意味着系统提示词、加载的技能内容以及长上下文的前半部分，在最初的1小时内都可在不同的`hermes`会话之间，甚至在不同分支的子智能体之间重复使用。
+对于运行在**原生Anthropic**、**OpenRouter**及**Nous Portal**上的Claude，Hermes会在系统提示词和技能模块中设置缓存控制指令，其有效时间为1小时（`ttl: "1h"`）。在当前时段内首次发送消息时，将按正常费率计费；而在同一时段内的后续任何会话发送，则会从缓存中读取内容，享受较低的缓存读取费率。这意味着系统提示词、加载的技能内容以及长上下文消息的开头部分，在首个小时内可在不同的`hermes`会话之间，甚至在不同子代理之间重复使用。
 
-Qwen Cloud（阿里达斯 Scope）上游服务的缓存过期时间被限制为5分钟，因此Hermes在该平台也会采用5分钟的缓存过期时间。其他通过第三方平台接入Claude的路径（如AWS Bedrock、Azure Foundry）则默认遵循对应服务提供商的缓存设置。xAI Grok则采用独立的会话绑定对话ID机制——详情请参阅[xAI提示词缓存](/integrations/providers#xai-grok--responses-api--prompt-caching)。
+Qwen Cloud（阿里达斯阔）的上游服务将缓存有效时间限制为5分钟，因此Hermes在该平台上也会采用5分钟的缓存时效。其他通过第三方实现的Claude版本（如AWS Bedrock、Azure Foundry）则遵循相应提供方的默认缓存设置。xAI Grok则采用独立的会话绑定对话ID机制——详情请参见[xAI提示词缓存](/integrations/providers#xai-grok--responses-api--prompt-caching)。
 
 目前不存在关闭此功能的选项——缓存功能始终处于开启状态，即便在单轮对话中也能节省成本，因为仅系统提示词所占的输入token数量就已相当可观。
 
+唯一可手动设置的参数是Hermes在Anthropic风格的缓存控制指令中请求的缓存有效时间长度。
+
+```yaml
+prompt_caching:
+  cache_ttl: "5m"   # "5m" or "1h" (Anthropic-supported tiers); other values are ignored
+```
+
+`cache_ttl`用于指定Hermes通过原生Anthropic API、OpenRouter及Nous Portal为Claude设置的断点缓存时间。仅支持Anthropic规定的两种时间值（`"5m"`和`"1h"`），其他任何值均会被忽略。那些有自身时间限制的提供商（例如最大缓存时间为5分钟的Qwen Cloud）仍需遵循上游平台的规定。
+
 ## 辅助模型
 
-Hermes会使用“辅助”模型来处理各类辅助任务，如图像分析、网页摘要生成、浏览器截图分析、会话标题生成以及上下文压缩等。默认情况下（`auxiliary.*.provider: "auto"`），Hermes会将所有辅助任务路由到你的**主聊天模型**——即你在`hermes model`中选择的同一服务提供商/模型。开始使用无需进行任何配置，但需注意，对于那些计算成本较高的推理模型（如Opus、MiniMax M2.7等），执行辅助任务会带来额外的费用。如果你希望无论使用何种主模型，都能以低成本快速完成辅助任务，可以明确指定`auxiliary.<task>.provider`和`auxiliary.<task>.model`的参数（例如，在OpenRouter上使用Gemini Flash模型进行图像处理和网页信息提取）。
+Hermes会使用“辅助”模型来处理诸如图像分析、网页摘要生成、浏览器截图分析、会话标题生成以及上下文压缩等辅助任务。默认情况下（`auxiliary.*.provider: "auto"`），Hermes会将所有辅助任务转发给您的**主聊天模型**——即您在`hermes model`中选择的同一提供商/模型。起步时无需进行任何配置，但请注意，在计算成本较高的推理模型（如Opus、MiniMax M2.7等）上，执行辅助任务会显著增加费用。如果您希望无论使用何种主模型都能快速且低成本地完成辅助任务，可以明确指定`auxiliary.<task>.provider`和`auxiliary.<task>.model`的参数（例如，在OpenRouter上使用Gemini Flash进行图像处理和网页信息提取）。
 
 :::note 为何“auto”模式会使用主模型
-在早期版本中，聚合平台用户（如OpenRouter、Nous Portal）会被默认分配到成本较低的供应商端模型。这一做法令许多用户感到意外——那些购买了聚合服务订阅的用户，其辅助任务却由不同的模型处理。现在，“auto”模式会对所有用户统一使用主模型，不过仍可通过`config.yaml`中的任务级覆盖设置来改变这一行为（详见下文的[完整辅助模型配置参考](#full-auxiliary-config-reference)）。
+在早期版本中，聚合服务用户（使用OpenRouter或Nous Portal的用户）会被默认分配到成本较低的提供商侧模型。这一做法令许多用户感到意外——那些购买了聚合服务订阅的用户，其辅助任务却由不同的模型处理。现在，“auto”模式对所有用户都统一使用主模型，不过仍可通过`config.yaml`中的任务级覆盖设置来改变这一行为（详见下文的[完整辅助模型配置参考](#full-auxiliary-config-reference)）。
 :::
 
 ### 交互式配置辅助模型
 
-无需手动编辑YAML文件，只需运行`hermes model`，然后从菜单中选择**“配置辅助模型”**即可。系统会提供一个交互式的任务级选择界面：
+无需手动编辑YAML文件，只需运行`hermes model`，然后从菜单中选择**“配置辅助模型”**。系统将提供一个交互式的任务选择界面：
 
 ```
 $ hermes model
@@ -956,6 +976,11 @@ auxiliary:
     api_key: ""                # API key for base_url (falls back to OPENAI_API_KEY)
     timeout: 120               # seconds — LLM API call timeout; vision payloads need generous timeout
     download_timeout: 30       # seconds — image HTTP download; increase for slow connections
+    max_concurrency: 8         # max concurrent image encode/resize bursts across the process
+                               # (default: host CPU core count, no ceiling) — bounds only the
+                               # CPU-bound encode step so a video-frame fan-out can't saturate
+                               # every core and starve the event loop; LLM calls stay fully
+                               # concurrent. Minimum 1; values < 1 are ignored.
 
   # Web page summarization + browser page text extraction
   web_extract:
@@ -1281,7 +1306,29 @@ agent:
   tool_use_enforcement: ["gpt", "codex", "gemini", "grok", "my-custom-model"]
 ```
 
-## 文本转语音配置
+## 工具调用循环防护机制
+
+Hermes 能够检测到智能体是否陷入了无意义的工具调用循环——例如相同的工具调用不断失败、同一工具反复出现故障，或是幂等调用始终返回相同结果且毫无进展。默认情况下，它会向工具调用结果中注入**警告信息**，促使模型自行纠正；系统不会强制终止运行，因为操作人员可以通过 CLI/TUI 进行干预。
+
+对于无人值守的网关/服务器部署环境，建议启用强制终止功能，这样当智能体陷入循环时即可立即切断连接，避免消耗过多的迭代次数。
+
+```yaml
+tool_loop_guardrails:
+  warnings_enabled: true       # inject warnings into tool results (default: true)
+  hard_stop_enabled: false     # also BLOCK the call past the hard-stop threshold (default: false)
+  warn_after:
+    exact_failure: 2           # identical failing call repeated N times
+    same_tool_failure: 3       # same tool failing N times (different args)
+    idempotent_no_progress: 2  # same result, no progress, N times
+  hard_stop_after:
+    exact_failure: 5
+    same_tool_failure: 8
+    idempotent_no_progress: 5
+```
+
+由于交互式会话中始终有人参与操作，`hard_stop_enabled` 的默认值为 `false`。在无人值守部署场景（如网关、定时任务或看板工作节点）中，建议将其设置为 `true`，以便在出现重复故障时直接阻止其继续运行，而不仅仅是发出警告。更多相关信息请参阅 [Docker/无人值守部署](docker.md)。
+
+## TTS 配置
 
 ```yaml
 tts:
@@ -1890,4 +1937,56 @@ terminal:
   cwd: /home/myuser/projects
 ```
 
-`~/.hermes/.env` 文件中的 `MESSAGING_CWD` 以及直接的 `TERMINAL_CWD` 设置仅作为旧版本兼容性的回退选项。新的配置应使用 `terminal.cwd`。
+`~/.hermes/.env` 文件中的 `MESSAGING_CWD` 以及直接的 `TERMINAL_CWD` 设置属于旧版兼容性回退方案。新配置应使用 `terminal.cwd`。
+
+## 网络
+
+用于解决向外发送 HTTP 请求时连接问题的变通方法：
+
+```yaml
+network:
+  force_ipv4: false   # Force IPv4 for outbound connections (default: false)
+```
+
+`force_ipv4` — 对于那些 IPv6 功能异常或无法连接的服务器，Python 会首先尝试解析 AAAA 记录，且在达到完整的 TCP 超时时间之前都可能处于挂起状态，之后才会回退到 IPv4。将此参数设置为 `true` 即可完全跳过 IPv6，直接通过 IPv4 建立连接。
+
+## 入门引导
+
+提供首次使用的引导提示以及结构化的配置信息填写功能：
+
+```yaml
+onboarding:
+  profile_build: "ask"   # "ask" (default) | "off"
+  seen: {}               # internal latch — leave empty
+```
+
+- `profile_build` — 控制在首个网关消息中展示的档案构建选项。默认值为 `"ask"`，即主动提出构建用户档案；该选项为**可选且需获得用户同意**——智能体会在执行任何查询前先征得许可，绝不会擅自读取用户的关联账户信息。设置为 `"off"` 时则仅显示简单的介绍内容。该选项最多只会触发一次。
+- `seen` — 内部状态。Hermes 会记录此处显示过的每条提示，确保其不再出现；档案构建选项在首次展示后也会被记录于此。请勿手动编辑此字段——若希望再次查看所有提示，可直接删除整个 `onboarding` 部分。
+
+## 控制面板
+
+用于配置[网页控制面板](/user-guide/features/web-dashboard)的参数，包括视觉主题、公开网址以及身份验证提供商。关于 OAuth、基本密码认证和 Drain 认证提供商的详细信息可在网页控制面板页面找到，其格式即为 `config.yaml`。
+
+```yaml
+dashboard:
+  theme: "default"            # "default" | "midnight" | "ember" | "mono" | "cyberpunk" | "rose"
+  show_token_analytics: false # Re-enable the (local-estimate-only) token/cost analytics surfaces
+  public_url: ""              # Full public authority for OAuth redirect_uri (env: HERMES_DASHBOARD_PUBLIC_URL)
+  oauth:                      # Portal OAuth gate (engaged with --host and not --insecure)
+    client_id: ""             # agent:{instance_id} — Portal provisions this
+    portal_url: ""            # blank → plugin default (production Portal)
+  basic_auth:                 # Self-hosted username/password gate (dashboard_auth/basic plugin)
+    username: ""              # blank → plugin no-op
+    password_hash: ""         # scrypt$... (preferred — no plaintext at rest)
+    password: ""              # plaintext fallback (hashed in-memory at load)
+    secret: ""                # token-signing key; blank → random per-process
+    session_ttl_seconds: 0    # 0 → plugin default (12h)
+  drain_auth:                 # Drain-control service-credential gate (dashboard_auth/drain plugin)
+    scope: "drain"            # capability label on the verified principal
+    min_secret_chars: 43      # entropy bar (url-safe-b64 chars; 43 ≈ 256 bits)
+```
+
+- `theme` — 仪表板视觉主题。  
+- `show_token_analytics` — 默认值为关闭。分析页面以及代币使用量与成本数据仅为**本地估算的下限值**（未计入辅助调用、重试操作、备用方案及缓存写入等），因此实际数值可能会远低于供应商的账单金额。仅在你明确知晓这些数据并不用于计费时，才将此参数设置为 `true`。  
+- `public_url` — 设置该参数后，即确定了 OAuth `redirect_uri` 所依据的完整地址格式（包括协议、主机名以及可选的路径前缀）。对于那些无法可靠转发 `X-Forwarded-*` 头信息的反向代理环境，建议设置此参数。如需通过代理头信息重建地址，则保持该字段为空。  
+- `oauth` / `basic_auth` / `drain_auth` — 由内置的仪表板认证插件读取的认证提供方配置。需要注意的是，**drain 秘钥本身并不在此处设置**，而是通过 `HERMES_DASHBOARD_DRAIN_SECRET` 环境变量进行配置。有关完整的认证设置流程，请参阅[Web 仪表板](/user-guide/features/web-dashboard)文档。
