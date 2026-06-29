@@ -85,10 +85,10 @@ cronjob(
 )
 ```
 
-或者直接指定某个特定主题：
+或者，可以通过定时任务的 `deliver:` 字段直接指定目标主题，也可以通过 Shell 脚本结合 [`hermes send` CLI](/guides/pipe-script-output) 来实现。
 
-```python
-send_message(target="ntfy:alerts-channel", message="Done!")
+```bash
+hermes send ntfy:alerts-channel "Done!"
 ```
 
 即便 cron 任务是通过网关在进程外运行的，此功能依然有效——该插件会注册一个 `standalone_sender_fn`，从而自行建立 HTTP 连接。
