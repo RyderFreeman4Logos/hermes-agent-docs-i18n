@@ -171,36 +171,36 @@ gateway:
 
 或者通过环境变量实现（适配器会在 `__init__` 方法中读取这些变量）。
 
-### 插件系统自动处理的流程
+### 插件系统自动处理的操作
 
-当您调用 `ctx.register_platform()` 时，以下集成环节将由系统自动处理——无需修改核心代码：
+当您调用 `ctx.register_platform()` 时，以下集成环节将自动处理——无需修改核心代码：
 
 | 集成环节 | 工作原理 |
 |---|---|
-| 网关适配器创建 | 先检查注册表，若未找到则使用内置的 if/elif 判断链 |
+| 网关适配器创建 | 在内置的 if/elif 判断链之前先查询注册表 |
 | 配置解析 | `Platform._missing_()` 函数可接受任意平台名称 |
-| 已连接平台验证 | 调用注册表的 `validate_config()` 方法进行验证 |
-| 用户授权检查 | 检查 `allowed_users_env` 和 `allow_all_env` 环境变量 |
-| 仅基于环境的自动启用 | `env_enablement_fn` 函数会设置 `PlatformConfig.extra` 及 `home_channel` 的值 |
-| YAML 配置转换 | `apply_yaml_config_fn` 函数负责将 `config.yaml` 中的键值转换为环境变量或额外配置项 |
-| Cron 定时任务触发 | `cron_deliver_env_var` 函数使 `deliver=<name>` 的写法能够正常工作 |
-| `hermes config` 用户界面显示 | `plugin.yaml` 文件中的 `requires_env` 和 `optional_env` 设置会自动填充到界面中 |
-| `send_message` 工具 | 消息将通过实时网关适配器进行传输 |
-| Webhook 跨平台发送 | 系统会先检查注册表，确认目标平台是否存在 |
-| `/update` 命令访问权限 | 通过 `allow_update_command` 标志控制访问权限 |
-| 频道目录展示 | 插件支持的平台会显示在频道列表中 |
-| 系统提示信息 | `platform_hint` 值会被注入到大语言模型的上下文中 |
-| 消息分片处理 | 根据 `max_message_length` 参数智能分割长消息 |
+| 已连接平台验证 | 调用注册表的 `validate_config()` 方法 |
+| 用户授权检查 | 核查 `allowed_users_env` / `allow_all_env` 环境变量 |
+| 仅基于环境的自动启用 | `env_enablement_fn` 函数会设置 `PlatformConfig.extra` 和 `home_channel` 的值 |
+| YAML 配置转换 | `apply_yaml_config_fn` 函数可将 `config.yaml` 中的键值转换为环境变量或额外配置项 |
+| Cron 定时任务触发 | `cron_deliver_env_var` 函数支持使用 `deliver=<名称>` 的格式 |
+| `hermes config` 用户界面字段填充 | `plugin.yaml` 文件中的 `requires_env` / `optional_env` 设置会自动填充到界面中 |
+| 消息发送引擎（`tools/send_message_tool.py`） | 消息会通过实时运行的网关适配器进行传输 |
+| Webhook 跨平台消息推送 | 会先查询注册表以确定支持的平台 |
+| `/update` 命令访问权限控制 | 通过 `allow_update_command` 标志进行控制 |
+| 频道目录管理 | 插件支持的平台会包含在频道枚举列表中 |
+| 系统提示信息生成 | 会将 `platform_hint` 注入大语言模型的上下文中 |
+| 消息分块处理 | 根据 `max_message_length` 参数智能分割长消息 |
 | 个人身份信息脱敏 | 通过 `pii_safe` 标志实现敏感信息保护 |
 | `hermes status` 状态显示 | 插件支持的平台会以 `(plugin)` 标签显示 |
 | `hermes gateway setup` 设置界面 | 插件支持的平台会出现在设置菜单中 |
-| `hermes tools` / `hermes skills` 功能 | 各平台的配置文件中会列出对应的插件平台 |
-| 令牌锁定（多配置文件场景） | 在 `connect()` 方法中使用 `acquire_scoped_lock()` 实现令牌锁定 |
+| `hermes tools` / `hermes skills` 功能支持 | 各平台的配置文件中会体现插件支持的功能 |
+| 令牌锁定（多配置文件场景） | 可在 `connect()` 方法中使用 `acquire_scoped_lock()` 实现锁定 |
 | 丢失配置的警告提示 | 当插件缺失时，系统会输出详细的日志信息 |
 
 ## 基于环境的自动配置
 
-大多数用户是通过在 `~/.hermes/.env` 文件中设置环境变量来配置平台，而非直接编辑 `config.yaml` 文件。`env_enablement_fn` 这一钩子函数允许插件在适配器构建之前就获取这些环境变量，这样一来，`hermes gateway status`、`get_connected_platforms()` 以及 Cron 定时任务都能获取到正确的平台状态，而无需先实例化平台 SDK。
+大多数用户是通过在 `~/.hermes/.env` 文件中设置环境变量来配置平台的，而非直接编辑 `config.yaml` 文件。`env_enablement_fn` 这一钩子功能允许您的插件在适配器构建**之前**就获取这些环境变量，这样一来，`hermes gateway status`、`get_connected_platforms()` 函数以及 Cron 定时任务就能获取到正确的平台状态，而无需先实例化平台 SDK。
 
 ```python
 def _env_enablement() -> dict | None:
