@@ -4,29 +4,29 @@ title: "Slash Commands Reference"
 description: "Complete reference for interactive CLI and messaging slash commands"
 ---
 
-# 斜杠命令参考
+# 斜杠命令参考手册
 
-Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py` 中的中央 `COMMAND_REGISTRY` 进行控制：
+Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py` 中的中央 `COMMAND_REGISTRY` 进行驱动：
 
-- **交互式 CLI 斜杠命令**——由 `cli.py` 调用，并从注册表中获取自动补全功能；
-- **消息传递型斜杠命令**——由 `gateway/run.py` 调用，帮助文本及平台菜单同样来自该注册表。
+- **交互式 CLI 斜杠命令** — 由 `cli.py` 调用，并从注册表中获取自动补全功能  
+- **消息传递型斜杠命令** — 由 `gateway/run.py` 调用，帮助文本及平台菜单同样来自该注册表
 
-已安装的技能也会作为动态斜杠命令在这两种接口中呈现。其中包括像 `/plan` 这样的内置技能，它能打开计划模式，并将 Markdown 格式的计划内容保存到与当前工作空间/后端工作目录相对的 `.hermes/plans/` 文件夹中。
+已安装的技能也会作为动态斜杠命令展示在两种接口中。这包括像 `/plan` 这样的内置技能，它可启动计划模式，并将 Markdown 格式的计划保存到与当前工作空间/后端工作目录相对的 `.hermes/plans/` 文件夹中。
 
-## 权限管理与管理员/用户区分
+## 权限管理与管理员/用户分离机制
 
-所有支持按用户设置允许列表的消息平台（Telegram、Discord、Slack、Matrix、Mattermost、Signal 等）都支持两级斜杠命令权限控制：**管理员**可以使用所有已注册的命令，而**普通用户**仅能使用在 `user_allowed_commands` 中列出的命令名称（此外还有始终允许的 `/help` 和 `/whoami` 命令）。你可以在 `~/.hermes/gateway-config.yaml` 文件的 platform 部分的 `extra:` 块中配置 `allow_admin_from` 和 `user_allowed_commands`（以及针对群组的对应配置 `group_allow_admin_from` / `group_user_allowed_commands`）。
+所有支持按用户设置允许列表的消息平台（Telegram、Discord、Slack、Matrix、Mattermost、Signal 等）都支持两级斜杠命令权限控制：**管理员**可以使用所有已注册的命令，而**普通用户**仅能使用在 `user_allowed_commands` 中列出的命令名称（此外还有始终允许的 `/help` 和 `/whoami` 命令）。你可以在 `~/.hermes/gateway-config.yaml` 文件的平台的 `extra:` 块中配置 `allow_admin_from` 和 `user_allowed_commands`（以及针对群组的对应参数 `group_allow_admin_from` / `group_user_allowed_commands`）。
 
-具体示例可参考各平台的文档——各平台的结构完全一致：
+具体示例请参考各平台文档——各平台的结构完全一致：
 
-- [Telegram](../user-guide/messaging/telegram.md#slash-command-access-control)
-- [Discord](../user-guide/messaging/discord.md)
-- [Slack](../user-guide/messaging/slack.md)
-- [Matrix](../user-guide/messaging/matrix.md)
-- [Mattermost](../user-guide/messaging/mattermost.md)
+- [Telegram](../user-guide/messaging/telegram.md#slash-command-access-control)  
+- [Discord](../user-guide/messaging/discord.md)  
+- [Slack](../user-guide/messaging/slack.md)  
+- [Matrix](../user-guide/messaging/matrix.md)  
+- [Mattermost](../user-guide/messaging/mattermost.md)  
 - [Signal](../user-guide/messaging/signal.md)
 
-如果某个范围未设置 `allow_admin_from`，则该范围将保持无限制的向后兼容模式——所有允许的用户都可以使用所有命令。
+如果某个作用域未设置 `allow_admin_from`，则该作用域将保持无限制的向后兼容模式——所有允许的用户都可以使用所有命令。
 
 ## 交互式 CLI 斜杠命令
 
@@ -36,101 +36,106 @@ Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py`
 
 | 命令 | 描述 |
 |------|------|
-| `/new [name]`（别名：/reset） | 启动新会话（生成新的会话 ID 和历史记录）。可选的 `[name]` 参数可用于设置初始会话标题——例如，输入 `/new my-experiment` 可以立即创建一个标题为 `my-experiment` 的新会话，便于后续通过 `/resume` 或 `/sessions` 查找。若要跳过确认弹窗，可添加 `now`、`--yes` 或 `-y` 参数，如 `/reset now`、/new --yes my-experiment`。 |
+| `/new [名称]`（别名：`/reset`） | 启动新会话（生成新的会话 ID 及历史记录）。可选的 `[名称]` 用于设置初始会话标题——例如 `/new my-experiment` 可创建一个已命名为 `my-experiment` 的新会话，便于后续通过 `/resume` 或 `/sessions` 查找。可添加 `now`、`--yes` 或 `-y` 参数跳过确认弹窗——例如 `/reset now`、`/new --yes my-experiment`。 |
 | `/clear` | 清空屏幕并启动新会话 |
 | `/history` | 显示对话历史记录 |
 | `/save` | 保存当前对话内容 |
+| `/prompt`（别名：`/compose`） | 在 `$EDITOR`（Markdown 编辑器）中输入下一条提示词，而非直接在界面中输入——非常适合输入长文本、多行内容或需精心格式化的提示词。 |
 | `/retry` | 重新发送上一条消息给智能体 |
-| `/undo` | 删除上一次用户与智能体之间的交互内容 |
+| `/undo` | 删除上一次用户与智能体之间的交互记录 |
 | `/title` | 为当前会话设置标题（用法：/title 我的会话名称） |
-| `/compress [here [N] \| focus topic]` | 手动压缩对话上下文（清空记忆并生成摘要）。`/compress here [N]` 会保留除最近 N 条交互内容外的所有内容并原样呈现——你可以自行设定压缩边界。指定“聚焦主题”则可缩小完整摘要所包含的内容范围。 |
+| `/compress [从此处开始 [N] \| 聚焦主题]` | 手动压缩对话上下文（清空部分记忆并生成摘要）。`/compress here [N]` 会保留除最近 N 条交互记录之外的所有内容并原样呈现——你可自行设定压缩范围。聚焦主题功能可限定完整摘要中需保留的内容范围。 |
 | `/rollback` | 列出或恢复文件系统检查点（用法：/rollback [编号]） |
-| `/snapshot [create\|restore <id>\|prune]`（别名：/snap） | 创建或恢复 Hermes 配置/状态的快照。`create [标签]` 用于保存快照，`restore <id>` 用于恢复到该快照状态，`prune [N]` 用于删除旧快照，不带参数则可列出所有快照。 |
+| `/snapshot [创建\|恢复 <编号>\|清理]`（别名：`/snap`） | 创建或恢复 Hermes 配置/状态的快照。`create [标签]` 用于保存快照，`restore <编号>` 用于恢复到该快照状态，`prune [N]` 用于删除旧快照，不带参数则可列出所有快照。 |
 | `/stop` | 终止所有正在运行的后台进程 |
-| `/queue <prompt>`（别名：/q） | 将提示语排队，等待下次轮到智能体处理（不会中断当前智能体的响应）。 |
-| `/steer <prompt>` | 在当前工具调用之后向智能体插入一条临时备注——不会中断当前流程，也不会触发新的用户轮次。当前工具处理完成后，该文本会追加到上一个工具的响应内容中，从而为智能体提供新上下文，同时不会打断当前的工具调用循环。可用于在任务执行过程中引导智能体的工作方向（例如，在智能体运行测试时要求其“专注于认证模块”）。 |
-| `/goal <text>` | 设置一个长期目标，Hermes 会在多轮对话中持续朝着该目标努力——这相当于我们实现的 Ralph 循环。每轮对话结束后，一个辅助判断模型会判定该目标是否已完成；若未完成，Hermes 会自动继续处理。子命令包括：/goal status、/goal pause、/goal resume、/goal clear。默认目标轮次数为 20 轮（由 `goals.max_turns` 控制）；任何真实用户的消息都会中断该循环，而状态信息可通过 `/resume` 恢复。完整使用指南请参阅 [持久化目标](/user-guide/features/goals)。 |
-| `/subgoal <text>` | 在当前循环中为已有目标添加用户自定义的判定标准。后续的提示语会原样将所有子目标呈现给智能体，判断模型会在综合所有子目标后给出“已完成”或“继续”的结论——只有当原始目标以及所有子目标都达成时，该目标才会被标记为已完成。子命令包括：/subgoal（列出子目标）、/subgoal remove <N>（删除指定数量的子目标）、/subgoal clear（清除所有子目标）。此命令需在已有 `/goal` 状态下使用。 |
-| `/resume [name]` | 恢复之前命名的会话 |
-| `/sessions`（TUI 别名：/switch） | 传统 CLI 模式：通过交互式选择器浏览并恢复之前的会话。TUI 模式：打开当前打开的 TUI 会话的实时切换界面。在 TUI 中可使用 `/sessions new` 立即启动另一个实时会话。 |
-| `/redraw` | 强制重新绘制整个用户界面（可解决 tmux 调整大小、鼠标选择异常等问题导致的界面错位）。 |
-| `/status` | 显示会话相关信息——包括使用的模型、提供方、用户配置文件、会话 ID、工作目录、标题、创建/更新时间戳、令牌总量以及智能体运行状态——随后还会显示一个本地的 **会话摘要** 区块（包含近期用户与智能体的交互次数、工具响应数量、最常用的工具、最近操作的文件、最新的用户提示语以及最新的智能体回复）。该摘要是根据内存中的对话内容在本地计算得出的，不会调用大型语言模型，也不会影响提示语缓存。 |
-| `/agents`（别名：/tasks） | 显示当前会话中正在运行的智能体及任务列表。 |
-| `/background <prompt>`（别名：/bg、/btw） | 在独立的后台会话中运行提示语。智能体会独立处理你的提示语，而你的当前会话仍可用于其他操作。任务完成后，结果会以面板形式显示。更多详情请参阅 [CLI 后台会话](/user-guide/cli#background-sessions)。 |
-| `/branch [name]`（别名：/fork） | 创建当前会话的分支（探索不同的处理路径）。 |
-| `/handoff <platform>` | **仅限 CLI 使用。** 将当前会话转移到某个消息平台（Telegram、Discord、Slack、WhatsApp、Signal、Matrix）。网关会立即接管该会话，在支持线程的消息平台上创建新的线程（如 Telegram 的主题、Discord 的文本频道线程、Slack 的消息锚定线程），并将目标平台的会话 ID 与你的 CLI 会话 ID 关联起来，从而实现包含角色信息的完整对话回放。同时系统还会生成一个模拟的用户轮次，让智能体确认自己已在新平台正常工作。操作成功后 CLI 会给出 `/resume` 的提示并正常退出；你可以随时使用 `/resume <标题>` 在本地恢复会话。若在当前轮次中执行此命令则会被拒绝。该功能要求网关正在运行，且目标平台已配置了主频道（可通过目标平台的聊天窗口执行 `/sethome` 命令设置）。更多信息请参阅 [跨平台会话转移](/user-guide/sessions#cross-platform-handoff)。 |
+| `/queue <提示词>`（别名：`/q`） | 将当前提示词放入队列，等待下次处理（不会中断智能体的当前响应）。 |
+| `/steer <提示词>` | 在当前工具调用之后向智能体注入一条补充说明——不会中断当前流程，也不会开启新的用户轮次。该文本会在当前工具处理完成后附加到上次工具的响应内容中，从而为智能体提供新上下文，同时不会打断当前的工具调用循环。可用于在任务执行过程中引导智能体的工作方向（例如在智能体运行测试时要求其“专注于认证模块”）。 |
+| `/goal <文本>` | 设置一个全局目标，Hermes 会在多轮对话中持续努力实现该目标——这相当于我们实现的 Ralph 循环机制。每轮对话结束后，一个辅助判断模型会判定该目标是否已完成；若未完成，Hermes 会自动继续处理。子命令包括：`/goal status`、`/goal pause`、`/goal resume`、`/goal clear`。默认目标轮次数为 20 轮（由 `goals.max_turns` 控制）；任何真实用户的消息都会中断该循环，而状态信息可通过 `/resume` 恢复。完整使用指南请参阅 [持久化目标](/user-guide/features/goals)。 |
+| `/subgoal <文本>` | 在当前循环中为已有目标添加用户自定义的子目标。后续的提示词会原样将所有子目标呈现给智能体，判断模型会将这些子目标纳入其“已完成/继续处理”的判定中——只有当原始目标以及所有子目标都达成后，该目标才会被标记为已完成。子命令包括：`/subgoal`（列出子目标）、`/subgoal remove <N>`、`/subgoal clear`。使用时必须先有激活的 `/goal` 状态。 |
+| `/moa <提示词>` | 使用默认的 [混合智能体](/user-guide/features/mixture-of-agents) 预设配置处理单条提示词，处理完成后恢复为你当前使用的模型。该操作为一次性处理，不会更改你的会话模型。 |
+| `/resume [名称]` | 恢复之前命名的会话 |
+| `/sessions`（TUI 别名：`/switch`） | 传统 CLI 模式：通过交互式选择器浏览并恢复之前的会话。TUI 模式：打开当前打开的 TUI 会话的实时切换界面。在 TUI 中可使用 `/sessions new` 立即启动另一个实时会话。 |
+| `/redraw` | 强制重新绘制整个用户界面（可解决 tmux 调整大小、鼠标选择异常等问题导致的界面错位问题）。 |
+| `/status` | 显示会话相关信息——包括模型类型、提供方、配置文件、会话 ID、工作目录、标题、创建/更新时间戳、令牌总量以及智能体运行状态——随后还会显示一个本地的 **会话摘要** 区块（包含近期用户与智能体的交互次数、工具响应数量、最常使用的工具、最近操作的文件、最新的用户提示词以及最新的智能体回复）。该摘要是从内存中的对话记录中本地计算得出的，不会调用大型语言模型，也不会影响提示词缓存。 |
+| `/agents`（别名：`/tasks`） | 显示当前会话中正在运行的智能体及任务列表。 |
+| `/background <提示词>`（别名：`/bg`、`/btw`） | 在独立的后台会话中处理一条提示词。智能体会独立处理你的提示词，而你的当前会话仍可用于其他工作。任务完成后，结果会以面板形式显示。更多详情请参阅 [CLI 后台会话](/user-guide/cli#background-sessions)。 |
+| `/branch [名称]`（别名：`/fork`） | 创建当前会话的子分支（探索不同的处理路径）。 |
+| `/handoff <平台>` | **仅限 CLI 使用。** 将当前会话转交给某个消息平台（Telegram、Discord、Slack、WhatsApp、Signal、Matrix）。网关会立即接管该会话，在支持线程功能的平台（如 Telegram 主题、Discord 文本频道线程、Slack 消息锚定线程）上创建新线程，同时将目标平台的会话 ID 与你的 CLI 会话 ID 关联起来，从而实现包含角色信息的完整对话记录回放。此外还会生成一条模拟的用户轮次，让智能体确认自己已在新平台正常工作。操作成功后 CLI 会给出 `/resume` 的提示并正常退出；你可随时使用 `/resume <标题>` 在本地恢复会话。若在当前轮次中执行此操作，则会被拒绝。该功能要求网关正在运行，且目标平台已配置了默认频道（可通过目标平台的聊天窗口执行 `/sethome` 命令设置）。更多详情请参阅 [跨平台会话转移](/user-guide/sessions#cross-platform-handoff)。 |
 
 ### 配置管理
 
 | 命令 | 描述 |
 |------|------|
 | `/config` | 显示当前配置信息 |
-| `/model [model-name]` | 显示或更改当前使用的模型。支持以下命令：/model claude-sonnet-4、/model provider:model（切换提供方）、/model custom:model（自定义端点）、/model custom:name:model（命名自定义提供方）、/model custom（根据端点自动检测模型），以及用户自定义的别名（/model fav、/model grok——详见 [自定义模型别名](#custom-model-aliases)）。使用 `--global` 参数可将更改永久保存到 config.yaml 文件中。**注意：** /model 命令仅能在已配置的提供方之间切换。若要添加新的提供方，需先退出当前会话，再在终端中运行 `hermes model` 命令。 |
-| `/codex-runtime [auto\|codex_app_server\|on\|off]` | 切换 OpenAI/Codex 模型所使用的可选 [Codex 应用服务器运行时](../user-guide/features/codex-app-server-runtime)。默认值为 `auto`，此时会使用 Hermes 的标准聊天补全功能；设置为 `codex_app_server` 后，会将轮次交给 `codex app-server` 子进程来处理原生 shell 命令、apply_patch 功能、ChatGPT 订阅认证以及已迁移的 Codex 插件。此设置会在下次会话中生效。 |
+| `/model [模型名称]` | 显示或更改当前使用的模型。支持以下命令：`/model claude-sonnet-4`、`/model provider:model`（切换提供方）、`/model custom:model`（自定义端点）、`/model custom:name:model`（指定名称的自定义提供方）、`/model custom`（根据端点自动检测模型），以及用户自定义的别名（如 `/model fav`、`/model grok`——详见 [自定义模型别名](#custom-model-aliases)）。使用 `--global` 参数可将更改永久保存到 config.yaml 文件中。**注意：** `/model` 命令仅能在已配置的提供方之间切换。若要添加新的提供方，需先退出当前会话，然后在终端中运行 `hermes model` 命令。 |
+| `/codex-runtime [auto\|codex_app_server\|on\|off]` | 切换 OpenAI/Codex 模型的可选 [Codex 应用服务器运行模式](../user-guide/features/codex-app-server-runtime)。默认值为 `auto`，此时使用 Hermes 的标准聊天补全功能；设置为 `codex_app_server` 后，会将对话轮次交给 `codex app-server` 子进程处理，从而实现原生 Shell 操作、apply_patch 功能、ChatGPT 订阅认证以及已迁移的 Codex 插件支持。该设置会在下次会话中生效。 |
 | `/personality` | 设置预定义的性格模式 |
-| `/verbose` | 切换工具处理进度的显示方式：关闭 → 新消息时显示 → 显示所有进度 → 详细显示。也可通过配置为 [消息传递场景启用](#notes) 此功能。 |
-| `/fast [normal\|fast\|status]` | 切换快速模式——相当于 OpenAI 的优先处理模式或 Anthropic 的快速模式。可选值包括：normal、fast、status。 |
-| `/reasoning` | 管理推理强度及显示方式（用法：/reasoning [level\|show\|hide]） |
+| `/verbose` | 切换工具处理进度的显示方式：关闭 → 新消息时显示 → 所有消息都显示 → 详细显示。也可通过配置为**消息传递场景**启用该功能（详见 #注释）。 |
+| `/fast [normal\|fast\|status]` | 切换快速模式——即 OpenAI 的优先处理模式或 Anthropic 的快速模式。可选值为 `normal`、`fast`、`status`。 |
+| `/reasoning` | 管理推理强度及显示设置（用法：/reasoning [级别\|显示\|隐藏]） |
 | `/skin` | 显示或更改界面皮肤/主题 |
-| `/statusbar`（别名：/sb） | 切换上下文/模型状态栏的显示与隐藏 |
-| `/voice [on\|off\|tts\|status]` | 切换 CLI 的语音模式及语音播放功能。录音时使用的按键为 `voice.record_key`（默认为 `Ctrl+B`）。 |
+| `/statusbar`（别名：`/sb`） | 切换上下文/模型状态栏的显示与隐藏 |
+| `/voice [on\|off\|tts\|status]` | 切换 CLI 的语音模式及语音播放功能。录音时使用的快捷键为 `voice.record_key`（默认为 `Ctrl+B`）。 |
 | `/yolo` | 切换 YOLO 模式——跳过所有危险命令的审批提示。 |
-| `/footer [on\|off\|status]` | 切换最终回复中是否显示网关运行时元数据页脚（包含使用的模型、上下文占比及当前工作目录信息）。 |
-| `/busy [queue\|steer\|interrupt\|status]` | 仅限 CLI 使用：控制在 Hermes 处理任务时按回车键的默认行为——将新消息排队、在当前轮次中插入临时指令，或立即中断当前操作。 |
+| `/footer [on\|off\|status]` | 切换最终回复中是否显示网关运行时元数据页脚（会显示模型类型、上下文占比及当前工作目录信息）。 |
+| `/busy [queue\|steer\|interrupt\|status]` | 仅限 CLI 使用：控制在 Hermes 处理任务时按下回车键的功能——可选择将新消息放入队列、在当前轮次中插入补充说明，或立即中断当前操作。 |
 | `/indicator [kaomoji\|emoji\|unicode\|ascii]` | 仅限 CLI 使用：选择 TUI 中的忙碌状态指示器样式。 |
+| `/timestamps [on\|off\|status]` | 仅限 CLI 使用：切换消息及 `/history` 页面中是否显示 `[HH:MM]` 格式的时间戳。 |
 
 ### 工具与技能| 命令 | 描述 |
 |---------|-------------|
 | `/tools [list\|disable\|enable] [name...]` | 管理工具：列出可用工具，或为当前会话禁用/启用特定工具。禁用工具会将其从智能体的工具集中移除，并触发会话重置。 |
 | `/toolsets` | 列出所有可用的工具集 |
 | `/browser [connect\|disconnect\|status]` | 管理本地的 Chromium 系列 CDP 连接。`connect` 会将浏览器工具连接到正在运行的 Chrome、Brave、Chromium 或 Edge 实例（默认地址：`http://127.0.0.1:9222`）。`disconnect` 用于断开连接。`status` 可查看当前连接状态。若未检测到调试器，会自动启动支持的 Chromium 系列浏览器。 |
-| `/skills` | 从在线注册表中搜索、安装、查看或管理技能。同时也可用于查看技能写入审批流程的相关信息：`/skills pending`、`/skills diff <id>`、`/skills approve <id>`、`/skills reject <id>`、`/skills approval on\|off`。详情请参阅 [智能体技能写入的审批机制](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval)。 |
-| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录，并切换该审批机制的状态。详情请参阅 [内存写入的控制](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
-| `/bundles` | 列出已配置的技能包——即通过 `/<name>` 这种斜杠别名形式一次性预加载多个技能的配置。可在 `~/.hermes/config.yaml` 文件的 `bundles:` 部分进行配置。详情请参阅 [技能包](/user-guide/features/skills#skill-bundles)。 |
-| `/learn <what to learn from>` | 根据您提供的任何内容——如目录、网址、刚刚向智能体演示的工作流程或粘贴的笔记——生成可复用的技能。该功能支持开放式输入：智能体会使用自身工具收集相关资料，然后按照统一的编写标准生成一个 `SKILL.md` 文件。该功能可在 CLI、消息传递网关、文本用户界面以及控制台的技能页面中使用。 |
+| `/skills` | 从在线注册表中搜索、安装、查看或管理技能。同时也可用于查看技能写入审批流程的相关信息：`/skills pending`、`/skills diff <id>`、`/skills approve <id>`、`/skills reject <id>`、`/skills approval on\|off`。详情请参阅[智能体技能写入的审批机制](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval)。 |
+| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录，并切换该审批机制的状态。详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
+| `/bundles` | 列出已配置的技能包——即通过 `/<name>` 这种斜杠别名形式一次性预加载多个技能的配置。可在 `~/.hermes/config.yaml` 文件的 `bundles:` 部分进行配置。详情请参阅[技能包](/user-guide/features/skills#skill-bundles)。 |
+| `/learn <what to learn from>` | 根据您提供的任何内容——如目录、网址、刚刚向智能体演示的工作流程或粘贴的笔记——生成可重复使用的技能。该功能支持开放式输入：智能体会使用自身工具收集相关资料，然后按照统一的编写标准生成 `SKILL.md` 文件。该功能可在 CLI、消息传递网关、文本用户界面以及控制台的技能页面中使用。 |
 | `/cron` | 管理定时任务（列出、添加/创建、编辑、暂停、恢复、运行、删除） |
-| `/suggestions [accept\|dismiss N\|catalog\|clear]`（别名：`/suggest`） | 查看建议的自动化脚本。使用 `/suggestions` 可列出待处理的建议，`/suggestions accept <id>` 可创建所建议的自动化脚本，`/suggestions dismiss <id>` 可拒绝某个建议，`/suggestions catalog` 可添加精选的入门级自动化脚本，`/suggestions clear` 可清除已处理的建议记录。被采纳的自动化脚本会以当前界面内容作为执行基础。 |
-| `/blueprint [name] [slot=value ...]`（别名：`/bp`） | 根据蓝图模板创建自动化脚本。仅输入 `/blueprint` 可查看所有可用蓝图；`/blueprint <name>` 会在下一次智能体响应时启动引导式的字段填充流程；`/blueprint <name> slot=value ...` 可直接创建该自动化脚本。 |
-| `/curator` | 背景模式下进行技能维护——支持 `status`、`run`、`pin`、`archive` 等操作。详情请参阅 [Curator 功能](/user-guide/features/curator)。 |
-| `/kanban <action>` | 无需离开聊天界面即可操作多项目、多角色的协作看板。完整的 `hermes kanban` 功能包括：`/kanban list`、`/kanban show t_abc`、`/kanban create "标题" --assignee X`、`/kanban comment t_abc "文本"`、`/kanban unblock t_abc`、`/kanban dispatch` 等。还支持多看板管理：`/kanban boards list`、`/kanban boards create <slug>`、`/kanban boards switch <slug>`、`/kanban --board <slug> <action>`。详情请参阅 [Kanban 斜杠命令](/user-guide/features/kanban#kanban-slash-command)。 |
+| `/suggestions [accept\|dismiss N\|catalog\|clear]`（别名：`/suggest`） | 查看系统推荐的自动化方案。使用 `/suggestions` 可列出待处理的建议，`/suggestions accept <id>` 可创建所推荐的自动化方案，`/suggestions dismiss <id>` 可拒绝某个建议，`/suggestions catalog` 可添加精选的入门级自动化方案，`/suggestions clear` 可清除已处理的建议记录。被采纳的自动化方案会以当前界面作为执行基础。 |
+| `/blueprint [name] [slot=value ...]`（别名：`/bp`） | 根据蓝图模板创建自动化方案。仅输入 `/blueprint` 可查看所有可用蓝图；`/blueprint <name>` 会在下一次智能体响应时启动引导式的字段填充流程；`/blueprint <name> slot=value ...` 可直接创建自动化任务。 |
+| `/curator` | 背景下的技能维护操作——包括 `status`、`run`、`pin`、`archive` 等功能。详情请参阅[Curator 功能](/user-guide/features/curator)。 |
+| `/kanban <action>` | 无需离开聊天界面即可操作多项目、多角色的协作看板。完整的 `hermes kanban` 功能包括：`/kanban list`、`/kanban show t_abc`、`/kanban create "title" --assignee X`、`/kanban comment t_abc "text"`、`/kanban unblock t_abc`、`/kanban dispatch` 等。还支持多看板管理：`/kanban boards list`、`/kanban boards create <slug>`、`/kanban boards switch <slug>`、`/kanban --board <slug> <action>`。详情请参阅[Kanban 斜杠命令](/user-guide/features/kanban#kanban-slash-command)。 |
 | `/reload-mcp`（别名：`/reload_mcp`） | 从 `config.yaml` 文件中重新加载 MCP 服务器 |
 | `/reload-skills`（别名：`/reload_skills`） | 重新扫描 `~/.hermes/skills/` 目录，查找新安装或已移除的技能 |
-| `/reload` | 将 `.env` 变量重新加载到当前运行会话中（无需重启即可获取新的 API 密钥） |
+| `/reload` | 将 `.env` 变量重新加载到当前运行的会话中（无需重启即可获取新的 API 密钥） |
 | `/plugins` | 列出已安装的插件及其状态 |
+| `/pet [list\|<slug>]` | 切换或采用 [petdex](/user-guide/features/pets) 模型宠物。`/pet` 用于切换宠物显示面板，`/pet list` 可查看已安装的宠物，`/pet <slug>` 可采用特定的宠物模型。 |
+| `/hatch <description>`（别名：`/generate-pet`） | 根据文本描述，使用配置好的图像后端（OpenRouter / Nous Portal）生成全新的 petdex 模型宠物。详情请参阅[宠物功能](/user-guide/features/pets)。 |
 
 ### 信息查询命令
 
 | 命令 | 描述 |
 |---------|-------------|
 | `/help` | 显示此帮助信息 |
-| `/version` | 显示 Hermes Agent 的版本、构建信息及运行环境详情 |
-| `/usage` | 显示令牌使用情况、费用明细、会话时长；若当前使用的服务提供商支持，还会显示 **账户限额** 部分，其中的内容会实时从提供商的 API 获取，包括剩余配额、积分及套餐使用情况 |
-| `/credits` | 显示您的 Nous 积分余额以及充值链接 |
-| `/billing` | 用于 Nous 的 CLI 终端账单管理功能——可查看余额、购买积分，以及管理自动续费和月度限额设置 |
-| `/insights` | 显示过去 30 天内的使用情况分析数据 |
-| `/platforms`（别名：`/gateway`） | 显示网关/消息传递平台的状态（仅提供 CLI 摘要视图） |
-| `/paste` | 附加剪贴板中的内容 |
-| `/copy [number]` | 将助手的最近一次回复复制到剪贴板（可指定编号复制倒数第 N 次的回复）。该功能仅适用于 CLI 环境 |
-| `/image <path>` | 附加本地图片文件，以便在后续提示中使用 |
-| `/debug` | 上传调试报告（包含系统信息及日志），并生成可分享的链接。该功能在消息传递场景中也可用 |
+| `/version` | 显示 Hermes Agent 的版本、构建编号以及运行环境信息。 |
+| `/usage` | 显示令牌使用情况、费用明细、会话时长；若当前使用的服务提供商支持，还会显示**账户限制**部分，其中会实时显示从提供商 API 获取的剩余配额/积分/套餐使用情况。 |
+| `/credits` | 显示您的 Nous 信用余额以及充值链接。 |
+| `/billing` | 用于 Nous 的 CLI 终端账单管理功能——可查看余额、购买积分，以及管理自动充值和月度使用限额。 |
+| `/insights` | 显示过去 30 天内的使用情况分析数据与统计信息。 |
+| `/platforms`（别名：`/gateway`） | 显示网关/消息传递平台的状态（仅提供 CLI 摘要视图）。 |
+| `/paste` | 附加剪贴板中的图片内容 |
+| `/copy [number]` | 将助手的最近一次回复复制到剪贴板（可指定编号复制倒数第 N 次的回复）。该功能仅适用于 CLI 环境。 |
+| `/image <path>` | 附加本地图像文件，以便在后续提示中使用。 |
+| `/debug` | 上传调试报告（包含系统信息及日志），并生成可分享的链接。该功能在消息传递界面中也可用。 |
 | `/profile` | 显示当前激活的配置文件名称及主目录路径 |
 
 ### 退出命令
 
 | 命令 | 描述 |
 |---------|-------------|
-| `/quit` | 退出 CLI 界面（也可使用 `/exit`） |
+| `/quit` | 退出 CLI 界面（也可使用 `/exit`）。 |
 
 ### 动态 CLI 斜杠命令
 
 | 命令 | 描述 |
 |---------|-------------|
-| `/<skill-name>` | 将任何已安装的技能作为按需调用的命令使用。例如：`/gif-search`、`/github-pr-workflow`、`/excalidraw` |
-| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置各种技能 |
+| `/<skill-name>` | 将任何已安装的技能作为按需调用的命令使用。例如：`/gif-search`、`/github-pr-workflow`、`/excalidraw`。 |
+| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置各种技能。 |
 
 ### 快速命令
 
-用户自定义的快速命令可将简短的斜杠命令映射为Shell命令或另一个斜杠命令。可在 `~/.hermes/config.yaml` 文件中进行配置：
+用户自定义的快速命令可将简短的斜杠命令映射到Shell命令或其它斜杠命令。可在 `~/.hermes/config.yaml` 文件中进行配置：
 
 ```yaml
 quick_commands:

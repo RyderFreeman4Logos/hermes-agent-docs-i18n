@@ -2582,7 +2582,7 @@
       - [可选技能目录](zh/website/docs/reference/optional-skills-catalog.md)
       - [配置文件命令参考](zh/website/docs/reference/profile-commands.md)
       - [内置技能目录](zh/website/docs/reference/skills-catalog.md)
-      - [斜杠命令参考](zh/website/docs/reference/slash-commands.md)
+      - [斜杠命令参考手册](zh/website/docs/reference/slash-commands.md)
       - [内置工具参考](zh/website/docs/reference/tools-reference.md)
       - [工具集参考](zh/website/docs/reference/toolsets-reference.md)
     - [User Guide]()
