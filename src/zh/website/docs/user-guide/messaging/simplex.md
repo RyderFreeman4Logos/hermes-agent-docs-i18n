@@ -52,28 +52,28 @@ SIMPLEX_HOME_CHANNEL=<contact-id>
 | 变量 | 是否必填 | 描述 |
 |---|---|---|
 | `SIMPLEX_WS_URL` | 是 | simplex-chat 守护进程的 WebSocket 地址 |
-| `SIMPLEX_ALLOWED_USERS` | 建议设置 | 以逗号分隔的允许列表。每项可以是数字形式的 `contactId`，也可以是显示名称——两种形式均可使用 |
-| `SIMPLEX_ALLOW_ALL_USERS` | 可选 | 设置为 `true` 即可允许所有联系人（请谨慎使用） |
-| `SIMPLEX_AUTO_ACCEPT` | 可选 | 自动接受来自其他联系人的请求（默认值为 `true`） |
-| `SIMPLEX_GROUP_ALLOWED` | 可选 | 以逗号分隔的机器人所属群组 ID，或使用 `*` 表示所有群组。若不设置，则完全忽略群组消息 |
+| `SIMPLEX_ALLOWED_USERS` | 建议设置 | 用逗号分隔的允许列表。每项可以是数字形式的 `contactId`，也可以是显示名称——两种形式均可使用 |
+| `SIMPLEX_ALLOW_ALL_USERS` | 可选 | 将其设置为 `true` 即可允许所有联系人（请谨慎使用） |
+| `SIMPLEX_AUTO_ACCEPT` | 可选 | 自动接受来自其他联系人的添加请求（默认值为 `true`） |
+| `SIMPLEX_GROUP_ALLOWED` | 可选 | 用逗号分隔机器人需参与的群组 ID，或使用 `*` 表示所有群组。若不设置，则完全忽略群组消息 |
 | `SIMPLEX_HOME_CHANNEL` | 可选 | 用于定时任务消息发送的默认联系人/群组 ID |
-| `SIMPLEX_HOME_CHANNEL_NAME` | 可选 | 主通道的人类可读标签 |
-| `HERMES_SIMPLEX_TEXT_BATCH_DELAY` | 可选 | 静默间隔秒数（默认值为 `0.8`），用于将连续发送的文本消息合并为一个事件 |
+| `SIMPLEX_HOME_CHANNEL_NAME` | 可选 | 主通道的人性化标签名称 |
+| `HERMES_SIMPLEX_TEXT_BATCH_DELAY` | 可选 | 静默间隔秒数（默认值为 `0.8`），用于将连续收到的文本消息合并为单个事件 |
 
 ## 查找您的联系人 ID 或显示名称
 
-启动守护进程后，与您的代理联系人开始对话。数字形式的 `contactId` 可在会话日志中查看，或通过 `hermes send_message action=list` 命令获取。如果您希望使用 SimpleX 用户界面中显示的名称，也是可行的——`SIMPLEX_ALLOWED_USERS` 参数接受这两种形式。
+启动守护进程后，与您的代理联系人开始对话。数字形式的 `contactId` 会出现在会话日志中。如果您希望使用 SimpleX 用户界面中显示的名称，也是可行的——`SIMPLEX_ALLOWED_USERS` 支持这两种形式。
 
-## 权限控制
+## 权限授权
 
-默认情况下，**所有联系人都会被拒绝访问**。您必须采取以下措施之一：
+默认情况下**所有联系人都会被拒绝访问**。您必须采取以下其中一种方式：
 
-1. 将 `SIMPLEX_ALLOWED_USERS` 设置为以逗号分隔的 `contactId` 和/或显示名称列表（例如，`SIMPLEX_ALLOWED_USERS=4,alice` 表示允许联系人 ID 为 4 的用户或显示名称为 “alice” 的用户），或者
-2. 使用**私信配对**方式——向机器人发送任意消息，它会回复一个配对码。随后通过 `hermes pairing approve simplex <CODE>` 命令输入该代码即可完成授权。
+1. 将 `SIMPLEX_ALLOWED_USERS` 设置为用逗号分隔的 `contactId` 和/或显示名称列表（例如，`SIMPLEX_ALLOWED_USERS=4,alice` 表示允许联系人 ID 为 4 的用户或显示名称为 “alice” 的用户），或者
+2. 使用**私信配对**方式——向机器人发送任意消息，它会回复一个配对码。通过命令 `hermes pairing approve simplex <CODE>` 输入该代码即可。
 
 ## 群组聊天
 
-默认情况下，该适配器会忽略群组消息——否则处于群组中的机器人将需要处理所有成员的通信。如需启用群组功能，请明确进行配置：
+默认情况下，该适配器会忽略群组消息——否则处于群组中的机器人将需要处理每个成员的通信内容。如需启用群组功能，请明确进行配置：
 
 ```
 SIMPLEX_GROUP_ALLOWED=12,34          # specific group IDs
@@ -81,18 +81,18 @@ SIMPLEX_GROUP_ALLOWED=12,34          # specific group IDs
 SIMPLEX_GROUP_ALLOWED=*              # any group the bot is in
 ```
 
-可通过在聊天 ID 前添加 `group:` 前缀来对消息进行分组，例如在 `send_message` 函数中使用 `simplex:group:12`，或将其作为 Cron 任务的 `deliver=` 目标。
+若要通过前缀添加 `group:` 来对聊天 ID 进行分组，例如：在 cron 的 `deliver=` 目标或 `hermes send` 调用中使用 `simplex:group:12`。
 
 ## 附件
 
 该适配器支持双向传输原生 SimpleX 附件：
 
 - **接收端**——通过守护进程的 XFTP 流程接收传入的图片、语音笔记和文件（流程为：`rcvFileDescrReady` → `/freceive` → 等待 `rcvFileComplete`），这些附件会以 `MessageEvent.media_urls` 的形式呈现，并附带相应的 `MessageType`（如 `PHOTO`、`VOICE`、`TEXT` 以及文档类型）。
-- **发送端**——`send_image_file`、`send_voice`、`send_document` 和 `send_video` 函数均使用包含 `filePath` 的结构化 `/_send` 格式，这样接收端的 SimpleX 客户端就能直接显示图片并播放语音笔记，而无需让用户下载。
+- **发送端**——`send_image_file`、`send_voice`、`send_document` 和 `send_video` 函数均使用包含 `filePath` 的结构化 `/_send` 格式，这样接收端的 SimpleX 客户端便能直接显示图片并播放语音笔记，而无需让用户下载。
 
-智能体回复中也可以在纯文本中嵌入 `MEDIA:/path/to/file` 标签——适配器会从内容中提取该标签，并将文件以语音笔记（音频格式）或文档的形式发送出去。
+智能体回复中也可以在纯文本中嵌入 `MEDIA:/path/to/file` 标签——适配器会从内容中提取该标签，并将文件作为语音笔记（音频格式）或文档发送出去。
 
-## 在 Cron 任务中使用 SimpleX
+## 在 cron 任务中使用 SimpleX
 
 ```python
 cronjob(
@@ -103,10 +103,10 @@ cronjob(
 )
 ```
 
-或者指定特定的联系人：
+或者通过定时任务的 `deliver:` 字段来指定特定联系人，也可以使用 [`hermes send` CLI`](/guides/pipe-script-output) 在Shell脚本中实现这一操作。
 
-```python
-send_message(target="simplex:<contact-id>", message="Done!")
+```bash
+hermes send simplex:<contact-id> "Done!"
 ```
 
 ## 隐私说明
