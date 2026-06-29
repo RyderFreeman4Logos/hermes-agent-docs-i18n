@@ -196,38 +196,38 @@ delegate_task(
 )
 ```
 
-这通常是最高效的架构模式：`execute_code` 能以较低成本处理10次及以上的连续工具调用，随后由子代理在整洁的上下文环境中执行那项耗时的推理任务。
+这通常是最高效的架构：`execute_code` 能以较低成本处理10次及以上的连续工具调用，随后由子代理在整洁的上下文环境中执行那项耗时的推理任务。
 
 ---
 
 ## 工具集选择
 
-根据子代理的需求来选择合适的工具集：
+应根据子代理的需求来选择工具集：
 
 | 任务类型 | 工具集 | 原因 |
 |-----------|--------|-----|
 | 网络搜索 | `["web"]` | 仅包含 web_search 和 web_extract 功能 |
 | 代码处理 | `["terminal", "file"]` | 支持 Shell 访问及文件操作 |
-| 全栈任务 | `["terminal", "file", "web"]` | 包含除消息传递之外的所有功能 |
-| 只读分析 | `["file"]` | 仅能读取文件，无 Shell 接口 |
+| 全栈任务 | `["terminal", "file", "web"]` | 包含除消息传递外的所有功能 |
+| 只读分析 | `["file"]` | 仅能读取文件，无 Shell 功能 |
 
-限制工具集的使用范围有助于让子代理专注执行任务，同时避免意外产生的副作用（例如搜索类子代理误执行 Shell 命令）。
+限制工具集的使用能让子代理保持专注，避免出现意外副作用（例如搜索类子代理误执行 Shell 命令）。
 
 ---
 
 ## 约束条件
 
-- **默认并行任务数为3个**：每个批次默认会启动3个并发子代理（可通过 config.yaml 中的 `delegation.max_concurrent_children` 参数进行调整，无上限限制，仅下限为1）
-- **嵌套委托为可选功能**：普通子代理（默认类型）无法调用 `delegate_task`、`clarify`、`memory`、`send_message` 或 `execute_code` 函数。而调度器子代理（`role="orchestrator"`）虽保留了 `delegate_task` 以用于进一步委托任务，但前提是需将 `delegation.max_spawn_depth` 的值设置得高于默认的1（下限为1，无上限）；其余四个函数对其仍不可用。如需全局禁用该功能，可设置 `delegation.orchestrator_enabled: false`。
+- **默认并行任务数为3个**：批次处理默认会启动3个并发子代理（可通过 config.yaml 中的 `delegation.max_concurrent_children` 参数进行配置，无上限限制，仅下限为1）
+- **嵌套委托为可选功能**：叶级子代理（默认）无法调用 `delegate_task`、`clarify`、`memory` 或 `execute_code`。调度器子代理（`role="orchestrator"`）虽保留了 `delegate_task` 以进行进一步委托，但前提是 `delegation.max_spawn_depth` 的值需高于默认的1（下限为1，无上限）；其余三个功能仍被禁止。可通过 `delegation.orchestrator_enabled: false` 全局禁用该功能。
 
 ### 并行度与嵌套深度的调整
 
 | 配置参数 | 默认值 | 取值范围 | 效果 |
 |----------|--------|---------|------|
-| `max_concurrent_children` | 3 | ≥1 | 每次调用 `delegate_task` 时启动的并行子代理数量 |
+| `max_concurrent_children` | 3 | ≥1 | 每次调用 `delegate_task` 时对应的并行子代理数量 |
 | `max_spawn_depth` | 1 | ≥1 | 允许的嵌套委托层级数 |
 
-示例：通过嵌套子代理运行30个并行任务：
+示例：使用嵌套子代理运行30个并行任务：
 
 ```yaml
 delegation:
