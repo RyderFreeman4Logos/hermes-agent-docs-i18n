@@ -186,30 +186,29 @@ hermes send --list telegram
 hermes send --list --json
 ```
 
-该频道列表是根据 `~/.hermes/channel_directory.json` 生成的，而网关在运行过程中会每隔几分钟刷新一次该文件。如果看到“尚未发现频道”的提示，请先启动一次网关（执行 `hermes gateway start`），以便其填充缓存。
+该频道列表源自 `~/.hermes/channel_directory.json` 文件，Hermes Gateway 在运行过程中会每隔几分钟刷新一次该文件。如果看到“尚未发现频道”的提示，请先启动一次 Gateway（执行 `hermes gateway start` 命令），以便其将数据填充到缓存中。
 
-在发送消息时，系统会依据此缓存将易于识别的名称（如 `discord:#ops`、`slack:#engineering`）转换为对应的实际标识，因此您无需记住那些数字编号。
+在发送消息时，系统会依据此缓存来解析易于识别的频道名称（如 `discord:#ops`、`slack:#engineering`），因此无需记住那些数字形式的频道 ID。
 
 ---
 
 ## 与其他方法的对比
 
-| 方法 | 多平台支持 | 是否复用 Hermes 凭证 | 是否需要网关 | 最适合的场景 |
-|------|------------|---------------------|--------------|------------|
-| `hermes send` | ✅ | ✅ | 否（使用机器人令牌） | 以上所有场景 |
-| 直接对每个平台使用 `curl` 命令 | 需分别为每个平台编写脚本 | 手动操作 | 否 | 需要实时监控的场景 |
-| 使用 `cron` 任务配合 `--deliver` 参数 | ✅ | ✅ | 否 | 需要定时执行的代理任务 |
-| `send_message` 代理工具 | ✅ | ✅ | 否 | 在代理循环内部使用 |
+| 方法 | 多平台支持 | 是否复用 Hermes 凭证 | 是否需要 Gateway | 最适合的场景 |
+|------|------------|---------------------|----------------|------------|
+| `hermes send` | ✅ | ✅ | 不需要（使用机器人令牌） | 上述所有场景 |
+| 对各平台直接使用原始 `curl` 命令 | 需分别为每个平台编写脚本 | 手动操作 | 不需要 | 关键监控任务 |
+| 使用 `cron` 作业结合 `--deliver` 参数 | ✅ | ✅ | 不需要 | 定时执行的 Agent 任务 |
 
-`hermes send` 被刻意设计为最简洁的接口。如果需要由代理来决定发送内容，可在聊天界面或 `cron` 任务中使用 `send_message` 工具。若需定时执行并生成基于大语言模型的内容，可使用 `cronjob(action='create', prompt=...)` 并配合 `deliver='telegram:...'` 参数。而只需传输原始字符串时，直接使用 `hermes send` 即可。
+`hermes send` 被设计为最简洁的接口。如果需要由 Agent 自行决定发送内容，可安排一个 cron 作业——Agent 的最终响应会自动发送到预先配置的 `deliver:` 目标地址（此时 Agent 不再直接发送消息）。若需定时执行并使用大语言模型生成的内容，可使用 `cronjob(action='create', prompt=...)` 并搭配 `deliver='telegram:...'` 参数。而如果仅需传递原始字符串，直接使用 `hermes send` 即可。
 
 ---
 
 ## 相关内容
 
-- [利用 Cron 自动化各类任务](/guides/automate-with-cron) ——
-  可将输出自动发送到任意平台的定时任务。
-- [网关内部机制](/developer-guide/gateway-internals) ——
-  `hermes send` 与 `cron` 任务所共用的消息传递路由系统。
+- [利用 Cron 实现自动化](/guides/automate-with-cron) ——
+  可将输出自动发送到任意平台的定时作业。
+- [Gateway 内部机制](/developer-guide/gateway-internals) ——
+  `hermes send` 与 cron 发送功能所共用的消息传递路由系统。
 - [消息平台配置指南](/user-guide/messaging/) ——
-  针对每个平台的单次配置说明。
+  各平台的单次配置说明。
