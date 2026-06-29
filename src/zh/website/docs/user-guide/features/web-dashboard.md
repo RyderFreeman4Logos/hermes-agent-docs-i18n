@@ -909,9 +909,17 @@ def register(ctx):
     ctx.register_dashboard_auth_provider(MyIdPProvider())
 ```
 
-登录页面会列出所有已注册的提供方；用户可以在多个提供方中选择其一，随后在 `/login` 页面进行登录操作。
+登录页面会列出所有已注册的提供方；用户可以在 `/login` 页面选择多个提供方中的任意一个进行使用。
 
-### 验证网关是否处于开启状态
+### 非交互式（承载令牌）认证
+
+除了传统的交互式人工登录方式（会话 Cookie + 刷新机制）之外，`DashboardAuthProvider` ABC 还支持通过设置 `supports_token = True` 和 `verify_token(token=...)` 来实现**非交互式的服务间认证**功能。当某个提供方启用此功能后，系统会对传入的 `Authorization: Bearer <token>` 请求进行验证。验证成功后，该提供方指定的支持令牌认证的接口将会获得一个 `TokenPrincipal` 对象（存储在 `request.state.token_principal` 中），从而实现无需 Cookie、无需重定向且无需刷新的认证流程。
+
+预置的第一个消费者就是 **drain** 提供方（位于 `plugins/dashboard_auth/drain`）：`nous-account-service` 会通过 `HERMES_DASHBOARD_DRAIN_SECRET` 为每个智能体生成专用密钥，该提供方则会使用恒定时间比较算法来验证传入的承载令牌，并将 `/api/gateway/drain` 接口标记为支持令牌认证。如果密钥强度不足或长度过短（小于 256 位），注册过程将会直接失败，相应接口也将保持禁用状态；而当该环境变量未被设置时，此功能则不会生效。相关的配置选项（如 `scope`、`min_secret_chars`）位于 `config.yaml` 文件的 `dashboard.drain_auth` 部分。
+
+自定义提供方也可以通过相同的方式实现 `supports_token`/`verify_token` 功能，从而为其自身定义的支持机器认证的接口提供支持。
+
+### 验证网关是否已启用
 
 ```bash
 # Quick env-var path.
