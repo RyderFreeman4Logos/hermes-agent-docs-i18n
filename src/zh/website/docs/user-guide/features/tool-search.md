@@ -5,17 +5,17 @@ sidebar_position: 95
 
 # 工具搜索功能
 
-当一个会话中连接了众多MCP服务器或非核心插件工具时，它们的JSON架构可能会在每一轮对话中占用大量上下文窗口空间——即便其中只有少数工具与用户实际询问的内容相关。
+当一个会话中连接了众多MCP服务器或非核心插件工具时，它们的JSON架构可能会在每一轮对话中占用大量上下文窗口空间——即便其中只有少数工具与用户实际提出的问题相关。
 
-**工具搜索功能**正是Hermes为解决这一问题而提供的可选渐进式披露机制。启用该功能后，模型可见工具数组中的MCP工具和插件工具会被三个桥接工具替代，模型会根据需求动态加载每个具体工具的架构。
+**工具搜索功能**正是Hermes为解决这一问题而推出的可选渐进式披露机制。启用该功能后，模型可见工具数组中的MCP工具和插件工具会被三个桥接工具替代，模型会按需加载每个特定工具的架构。
 
-:::info 内置Hermes工具永不延迟加载
-构成Hermes核心功能集的工具（如`terminal`、`read_file`、`write_file`、`patch`、`search_files`、`todo`、`memory`、`browser_*`、`web_search`、`web_extract`、`clarify`、`execute_code`、`delegate_task`、`session_search`、`send_message`以及其余的`_HERMES_CORE_TOOLS`）会*始终*直接加载。只有MCP工具和非核心插件工具才支持延迟加载。
+:::info 内置Hermes工具从不延迟加载
+构成Hermes核心功能集的工具（如`terminal`、`read_file`、`write_file`、`patch`、`search_files`、`todo`、`memory`、`browser_*`、`web_search`、`web_extract`、`clarify`、`execute_code`、`delegate_task`、`session_search`以及`_HERMES_CORE_TOOLS`中的其他工具）会*始终*直接加载。只有MCP工具和非核心插件工具才具备延迟加载的资格。
 :::
 
 ## 工作原理
 
-当某轮对话启用工具搜索功能时，模型会看到三个新工具取代了那些被延迟加载的工具：
+当某轮对话启用工具搜索功能时，模型会看到被延迟加载的工具被三个新工具所取代：
 
 ```
 tool_search(query, limit?)     — search the deferred-tool catalog
