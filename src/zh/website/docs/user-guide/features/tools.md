@@ -6,34 +6,34 @@ description: "Overview of Hermes Agent's tools — what's available, how toolset
 
 # 工具与工具集
 
-工具是用于扩展智能体功能的函数，它们被整理成逻辑上独立的**工具集**，可根据不同平台的需求进行启用或禁用。
+工具是用于扩展智能体功能的函数，它们被整理成逻辑上独立的**工具集**，可根据不同平台进行启用或禁用。
 
 ## 可用工具
 
-Hermes 搭载了丰富的内置工具注册表，涵盖网页搜索、浏览器自动化、终端执行、文件编辑、内存管理、任务委派、强化学习训练、消息发送、Home Assistant 集成等功能。
+Hermes 搭载了丰富的内置工具注册表，涵盖网页搜索、浏览器自动化、终端执行、文件编辑、内存管理、任务委托、定时任务、Home Assistant 集成等功能。
 
 :::note
-**Honcho 跨会话内存**作为内存提供插件提供（位于 `plugins/memory/honcho/` 目录），而非内置工具集。如需安装，请参阅 [插件](./plugins.md) 文档。
+**Honcho 跨会话内存**作为内存提供插件提供（位于 `plugins/memory/honcho/` 目录），并非内置工具集。如需安装，请参阅 [插件](./plugins.md) 文档。
 :::
 
 按功能分类的概览：
 
 | 类别 | 示例 | 描述 |
 |------|------|------|
-| **网页** | `web_search`, `web_extract` | 在网络上搜索并提取页面内容。 |
-| **X 平台搜索** | `x_search` | 通过 xAI 内置的 `x_search` Responses 工具在 X（Twitter）上搜索帖子和主题——该功能需要 xAI 凭证（SuperGrok OAuth 或 `XAI_API_KEY`）支持；默认处于关闭状态，可通过 `hermes tools` → 🐦 X（Twitter）搜索来启用。 |
-| **终端与文件** | `terminal`, `process`, `read_file`, `patch` | 执行命令并操作文件。 |
+| **网页** | `web_search`, `web_extract` | 在网页上搜索并提取页面内容。 |
+| **X 平台搜索** | `x_search` | 通过 xAI 内置的 `x_search` 响应工具在 X（Twitter）上搜索帖子和主题——该功能需使用 xAI 凭证（SuperGrok OAuth 或 `XAI_API_KEY`）才能启用；默认处于关闭状态，可通过 `hermes tools` → 🐦 X（Twitter）搜索来开启。 |
+| **终端与文件** | `terminal`, `process`, `read_file`, `patch` | 执行命令及操作文件。 |
 | **浏览器** | `browser_navigate`, `browser_snapshot`, `browser_vision` | 支持文本处理和视觉识别的交互式浏览器自动化功能。 |
 | **多媒体** | `vision_analyze`, `image_generate`, `text_to_speech` | 多模态分析与生成功能。 |
-| **智能体编排** | `todo`, `clarify`, `execute_code`, `delegate_task` | 用于任务规划、需求澄清、代码执行以及子智能体委派。 |
-| **内存与检索** | `memory`, `session_search` | 提供持久化内存管理和会话内容检索功能。 |
-| **自动化与消息发送** | `cronjob`, `send_message` | 支持定时任务，可执行创建/列出/更新/暂停/恢复/运行/删除等操作，同时具备消息发送功能。 |
-| **集成工具** | `ha_*`, MCP 服务器工具 | 用于连接 Home Assistant、MCP 及其他系统。 |
+| **智能体编排** | `todo`, `clarify`, `execute_code`, `delegate_task` | 用于任务规划、需求澄清、代码执行以及子智能体委托。 |
+| **内存与检索** | `memory`, `session_search` | 实现持久化内存管理及会话内容检索。 |
+| **自动化** | `cronjob` | 支持创建、列表查看、更新、暂停、恢复、运行和删除等操作的定时任务。任务发送功能由 cron 自带的发送机制、`hermes send` CLI 以及网关通知器处理，而非通过智能体可调用的工具实现。 |
+| **集成服务** | `ha_*`, MCP 服务器工具 | Home Assistant、MCP 及其他集成服务。 |
 
 如需查看基于代码生成的权威工具列表，请参阅 [内置工具参考](/reference/tools-reference) 和 [工具集参考](/reference/toolsets-reference)。
 
 :::tip Nous 工具网关
-已订阅付费版 [Nous Portal](https://portal.nousresearch.com) 的用户可通过 **[工具网关](tool-gateway.md)** 使用网页搜索、图像生成、文本转语音以及浏览器自动化功能——无需额外的 API 密钥。运行 `hermes model` 即可启用该功能，或通过 `hermes tools` 配置单个工具。
+已订阅付费版 [Nous Portal](https://portal.nousresearch.com) 的用户可通过 **[工具网关](tool-gateway.md)** 使用网页搜索、图像生成、文本转语音及浏览器自动化功能——无需单独的 API 密钥。运行 `hermes model` 即可启用该功能，或通过 `hermes tools` 配置特定工具。
 :::
 
 ## 工具集的使用方法
