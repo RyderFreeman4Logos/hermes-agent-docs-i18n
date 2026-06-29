@@ -713,15 +713,15 @@ hermes mcp serve --verbose    # Debug logging on stderr
 
 ### 工作原理
 
-MCP 服务器直接从 Hermes 的会话存储中读取对话数据（位于 `~/.hermes/sessions/sessions.json` 及 SQLite 数据库中）。一个后台线程会定期查询数据库以获取新消息，并维护一个内存中的事件队列。在发送消息时，它会使用与 Hermes 代理本身相同的 `send_message` 架构。
+MCP 服务器直接从 Hermes 的会话存储区（`~/.hermes/sessions/sessions.json` 及 SQLite 数据库）读取对话数据。一个后台线程会定期查询数据库中的新消息，并维护一个内存中的事件队列。在发送消息时，它使用与定时任务发送及 `hermes send` CLI 相同的内部发送引擎（`tools/send_message_tool.py`）。
 
-对于读取操作（如列出对话、查看历史记录、轮询事件），网关无需处于运行状态。但进行发送操作时则必须保持网关运行，因为平台适配器需要保持活跃的连接。
+对于读取操作（如列出对话、查看历史记录、轮询事件），无需运行网关；但执行发送操作时必须运行网关，因为平台适配器需要保持活跃的连接。
 
 ### 当前限制
 
-- 目前内置的 `hermes mcp serve` 只提供**基于标准输入输出的标准格式**的 MCP 服务器。如果需要 HTTP 格式的 MCP 服务器，需单独运行适配器；或者更常见的做法是使用 Hermes 的 MCP **客户端**版本，该版本同时支持标准输入输出和 HTTP 协议（在 `mcp_servers.yaml`/`config.yaml` 中配置 `url` 和 `headers`；详情参见上文[HTTP 服务器](#http-servers)部分）。
-- 通过针对文件修改时间进行优化的数据库轮询机制，事件轮询间隔约为 200 毫秒（当文件未被修改时不会执行额外操作）。
-- 目前还不支持 `claude/channel` 推送通知协议。
+- 目前内置的 `hermes mcp serve` 只提供**基于标准输入输出**的 MCP 服务器。如果需要 HTTP 版本的 MCP 服务器，需单独运行适配器；或者更常见的做法是使用 Hermes 的 MCP **客户端**，它同时支持标准输入输出和 HTTP 协议（在 `mcp_servers.yaml`/`config.yaml` 中配置 `url` 和 `headers`；详情请参见上文的[HTTP 服务器](#http-servers)部分）。
+- 通过针对文件修改时间进行优化的数据库轮询机制，事件轮询间隔约为 200 毫秒（若文件未发生变化则跳过处理）。
+- 目前尚不支持 `claude/channel` 推送通知协议。
 - 仅支持文本发送（无法通过 `messages_send` 功能发送媒体文件或附件）。
 
 ## 相关文档
