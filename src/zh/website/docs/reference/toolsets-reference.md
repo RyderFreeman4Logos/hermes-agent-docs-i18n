@@ -51,49 +51,50 @@ hermes tools                            # curses UI to enable/disable per platfo
 ## 核心工具集
 
 | 工具集 | 工具 | 用途 |
-|-------|------|------|
-| `browser` | `browser_back`, `browser_cdp`, `browser_click`, `browser_console`, `browser_dialog`, `browser_get_images`, `browser_navigate`, `browser_press`, `browser_scroll`, `browser_snapshot`, `browser_type`, `browser_vision`, `web_search` | 核心浏览器自动化功能。其中 `web_search` 用于快速查询作为备用方案。`browser_cdp` 和 `browser_dialog` 会在运行时根据条件启用——仅当会话启动时可通过 `/browser connect`、`browser.cdp_url` 配置、Browserbase 或 Camofox 获取 CDP 端点地址时才会注册。当连接了 CDP 监控节点后，`browser_snapshot` 会添加 `pending_dialogs` 和 `frame_tree` 字段，`browser_dialog` 即可与之配合使用。 |
+|---------|------|------|
+| `browser` | `browser_back`, `browser_cdp`, `browser_click`, `browser_console`, `browser_dialog`, `browser_get_images`, `browser_navigate`, `browser_press`, `browser_scroll`, `browser_snapshot`, `browser_type`, `browser_vision`, `web_search` | 核心浏览器自动化功能。其中 `web_search` 用于快速查询作为备用方案。`browser_cdp` 和 `browser_dialog` 会在运行时动态启用——仅在会话启动时可通过 `/browser connect`、`browser.cdp_url` 配置、Browserbase 或 Camofox 获取 CDP 接口后才会注册。当连接了 CDP 监控节点后，`browser_snapshot` 会新增 `pending_dialogs` 和 `frame_tree` 字段，`browser_dialog` 会与这些字段协同工作。 |
 | `clarify` | `clarify` | 当智能体需要进一步澄清信息时，向用户提问。 |
-| `code_execution` | `execute_code` | 运行能够以编程方式调用 Hermes 工具的 Python 脚本。 |
+| `code_execution` | `execute_code` | 运行可程序化调用 Hermes 工具的 Python 脚本。 |
+| `coding` | 复合工具集（包含 `file` + `terminal` + `search` + `web` + `skills` + `browser` + `todo` + `memory` + `session_search` + `clarify` + `code_execution` + `delegation` + `vision`） | 面向软件开发的工具包，涵盖文件编辑、终端操作、搜索、网页文档处理、技能调用、浏览器操作、任务委托以及代码执行等功能。 |
 | `cronjob` | `cronjob` | 安排并管理周期性任务。 |
-| `debugging` | 复合工具集（包含 `file`、`terminal`、`web`） | 调试功能包——支持文件、进程/终端以及网页内容提取/搜索。 |
+| `debugging` | 复合工具集（包含 `file` + `terminal` + `web`） | 调试工具包，提供文件操作、进程/终端管理以及网页内容提取与搜索功能。 |
 | `delegation` | `delegate_task` | 创建独立的子智能体实例以实现并行处理。 |
-| `discord` | `discord` | Discord 的核心文本/嵌入消息/私信操作功能（仅限网关模式）。该功能属于 `hermes-discord` 工具集。 |
-| `discord_admin` | `discord_admin` | Discord 管理功能，包括封禁用户、修改角色权限、管理频道等。该功能同样属于 `hermes-discord` 工具集，要求智能体拥有相应的 Discord 权限。 |
-| `feishu_doc` | `feishu_doc_read` | 读取飞书/企业微信文档内容。被飞书文档评论智能回复处理工具所使用。 |
-| `feishu_drive` | `feishu_drive_add_comment`, `feishu_drive_list_comments`, `feishu_drive_list_comment_replies`, `feishu_drive_reply_comment` | 飞书/企业微信云盘中的评论操作功能。该功能仅限于评论相关智能体使用，不会在 `hermes-cli` 或其他消息类工具集中提供。 |
-| `file` | `patch`, `read_file`, `search_files`, `write_file` | 文件的读取、写入、搜索和编辑功能。 |
-| `homeassistant` | `ha_call_service`, `ha_get_state`, `ha_list_entities`, `ha_list_services` | 通过 Home Assistant 实现智能家居控制。仅当设置了 `HASS_TOKEN` 时才可用。 |
-| `computer_use` | `computer_use` | 通过 cua-driver 实现后台桌面控制——不会抢占光标或焦点。适用于任何具备工具调用能力的模型，支持 macOS、Windows 和 Linux 系统，要求 `$PATH` 中已安装 `cua-driver`。 |
-| `context_engine` | 不固定 | 由当前激活的上下文引擎插件提供的运行时工具集（在插件填充内容之前为空）。 |
-| `image_gen` | `image_generate` | 通过 FAL.ai 实现文本转图像功能，可选择 OpenAI 或 xAI 后端。 |
-| `video_gen` | `video_generate` | 通过插件支持的后端实现文本转视频及图像转视频功能，可选后端包括 xAI Grok-Imagine、FAL.ai Veo 3.1 / Pixverse v6 / Kling O3。如需对图像进行动画处理，请传入 `image_url` 参数；若仅需文本转视频则无需该参数。 |
-| `kanban` | `kanban_block`, `kanban_comment`, `kanban_complete`, `kanban_create`, `kanban_heartbeat`, `kanban_link`, `kanban_list`, `kanban_show`, `kanban_unblock` | 多智能体协作工具集。为调度器生成的任务处理单元（类型为 `HERMES_KANBAN_TASK`）以及明确指定使用 `kanban` 工具集的配置文件所注册；使用通配符 `all` 或 `*` 无法启用此功能。任务处理单元可标记任务完成、阻塞、发送心跳信息、添加评论以及创建/关联后续任务；而协调器配置文件还可获得列表显示、解除阻塞等看板管理功能。 |
+| `discord` | `discord` | Discord 的核心文本/嵌入消息/私信操作功能（仅限网关模式）。属于 `hermes-discord` 工具集的一部分。 |
+| `discord_admin` | `discord_admin` | Discord 管理功能，包括封禁用户、修改角色权限、管理频道等。同样属于 `hermes-discord` 工具集，要求智能体拥有相应的 Discord 权限。 |
+| `feishu_doc` | `feishu_doc_read` | 读取飞书/企业微信文档内容，被飞书文档评论智能回复功能所使用。 |
+| `feishu_drive` | `feishu_drive_add_comment`, `feishu_drive_list_comments`, `feishu_drive_list_comment_replies`, `feishu_drive_reply_comment` | 飞书/企业微信云盘评论操作功能，仅限于评论相关智能体使用，不会在 `hermes-cli` 或其他消息平台工具集中提供。 |
+| `file` | `patch`, `read_file`, `search_files`, `write_file` | 文件的读取、写入、搜索及编辑功能。 |
+| `homeassistant` | `ha_call_service`, `ha_get_state`, `ha_list_entities`, `ha_list_services` | 通过 Home Assistant 实现智能家居控制，仅在设置了 `HASS_TOKEN` 后可用。 |
+| `computer_use` | `computer_use` | 通过 cua-driver 实现后台桌面控制，不会占用光标或焦点，适用于任何具备工具调用能力的模型，支持 macOS、Windows 和 Linux 系统，要求 `$PATH` 中已安装 `cua-driver`。 |
+| `context_engine` | 不固定 | 由当前激活的上下文引擎插件提供的运行时工具（在插件填充内容前为空）。 |
+| `image_gen` | `image_generate` | 通过 FAL.ai 实现文本转图像功能，可选支持 OpenAI / xAI 后端。 |
+| `video_gen` | `video_generate` | 通过插件注册的后端实现文本转视频及图像转视频功能，可选后端包括 xAI Grok-Imagine、FAL.ai Veo 3.1 / Pixverse v6 / Kling O3。如需为图像添加动画效果，请传入 `image_url` 参数；如需直接生成视频，则无需该参数。 |
+| `kanban` | `kanban_block`, `kanban_comment`, `kanban_complete`, `kanban_create`, `kanban_heartbeat`, `kanban_link`, `kanban_list`, `kanban_show`, `kanban_unblock` | 多智能体协调工具，为调度器生成的任务处理节点（类型为 `HERMES_KANBAN_TASK`）以及明确指定使用 `kanban` 工具集的配置文件所使用（`all`/`*` 通配符无法启用此功能）。任务处理节点可标记任务完成、阻塞、发送心跳、添加评论以及创建/关联后续任务；而调度器配置文件还可获得列表展示、解除阻塞等看板管理功能。 |
 | `memory` | `memory` | 实现跨会话的持久化内存管理。 |
-| `messaging` | `send_message` | 在当前会话内向其他平台（如 Telegram、Discord 等）发送消息。 |
-| `safe` | `image_generate`, `vision_analyze`, `web_extract`, `web_search`（通过 `includes` 选项启用） | 仅限读取信息和生成媒体内容，禁止文件写入、终端操作及代码执行。 |
+| `project` | `project_create`, `project_list`, `project_switch` | 创建及切换桌面端的 [项目](../user-guide/cli.md)，即带命名、多文件夹结构的workspace，仅适用于 GUI/桌面会话。 |
+| `safe` | `image_generate`, `vision_analyze`, `web_extract`, `web_search`（通过 `includes` 选项启用） | 仅限读取与媒体生成功能，禁止文件写入、终端操作及代码执行。 |
 | `search` | `web_search` | 仅支持网页搜索，不包含内容提取功能。 |
 | `session_search` | `session_search` | 搜索过往的对话会话记录。 |
-| `skills` | `skill_manage`, `skill_view`, `skills_list` | 实现技能的创建、读取和列表查询功能。 |
-| `spotify` | `spotify_albums`, `spotify_devices`, `spotify_library`, `spotify_playback`, `spotify_playlists`, `spotify_queue`, `spotify_search` | 对 Spotify 的原生控制功能，包括播放、队列管理、搜索、播放列表操作、专辑管理及资料库查询等。由内置的 `spotify` 插件负责注册。 |
-| `terminal` | `process`, `terminal` | 执行 Shell 命令以及管理后台进程。 |
-| `todo` | `todo` | 在当前会话内管理任务列表。 |
+| `skills` | `skill_manage`, `skill_view`, `skills_list` | 技能的创建、读取及列表查询功能。 |
+| `spotify` | `spotify_albums`, `spotify_devices`, `spotify_library`, `spotify_playback`, `spotify_playlists`, `spotify_queue`, `spotify_search` | 对 Spotify 的原生控制功能，包括播放、队列管理、搜索、播放列表、专辑及音乐库操作，由内置的 `spotify` 插件提供。 |
+| `terminal` | `process`, `terminal` | Shell 命令执行及后台进程管理功能。 |
+| `todo` | `todo` | 管理当前会话内的任务列表。 |
 | `tts` | `text_to_speech` | 生成文本转语音音频。 |
 | `vision` | `vision_analyze` | 利用具备视觉处理能力的模型进行图像分析。 |
-| `video` | `video_analyze` | 视频分析及理解工具（为可选功能，不属于默认工具集——需通过 `--toolsets` 显式添加）。 |
+| `video` | `video_analyze` | 视频分析及理解工具（为可选功能，不在默认工具集中，需通过 `--toolsets` 显式添加）。 |
 | `web` | `web_extract`, `web_search` | 网页搜索及页面内容提取功能。 |
-| `x_search` | `x_search` | 通过 xAI 内置的 `x_search` Responses 工具搜索 X（Twitter）上的帖子和主题串。默认为关闭状态，需通过 `hermes tools` 手动启用；仅当配置了 xAI 凭证（SuperGrok OAuth 或 `XAI_API_KEY`）后才会注册对应的结构定义。 |
-| `yuanbao` | `yb_query_group_info`, `yb_query_group_members`, `yb_search_sticker`, `yb_send_dm`, `yb_send_sticker` | 元宝的私信/群组操作及贴图搜索功能。仅在 `hermes-yuanbao` 环境中注册。 |
+| `x_search` | `x_search` | 通过 xAI 内置的 `x_search` Responses 工具搜索 X（Twitter）上的帖子与主题串，默认为关闭状态，需通过 `hermes tools` 打开；仅当配置了 xAI 凭证（SuperGrok OAuth 或 `XAI_API_KEY`）后才会注册对应的架构。 |
+| `yuanbao` | `yb_query_group_info`, `yb_query_group_members`, `yb_search_sticker`, `yb_send_dm`, `yb_send_sticker` | 腾讯元宝的私信/群组操作及贴图搜索功能，仅在 `hermes-yuanbao` 环境中可用。 |
 
 ## 平台工具集
 
 平台工具集定义了特定部署目标所需的完整工具配置。大多数消息平台使用的工具集与 `hermes-cli` 相同：
 
 | 工具集 | 与 `hermes-cli` 的差异 |
-|-------|------------------------|
-| `hermes-cli` | 完整的工具集——交互式 CLI 会话的默认选择。包含文件操作、终端操作、网页操作、浏览器操作、内存管理、技能管理、视觉处理、图像生成、任务列表管理、文本转语音、子智能体派发、代码执行、定时任务管理、会话搜索、澄清功能以及仅限读取的 `safe` 功能包，同时还包含标准的消息发送工具。 |
-| `hermes-acp` | 省去了 `clarify`、`cronjob`、`image_generate`、`send_message`、`text_to_speech` 以及全部四个与 Home Assistant 相关的工具。专为在集成开发环境中的编程任务设计。 |
-| `hermes-api-server` | 省去了 `clarify`、`send_message` 和 `text_to_speech` 功能，保留其余所有功能——适用于无需用户交互的程序化访问场景。 |
+|---------|------------------------|
+| `hermes-cli` | 完整的工具集，为交互式 CLI 会话的默认配置，包含文件操作、终端、网页、浏览器、内存、技能、视觉处理、图像生成、任务管理、文本转语音、任务委托、代码执行、定时任务、会话搜索以及澄清功能，同时还包含仅限读取的 `safe` 工具包。 |
+| `hermes-acp` | 移除了 `clarify`、`cronjob`、`image_generate`、`text_to_speech` 以及所有四个与 Home Assistant 相关的工具，专注于在集成开发环境中的编程任务。 |
+| `hermes-api-server` | 移除了 `clarify` 和 `text_to_speech`，保留其余所有功能，适用于无需用户交互的程序化访问场景。 |
 | `hermes-cron` | 与 `hermes-cli` 完全相同。 |
 | `hermes-telegram` | 与 `hermes-cli` 完全相同。 |
 | `hermes-discord` | 在 `hermes-cli` 的基础上新增了 `discord` 和 `discord_admin` 功能。 |
@@ -106,15 +107,15 @@ hermes tools                            # curses UI to enable/disable per platfo
 | `hermes-sms` | 与 `hermes-cli` 完全相同。 |
 | `hermes-bluebubbles` | 与 `hermes-cli` 完全相同。 |
 | `hermes-dingtalk` | 与 `hermes-cli` 完全相同。 |
-| `hermes-feishu` | 新增了五个 `feishu_doc_*` / `feishu_drive_*` 工具（仅被文档评论处理工具使用，普通聊天适配器不会使用）。 |
+| `hermes-feishu` | 新增了五个 `feishu_doc_*` / `feishu_drive_*` 工具，仅被文档评论处理功能使用，不会出现在常规聊天适配器中。 |
 | `hermes-qqbot` | 与 `hermes-cli` 完全相同。 |
 | `hermes-wecom` | 与 `hermes-cli` 完全相同。 |
 | `hermes-wecom-callback` | 与 `hermes-cli` 完全相同。 |
 | `hermes-weixin` | 与 `hermes-cli` 完全相同。 |
-| `hermes-yuanbao` | 在 `hermes-cli` 的基础上新增了五个 `yb_*` 工具（私信/群组/贴图相关功能）。 |
-| `hermes-homeassistant` | 与 `hermes-cli` 完全相同（Home Assistant 相关工具默认已存在，设置 `HASS_TOKEN` 后即可激活）。 |
+| `hermes-yuanbao` | 在 `hermes-cli` 的基础上新增了五个 `yb_*` 工具，用于私信、群组及贴图操作。 |
+| `hermes-homeassistant` | 与 `hermes-cli` 完全相同（Home Assistant 相关工具默认已存在，设置 `HASS_TOKEN` 后即可启用）。 |
 | `hermes-webhook` | 与 `hermes-cli` 完全相同。 |
-| `hermes-gateway` | 内部网关协调工具集——整合了所有 `hermes-<platform>` 工具集；当网关需要接收来自任意消息源的消息时使用。 |
+| `hermes-gateway` | 内部网关协调工具集，汇集了所有 `hermes-<platform>` 工具集的功能，用于需要接收来自任意消息源的场景。 |
 
 ## 动态工具集
 
