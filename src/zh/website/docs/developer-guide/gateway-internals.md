@@ -174,28 +174,28 @@ gateway/platforms/                  # core base + legacy direct adapters
 └── api_server.py        # REST API server adapter
 ```
 
-实验性的连接器支持平台会使用 `gateway/relay/` 目录下的通用中继适配器，而非直接使用平台模块。当配置了 `GATEWAY_RELAY_URL` 或 `gateway.relay_url` 后，网关会注册该 `relay` 平台，通过出站 WebSocket 连接到连接器，并通过同一个套接字接收 `descriptor`、`inbound` 以及 `interrupt_inbound` 数据帧。连接器会发布 `CapabilityDescriptor`；Hermes 可以通过该中继发送常规的出站回复、无需令牌的 `follow_up` 操作以及中断数据帧。相关的接口定义文档位于 [`docs/relay-connector-contract.md`](https://github.com/NousResearch/hermes-agent/blob/main/docs/relay-connector-contract.md)。
+实验性的连接器支持平台会使用 `gateway/relay/` 目录下的通用中继适配器，而非直接使用平台模块。当配置了 `GATEWAY_RELAY_URL` 或 `gateway.relay_url` 后，网关会注册该 `relay` 平台，通过出站 WebSocket 连接到连接器，并在同一套套接字上接收 `descriptor`、`inbound` 以及 `interrupt_inbound` 数据帧。连接器会发布 `CapabilityDescriptor`；Hermes 可以通过该中继发送常规的出站回复、无需令牌的 `follow_up` 操作以及中断数据帧。相关的接口规范文档位于 [`docs/relay-connector-contract.md`](https://github.com/NousResearch/hermes-agent/blob/main/docs/relay-connector-contract.md)。
 
 各类适配器均需实现以下通用接口：
 - `connect()` / `disconnect()` —— 生命周期管理
 - `send_message()` —— 发送出站消息
-- `on_message()` —— 对入站消息进行标准化处理，生成 `MessageEvent` 对象
+- `on_message()` —— 对入站消息进行标准化处理，转换为 `MessageEvent` 对象
 
 ### 令牌锁定机制
 
-使用唯一凭证进行连接的适配器需在 `connect()` 方法中调用 `acquire_scoped_lock()`，并在 `disconnect()` 方法中调用 `release_scoped_lock()`。此机制可防止两个不同的配置文件同时使用同一个机器人令牌。
+使用唯一凭证连接的适配器需在 `connect()` 方法中调用 `acquire_scoped_lock()`，并在 `disconnect()` 方法中调用 `release_scoped_lock()`。此机制可防止两个不同的配置文件同时使用同一个机器人令牌。
 
 ## 消息传递路径
 
 出站消息传递功能（位于 `gateway/delivery.py`）负责处理以下场景：
 - **直接回复** —— 将响应发送回原始聊天窗口
 - **主频道发送** —— 将定时任务输出及后台处理结果发送到已配置的主频道
-- **指定目标发送** —— 使用 `send_message` 工具并指定目标地址，如 `telegram:-1001234567890`；或者为 Shell 脚本编写封装该工具的 [`hermes send` CLI`](/guides/pipe-script-output)
+- **指定目标发送** —— 通过发送引擎指定目标地址，例如 `telegram:-1001234567890`；该功能可通过 [`hermes send` CLI`](/guides/pipe-script-output) 为脚本提供支持，也可通过 cron 的 `deliver:` 参数实现
 - **跨平台发送** —— 将消息发送到与原始消息不同的平台
 
-定时任务生成的消息不会被记录在网关的会话历史中，仅存在于相应的定时任务会话中。这是出于刻意的设计考量，旨在避免出现消息顺序混乱的问题。
+定时任务生成的消息不会被记录在网关的会话历史中，仅存在于对应的定时任务会话中。这是经过刻意设计的做法，旨在避免出现消息顺序混乱的问题。
 
-## 钩子机制
+## 钩子功能
 
 网关钩子是用于响应各种生命周期事件的 Python 模块：
 
@@ -212,14 +212,14 @@ gateway/platforms/                  # core base + legacy direct adapters
 | `agent:end` | 智能体处理完毕并返回响应时 |
 | `command:*` | 任何斜杠命令被执行时 |
 
-钩子模块可从 `gateway/builtin_hooks/`（一个扩展点——当前发布的版本中该目录为空；`_register_builtin_hooks()` 仅为空操作占位函数）以及用户自定义的 `~/.hermes/hooks/` 目录中找到。每个钩子都包含一个包含 `HOOK.yaml` 配置文件和 `handler.py` 处理程序的目录结构。
+钩子文件可从 `gateway/builtin_hooks/`（一个扩展点——当前发布的版本中该目录为空；`_register_builtin_hooks()` 仅为占位函数）以及用户自定义的 `~/.hermes/hooks/` 目录中找到。每个钩子都包含一个包含 `HOOK.yaml` 配置文件和 `handler.py` 处理程序的目录结构。
 
 ## 内存提供器集成
 
-当启用了内存提供器插件（例如 Honcho）后，系统会按以下流程工作：
+当启用了内存提供器插件（如 Honcho）后，系统会按以下流程运作：
 1. 网关为每条消息创建一个包含会话 ID 的 `AIAgent` 对象
-2. `MemoryManager` 会使用会话上下文来初始化对应的内存提供器
-3. 提供器的各类工具（如 `honcho_profile`、`viking_search`）将通过该内存提供器进行调用处理
+2. `MemoryManager` 会使用会话上下文来初始化对应的提供器
+3. 提供器的各种工具（如 `honcho_profile`、`viking_search`）将通过该机制被调用
 
 ```text
 AIAgent._invoke_tool()
