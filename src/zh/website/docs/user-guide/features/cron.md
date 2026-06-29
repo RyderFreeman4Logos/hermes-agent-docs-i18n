@@ -213,7 +213,7 @@ hermes cron status
 
 ### 网关调度器行为
 
-在每个时间间隔内，Hermes会执行以下操作：
+在每个时间间隔内，Hermes 会执行以下操作：
 
 1. 从 `~/.hermes/cron/jobs.json` 中加载任务列表；
 2. 将每个任务的 `next_run_at` 时间与当前时间进行比对；
@@ -225,61 +225,61 @@ hermes cron status
 
 `~/.hermes/cron/.tick.lock` 文件用于锁定资源，防止多个调度周期同时重复执行同一批任务。
 
-## 输出目标选择
+## 输出目标选项
 
-在安排任务时，您可以指定输出的去向：
+在安排任务时，您可以指定输出去往何处：
 
 | 选项 | 描述 | 示例 |
 |------|------|------|
 | `"origin"` | 返回任务创建的源头 | 消息平台上的默认选项 |
-| `"local"` | 仅保存到本地文件（`~/.hermes/cron/output/`） | CLI工具的默认选项 |
-| `"telegram"` | 发送到Telegram主频道 | 使用 `TELEGRAM_HOME_CHANNEL` 变量 |
-| `"telegram:123456"` | 按ID发送到特定Telegram聊天窗口 | 直接发送 |
-| `"telegram:-100123:17585"` | 按格式 `chat_id:thread_id` 发送到特定Telegram主题 | |
-| `"discord"` | 发送到Discord主频道 | 使用 `DISCORD_HOME_CHANNEL` 变量 |
-| `"discord:#engineering"` | 按频道名称发送到特定Discord频道 | |
-| `"slack"` | 发送到Slack主频道 | |
-| `"whatsapp"` | 发送到WhatsApp主账号 | |
-| `"signal"` | 发送到Signal应用 | |
-| `"matrix"` | 发送到Matrix主房间 | |
-| `"mattermost"` | 发送到Mattermost主频道 | |
-| `"email"` | 通过邮件发送 | |
-| `"sms"` | 通过Twilio发送短信 | |
-| `"homeassistant"` | 发送到Home Assistant设备 | |
-| `"dingtalk"` | 发送到钉钉 | |
-| `"feishu"` | 发送到飞书/Lark | |
-| `"wecom"` | 发送到企业微信 | |
-| `"weixin"` | 发送到微信 | |
-| `"bluebubbles"` | 发送到BlueBubbles（iMessage） | |
-| `"qqbot"` | 发送到QQ机器人 | |
-| `"all"` | 同时发送到所有已连接的频道 | 在任务执行时动态确定目标 |
-| `"telegram,discord"` | 同时发送到指定的多个频道 | 用逗号分隔的列表 |
-| `"origin,all"` | 先发送到任务创建地，再发送到其他所有已连接频道 | 可组合任意选项 |
+| `"local"` | 仅保存到本地文件（`~/.hermes/cron/output/`） | CLI 的默认选项 |
+| `"telegram"` | Telegram 主频道 | 使用 `TELEGRAM_HOME_CHANNEL` 变量 |
+| `"telegram:123456"` | 按 ID 指定的特定 Telegram 聊天 | 直接发送至该聊天 |
+| `"telegram:-100123:17585"` | 按格式 `chat_id:thread_id` 指定的特定 Telegram 主题 | 发送至对应主题会话 |
+| `"discord"` | Discord 主频道 | 使用 `DISCORD_HOME_CHANNEL` 变量 |
+| `"discord:#engineering"` | 按频道名称指定的特定 Discord 频道 | 发送至指定频道 |
+| `"slack"` | Slack 主频道 |  |
+| `"whatsapp"` | WhatsApp 主账号 |  |
+| `"signal"` | Signal 应用 |  |
+| `"matrix"` | Matrix 主房间 |  |
+| `"mattermost"` | Mattermost 主频道 |  |
+| `"email"` | 邮件 |  |
+| `"sms"` | 通过 Twilio 发送短信 |  |
+| `"homeassistant"` | Home Assistant 系统 |  |
+| `"dingtalk"` | DingTalk 工作台 |  |
+| `"feishu"` | Feishu/Lark 办公平台 |  |
+| `"wecom"` | WeCom 工作台 |  |
+| `"weixin"` | 微信 |  |
+| `"bluebubbles"` | BlueBubbles（iMessage） |  |
+| `"qqbot"` | QQ 客户端（腾讯 QQ） |  |
+| `"all"` | 发送至所有已连接的频道 | 在实际执行时动态确定目标 |
+| `"telegram,discord"` | 发送至指定的多个频道 | 用逗号分隔的列表 |
+| `"origin,all"` | 同时发送至任务源头及所有其他已连接频道 | 可组合任意选项 |
 
-代理的最终响应会自动发送出去，您无需在定时任务提示语中手动调用 `send_message` 函数。
+代理的最终响应会自动发送到配置好的 `deliver:` 目标地址——代理本身不会主动发送消息，因此无需在定时任务提示语中添加任何发送逻辑。
 
 ### 路由意图（`all`）
 
-使用 `all` 选项后，您只需安排一次定时任务，即可将其发送到所有已配置的消息频道，而无需逐一指定频道名称。该选项会在**任务实际执行时**才确定具体目标，因此如果您在设置 `TELEGRAM_HOME_CHANNEL` 之前就创建了任务，那么该任务将在设置完成后的下一个调度周期才开始使用Telegram作为输出渠道。
+使用 `all` 选项后，您只需提交一个定时任务，即可将其发送到所有已配置的消息频道，而无需逐一指定频道名称。该选项会在**实际执行时动态确定目标**，因此，在您设置 `TELEGRAM_HOME_CHANNEL` 之前创建的任务，会在下次调度时才开始通过 Telegram 发送。
 
-语义说明：`all` 会扩展为所有已配置有主频道的平台。即使设置为 `0`，任务也不会产生任何输出目标，且会在系统日志中记录为发送失败。
+语义说明：`all` 会扩展为所有已配置了主频道的平台。即使设置为 `0` 也无妨，此时任务不会产生任何输出目标，系统会将其记录为发送失败。
 
-`all` 选项可与明确的指定目标一起使用。例如，`origin,all` 表示先将任务发送到任务创建地，再发送到其他所有已连接的频道，同时通过 `(平台, 聊天ID, 主题ID)` 组合来避免重复发送。
+`all` 选项可与明确的指定目标共同使用。例如，`origin,all` 表示将消息发送至任务源头频道以及所有其他已连接的频道，同时通过 `(平台, 聊天 ID, 主题 ID)` 的组合来避免重复发送。
 
-### Telegram定时任务主题（`TELEGRAM_CRON_THREAD_ID`）
+### Telegram 定时任务主题（`TELEGRAM_CRON_THREAD_ID`）
 
-当启用Telegram主题模式时，主私信窗口会被保留作为系统大厅——发送到该窗口的回复会收到大厅提示并被拒绝，且 `reply_to_message_id` 信息也会被丢弃，因此您无法回复那些发送到主聊天窗口的定时任务消息。
+当启用 Telegram 主题模式后，根私信对话将被用作系统大厅——发送到该处的回复会被系统拒绝，并附带大厅提醒，同时 `reply_to_message_id` 信息也会被丢弃，因此您无法回复进入主聊天的定时任务消息。
 
-建议将定时任务指向专门的论坛主题：
+建议将定时任务指向专用的论坛主题：
 
-1. 在Telegram中打开机器人的私信窗口，创建一个名为“Cron”之类的主题。长按主题标题 → 选择**复制链接**；链接末尾的数字即为该主题的 `message_thread_id`。
-2. 在您的 `.env` 文件中设置 `TELEGRAM_CRON_THREAD_ID=<该ID>`。
+1. 在 Telegram 中打开机器人的私信对话，创建一个名为“Cron”之类的主题。长按主题标题 → 选择**复制链接**，链接末尾的数字即为该主题的 `message_thread_id`。
+2. 在您的 `.env` 文件中设置 `TELEGRAM_CRON_THREAD_ID=<该 ID>`。
 
-此设置仅适用于定时任务的输出。其他场景下使用的 `TELEGRAM_HOME_CHANNEL_THREAD_ID`（如重启通知）则保持不变。如果明确指定了 `deliver="telegram:chat_id:thread_id"`，则该指定仍会优先于环境变量设置。现在，对定时任务消息的回复会发送到对应的主题会话中，您可以直接对其进行处理。
+此设置仅适用于定时任务的输出发送。其他场景下使用的 `TELEGRAM_HOME_CHANNEL_THREAD_ID`（如重启通知）则保持不变。若明确指定了 `deliver="telegram:chat_id:thread_id"`，则该指定会优先于环境变量设置。现在，对定时任务消息的回复将会发送到对应的主题会话中，您可以直接对其进行处理。
 
 ### 响应格式封装
 
-默认情况下，发送出的定时任务输出会带有标题和页脚，以便接收方能够识别其为定时任务产生的内容：
+默认情况下，发送出的定时任务输出会带有标题和页脚，以便接收方知晓该内容来自定时任务：
 
 ```
 Cronjob Response: Morning feeds
@@ -419,38 +419,38 @@ cronjob(
 
 **工作原理：**
 
-- 当任务 2 被触发时，Hermes 会从 `~/.hermes/cron/output/{job1_id}/*.md` 中读取任务 1 的最新输出内容。
-- 该输出内容会自动添加到任务 2 的提示语开头。
-- 任务 2 无需硬编码“读取此文件”的指令——它可直接将相关内容作为上下文获取。
-- 任务链的长度可任意延伸：任务 1 → 任务 2 → 任务 3 → ...
+- 当作业 2 被触发时，Hermes 会从 `~/.hermes/cron/output/{job1_id}/*.md` 中读取作业 1 的最新输出内容。
+- 该输出内容会自动添加到作业 2 的提示语开头。
+- 作业 2 无需硬编码“读取此文件”的指令，因为相关内容会作为上下文直接提供给它。
+- 任务链的长度可任意延伸：作业 1 → 作业 2 → 作业 3 → ...
 
 **`context_from` 的支持格式：**
 
 | 格式 | 示例 |
 |------|------|
-| 单个任务 ID（字符串） | `context_from="a1b2c3d4"` |
-| 多个任务 ID（列表） | `context_from=["job_a", "job_b"]` |
+| 单个作业 ID（字符串） | `context_from="a1b2c3d4"` |
+| 多个作业 ID（列表） | `context_from=["job_a", "job_b"]` |
 
-输出内容将按照列出的顺序进行拼接。
+输出内容将按照列出的顺序依次拼接。
 
 **适用场景：**
 
 - 多阶段处理流程（收集 → 过滤 → 格式化 → 交付）
-- 各步骤之间存在依赖关系的任务（第 N 步的工作依赖于第 N-1 步的输出）
-- 需要某个任务汇总其他多个任务结果的扩展/汇聚型架构
+- 依赖型任务，即第 N 步的工作依赖于第 N-1 步的输出结果
+- 发散/汇聚型架构，即某个作业需要汇总其他多个作业的处理结果
 
 ## 提供商故障恢复机制
 
-定时任务会继承您配置的备用提供商以及凭证池轮换机制。如果主 API 密钥出现速率限制，或对应提供商返回错误，定时任务代理可以：
+定时作业会继承您配置的备用提供商以及凭证池轮换机制。如果主 API 密钥出现速率限制，或对应提供商返回错误，定时任务代理可以：
 
 - 如果在 `config.yaml` 中配置了 `fallback_providers`（或旧版的 `fallback_model`），则自动切换到备用提供商。
 - 对于同一提供商，自动切换到 [凭证池](/user-guide/configuration#credential-pool-strategies) 中的下一组凭证。
 
-这意味着高频运行或在高峰时段执行的定时任务具备更强的容错能力——单个出现速率限制的密钥不会导致整个任务执行失败。
+这意味着高频运行或在业务高峰时段执行的定时作业具备更强的容错能力——单个出现速率限制的密钥不会导致整个任务失败。
 
 ## 时间调度格式
 
-代理的最终响应会自动发送——您无需在针对同一目标地址的定时任务提示语中再添加 `send_message` 指令。如果定时任务调用了 `send_message` 但目标地址正是调度器已计划发送内容的地址，Hermes 会跳过重复发送操作，而是要求模型将面向用户的内容放入最终响应中。仅当需要发送到其他额外地址或不同地址时，才使用 `send_message`。
+代理的最终响应会自动发送到该作业所指定的 `deliver:` 目标地址。由于代理不再直接发送消息，因此面向用户的内容会直接包含在最终响应中。若需将内容发送到**其他或不同的**目标地址，可在定时作业中列出多个 `deliver:` 目标（用逗号分隔，例如 `deliver: "telegram,discord"`），而非让代理分别发送。
 
 ### 相对延迟（单次执行）
 
