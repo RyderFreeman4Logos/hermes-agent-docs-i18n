@@ -226,12 +226,14 @@ uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
 
-手动克隆备用方案（适用于一次性克隆场景或 CI 环境，即在那些您明确不希望采用托管安装结构的情形下）：
+手动克隆回退方案（适用于临时克隆或 CI 环境，即那些您明确不希望采用托管安装结构的场景）：
+
+请在已克隆的源代码目录之外创建虚拟环境——因为代理程序在其运行的目录内创建的虚拟环境，可能会被该代理针对自身下载的代码所执行的相对路径命令清除，从而导致会话进行到一半时运行时的环境被破坏。
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv venv .venv --python 3.11
-source .venv/bin/activate
+uv venv ~/.hermes/venvs/hermes-dev --python 3.11
+source ~/.hermes/venvs/hermes-dev/bin/activate
 uv pip install -e ".[all,dev]"
 scripts/run_tests.sh
 ```
