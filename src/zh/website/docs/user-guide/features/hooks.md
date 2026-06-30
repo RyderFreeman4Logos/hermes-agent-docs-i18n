@@ -369,10 +369,10 @@ def register(ctx):
 
 **所有钩子的通用规则：**
 
-- 回调函数接收**关键字参数**。为确保向后兼容性，始终应接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
-- 如果某个回调发生**崩溃**，系统会将其记录并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体崩溃。
-- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具调用，而 [`pre_llm_call`](#pre_llm_call) 可以在向大语言模型发起请求时**注入上下文**。其余所有钩子均为仅触发即忽略的观察者。
-- 观察者回调函数会自动接收 `telemetry_schema_version` 参数。若该参数存在，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可解析的标识符，无需解析其字符串格式。
+- 回调函数接收**关键字参数**。为确保向后兼容，务必接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
+- 如果某个回调函数发生**崩溃**，系统会将其记录下来并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体崩溃。
+- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具调用，而 [`pre_llm_call`](#pre_llm_call) 可以向 LLM 调用中**注入上下文**。其余所有钩子均为仅执行一次即忽略的观察者。
+- 观察者回调函数会自动接收到 `telemetry_schema_version` 参数。若该参数存在，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可识别的标识符，无需解析其字符串格式。
 
 ### 快速参考表
 
@@ -382,24 +382,25 @@ def register(ctx):
 | [`post_tool_call`](#post_tool_call) | 任何工具返回之后 | 被忽略 |
 | [`pre_llm_call`](#pre_llm_call) | 每轮对话中，在工具调用循环之前仅触发一次 | `{"context": str}`，用于在用户消息前添加上下文 |
 | [`post_llm_call`](#post_llm_call) | 每轮对话中，在工具调用循环之后仅触发一次 | 被忽略 |
+| [`pre_verify`](#pre_verify) | 智能体编辑代码后、进行验证或完成工作之前，每轮对话中触发一次 | `{"action": "continue", "message": str}`，用于继续执行 |
 | [`on_session_start`](#on_session_start) | 创建新会话时（仅第一轮对话） | 被忽略 |
 | [`on_session_end`](#on_session_end) | 会话结束时 | 被忽略 |
-| [`on_session_finalize`](#on_session_finalize) | CLI或网关终止当前会话时（用于刷新、保存数据或统计信息） | 被忽略 |
-| [`on_session_reset`](#on_session_reset) | 网关更换新的会话密钥时（例如通过 `/new` 或 `/reset` 指令） | 被忽略 |
-| [`subagent_start`](#subagent_start) | 已创建待运行的 `delegate_task` 子智能体时 | 被忽略 |
-| [`subagent_stop`](#subagent_stop) | `delegate_task` 子智能体已退出时 | 被忽略 |
-| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | 网关收到用户消息后，在进行身份验证和任务分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程走向 |
-| [`pre_approval_request`](#pre_approval_request) | 需要用户批准的危险指令在发送提示或通知之前 | 被忽略 |
-| [`post_approval_response`](#post_approval_response) | 用户对批准提示作出响应（或超时）时 | 被忽略 |
-| [`transform_tool_result`](#transform_tool_result) | 任何工具返回之后，在将结果传递给模型之前 | `str`，用于替换结果；`None`，表示保持原样 |
-| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，于内容截断、ANSI编码移除或敏感信息遮蔽之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
-| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后，在最终响应返回给用户之前 | `str`，用于替换响应文本；`None` 或空字符串，表示保持原样 |
+| [`on_session_finalize`](#on_session_finalize) | CLI/gateway 销毁正在使用的会话时（如刷新、保存数据或生成统计信息） | 被忽略 |
+| [`on_session_reset`](#on_session_reset) | Gateway 更换新的会话密钥时（例如通过 `/new` 或 `/reset` 指令） | 被忽略 |
+| [`subagent_start`](#subagent_start) | 已创建 `delegate_task` 子任务并即将运行时 | 被忽略 |
+| [`subagent_stop`](#subagent_stop) | `delegate_task` 子任务已退出时 | 被忽略 |
+| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | Gateway 收到用户消息后、进行身份验证和任务分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程 |
+| [`pre_approval_request`](#pre_approval_request) | 需要用户批准的危险命令在发送提示或通知之前 | 被忽略 |
+| [`post_approval_response`](#post_approval_response) | 用户对审批提示作出响应（或超时）时 | 被忽略 |
+| [`transform_tool_result`](#transform_tool_result) | 任何工具返回之后、结果传递给模型之前 | `str`，用于替换结果；`None`，表示保持原样 |
+| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，数据被截断、去除 ANSI 格式或进行屏蔽之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
+| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后、最终响应发送之前 | `str`，用于替换响应文本；`None`/空字符串，表示保持原样 |
 
 ---
 
 ### `pre_tool_call`
 
-在**每次工具执行之前立即触发**——无论是内置工具还是插件提供的工具。
+在**每次工具执行之前立即触发**——无论是内置工具还是插件提供的工具均适用。
 
 **回调函数签名：**
 
@@ -644,9 +645,74 @@ def register(ctx):
     ctx.register_hook("post_llm_call", log_response_length)
 ```
 
+### `pre_verify`
+
+该钩子在**智能体每次编辑代码后、完成编辑之前**触发一次（位于内置的“停止时验证”机制之后）。它属于用户/插件策略控制机制：回调函数可以决定让智能体继续执行——比如进行进一步检查、暂缓处理或整理差异内容——而非让其直接停止。
+
+Hermes 中预置的验证提示并非默认的 `pre_verify` 钩子。仅在编辑的代码缺乏最新的验证证据时，它才会作为基于证据的“停止时验证”提示的补充，因此不会产生第二个默认的继续执行路径。如需保持内置的简洁提示，可设置 `agent.verify_guidance: false`。
+
+**回调函数签名：**
+
+```python
+def my_callback(session_id: str, platform: str, model: str, coding: bool,
+                attempt: int, final_response: str, changed_paths: list, **kwargs):
+```
+
+| 参数 | 类型 | 描述 |
+|-----------|------|-------------|
+| `session_id` | `str` | 当前会话的唯一标识符 |
+| `platform` | `str` | 会话运行的平台（如 `"cli"`、`"telegram"` 等） |
+| `model` | `str` | 模型标识符 |
+| `coding` | `bool` | 当前轮次是否处于编码模式（即在代码工作区中）——可基于此参数限定钩子的作用范围 |
+| `attempt` | `int` | 该轮次已被触发过的次数（首次为 0）——可用于实现自我节流 |
+| `final_response` | `str` | 智能体即将给出的答案 |
+| `changed_paths` | `list` | 智能体在当前轮次中修改过的文件列表（已排序，且始终非空） |
+
+可通过检查 `coding` 参数将钩子的作用范围限定在编码场景中，并利用 `attempt` 参数实现单次触发机制（shell 钩子会同时读取 `.extra` 文件中的这两个参数），这与基于 `tool_name` 限定的 `pre_tool_call` 钩子的工作方式相同——因此你可以注册多个 `pre_verify` 钩子，让它们仅在对应场景下被触发。
+
+**触发时机：** 在 `agent/conversation_loop.py` 文件中，即智能体准备接受最终答案、完成停止前验证之后的时刻——但仅限于当前轮次智能体确实修改了代码且已注册了至少一个 `pre_verify` 钩子的情形。
+
+**返回值——用于让智能体继续运行：**
+
+```python
+return {"action": "continue", "message": "Run the formatter on your changes, then finish."}
+```
+
+`message` 会被作为一条虚拟用户轮次附加到对话中，随后循环会再次启动。Claude-Code 的停止指令格式（`{"decision": "block", "reason": "..."}`，其中“阻止停止”意味着*继续执行*）也同样有效。若指令不包含任何消息或其他返回值，则该轮次将结束。
+
+**限制机制：** 单次轮次中连续的“继续”指令数量受 `agent.max_verify_nudges`（默认值为 3）的限制，因此那些始终要求继续执行的钩子函数永远无法使循环陷入死循环。在代理被多次提示时，尝试生成的答案会被保存在历史记录中，但不会显示给用户。
+
+**确保操作可重试：** 由于钩子函数会在每次提示后重新触发，因此应在 `attempt` 条件上设置判断（`if attempt: return None`）；否则它将不断发送提示，直到达到数量上限为止。
+
+**应用场景：** 在创意迭代过程中暂缓执行测试或代码检查；要求某些路径必须通过验证；在生成变更日志条目之前阻止任务标记为“已完成”；运行针对特定项目的验证清单。
+
+**示例——在创意界面开发阶段暂缓检查，采用限定范围+单次执行的模式：**
+
+```python
+UI = (".tsx", ".jsx", ".css", ".scss")
+
+def defer_ui_checks(coding, attempt, changed_paths, **kwargs):
+    if attempt or not coding:
+        return None  # one-shot, coding only
+    if not all(p.endswith(UI) for p in changed_paths):
+        return None  # only pure-UI edits
+    return {
+        "action": "continue",
+        "message": "This is UI work — don't run tests/lints yet; ask the user to "
+                   "eyeball it first, and clean the diff before any commit.",
+    }
+
+def register(ctx):
+    ctx.register_hook("pre_verify", defer_ui_checks)
+```
+
+如需持续性的指导以优化内置的“证据缺失提示”功能，可使用 `agent.verify_guidance`。而对于那些无需通过验证机制来强制执行的更广泛的编码规范，建议在 `config.yaml` 中使用 `agent.coding_instructions` —— 该功能会随编码任务一同执行，且不会额外占用推理轮次。
+
+---
+
 ### `on_session_start`
 
-在创建一个全新的会话时触发**一次**。在会话继续进行时（即用户在现有会话中发送第二条消息时）**不会**触发。
+在创建全新会话时**仅触发一次**。当用户在现有会话中发送第二条消息进行会话续接时，**不会**再次触发。
 
 **回调函数签名：**
 
@@ -1263,6 +1329,10 @@ hooks_auto_accept: false         # See "Consent model" below
 
 // Inject context for pre_llm_call:
 {"context": "Today is Friday, 2026-04-17"}
+
+// Keep the agent going at the verify gate (pre_verify); both shapes accepted:
+{"action": "continue", "message": "Run the formatter, then finish."}
+{"decision": "block",  "reason":  "Run the formatter, then finish."}
 
 // Silent no-op — any empty / non-matching output is fine:
 ```
