@@ -566,13 +566,28 @@ gateway:
       # gateway_restart_notification omitted → defaults to true
 ```
 
-在噪音较大或优先级较低的平台上可将其关闭，而在主要聊天场景中则保持开启状态。无论当前有多少会话正在运行，该通知都会在每次重启时发送一次。
+在噪音较大或优先级较低的平台上可将其关闭，而在主要聊天平台则应保持开启状态。无论同时进行多少个会话，该通知都将在每次重启时发送一次。
+
+### 输入中状态指示
+
+当智能体正在处理消息时，支持该功能的平台会显示实时的输入中状态——在 Telegram/Discord/Signal 上表现为“正在输入…”的提示气泡，而在 Slack 上则显示为“正在思考…”的助手状态。这一功能可通过 `gateway-config.yaml` 文件中的 `typing_indicator` 参数按平台进行控制，其默认值为 `true`：
+
+```yaml
+gateway:
+  platforms:
+    slack:
+      typing_indicator: false   # don't show "is thinking…" on Slack
+    telegram:
+      # typing_indicator omitted → defaults to true
+```
+
+在不需要显示该指示器的任何平台上，均可将 `typing_indicator: false` 设置为该值。部分用户认为 Slack 的“正在思考中”状态过于烦人（由于它使用了 Slack 的 Assistant API，该状态显示时还会暂时禁用输入框）。关闭此功能仅能隐藏指示器，消息发送及其他功能均保持不变。由于该参数具有通用性，因此所有平台都适用相同的键名。
 
 ### 网关重启后的会话恢复
 
-当网关在某个工具调用或内容生成正在进行时关闭，受影响的会话会被标记为 `restart_interrupted`。下次启动时，网关会为每个此类会话安排自动恢复——用户会在聊天界面收到简短提示（“重启后请发送任意消息，我会尝试从您上次停下的地方继续。”），随后会话将从对方回复的最后一个已保存轮次处继续。
+当网关在处理中的工具调用或生成任务时意外关闭，相关会话会被标记为 `restart_interrupted` 状态。下次启动时，网关会为每个受影响的会话安排自动恢复——用户会在聊天中收到简短提示（“重启后请发送任意消息，我会尝试从您中断的地方继续处理”），随后会话会从对方上次回复的内容处继续。
 
-此功能默认处于开启状态，并会在网关启动时进行日志记录：
+此功能默认处于开启状态，并会在网关启动时记录相关日志：
 
 ```
 Scheduled auto-resume for N restart-interrupted session(s)
