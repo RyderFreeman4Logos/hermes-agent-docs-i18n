@@ -172,79 +172,81 @@ import requests, json
 # Print summary to stdout — agent analyzes and reports
 ```
 
-脚本的超时时间默认为120秒。`_get_script_timeout()`函数通过三层机制来确定这一限制值：
+脚本的超时时间默认为3600秒（1小时）。`_get_script_timeout()`函数通过三层机制来确定这一限制：
 
 1. **模块级覆盖** — `_SCRIPT_TIMEOUT`（用于测试或monkeypatch操作）。仅当该值与默认值不同时才会生效。
 2. **环境变量** — `HERMES_CRON_SCRIPT_TIMEOUT`
 3. **配置文件** — `config.yaml`中的`cron.script_timeout_seconds`项（通过`load_config()`函数读取）
-4. **默认值** — 120秒
+4. **默认值** — 3600秒（1小时）
 
-### 备用提供者机制
+此超时限制仅适用于**运行前的脚本**，而不影响整个Agent。基于技能或LLM驱动的任务则遵循独立的“空闲时间”预算机制（`HERMES_CRON_TIMEOUT`，默认为空闲600秒，`0`表示无限制）——只要这些任务持续调用工具或传输Token，就可以运行数小时；只有当在设定空闲期后仍无任何活动时，才会被终止。脚本会被发送到持久化的线程池中处理（不会被tick锁占用），因此长时间运行的脚本不会阻碍其他待处理任务的执行。
 
-`run_job()`函数会将用户配置的备用提供者及凭证池传递给`AIAgent`实例：
+### 提供商恢复机制
 
-- **备用提供者** — 从`config.yaml`中读取`fallback_providers`（列表形式）或`fallback_model`（旧版字典形式），其格式与网关的`_load_fallback_model()`函数要求一致。这些参数会以`fallback_model=`的形式传递给`AIAgent.__init__`方法，该方法会将两种格式统一处理为备用提供者链。
-- **凭证池** — 通过`load_pool(provider)`函数，根据已确定的运行时提供者名称从`agent.credential_pool`中加载凭证池。仅当凭证池中存在有效凭证（即`pool.has_credentials()`返回真值）时才会传递该凭证池。此机制可在遇到429限流错误时实现同一提供者下的密钥轮换。
+`run_job()`函数会将用户配置的备用提供商和凭证池传递给`AIAgent`实例：
 
-这一设计与网关的行为保持一致——若没有该机制，定时任务在遇到限流时会直接失败而无法尝试恢复。
+- **备用提供商** — 从`config.yaml`中读取`fallback_providers`（列表形式）或`fallback_model`（旧版字典形式），其格式与网关的`_load_fallback_model()`函数要求一致。这些参数会以`fallback_model=`的形式传递给`AIAgent.__init__`方法，该方法会将两种格式统一转换为备用提供商链。
+- **凭证池** — 使用已确定的运行时提供商名称，通过`agent.credential_pool`中的`load_pool(provider)`函数加载凭证池。仅当凭证池中存在有效凭证（`pool.has_credentials()`返回True）时才会传递该凭证池。此机制可在遇到429限流错误时实现同一提供商的密钥轮换。
 
-## 交付方式
+这一设计与网关的行为一致——若没有该机制，Cron Agent在遇到限流时会直接失败而无法尝试恢复。
 
-定时任务的执行结果可发送到任何支持的目标平台。
+## 交付模式
 
-仅输入平台名称（如`slack`、`telegram`等）即可将结果发送到该平台配置的**主频道**。若需指定**特定**目标，则可在名称后加上冒号并注明目标地址，格式为`platform:<target>`。目标地址会在任务执行时才进行解析（而非创建任务时），因此即使某个平台尚未连接，任务仍可指定其目标地址，待平台上线后再开始发送结果。
+Cron任务的执行结果可以发送到任何支持的平台。
+
+仅输入平台名称（如`slack`、`telegram`等）即可将结果发送到该平台配置的**主频道**。若需指定**特定**目标，则需在名称后加上冒号并跟上目标地址，格式为`platform:<target>`。目标地址会在任务执行时才被确定（而非创建任务时），因此即使某个平台尚未连接，任务也可以指定其未来的目标地址，待平台上线后再开始发送结果。
 
 大多数平台还支持第三个参数，即线程或主题标识：`platform:<chat_id>:<thread_id>`。
 
-| 目标类型 | 语法格式 | 示例 |
-|----------|----------|------|
-| 原始聊天窗口 | `origin` | 将结果发送到创建任务的聊天窗口 |
+| 目标类型 | 语法 | 示例 |
+|----------|------|------|
+| 原始聊天频道 | `origin` | 将结果发送到任务创建时的聊天频道 |
 | 本地文件 | `local` | 保存到`~/.hermes/cron/output/`目录 |
 | Telegram | `telegram`、`telegram:<chat_id>`、`telegram:<chat_id>:<thread_id>`、`telegram:@username` | `telegram:-1001234567890:17585` |
 | Discord | `discord`、`discord:#channel`、`discord:<channel_id>`、`discord:<channel_id>:<thread_id>` | `discord:#engineering` |
 | Slack | `slack`、`slack:#channel`、`slack:<channel_id>`、`slack:<channel_id>:<thread_ts>` | `slack:#engineering` |
 | Matrix | `matrix`、`matrix:<!room_id:server>`、`matrix:<@user:server>` | `matrix:!abc123:example.org` |
-| 飞书 | `feishu`、`feishu:<chat_id>`、`feishu:<chat_id>:<thread_id>` | `feishu:oc_abc123def` |
+| Feishu | `feishu`、`feishu:<chat_id>`、`feishu:<chat_id>:<thread_id>` | `feishu:oc_abc123def` |
 | WhatsApp | `whatsapp`、`whatsapp:<jid>`、`whatsapp:+<E.164>` | `whatsapp:123456@g.us` |
 | Signal | `signal`、`signal:group:<id>`、`signal:+<E.164>` | `signal:group:aBcD==` |
-| 短信 | `sms`、`sms:+<E.164>` | `sms:+<E.164 number>` |
+| SMS | `sms`、`sms:+<E.164>` | `sms:+<E.164 number>` |
 | 邮件 | `email`、`email:<address>` | `email:alerts@example.com` |
 | 微信 | `weixin`、`weixin:<wxid>` | `weixin:wxid_abc123` |
 | Mattermost | `mattermost`或`mattermost:<channel_id>` | 仅输入名称则发送到Mattermost主频道 |
 | Home Assistant | `homeassistant`或`homeassistant:<conversation>` | 仅输入名称则发送到HA对话窗口 |
-| 钉钉 | `dingtalk`或`dingtalk:<chat_id>` | 仅输入名称则发送到钉钉 |
+| 企业微信 | `dingtalk`或`dingtalk:<chat_id>` | 仅输入名称则发送到企业微信 |
 | 微信工作台 | `wecom`或`wecom:<chat_id>` | 仅输入名称则发送到微信工作台 |
 | BlueBubbles | `bluebubbles`或`bluebubbles:<chat_guid>` | 仅输入名称则通过BlueBubbles发送到iMessage |
-| QQ机器人 | `qqbot`或`qqbot:<chat_id>` | 仅输入名称则通过腾讯官方API v2发送到QQ |
+| QQ机器人 | `qqbot`或`qqbot:<chat_id>` | 仅输入名称则通过官方API v2发送到QQ（腾讯） |
 
-第一组平台拥有明确且经过验证的目标地址语法——包括带名称的频道（如`#channel`）、主题/线程、房间/用户ID、群组ID或电话号码。其余平台则支持通用的`platform:<chat_id>`格式（冒号后的值将直接作为目标ID使用）；仅输入平台名称则始终发送到该平台的主频道。
+第一组平台拥有明确且经过验证的目标地址语法——包括带名称的频道（如`#channel`）、主题/线程、房间/用户ID、群组ID或电话号码。其余平台则支持通用的`platform:<chat_id>`格式（冒号后的内容将直接作为目标ID使用）；仅输入平台名称则始终会发送到该平台的主频道。
 
-**带名称的频道**（如`slack:#engineering`、`discord:#engineering`，或类似`slack:engineering`的友好名称）会依据网关从已连接的适配器中构建的频道目录进行解析，因此网关必须已发现该频道才能完成名称解析；而纯数字ID（如`slack:C0123ABCD45`）则始终有效。
+**带名称的频道**（如`slack:#engineering`、`discord:#engineering`，或是类似`slack:engineering`的友好名称）会根据网关从已连接的适配器中构建的频道目录进行解析，因此只有当网关已发现该频道时，名称解析才能成功；而直接使用原始ID（如`slack:C0123ABCD45`）则始终有效。
 
-对于**Telegram主题**，应使用`telegram:<chat_id>:<thread_id>`格式（例如`telegram:-1001234567890:17585`）。**Slack线程**的第三个参数为父消息的`thread_ts`值（例如`slack:C0123ABCD45:1700000000.000100`），因此该格式仅适用于在现有消息下回复时使用。
+对于**Telegram主题**，应使用`telegram:<chat_id>:<thread_id>`格式（例如`telegram:-1001234567890:17585`）。对于**Slack线程**，第三个参数为父消息的`thread_ts`值（例如`slack:C0123ABCD45:1700000000.000100`），因此该格式仅适用于在现有消息下回复时的场景。
 
 ### 响应封装
 
-默认情况下（即`cron.wrap_response: true`），定时任务的结果会被封装为包含以下内容的格式：
-- 一个用于标识定时任务名称及具体任务的头部信息
-- 一个底部说明，指出代理无法在对话中查看已发送的消息
+默认情况下（`cron.wrap_response: true`），Cron任务的响应会被封装为包含以下内容的格式：
+- 一个标题，用于标识Cron任务名称及具体任务
+- 一个页脚，说明Agent无法在对话中查看已发送的消息
 
-若在定时任务响应前添加 `[SILENT]` 前缀，则可完全禁止结果发送——这适用于仅需向文件写入数据或执行其他副作用的任务。
+若Cron响应前缀为`[SILENT]`，则表示完全不发送响应——这非常适合那些仅需向文件写入数据或执行其他副作用的任务。
 
 ### 会话隔离
 
-定时任务的结果不会被记录到网关的会话对话历史中，仅存在于该定时任务自身的会话中。这一设计可避免目标聊天窗口中的对话出现消息顺序混乱的问题。
+Cron任务的执行结果不会被记录到网关的会话对话历史中。它们仅存在于该Cron任务自身的会话中。这样可以避免目标聊天频道中的对话出现消息顺序混乱的问题。
 
 ## 递归防护机制
 
-运行定时任务的会话中会禁用`cronjob`工具集。此举可防止：
-- 定时任务自行创建新的定时任务
-- 导致令牌消耗激增的递归调度行为
-- 在任务内部意外修改任务调度设置
+运行在Cron模式下的会话会禁用`cronjob`工具集。这一措施可防止：
+- 定时任务创建新的Cron任务
+- 导致Token消耗激增的递归调度行为
+- 在任务内部意外修改任务调度计划
 
 ## 锁定机制
 
-调度器会使用跨进程的基于文件的锁定机制（Unix系统使用`fcntl.flock`，Windows系统使用`msvcrt.locking`）来确保同一批待处理任务不会被重复执行——即便是在网关的进程内定时器与独立的`hermes cron`命令或手动调用的`tick()`函数之间也是如此。如果无法获取锁定，`tick()`函数会立即返回0。
+调度器采用跨进程的基于文件的锁定机制（Unix系统使用`fcntl.flock`，Windows系统使用`msvcrt.locking`）来确保不会有多个tick同时执行同一批待处理任务——即便是在网关的进程内计时器与独立的`hermes cron`命令或手动调用的`tick()`函数之间也是如此。如果无法获取锁，`tick()`函数会立即返回0。
 
 ## CLI接口
 
