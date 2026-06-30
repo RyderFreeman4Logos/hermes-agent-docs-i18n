@@ -60,17 +60,20 @@ git checkout -b fix/description
 scripts/run_tests.sh
 ```
 
-### 手动克隆回退方案
+### 手动克隆作为备用方案
 
-仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方法（例如在容器或 CI 任务中使用的临时克隆项目）。若选择这种方式进行安装，请务必从该虚拟环境内运行 `hermes` 入口程序；否则，直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入无关的系统 Python 包。
+仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方式（例如在容器或 CI 任务中使用的临时克隆目录）。若选择这种方式安装，请务必从该虚拟环境运行 `hermes` 入口程序；直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入与当前项目无关的系统级 Python 包。
+
+请在**已克隆的源代码目录之外**创建虚拟环境。如果虚拟环境位于代理程序运行的目录内，代理程序可能会对其自身下载的代码执行相对路径指令（如 `rm -rf venv`、`uv venv venv` 等），从而直接删除该虚拟环境，导致正在运行的进程在会话中途意外终止。将虚拟环境置于源代码目录之外，可避免工作区中的任何相对路径指向它。
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
 cd hermes-agent
 
-# Create venv with Python 3.11
-uv venv venv --python 3.11
-export VIRTUAL_ENV="$(pwd)/venv"
+# Create venv with Python 3.11, OUTSIDE the source tree
+uv venv ~/.hermes/venvs/hermes-dev --python 3.11
+export VIRTUAL_ENV="$HOME/.hermes/venvs/hermes-dev"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install with all extras (messaging, cron, CLI menus, dev tools)
 uv pip install -e ".[all,dev]"
