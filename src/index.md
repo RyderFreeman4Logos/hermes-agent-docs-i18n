@@ -3,9 +3,9 @@
 This mdBook mirrors Hermes Agent documentation in English and Simplified Chinese.
 
 - Source tree: `/home/obj/.hermes/hermes-agent`
-- Tracked source documents: 1082
-- Source bytes: 14,122,876
-- Chinese pages currently present: 1073
+- Tracked source documents: 1083
+- Source bytes: 14,136,472
+- Chinese pages currently present: 1074
 - Translator: `hymt` with local `Hy-MT2-7B.i1-Q6_K.gguf`
 - Update policy: changed files are detected by SHA-256 and translated incrementally.
 
