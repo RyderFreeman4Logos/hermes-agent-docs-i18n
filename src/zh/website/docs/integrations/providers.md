@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # AI 提供商
 
-本页面介绍了如何为 Hermes Agent 配置推理供应商——涵盖从 OpenRouter、Anthropic 等云 API，到 Ollama、vLLM 等自托管端点，以及高级路由与回退配置等内容。要使用 Hermes，至少需要配置一个供应商。
+本页面介绍了如何为 Hermes Agent 配置推理供应商——涵盖从 OpenRouter 和 Anthropic 等云 API，到 Ollama 和 vLLM 等自托管端点，以及高级路由与回退配置等内容。要使用 Hermes，至少需要配置一个供应商。
 
 ## 推理供应商
 
@@ -18,40 +18,41 @@ sidebar_position: 1
 | **OpenAI Codex** | 使用 `hermes model`（通过 ChatGPT OAuth 访问，使用 Codex 模型） |
 | **GitHub Copilot** | 使用 `hermes model`（通过 OAuth 设备代码流程，需提供 `COPILOT_GITHUB_TOKEN`、`GH_TOKEN` 或 `gh auth token`） |
 | **GitHub Copilot ACP** | 使用 `hermes model`（会在本地启动 `copilot --acp --stdio`） |
-| **Anthropic** | 使用 `hermes model`（通过 OAuth 获取 Claude Max 及额外使用额度；也支持使用 Anthropic API 密钥或手动设置的令牌——详见下方说明） |
+| **Anthropic** | 使用 `hermes model`（Claude Max 模型，可通过 OAuth 获取额外使用额度；也支持使用 Anthropic API 密钥或手动设置的令牌——详见下方说明） |
 | **OpenRouter** | 在 `~/.hermes/.env` 文件中设置 `OPENROUTER_API_KEY` |
-| **NovitaAI** | 在 `~/.hermes/.env` 文件中设置 `NOVITA_API_KEY`（供应商名称为 `novita`，提供 200 多种模型，支持 Model API、Agent Sandbox 和 GPU Cloud 功能） |
+| **NovitaAI** | 在 `~/.hermes/.env` 文件中设置 `NOVITA_API_KEY`（供应商名称为 `novita`，提供 200 多种模型，还支持 Model API、Agent Sandbox 和 GPU Cloud 功能） |
 | **z.ai / GLM** | 在 `~/.hermes/.env` 文件中设置 `GLM_API_KEY`（供应商名称为 `zai`） |
 | **Kimi / Moonshot** | 在 `~/.hermes/.env` 文件中设置 `KIMI_API_KEY`（供应商名称为 `kimi-coding`） |
-| **Kimi / Moonshot（中国版）** | 在 `~/.hermes/.env` 文件中设置 `KIMI_CN_API_KEY`（供应商名称为 `kimi-coding-cn`；别名包括 `kimi-cn`、`moonshot-cn`） |
-| **Arcee AI** | 在 `~/.hermes/.env` 文件中设置 `ARCEEAI_API_KEY`（供应商名称为 `arcee`；别名包括 `arcee-ai`、`arceeai`） |
-| **GMI Cloud** | 在 `~/.hermes/.env` 文件中设置 `GMI_API_KEY`（供应商名称为 `gmi`；别名包括 `gmi-cloud`、`gmicloud`） |
+| **Kimi / Moonshot（中国版）** | 在 `~/.hermes/.env` 文件中设置 `KIMI_CN_API_KEY`（供应商名称为 `kimi-coding-cn`；别名有 `kimi-cn`、`moonshot-cn`） |
+| **Arcee AI** | 在 `~/.hermes/.env` 文件中设置 `ARCEEAI_API_KEY`（供应商名称为 `arcee`；别名有 `arcee-ai`、`arceeai`） |
+| **GMI Cloud** | 在 `~/.hermes/.env` 文件中设置 `GMI_API_KEY`（供应商名称为 `gmi`；别名有 `gmi-cloud`、`gmicloud`） |
 | **MiniMax** | 在 `~/.hermes/.env` 文件中设置 `MINIMAX_API_KEY`（供应商名称为 `minimax`） |
 | **MiniMax 中国版** | 在 `~/.hermes/.env` 文件中设置 `MINIMAX_CN_API_KEY`（供应商名称为 `minimax-cn`） |
 | **xAI (Grok) — Responses API** | 在 `~/.hermes/.env` 文件中设置 `XAI_API_KEY`（供应商名称为 `xai`） |
 | **xAI Grok OAuth (SuperGrok)** | 通过 `hermes model` 选择“xAI Grok OAuth (SuperGrok / Premium+)”选项，使用浏览器登录，无需 API 密钥。详情请参阅 [指南](../guides/xai-grok-oauth.md) |
 | **Qwen Cloud（阿里巴巴 DashScope）** | 在 `~/.hermes/.env` 文件中设置 `DASHSCOPE_API_KEY`（供应商名称为 `alibaba`） |
-| **阿里云（编码套餐）** | 需设置 `DASHSCOPE_API_KEY`（供应商名称为 `alibaba-coding-plan`，别名为 `alibaba_coding`）——该服务采用独立的计费方案，端点也有所不同 |
+| **阿里云（编程套餐）** | 需设置 `DASHSCOPE_API_KEY`（供应商名称为 `alibaba-coding-plan`，别名为 `alibaba_coding`）——该套餐有独立的计费方式及不同的端点地址 |
 | **Kilo Code** | 在 `~/.hermes/.env` 文件中设置 `KILOCODE_API_KEY`（供应商名称为 `kilocode`） |
-| **小米 MiMo** | 在 `~/.hermes/.env` 文件中设置 `XIAOMI_API_KEY`（供应商名称为 `xiaomi`；别名包括 `mimo`、`xiaomi-mimo`） |
-| **腾讯 TokenHub** | 在 `~/.hermes/.env` 文件中设置 `TOKENHUB_API_KEY`（供应商名称为 `tencent-tokenhub`；别名包括 `tencent`、`tokenhub`、`tencentmaas`） |
+| **小米 MiMo** | 在 `~/.hermes/.env` 文件中设置 `XIAOMI_API_KEY`（供应商名称为 `xiaomi`；别名有 `mimo`、`xiaomi-mimo`） |
+| **腾讯 TokenHub** | 在 `~/.hermes/.env` 文件中设置 `TOKENHUB_API_KEY`（供应商名称为 `tencent-tokenhub`；别名有 `tencent`、`tokenhub`、`tencentmaas`） |
 | **OpenCode Zen** | 在 `~/.hermes/.env` 文件中设置 `OPENCODE_ZEN_API_KEY`（供应商名称为 `opencode-zen`） |
 | **OpenCode Go** | 在 `~/.hermes/.env` 文件中设置 `OPENCODE_GO_API_KEY`（供应商名称为 `opencode-go`） |
 | **DeepSeek** | 在 `~/.hermes/.env` 文件中设置 `DEEPSEEK_API_KEY`（供应商名称为 `deepseek`） |
-| **Hugging Face** | 在 `~/.hermes/.env` 文件中设置 `HF_TOKEN`（供应商名称为 `huggingface`；别名包括 `hf`） |
+| **Hugging Face** | 在 `~/.hermes/.env` 文件中设置 `HF_TOKEN`（供应商名称为 `huggingface`；别名有 `hf`） |
 | **Google / Gemini** | 在 `~/.hermes/.env` 文件中设置 `GOOGLE_API_KEY`（或 `GEMINI_API_KEY`）（供应商名称为 `gemini`） |
+| **Google Vertex AI** | 通过 `hermes model` 选择“Google Vertex AI”选项（供应商名称为 `vertex`；通过服务账户 JSON 或 ADC 实现 OAuth2 认证，费用按 GCP 计费方式收取） |
 | **OpenAI API（直接连接）** | 在 `~/.hermes/.env` 文件中设置 `OPENAI_API_KEY`（供应商名称为 `openai-api`，可选参数为 `OPENAI_BASE_URL`） |
-| **Azure AI Foundry** | 通过 `hermes model` 选择“Azure AI Foundry”选项（供应商名称为 `azure-foundry`；使用 Azure OpenAI / Foundry 的端点及密钥） |
-| **AWS Bedrock** | 通过 `hermes model` 选择“AWS Bedrock”选项（供应商名称为 `bedrock`；通过 boto3 使用标准的 AWS 凭据链） |
-| **NVIDIA Build** | 在 `~/.hermes/.env` 文件中设置 `NVIDIA_API_KEY`（供应商名称为 `nvidia`；在 build.nvidia.com 上托管 NIM 模型） |
+| **Azure AI Foundry** | 通过 `hermes model` 选择“Azure AI Foundry”选项（供应商名称为 `azure-foundry`；使用 Azure OpenAI / Foundry 端点及密钥） |
+| **AWS Bedrock** | 通过 `hermes model` 选择“AWS Bedrock”选项（供应商名称为 `bedrock`；通过 boto3 使用标准的 AWS 凭证链） |
+| **NVIDIA Build** | 在 `~/.hermes/.env` 文件中设置 `NVIDIA_API_KEY`（供应商名称为 `nvidia`；模型存储在 build.nvidia.com 的 NIM 平台上） |
 | **Ollama Cloud** | 通过 `hermes model` 选择“Ollama Cloud”选项（供应商名称为 `ollama-cloud`；使用云端托管的 Ollama API） |
 | **Qwen OAuth** | 通过 `hermes model` 选择“Qwen OAuth”选项（供应商名称为 `qwen-oauth`；通过浏览器 PKCE 方式登录） |
 | **MiniMax OAuth** | 通过 `hermes model` 选择“MiniMax (OAuth)”选项（供应商名称为 `minimax-oauth`；通过浏览器 PKCE 方式登录） |
 | **StepFun** | 在 `~/.hermes/.env` 文件中设置 `STEPFUN_API_KEY`（供应商名称为 `stepfun`） |
-| **LM Studio** | 通过 `hermes model` 选择“LM Studio”选项（供应商名称为 `lmstudio`，可选参数为 `LM_API_KEY`） |
+| **LM Studio** | 通过 `hermes model` 选择“LM Studio”选项（供应商名称为 `lmstudio`；可选参数为 `LM_API_KEY`） |
 | **自定义端点** | 通过 `hermes model` 选择“Custom endpoint”选项（相关配置保存在 `config.yaml` 文件中） |
 
-关于官方 API 密钥的设置路径，请参阅专门的 [Google Gemini 指南](/guides/google-gemini)。
+关于官方 API 密钥的设置路径，可参阅专门的 [Google Gemini 指南](/guides/google-gemini)。
 
 :::提示 模型密钥别名
 在 `model:` 配置部分，您可以使用 `default:` 或 `model:` 作为模型 ID 的键名。`model: { default: my-model }` 和 `model: { model: my-model }` 的效果是完全相同的。
@@ -59,7 +60,7 @@ sidebar_position: 1
 
 ### Nous Portal
 
-[Nous Portal](https://portal.nousresearch.com) 是 Nous Research 提供的统一订阅门户，也是**运行 Hermes Agent 的推荐方式**。只需一次 OAuth 登录，即可使用 300 多种前沿智能体模型（如 Claude、GPT、Gemini、DeepSeek、Qwen、Kimi、GLM、MiniMax、Grok 等），同时还能使用 [Tool Gateway](/user-guide/features/tool-gateway)（具备网页搜索、图像生成、文本转语音、浏览器自动化等功能）以及 [Nous Chat](https://chat.nousresearch.com)——所有服务均通过您的 Nous 订阅账户计费，无需为每个供应商单独开立账户。
+[Nous Portal](https://portal.nousresearch.com) 是 Nous Research 提供的统一订阅门户，也是**运行 Hermes Agent 的推荐方式**。只需一次 OAuth 登录，即可使用 300 多种前沿智能体模型（如 Claude、GPT、Gemini、DeepSeek、Qwen、Kimi、GLM、MiniMax、Grok 等），同时还能使用 [Tool Gateway](/user-guide/features/tool-gateway)（功能包括网页搜索、图像生成、文本转语音、浏览器自动化）以及 [Nous Chat](https://chat.nousresearch.com)——所有费用均从您的 Nous 订阅账户中扣除，无需为每个供应商单独付费。
 
 ```bash
 hermes setup --portal     # fresh install — OAuth + provider + gateway in one command
@@ -361,15 +362,40 @@ bedrock:
   #   guardrail_version: "DRAFT"
 ```
 
-认证过程采用标准的 boto3 方式：可直接指定 `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`，或从 `~/.aws/credentials` 中读取 `AWS_PROFILE`；也可通过 EC2/ECS/Lambda 上的 IAM 角色、IMDS 或 SSO 进行认证。若已使用 AWS CLI 完成认证，则无需设置任何环境变量。
+认证过程采用标准的 boto3 认证流程：可直接指定 `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`，或从 `~/.aws/credentials` 中读取 `AWS_PROFILE`；亦可在 EC2/ECS/Lambda 上使用 IAM 角色进行认证，或者通过 IMDS 或 SSO 方式完成认证。若您已通过 AWS CLI 完成认证，则无需设置任何环境变量。
 
-Bedrock 在底层实际上使用了 **Converse API**——所有请求都会被转换为与具体模型无关的格式，因此相同的配置即可适用于 Claude、Nova、DeepSeek 和 Llama 等模型。仅当需要调用非默认区域端点时，才需设置 `BEDROCK_BASE_URL`。
+Bedrock 在底层实际上使用了 **Converse API**——所有请求都会被转换为与模型类型无关的格式，因此相同的配置即可适用于 Claude、Nova、DeepSeek 以及 Llama 等模型。仅当您需要调用非默认区域端点时，才需设置 `BEDROCK_BASE_URL`。
 
-如需了解 IAM 设置、区域选择以及跨区域推理的详细步骤，请参阅 [AWS Bedrock 指南](/guides/aws-bedrock)。
+如需了解 IAM 设置、区域选择以及跨区域推理的详细操作指南，请参阅 [AWS Bedrock 指南](/guides/aws-bedrock)。
 
-### Qwen Portal（OAuth）
+### Google Vertex AI
 
-阿里云的 Qwen Portal 支持基于浏览器的 OAuth 登录。在 “hermes model” 中选择 **Qwen OAuth (Portal)**，通过浏览器完成登录，Hermes 会自动保存刷新令牌。
+通过 Vertex AI 提供的兼容 OpenAI 的端点，在 Google Cloud 上运行 Gemini 模型。其认证方式采用 **OAuth2**，会基于服务账户 JSON 文件或应用程序默认凭据（ADC）生成有效期较短（约 1 小时）的访问令牌。该系统**不存在静态 API 密钥**，Hermes 会自动为您生成并刷新令牌，甚至在会话过程中出现 `401` 错误时也会重新生成令牌。
+
+```bash
+# Service account JSON (recommended for servers / gateways)
+echo "VERTEX_CREDENTIALS_PATH=/path/to/service-account.json" >> ~/.hermes/.env
+# or Application Default Credentials
+gcloud auth application-default login
+
+hermes model   # → "Google Vertex AI" → project → region → model
+```
+
+或者通过 `config.yaml` 配置（项目名和区域信息不属于敏感内容，会存储在此文件中；而凭证路径则仍保留在 `.env` 文件中）：
+```yaml
+model:
+  provider: "vertex"
+  default: "google/gemini-3-flash-preview"   # Vertex requires the google/ prefix
+vertex:
+  project_id: "my-gcp-project"   # blank → use the project embedded in the credentials
+  region: "global"               # required for the Gemini 3.x previews
+```
+
+`VERTEX_PROJECT_ID` / `VERTEX_REGION` 环境变量会覆盖 `config.yaml` 中的配置值。请使用 `pip install 'hermes-agent[vertex]'` 进行安装（或让 Hermes 在首次使用时自动安装 `google-auth`）。如需完整操作指南，请参阅 [Google Vertex AI 指南](/guides/google-vertex)；若需通过静态 API 密钥在 AI Studio 中使用该功能，则可参考 [Google Gemini 指南](/guides/google-gemini)。
+
+### Qwen Portal（OAuth 认证）
+
+基于浏览器的 OAuth 登录方式的阿里巴巴 Qwen Portal。在 `hermes model` 中选择 **Qwen OAuth (Portal)**，通过浏览器完成登录，Hermes 会自动保存刷新令牌。
 
 ```bash
 hermes model
