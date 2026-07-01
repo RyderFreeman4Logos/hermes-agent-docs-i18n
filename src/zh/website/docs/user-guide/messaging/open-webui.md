@@ -18,55 +18,17 @@ flowchart LR
     B -->|SSE streaming response| A
 ```
 
-Open WebUI 与 Hermes Agent 的 API 服务器的连接方式，与它连接 OpenAI 的方式相同。Hermes 会利用其完整的工具集——终端操作、文件处理、网络搜索、内存功能以及各种技能——来处理请求，并返回最终结果。
+Open WebUI 与 Hermes Agent 的 API 服务器的连接方式与连接 OpenAI 完全相同。Hermes 会利用其完整的工具集——终端操作、文件处理、网络搜索、内存功能以及各种技能——来处理这些请求，并返回最终结果。
 
-:::重要：运行时位置
-该 API 服务器属于 **Hermes Agent 运行时环境**，而非单纯的 LLM 代理。对于每个请求，Hermes 都会在 API 服务器所在的主机上创建一个服务器端的 `AIAgent` 对象。各类工具调用均在该 API 服务器运行的位置执行。
+:::重要：运行环境位置
+该 API 服务器属于 **Hermes Agent 运行时环境**，而非单纯的 LLM 代理。对于每个请求，Hermes 都会在 API 服务器所在的主机上创建一个服务器端的 `AIAgent` 对象。各类工具调用均在该 API 服务器的运行环境中执行。
 
-例如，如果将 Open WebUI 或其他兼容 OpenAI 的客户端配置为连接到远程机器上的 Hermes API 服务器，那么 `pwd` 命令、文件操作工具、浏览器工具、本地 MCP 工具以及其他工作区工具都将在远程 API 服务器上运行，而非在笔记本电脑上。
+例如，如果将 Open WebUI 或其他兼容 OpenAI 的客户端连接到远程机器上的 Hermes API 服务器，那么 `pwd` 命令、文件处理工具、浏览器工具、本地 MCP 工具以及其他工作区工具都将在远程 API 服务器的主机上运行，而非笔记本电脑上。
 :::
 
-Open WebUI 采用服务器对服务器的方式与 Hermes 进行通信，因此在这种集成场景下无需设置 `API_SERVER_CORS_ORIGINS` 参数。
+Open WebUI 采用服务器对服务器的方式与 Hermes 进行通信，因此在这种集成方式下无需设置 `API_SERVER_CORS_ORIGINS` 参数。
 
 ## 快速设置
-
-### 一键本地启动（macOS/Linux，无需 Docker）
-
-如果您希望通过一个可重复使用的启动脚本在本地将 Hermes 与 Open WebUI 直接连接起来，请运行以下命令：
-
-```bash
-cd ~/.hermes/hermes-agent
-bash scripts/setup_open_webui.sh
-```
-
-脚本的功能：
-
-- 确保 `~/.hermes/.env` 文件中包含 `API_SERVER_ENABLED`、`API_SERVER_HOST`、`API_SERVER_KEY`、`API_SERVER_PORT` 以及 `API_SERVER_MODEL_NAME` 这些参数；
-- 重启 Hermes 网关，从而启动 API 服务器；
-- 将 Open WebUI 安装到 `~/.local/open-webui-venv` 目录中；
-- 在 `~/.local/bin/start-open-webui-hermes.sh` 处创建启动脚本；
-- 在 macOS 系统上安装 `launchd` 用户服务；在基于 `systemd --user` 的 Linux 系统上则在该系统中安装用户服务。
-
-默认值：
-
-- Hermes API 地址：`http://127.0.0.1:8642/v1`
-- Open WebUI 地址：`http://127.0.0.1:8080`
-- 提供给 Open WebUI 的模型名称：`Hermes Agent`
-
-常用自定义选项：
-
-```bash
-OPEN_WEBUI_NAME='My Hermes UI' \
-OPEN_WEBUI_ENABLE_SIGNUP=true \
-HERMES_API_MODEL_NAME='My Hermes Agent' \
-bash scripts/setup_open_webui.sh
-```
-
-在 Linux 系统上，要自动设置后台服务，必须先有一个可正常运行的 `systemd --user` 会话。如果您使用的是无界面 SSH 服务器且希望跳过服务安装步骤，请运行以下命令：
-
-```bash
-OPEN_WEBUI_ENABLE_SERVICE=false bash scripts/setup_open_webui.sh
-```
 
 ### 1. 启用 API 服务器
 
