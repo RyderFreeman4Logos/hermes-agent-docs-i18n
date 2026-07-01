@@ -228,7 +228,7 @@ hermes auth remove P INDEX  Remove by provider + index
 hermes auth reset PROVIDER  Clear exhaustion status
 ```
 
-每个提供者对应的多个凭证会构成一个池，该池会自动轮换使用这些凭证，并自动跳过已用尽的密钥。
+每个提供者对应的多个凭证会共同构成一个池，该池会自动轮换使用这些凭证，并自动跳过已用尽的密钥。
 
 ```
 hermes insights [--days N]  Usage analytics
@@ -674,62 +674,62 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 
 ### 实用提示
 
-- **处理快速子任务时优先使用 `delegate_task`** —— 相比启动完整进程，其开销更小。
-- **在启动用于编辑代码的智能体时使用 `-w`（工作树模式）** —— 可避免 Git 冲突。
-- **为一次性模式设置超时时间** —— 复杂任务可能需要 5-10 分钟才能完成。
-- **使用 `hermes chat -q` 进行“发完即忘”操作** —— 无需伪终端。
-- **交互式会话请使用 tmux** —— 原始伪终端模式会导致 prompt_toolkit 在处理 `\r` 和 `\n` 时出现问题。
-- **对于定时任务**，建议使用 `cronjob` 工具而非直接启动进程 —— 它能自动处理任务交付与重试机制。
+- **处理子任务时优先使用 `delegate_task`** —— 相比启动完整进程，其开销更小。
+- 在启动用于编辑代码的 Agent 时，使用 `-w`（工作树模式）——可避免 git 冲突。
+- 为一次性模式设置超时时间——复杂任务可能需要 5-10 分钟才能完成。
+- 使用 `hermes chat -q` 进行“发完即忘”式操作——无需伪终端。
+- 交互式会话建议使用 tmux——原始伪终端模式会导致 prompt_toolkit 出现 `\r` 与 `\n` 的兼容问题。
+- 对于定时任务，建议使用 `cronjob` 工具而非直接启动进程——它能自动处理任务交付与重试机制。
 
 ---
 
 ## 持久化与后台系统
 
-有四个系统与主对话循环并行运行。此处为快速参考；完整的开发者文档见 `AGENTS.md`，面向用户的文档则在 `website/docs/user-guide/features/` 下。
+有四个系统与主对话循环并行运行。此处为快速参考；完整的开发者文档位于 `AGENTS.md`，面向用户的文档则在 `website/docs/user-guide/features/` 下。
 
-### 任务委托（`delegate_task`）
+### 任务委派 (`delegate_task`)
 
-启动一个拥有独立上下文与终端会话的子智能体。
+启动一个拥有独立上下文与终端会话的子 Agent。
 
-- **单任务模式**：`delegate_task(goal, context, toolsets)`。
-- **批量模式**：`delegate_task(tasks=[{goal, ...}, ...])` 会并行执行多个子任务，其并发数量受 `delegation.max_concurrent_children`（默认为 3）限制。
-- **后台模式**：`delegate_task(background=true)` 会立即返回一个处理句柄，同时让主循环继续运行；子任务完成后，其结果会作为新对话轮次重新加入对话。
-- **角色类型**：`leaf`（默认，不可再次委托）与 `orchestrator`（可自行创建工作进程，受 `delegation.max_spawn_depth` 限制）。
-- **非持久化**。后台运行的子任务仍属于进程级存在 —— 若父进程退出，子任务也会丢失。对于需要长期存在的任务，请使用 `cronjob` 或 `terminal(background=True, notify_on_complete=True)`。
+- **单次任务：** `delegate_task(goal, context)`。
+- **批量任务：** `delegate_task(tasks=[{goal, ...}, ...])` 会并行执行多个子任务，其并发数量受 `delegation.max_concurrent_children`（默认为 3）限制。
+- **后台运行：** `delegate_task(background=true)` 会立即返回一个处理句柄，同时让主循环继续运行；子任务完成后，其结果会作为新轮次重新加入对话。
+- **角色划分：** `leaf`（默认角色，不可再次委派）与 `orchestrator`（可自行启动工作进程，其启动深度受 `delegation.max_spawn_depth` 限制）。
+- **非持久化：** 后台运行的子任务仍属于进程级存在——若父进程退出，子任务也会丢失。对于需要长期运行的任务，请使用 `cronjob` 或 `terminal(background=True, notify_on_complete=True)`。
 
-配置项位于 `config.yaml` 的 `delegation.*` 部分。
+配置项：位于 `config.yaml` 中的 `delegation.*`。
 
 ### Cron（定时任务）
 
-一种持久化调度器 —— 由 `cron/jobs.py` 和 `cron/scheduler.py` 组成。可通过 `cronjob` 工具、`hermes cron` CLI（支持 `list`、`add`、`edit`、`pause`、`resume`、`run`、`remove` 操作）或 `/cron` 接口来控制。
+一种持久化调度器——由 `cron/jobs.py` 和 `cron/scheduler.py` 组成。可通过 `cronjob` 工具、`hermes cron` CLI（支持 `list`、`add`、`edit`、`pause`、`resume`、`run`、`remove` 命令）或 `/cron` 斜杠命令来操作。
 
-- **调度方式**：持续时间（如 `"30m"`、`"2h"`）、周期性表达式（如 `"every monday 9am"`）、五字段 Cron 表达式（如 `"0 9 * * *"`）或 ISO 时间戳。
-- **任务级配置项**：`skills`、`model`/`provider` 的覆盖设置、`script`（任务执行前的数据收集脚本；若设置 `no_agent=True`，则该脚本即构成整个任务）、`context_from`（将任务 A 的输出传递给任务 B）、`workdir`（在指定目录中运行并加载该目录下的 `AGENTS.md` / `CLAUDE.md` 文件）、跨平台任务交付功能。
-- **固有限制**：每次任务执行最多可被强制中断 3 分钟；`.tick.lock` 文件可防止不同进程重复触发调度；Cron 会话默认设置 `skip_memory=True`；Cron 任务的输出会以标题/页脚形式封装，而不会直接复制到目标网关会话中（从而保持角色切换的完整性）。
+- **调度规则：** 时长（如 `"30m"`、`"2h"`）、“每隔”时间表达式（如 `"every monday 9am"`）、5 字段 Cron 表达式（如 `"0 9 * * *"`）或 ISO 时间戳。
+- **任务级配置选项：** `skills`（指定技能）、`model`/`provider`（覆盖默认模型与提供方）、`script`（任务执行前的数据收集脚本；若设置 `no_agent=True`，则该脚本即构成整个任务）、`context_from`（将任务 A 的输出传递给任务 B）、`workdir`（在指定目录中运行，并加载该目录下的 `AGENTS.md`/`CLAUDE.md` 文件）、跨平台任务交付功能。
+- **固有约束：** 每次执行最多可被强制中断 3 分钟；`.tick.lock` 文件可防止不同进程同时触发调度；Cron 会话默认设置 `skip_memory=True`；Cron 生成的请求会带有头部与尾部信息，而不会被直接映射到目标网关会话中（从而保持角色切换的完整性）。
 
 用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 
 ### 技能管理器（技能生命周期管理）
 
-用于对智能体创建的技能进行后台维护。它可跟踪技能使用情况，标记闲置技能为过期，归档过期的技能，并生成预执行前的 tar.gz 备份，确保数据不会丢失。
+负责对 Agent 创建的技能进行后台维护。它会记录技能使用情况，标记闲置技能为过时，归档过时技能，并保留任务执行前的 tar.gz 备份，确保数据不会丢失。
 
-- **CLI 命令**：`hermes curator <verb>` —— 支持 `status`、`run`、`pause`、`resume`、`pin`、`unpin`、`archive`、`restore`、`prune`、`backup`、`rollback` 等操作。
-- **Slash 命令**：`/curator <subcommand>` 功能与 CLI 相同。
-- **作用范围**：仅处理 `created_by: "agent"` 标识的技能。预装或通过中心节点安装的技能不在其管理范围内。**该工具绝不会删除技能** —— 最严重的操作仅为归档。被标记为“固定”的技能可免于所有自动转换及大型语言模型审查流程。
-- **成本**：基于确定性的闲置检测与清理操作是免费的。辅助模型用于“将重叠技能整合为聚合技能”的功能默认处于关闭状态 —— 可通过设置 `curator.consolidate: true` 或使用 `hermes curator run --consolidate` 启用该功能。常规的后台维护操作不消耗任何令牌。
-- **监控数据**：位于 `~/.hermes/skills/.usage.json` 的侧车文件会记录每个技能的 `use_count`、`view_count`、`patch_count`、`last_activity_at`、`state` 以及是否被固定等信息。
+- **CLI 命令：** `hermes curator <动词>` —— 支持 `status`、`run`、`pause`、`resume`、`pin`、`unpin`、`archive`、`restore`、`prune`、`backup`、`rollback` 等操作。
+- **斜杠命令：** `/curator <子命令>`，功能与 CLI 相同。
+- **作用范围：** 仅处理 `created_by: "agent"` 标识的技能。预装或通过 hub 安装的技能不在管理范围内。该工具**绝不会删除**技能——最严厉的操作仅为归档。被标记为“固定”的技能可免于所有自动转换及大语言模型审核流程。
+- **成本：** 基于确定性的闲置检测与清理操作是免费进行的。辅助模型用于“将重叠技能整合为汇总组”的功能默认处于关闭状态——可通过设置 `curator.consolidate: true` 或执行 `hermes curator run --consolidate` 来启用。常规的后台维护操作不消耗任何令牌。
+- **监控数据：** 日志文件保存在 `~/.hermes/skills/.usage.json` 中，其中记录了每个技能的 `use_count`、`view_count`、`patch_count`、`last_activity_at`、`state` 以及是否被固定等信息。
 
-配置项位于 `curator.*` 部分（包括 `enabled`、`interval_hours`、`min_idle_hours`、`stale_after_days`、`archive_after_days`、`backup.*` 等）。  
+配置项：`curator.*`（包括 `enabled`、`interval_hours`、`min_idle_hours`、`stale_after_days`、`archive_after_days`、`backup.*` 等）。  
 用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
 
-### 看板系统（多智能体任务队列）
+### 看板系统（多 Agent 工作队列）
 
-这是一个基于 SQLite 的持久化看板系统，适用于多账号/多工作进程的协作场景。用户可通过 `hermes kanban <verb>` 命令来操作它；由调度器创建的工作进程会看到受 `HERMES_KANBAN_TASK` 限制的专用 `kanban_*` 工具集，而编排型账号则可选择使用更全面的 `kanban` 工具集。除非另有配置，普通会话不会包含任何 `kanban_*` 结构。
+这是一个基于 SQLite 的持久化看板系统，适用于多账号/多工作进程的协作场景。用户可通过 `hermes kanban <动词>` 来操作它；由调度器启动的工作进程可使用受 `HERMES_KANBAN_TASK` 限制的 `kanban_*` 工具集，而调度者账号则可启用更完整的 `kanban` 工具集。除非特别配置，普通会话不会生成任何 `kanban_*` 结构。
 
-- **常用 CLI 命令**：`init`、`create`、`list`（别名 `ls`）、`show`、`assign`、`link`、`unlink`、`comment`、`complete`、`block`、`unblock`、`archive`、`tail`。较少使用的命令包括 `watch`、`stats`、`runs`、`log`、`dispatch`、`daemon`、`gc`。
-- **工作进程/编排型账号的工具集**：包含 `kanban_show`、`kanban_complete`、`kanban_block`、`kanban_heartbeat`、`kanban_comment`、`kanban_create`、`kanban_link` 等命令；那些在非调度器创建的任务中明确启用了 `kanban` 工具集的账号，还可使用 `kanban_list` 和 `kanban_unblock` 命令来管理看板中的任务流转。
-- **调度器**默认在网关内部运行（通过 `kanban.dispatch_in_gateway: true` 参数启用） —— 它负责回收过期的任务请求、提升已准备就绪的任务优先级、以原子方式获取任务，并启动对应的账号。若连续出现 `failure_limit` 次启动失败（默认为 2 次，可通过 `kanban.failure_limit` 或每个任务的 `max_retries` 参数进行调整），调度器会自动将该任务标记为阻塞状态。
-- **隔离机制**：看板本身是硬性隔离边界（工作进程的环境中会固定包含 `HERMES_KANBAN_BOARD` 环境变量）；而“租户”则是看板内的一个软性命名空间，用于实现工作路径与内存键值的隔离。
+- **常用 CLI 命令：** `init`、`create`、`list`（别名 `ls`）、`show`、`assign`、`link`、`unlink`、`comment`、`complete`、`block`、`unblock`、`archive`、`tail`。较少使用的命令包括：`watch`、`stats`、`runs`、`log`、`dispatch`、`daemon`、`gc`。
+- **工作进程/调度者工具集：** `kanban_show`、`kanban_complete`、`kanban_block`、`kanban_heartbeat`、`kanban_comment`、`kanban_create`、`kanban_link`；那些在非调度器任务中明确启用了 `kanban` 工具集的账号，还可使用 `kanban_list` 和 `kanban_unblock` 命令来管理看板中的任务流转。
+- **调度器**默认在网关内部运行（`kanban.dispatch_in_gateway: true`），负责回收过期的任务请求、提升已准备就绪的任务优先级、以原子方式获取任务，并启动对应的账号。若连续出现 `failure_limit` 次启动失败（默认为 2 次，可通过 `kanban.failure_limit` 或每个任务的 `max_retries` 参数进行配置），调度器会自动阻止该任务继续处理。
+- **隔离机制：** 看板本身是硬性隔离边界（工作进程的环境中会固定设置 `HERMES_KANBAN_BOARD` 变量）；而“租户”则是看板内的一个软性命名空间，用于实现工作路径与内存键的隔离。
 
 用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban
 
@@ -737,37 +737,37 @@ terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_14305
 
 ## 用户界面与其他功能
 
-除了 CLI 和网关之外，还有以下几项值得了解的功能：
+除了 CLI 与网关之外，还有以下几项值得了解的功能：
 
-- **桌面应用**（`hermes desktop` / `hermes gui`）—— 专为 macOS/Linux/Windows 设计的原生 Electron 应用：支持流式聊天、会话列表、拖放及剪贴板粘贴文件功能、Cmd+K 快捷调色板、状态栏模型选择器、可自定义的快捷键、原生通知、实时子智能体监控窗口、VS Code Marketplace 主题，以及针对不同账号的远程网关登录功能（支持 OAuth 或用户名/密码认证），因此即便使用轻量级的本地 GUI，也能控制强大的远程智能体。
-- **Web 控制面板**（`hermes dashboard`）—— 完整的管理员面板：可在浏览器中配置所有消息通道、MCP 目录、Webhook/钩子功能、内存设置，以及完整的账号构建器（包括模型、技能和 MCP 功能），同时还内置了 `hermes --tui` 聊天界面。该控制面板通过 OAuth/令牌机制进行访问保护。
-- **兼容 OpenAI 的代理**（`hermes proxy`）—— 提供一个 `http://localhost:port` 地址的 OpenAI API 接口，其背后支持您当前登录的任何 OAuth 服务提供商（如 Claude Pro、ChatGPT Pro、SuperGrok）。您可以直接将 Codex CLI、Aider、Cline、Continue 或其他任意脚本指向该接口使用，无需提供 API 密钥。
-- **自动化蓝图** —— 选择已命名的自动化流程后，Hermes 会询问您需要哪些功能（无需编写 Cron 语法）。一个自动化定义可同时生成控制面板表单、Slash 命令、智能体对话内容以及文档目录中的条目。
-- **`memory` 工具的批量操作** —— 可传递一个包含添加/替换/删除操作的 `operations` 数组，这些操作会针对最终的字符预算以原子方式执行，因此即使单独执行添加操作会导致字符超出限制，通过批量操作仍可同时释放空间并添加新内容。
-- **`session_search`** —— 基于 FTS5 算法实现，无需辅助大型语言模型，几乎可以视为免费功能。它仅提供一个工具，根据传入的参数不同会自动切换三种模式：检索模式（通过 `query` 参数）、滚动查找模式（通过 `session_id` 和 `around_message_id` 参数）、浏览模式（无参数）。
-- **通过 SuperGrok OAuth 访问 xAI Grok** —— 使用您的 xAI 账号登录即可（无需 API 密钥）；该功能还支持 Cursor 的 `grok-composer-2.5-fast` 编程模型。
+- **桌面应用**（`hermes desktop` / `hermes gui`）——专为 macOS/Linux/Windows 设计的原生 Electron 应用：支持流式聊天、会话列表、拖放及剪贴板粘贴文件、Cmd+K 快捷调色板、状态栏模型选择器、可自定义的快捷键、原生通知功能、实时子 Agent 监控窗口、VS Code Marketplace 主题，以及针对不同账号的远程网关登录功能（支持 OAuth 或用户名/密码认证），从而让轻量级的本地 GUI 能够控制功能强大的远程 Agent。
+- **Web 控制面板**（`hermes dashboard`）——功能完备的管理员面板：允许在浏览器中配置所有消息通道、MCP 目录、Webhook/钩子功能、内存设置，以及完整的账号构建工具（包括模型、技能与 MCP），同时还内置了 `hermes --tui` 聊天界面。该控制面板通过 OAuth/令牌机制进行访问保护。
+- **兼容 OpenAI 的代理**（`hermes proxy`）——提供一个 `http://localhost:port` 接口，可调用由您当前登录的 OAuth 提供方（如 Claude Pro、ChatGPT Pro、SuperGrok）支持的 OpenAI API。您可以直接将 Codex CLI、Aider、Cline、Continue 或任何脚本指向该接口使用，无需 API 密钥。
+- **自动化蓝图**——选择某个已命名的自动化流程后，Hermes 会询问您需要哪些配置（无需使用 Cron 语法）。一个自动化定义可生成控制面板表单、斜杠命令、Agent 对话内容以及文档目录中的条目。
+- **`memory` 工具的批量操作**——您可以传入一个包含添加/替换/删除操作的 `operations` 数组，这些操作会针对最终的字符预算以原子方式执行，因此即使单独执行某项添加操作会导致内存溢出，通过批量操作仍可同时释放空间并添加新内容。
+- **`session_search`**——基于 FTS5 算法实现，无需额外的大语言模型支持，几乎无需成本。该工具仅有一个命令，根据传入的参数不同可对应三种使用模式：搜索模式（通过 `query` 参数指定查询条件）、滚动查看模式（通过 `session_id` 与 `around_message_id` 参数定位内容）、浏览模式（无参数）。
+- **通过 SuperGrok OAuth 访问 xAI Grok**——可使用您的 xAI 账号登录（无需 API 密钥），该功能还内置了 Cursor 的 `grok-composer-2.5-fast` 编程模型。
 
 ---
 
-## Windows 系统特有问题
+## Windows 系统特有的问题
 
-Hermes 在 Windows 系统上可直接运行（支持 PowerShell、cmd、Windows Terminal、git-bash mintty、VS Code 集成终端等）。大部分功能都能正常使用，但由于 Win32 与 POSIX 环境存在一些差异，我们遇到了一些问题 —— 请在发现新问题时在此处记录下来，以便后续使用者无需重复摸索。
+Hermes 在 Windows 系统上可直接运行（支持 PowerShell、cmd、Windows Terminal、git-bash mintty、VS Code 集成终端等）。大部分功能都能正常使用，但由于 Win32 与 POSIX 环境存在一些差异，我们遇到了一些问题——请在发现新问题时在此处记录下来，以便后续使用者无需重复摸索。
 
 ### 输入/快捷键
 
-**Alt+Enter 不会插入换行符** —— Windows Terminal（以及 mintty）会在 prompt_toolkit 接收到按键之前就将其用于全屏模式。建议改用 **Ctrl+Enter**（在 Windows 上 CLI 将其绑定为换行操作；原始的 Ctrl+J 也会产生相同效果，且不会造成问题）。若想查看终端是如何处理按键的，可从项目根目录运行 `python scripts/keystroke_diagnostic.py` 脚本。
+**Alt+Enter 不会插入换行符**——Windows Terminal（以及 mintty）会在 prompt_toolkit 接收到按键之前将其用于全屏模式。建议使用 **Ctrl+Enter** 代替（在 Windows 上 CLI 将其绑定为换行操作；原始的 Ctrl+J 也会产生相同效果，且不会造成问题）。若想查看终端如何处理按键输入，可从项目根目录运行 `python scripts/keystroke_diagnostic.py` 脚本。
 
 ### 配置/文件
 
-**首次运行时会出现 HTTP 400 “未提供模型”错误** —— 原因是 `config.yaml` 文件被保存时带有 UTF-8 BOM 标记（Notepad 编辑器会自动添加此标记）。请将其重新保存为不带 BOM 的 UTF-8 格式；这样使用 `hermes config edit` 命令进行编辑时就能正常工作。
+**首次运行时会出现 HTTP 400 “未提供模型”错误**——这是因为 `config.yaml` 文件是以带 UTF-8 BOM 格式保存的（Notepad 编辑器会自动添加 BOM）。请将其重新保存为不带 BOM 的 UTF-8 格式；这样使用 `hermes config edit` 命令时就能正确写入配置。
 
 ### `execute_code` / 沙箱环境
 
-**沙箱子进程会抛出 WinError 10106 错误** —— 原因是该进程无法创建 `AF_INET` 类型的套接字。通常这是由于 Hermes 的环境清理机制移除了 `SYSTEMROOT`/`WINDIR`/`COMSPEC` 等路径（Python 的 `socket` 模块需要这些路径才能找到 `mswsock.dll` 文件），而非 Winsock LSP 存在问题。《tools/code_execution_tool.py` 文件中的 `_WINDOWS_ESSENTIAL_ENV_VARS` 允许列表可解决此问题；如果仍然出现该错误，可在 `execute_code` 块中输出 `os.environ` 的内容，确认 `SYSTEMROOT` 变量是否已被正确设置。
+**沙箱子进程会抛出 WinError 10106 错误**——原因是该进程无法创建 `AF_INET` 类型的套接字。根本原因通常是 Hermes 的环境清理机制移除了 `SYSTEMROOT`/`WINDIR`/`COMSPEC` 等路径（Python 的 `socket` 模块需要这些路径才能找到 `mswsock.dll` 文件），而非 Winsock LSP 出现故障。《tools/code_execution_tool.py` 文件中的 `_WINDOWS_ESSENTIAL_ENV_VARS` 允许列表可解决此问题；如果仍然遇到该错误，可在 `execute_code` 代码块中输出 `os.environ` 的内容，确认 `SYSTEMROOT` 变量是否已被正确设置。
 
 ### 在 Windows 上进行测试
 
-`scripts/run_tests.sh` 脚本仅支持 POSIX 环境（要求先运行 `.venv/bin/activate` 命令激活虚拟环境）；而 Hermes 安装目录下的 `venv/Scripts/` 目录中并未预装 pip/pytest 工具（为节省体积而未包含）。建议在系统级的 Python 环境中安装 pytest，然后直接使用 `-n 0` 参数运行测试（`pyproject.toml` 文件中的 `addopts` 部分已预先设置了 `-n` 参数）：
+`scripts/run_tests.sh` 脚本仅支持 POSIX 环境（要求先运行 `.venv/bin/activate` 命令激活虚拟环境）；而 Hermes 安装目录下的 `venv/Scripts/` 文件夹中未预装 pip/pytest 工具（为节省体积而未包含）。建议在系统级的 Python 环境中安装 pytest，然后直接使用 `-n 0` 参数运行测试（`pyproject.toml` 文件中的 `addopts` 配置已自动设置了 `-n` 参数）。
 
 ```bash
 "/c/Program Files/Python311/python" -m pip install --user pytest pytest-xdist pyyaml
@@ -968,9 +968,9 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 如需示例代码，请参阅 `tests/agent/test_prompt_builder.py::TestEnvironmentHints`。
 
-### 系统提示的运行环境部分
+### 系统提示的运行环境模块
 
-关于主机/后端的相关信息（操作系统、`$
+关于主机/后端的实际信息（操作系统、`$
 
 ```
 type: concise subject line
