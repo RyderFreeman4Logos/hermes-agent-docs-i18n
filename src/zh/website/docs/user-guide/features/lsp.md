@@ -33,7 +33,7 @@ LSP 的运行取决于**Git 工作区检测结果**。当智能体的工作目�
 }
 ```
 
-`lint`字段用于存储语法检查结果（通过`ast.parse`、`json.loads`等方式在进程内进行的解析耗时，以微秒计）；而`lsp_diagnostics`字段则包含来自真实语言服务器的语义诊断信息。该系统通过两个独立的通道传递这些数据——对于存在语义问题但语法正常的文件，代理会将其标记为`lint: ok`，同时生成完整的`lsp_diagnostics`数据。
+`lint`字段用于存储语法检查结果（通过`ast.parse`、`json.loads`等在进程内进行的解析耗时，以微秒为单位）；而`lsp_diagnostics`字段则包含来自真实语言服务器的语义诊断信息。该系统会通过两个独立的通道传递这些数据——对于存在语法问题但语义正常的文件，代理会将状态标记为`lint: ok`，同时提供完整的`lsp_diagnostics`信息。
 
 ## 支持的语言
 
@@ -54,7 +54,7 @@ LSP 的运行取决于**Git 工作区检测结果**。当智能体的工作目�
 | OCaml | `ocaml-lsp` | 手动安装（通过opam） |
 | Dockerfile | `dockerfile-language-server-nodejs` | npm |
 | Terraform | `terraform-ls` | 手动安装 |
-| Dart | `dart language-server` | 手动安装（依赖dart SDK） |
+| Dart | `dart language-server` | 手动安装（依赖dart sdk） |
 | Haskell | `haskell-language-server` | 手动安装（通过ghcup） |
 | Julia | `julia` + LanguageServer.jl | 手动安装 |
 | Clojure | `clojure-lsp` | 手动安装 |
@@ -65,10 +65,24 @@ LSP 的运行取决于**Git 工作区检测结果**。当智能体的工作目�
 | Prisma | `prisma language-server` | 手动安装 |
 | Kotlin | `kotlin-language-server` | 手动安装 |
 | Java | `jdtls` | 手动安装 |
+| PowerShell | `PowerShellEditorServices`（基于`pwsh`宿主） | 手动安装（需下载zip包） |
 
-对于标记为“手动安装”的语言，需通过该语言对应的工具链管理器（如rustup、ghcup、opam、brew等）来安装相应的语言服务器。Hermes会自动检测PATH环境变量中或`<HERMES_HOME>/lsp/bin/`目录下的可执行文件。
+对于标记为“手动安装”的语言，需使用该语言对应的工具链管理器（如rustup、ghcup、opam、brew等）来安装相应的语言服务器。Hermes会自动检测PATH环境变量中或`<HERMES_HOME>/lsp/bin/`目录下的可执行文件。
 
-另有部分语言服务器需要与其依赖项一同安装，而npm不会自动下载这些依赖项。目前典型的例子是`typescript-language-server`，它需要从相同的`node_modules`目录中导入`typescript` SDK——当您运行`hermes lsp install typescript`命令时，Hermes会同时安装这两个包；或者在上次使用后触发自动安装功能时也会一并安装。
+### PowerShell
+
+`PowerShellEditorServices`并非单一的可执行文件，而是一个由`pwsh`（PowerShell 7+版本）或`powershell`宿主启动的模块包。安装步骤如下：
+
+1. 先安装[PowerShell](https://github.com/PowerShell/PowerShell)，确保`pwsh`（或Windows自带的`powershell`）已添加到PATH环境变量中。
+2. 从[PowerShellEditorServices的发布页面](https://github.com/PowerShell/PowerShellEditorServices/releases)下载最新版本的zip包并解压。
+3. 将Hermes配置为指向解压后的包目录，即包含`PowerShellEditorServices/Start-EditorServices.ps1`文件的目录。可通过以下任一方式完成配置：
+   - 在`config.yaml`文件中设置`lsp.servers.powershell.command: ["/path/to/bundle"]`；
+   - 将解压后的文件复制到`<HERMES_HOME>/lsp/PowerShellEditorServices`目录；
+   - 设置环境变量`PSES_BUNDLE_PATH=/path/to/bundle`。
+
+一旦检测到`pwsh`存在，执行`hermes lsp status`命令就会显示“已安装”状态；如果缺少该包，日志中会显示一条包含下载链接的警告信息。
+
+有些语言服务器在安装时还会依赖其他包，而这些依赖包不会被npm自动下载。目前属于这种情况的是`typescript-language-server`，它需要从同一个`node_modules`目录中导入`typescript` SDK——当执行`hermes lsp install typescript`命令时，Hermes会同时安装这两个包；或者在上次使用后触发自动安装功能时也会一并安装。
 
 ## CLI命令行界面
 
