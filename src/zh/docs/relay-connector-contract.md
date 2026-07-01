@@ -1,10 +1,10 @@
 # Relay ↔ Connector 协议（v1，实验性版本）
 
-> **状态：** 实验性版本。在至少有两个一级平台（Discord 和 Telegram）对其完成验证之前，该协议可能会在无需废弃周期的情况下发生变化。实验阶段的改进仅限于**增量式**修改，并受 `contract_version` 控制。任何破坏性变更将同步更新两个代码库。
+> **状态：** 实验性版本。在至少有两个一级平台（Discord 和 Telegram）对其完成验证之前，该协议**可能随时变更**而无需经过废弃流程。在实验阶段，协议的演进仅限于**增量式修改**，且受 `contract_version` 的控制。任何破坏性变更都会同步更新两个代码库。
 
 本文档定义了 **Hermes 网关**（Python，位于 `gateway/relay/` 目录）与 **连接器**（Node/TypeScript，位于 `NousResearch/gateway-gateway` 目录）之间的正式接口。连接器实现者首先需要阅读此文件。
 
-网关会运行一个通用的 `RelayAdapter`，该适配器会**向外**连接至连接器，在握手阶段接收 `CapabilityDescriptor`，随后通过每轮双向 WebSocket 交换标准化的 `MessageEvent`（入站消息）及操作指令（出站指令）。网关始终无法知晓自身所对接的具体平台；所有与平台相关的套接字及身份验证逻辑均由连接器负责处理。
+网关会运行一个通用的 `RelayAdapter`，该适配器会**向外连接**连接器，在握手阶段接收 `CapabilityDescriptor`，随后通过每轮双向 WebSocket 交换标准化的 `MessageEvent`（入站消息）及操作指令（出站指令）。网关永远无法知晓自身所对接的具体平台是哪一个；所有与特定平台相关的套接字及身份验证逻辑均由连接器负责处理。
 
 ---
 
@@ -12,95 +12,95 @@
 
 1. 网关建立传输连接（`connect`）。
 2. 网关调用 `handshake()` 方法，连接器则返回一个 `CapabilityDescriptor`（见第 2 节），其中描述了该适配器实例所支持的平台信息。
-3. 网关根据该描述配置适配器的相关参数（如字符限制、长度单位、草稿/编辑/线程/Markdown 支持能力等），并注册入站消息处理函数。
+3. 网关根据该描述符配置适配器的相关参数（如字符限制、长度单位、草稿/编辑/线程/Markdown 支持能力等），并注册入站消息处理函数。
 4. 此后，连接器开始流式传输入站事件，并接收网关发出的出站操作指令。
 
-`contract_version`（当前为 `1`）会包含在描述符中。为保证向后兼容性，网关会忽略未知的描述符字段，并用默认值填充缺失的可选字段。
+`contract_version`（当前为 `1`）会包含在描述符中。为保证向前兼容性，网关会忽略未知的描述符字段，并用默认值填充缺失的可选字段。
 
 ---
 
-## 2. CapabilityDescriptor（握手数据包内容）
+## 2. CapabilityDescriptor（握手数据载荷）
 
-为 JSON 对象。数据来源：`gateway/relay/descriptor.py`。
+这是一个 JSON 对象。其权威定义位于 `gateway/relay/descriptor.py` 文件中。
 
 | 字段 | 类型 | 是否必填 | 含义 |
 | --- | --- | --- | --- |
 | `contract_version` | int | 是 | 协议版本号（同一版本内仅支持增量式修改）。 |
 | `platform` | string | 是 | 平台名称（例如 `"discord"`、`"telegram"`）。 |
 | `label` | string | 是 | 便于人类理解的标签。 |
-| `max_message_length` | int | 是 | 字符限制值；网关会将其暴露为 `MAX_MESSAGE_LENGTH`。若值为 0，则视为 4096。 |
-| `supports_draft_streaming` | bool | 是 | 是否支持原生草稿流预览功能。 |
-| `supports_edit` | bool | 是 | 是否支持基于编辑的流式传输；若为 false，客户端将降级为每段仅发送一条消息。 |
+| `max_message_length` | int | 是 | 字符限制上限；网关会将其暴露为 `MAX_MESSAGE_LENGTH`。若值为 0，则视为 4096 字符。 |
+| `supports_draft_streaming` | bool | 是 | 是否支持原生的草稿流预览功能。 |
+| `supports_edit` | bool | 是 | 是否支持基于编辑的流式传输；若为 false，客户端将只能以每段一条消息的方式接收内容。 |
 | `supports_threads` | bool | 是 | 是否具备 `create_handoff_thread` 能力。 |
-| `markdown_dialect` | string | 是 | `"plain"`、`"markdown_v2"`、`"discord"` 等（决定是否支持代码块功能）。 |
+| `markdown_dialect` | string | 是 | `"plain"`、`"markdown_v2"`、`"discord"` 等（该字段会决定 `supports_code_blocks` 的行为）。 |
 | `len_unit` | string | 是 | `"chars"`（使用内置长度函数）或 `"utf16"`（Telegram 使用的 UTF-16 代码单元）。 |
 | `emoji` | string | 否 | 显示用的表情符号（默认为 🔌）。 |
 | `platform_hint` | string | 否 | 系统提示用的平台标识。 |
-| `pii_safe` | bool | 否 | 是否在会话描述中隐藏个人信息数据。 |
+| `pii_safe` | bool | 否 | 是否会在会话描述中隐去个人身份信息。 |
 
-大部分字段实际上都是从网关现有的 `PlatformEntry` 对象中提取的；而仅在运行时才需要的字段（如 `len_unit`、`supports_*`、`markdown_dialect`）则来自对应平台适配器的能力方法。
+大部分字段实际上都是从网关现有的 `PlatformEntry` 对象中提取而来的；而仅在运行时才需要的字段（如 `len_unit`、`supports_*`、`markdown_dialect`）则来自对应平台适配器的能力方法。
 
 ---
 
 ## 3. 入站消息：`MessageEvent` 数据结构
 
-连接器会将每个平台的原始消息事件转换为 `MessageEvent` 对象（定义位于 `gateway/platforms/base.py`），然后将其发送给网关。入站消息是通过网关的**出站方向** `/relay` WebSocket 传输的（详见下文的传输说明）——连接器会通过网关已建立的套接字向下推送 `inbound` 消息帧。网关会利用嵌入在消息中的 `SessionSource` 对象通过 `build_session_key()` 方法生成会话密钥；因此，正确设置各类标识符是连接器最核心的职责。
+连接器会将每个平台的原始消息事件转换为标准的 `MessageEvent` 对象（定义位于 `gateway/platforms/base.py`），然后将其发送给网关。入站消息是通过网关的**出站方向 `/relay` WebSocket** 传输的（详见下文的传输说明）——连接器会通过网关已建立的套接字，向下推送 `inbound` 类型的数据帧。网关会利用嵌入在消息中的 `SessionSource` 对象通过 `build_session_key()` 方法生成会话密钥；因此，正确填写各类标识符是连接器需要承担的最重要的职责。
 
-### 入站传输方式（WS 后通道，非 HTTP）
+### 入站传输方式（使用 WebSocket 通道，而非 HTTP）
 
-网关会**向外**连接到连接器的 `/relay` WebSocket，用于执行握手、发送出站操作指令（见第 4 节）以及自身的 `/stop` 停止请求（见第 5 节）。入站消息则通过同一套接字的**反向通道**传输：连接器会通过网关的出站 WebSocket 向下推送 `inbound` 消息帧（以及用于第 5 节的 `interrupt_inbound` 消息帧）。网关**没有专门的入站 HTTP 接口**——托管式的网关无需也无法暴露任何入站端口；所有数据都通过其主动建立的连接进行传输。
+网关会**向外连接**连接器的 `/relay` WebSocket，用于执行握手、发送出站操作指令（见第 4 节）以及发送自身的 `/stop` 停止指令（见第 5 节）。入站消息则通过同一套接字的**反向通道**传输：连接器会通过网关的出站 WebSocket，向下推送 `inbound` 类型的数据帧（若需要中断入站传输，则会使用 `interrupt_inbound` 类型帧，见第 5 节）。网关**没有专门的入站 HTTP 接口**——托管式的网关无需也无法暴露任何入站端口；所有数据都通过其主动建立的连接进行传输。
 
-**多实例路由机制。**负责处理某个平台消息的连接器实例（即生成入站事件的实例），通常**并非**网关建立出站 WebSocket 连接的目标实例。因此，该生成消息的实例会将事件发布到连接器内部的**中继总线**上（基于 Redis 的发布/订阅机制，位于 `src/core/relayBus.ts` 中），并使用租户标识作为键值。每个连接器实例都会订阅该总线，并将收到的每条消息路由至对应租户的**本地**会话中（通过 `RelayServer.routeBusMessage` 方法实现）；最终，实际持有网关套接字的那个实例才会处理该消息，而那些没有该租户本地会话的实例则不会执行任何操作。因此，跨实例的消息传递实际上只是集群内部的 Redis 传输，而非公共 HTTP 调用。
+**多实例路由机制。**负责处理某个平台消息的连接器实例（即生成入站事件的实例），通常**并非**网关建立出站 WebSocket 连接的目标实例。因此，该生成事件的实例会将消息发布到连接器内部的**中继总线**上（基于 Redis 的发布/订阅机制，位于 `src/core/relayBus.ts` 文件中的 `RelayBus` 类）。每个连接器实例都会订阅该总线，并将收到的每条消息路由到对应租户的**本地会话**中（通过 `RelayServer.routeBusMessage` 方法实现）。最终，只有持有网关套接字的那个实例才会处理该消息；而那些没有该租户本地会话的实例则不会执行任何操作。因此，跨实例的消息传递实际上只是在同一集群内的 Redis 通信，而非公共 HTTP 调用。
 
-连接器向网关发送的帧格式（通过 WebSocket）如下：
+数据帧格式（从连接器发送到网关，通过 WebSocket）如下：
 
 - `{"type":"inbound", "event": <MessageEvent>, "bufferId"?}`
-- `{"type":"interrupt_inbound", "session_key", "chat_id"}`（用于第 5 节）
-- `{"type":"passthrough_forward", "forward": <PassthroughForward>, "bufferId"?}`（用于第 5.1 节）
+- `{"type":"interrupt_inbound", "session_key", "chat_id"}`（用于中断入站传输，见第 5 节）
+- `{"type":"passthrough_forward", "forward": <PassthroughForward>, "bufferId"?}`（用于转发请求，见第 5.1 节）
 
-`PassthroughForward` 是转发请求的原始格式，对应于二级/三级 webhook 机制（如 Discord 交互、Twilio 请求），其结构为 `{platform, botId, method, path, headers: [[k,v],…], bodyB64}`。消息体采用 Base64 编码，这样即使使用以换行符分隔的 JSON 格式传输，任意字节数据也能完整传递；网关会对其进行 Base64 解码，还原为连接器转发的原始字节数据（连接器已在边缘节点验证了提供方的签名，并去除了任何共享身份凭证——见第 6 节——因此网关只需处理经过净化、不含令牌的消息体，再通过无令牌的 `follow_up` 机制进行处理）。详情参见第 3.1 节。
+`PassthroughForward` 是一种用于转发请求的专用数据格式，适用于二级/三级 webhook 场景（如 Discord 交互、Twilio 请求），其结构为 `{platform, botId, method, path, headers: [[k,v],…], bodyB64}`。消息体采用 Base64 编码，这样即使使用以换行符分隔的 JSON 格式传输，任意字节也能被完整传递；网关会对其进行 Base64 解码，从而得到连接器发送来的原始字节数据（连接器已在边缘节点验证了服务提供商的签名，并去除了任何共享身份凭证——见第 6 节），因此网关只需处理经过清理、不含令牌的消息体，再通过无需令牌的 `follow_up` 机制来处理该请求。详情请参见第 3.1 节。
 
-**信任机制。** WebSocket 升级过程会使用网关为每个网关配置的密钥进行身份验证（见第 6.1 节），因此整个通信通道是端到端可信的——入站消息无需再单独进行 HMAC 签名（因为经过身份验证的套接字本身已具备了旧版 HTTP 方式所需的传输来源证明功能）。而中继总线的消息传递则发生在连接器自身的信任域内（与租约、缓冲区及能力信息存储处于同一安全域）。
+**信任机制。** WebSocket 升级过程会使用网关为每个网关配置的专用密钥进行身份验证（见第 6.1 节），因此整个通信通道是端到端可信的——入站数据帧无需单独进行 HMAC 签名（因为经过身份验证的套接字本身就已经具备了旧版 HTTP 接口所需的传输来源证明功能）。而通过中继总线进行的消息传递则发生在连接器的信任域内（与该实例的租约、缓冲区及能力信息存储处于同一安全域）。
 
-> 该协议的早期版本是通过带签名的**HTTP POST**请求将入站消息发送到 `gatewayEndpoint` 地址（即 `HttpGatewayDelivery` 机制以及网关端的 `inbound_receiver` 组件），并使用针对每个租户的专用密钥进行 HMAC 签名。这种方式要求每个网关都必须暴露一个可访问的入站 URL，而托管式网关由于没有公网 IP，根本无法做到这一点。上述的 WS 后通道机制取代了这种做法；为保持向后兼容性，仍会保留针对每个租户的专用密钥，但已不再用于入站消息传输。至于**直通通道**（即二级/三级 webhook 机制，如 Discord 交互、Twilio 请求），历史上仍使用 `gatewayEndpoint` 进行后续响应处理；第 5 阶段的第 5.1 节已将这部分功能也迁移至 WS 通道上（即上述的 `passthrough_forward` 框架），因此托管式网关完全无需暴露任何公网入站接口，而 `gatewayEndpoint` 也将在过渡完成后被废弃。
+> 该协议的早期版本是通过带签名的**HTTP POST**请求将入站消息发送到 `gatewayEndpoint` 地址（即 `HttpGatewayDelivery` 机制，以及网关端的 `inbound_receiver` 组件），并且使用针对每个租户的专用密钥进行 HMAC 签名。但这种方式要求每个网关都必须暴露一个可访问的入站 URL，而托管式的网关由于没有公网 IP，根本无法做到这一点。因此，现在的 WebSocket 通道机制取代了旧方案；虽然为保持向前兼容性，仍保留了针对每个租户的专用密钥，但已不再用于入站消息传输。至于**转发平面**（即二级/三级 webhook，如 Discord 交互、Twilio 请求），过去仍会使用 `gatewayEndpoint` 进行 POST 请求后的响应转发；在第五阶段的第 5.1 节中，这一流程也被改为了通过 WebSocket 实现（即上述的 `passthrough_forward` 数据帧），这样一来，托管式的网关就完全不需要暴露任何公网入站端口，而 `gatewayEndpoint` 也将在迁移完成后被废弃。
 
-### 3.1 直通通道的转发机制（见第 5.1 节）
+### 3.1 转发平面的请求转发（见第 5.1 节）
 
-直通通道会在连接器的边缘节点处响应提供方发出的那些对延迟极为敏感的 ACK 请求（例如 Discord 在约 3 秒内返回的延迟交互响应），随后**直接转发**原始请求至网关，且采用“发送即忘”的方式处理。由于提供方已经收到了响应，因此无需再等待回复，该转发请求会通过与入站消息相同的出站 WebSocket 通道，以 `passthrough_forward` 框架的形式传输，而非通过 HTTP POST。网关会通过常规的代理处理路径对解码后的请求进行处理（例如 Discord 的交互请求会被解码为 `MessageEvent` 对象，并按普通消息处理；回复则通过出站的 `/follow_up` 通道发送）。当请求被缓存时，`bufferId` 字段会出现（第 5 阶段的第 5.3 节提到了仅缓存模式的切换），网关会在完成持久化传递后对该请求予以确认。
+在转发平面中，系统会在连接器的边缘节点处响应服务提供商发出的、对延迟要求极高的 ACK 请求（例如 Discord 在约 3 秒内返回的延迟交互响应），随后**直接转发**原始请求至网关。由于服务提供商已经收到了响应，因此无需再等待回复，所以该请求会通过与入站消息相同的出站 WebSocket 通道，以 `passthrough_forward` 数据帧的形式发送，而非通过 HTTP POST。网关会通过常规的代理处理流程来解析该请求（例如，Discord 的交互请求会被解析为 `MessageEvent` 对象，并像普通消息一样被处理；回复则通过出站的 `/follow_up` 通道发送）。当请求被缓存时，数据帧中会包含 `bufferId` 字段（见第五阶段的第 5.3 节关于仅缓存模式的说明），网关会在完成持久化转发后对该请求予以确认。
 
 ---
 
 ## SessionSource 字段（网络传输层的数据结构）
 
-数据来源：`gateway/session.py` 中的 `SessionSource.to_dict()` 方法。这些字段代表了网关在网络传输层所接收的所有数据键值对。`platform`、`chat_id`、`chat_type`、`user_id`、`user_name`、`thread_id`、`chat_name` 和 `chat_topic` 这些字段始终存在（可能值为 `null`）；其余字段则仅在对应值被设置时才会出现在传输数据中。
+这些字段的权威定义位于 `gateway/session.py` 文件中的 `SessionSource.to_dict()` 方法。它们代表了网关在网络传输层所接收到的所有数据键值对。`platform`、`chat_id`、`chat_type`、`user_id`、`user_name`、`thread_id`、`chat_name` 和 `chat_topic` 这些字段始终都会出现（可能值为 `null`）；其余字段则仅在对应值被设置时才会出现在传输数据中。
 
 | 字段 | 类型 | 是否始终发送 | 含义 |
 | --- | --- | --- | --- |
 | `platform` | string | 是 | 平台名称，与描述符中的 `platform` 字段一致。 |
-| `chat_id` | string | 是 | 主要对话 ID（频道/聊天室）。也可用作会话密钥的区分标识。 |
-| `chat_type` | string | 是 | 对话类型，包括 `dm`（私信）、`group`（群组）、`channel`（频道）、`thread`（线程）和 `forum`（论坛）。 |
+| `chat_id` | string | 是 | 主要对话 ID（频道/聊天室），同时也是会话密钥的标识字段。 |
+| `chat_type` | string | 是 | 对话类型，包括 `dm`、`group`、`channel`、`thread`、`forum` 等。 |
 | `chat_name` | string\|null | 是 | 便于人类理解的聊天室名称。 |
-| `user_id` | string\|null | 是 | 消息发送者的 ID，也可用作会话密钥的区分标识。 |
+| `user_id` | string\|null | 是 | 消息发送者的 ID，同时也是会话密钥的标识字段。 |
 | `user_name` | string\|null | 是 | 发送者的显示名称。 |
-| `thread_id` | string\|null | 是 | 当消息位于线程中时，表示该线程或论坛主题的 ID，也可用作会话密钥的区分标识。 |
+| `thread_id` | string\|null | 是 | 当消息位于线程中时，用于标识该线程或论坛主题的 ID，同样可作为会话密钥。 |
 | `chat_topic` | string\|null | 是 | 频道或聊天室的标题/描述信息（适用于 Discord、Slack 等平台）。 |
 | `user_id_alt` | string | 否 | 平台特定的稳定备用 ID，例如 Signal 的 UUID 或飞书中的 union_id。 |
 | `chat_id_alt` | string | 否 | 备用聊天 ID，例如 Signal 群组内部的内部 ID。 |
-| `scope_id` | string | 否 | 与平台无关的**作用域**区分标识：适用于 Discord 社群、Slack 工作空间、Matrix 服务器等。对于实现 Discord/Slack 平台间的会话隔离功能而言是必需的，也可用作会话密钥的区分标识。（该字段为 D-Q2.5 版本网络格式迁移后的标准名称。） |
-| `guild_id` | string | 否 | **已废弃的 `scope_id` 别名**——在两个代码库同时进行读写操作的过渡阶段，该字段仍会被生成和读取；此时读取方会通过 `scope_id ?? guild_id` 的逻辑来确定最终使用的标识符。一旦两个代码库都完全基于 `scope_id` 运行，该字段就会被移除。 |
-| `parent_chat_id` | string | 否 | 当 `chat_id` 指向某个线程时，表示该线程所在的父频道 ID。 |
-| `message_id` | string | 否 | 触发当前消息的 ID（用于固定消息、回复或互动操作）。 |
+| `scope_id` | string | 否 | 与平台无关的**作用域**标识字段，用于区分不同的 Discord 社群、Slack 工作空间或 Matrix 服务器。对于实现 Discord/Slack 平台间的会话隔离功能而言，该字段是必需的，同样可作为会话密钥。（该字段的规范名称源自 D-Q2.5 版本的协议格式迁移。） |
+| `guild_id` | string | 否 | **旧版别名，连接器已不再读取该字段。**从 D-Q2.5c 版本开始，连接器仅读取和写入 `scope_id`；不过网关端的 `SessionSource.to_dict()` 方法仍会输出 `guild_id` 字段（其值会与 `scope_id` 保持一致），目的是为了实现非中继会话的持久化存储，因此该字段仍可能出现在传输数据中，但连接器会直接忽略它。请勿依赖该字段。 |
+| `parent_chat_id` | string | 否 | 当 `chat_id` 指向某个线程时，用于标识该线程所在的父频道。 |
+| `message_id` | string | 否 | 触发该消息的原始消息 ID，可用于固定消息、回复或回应操作。 |
 
-> `is_bot` 字段用于标识消息发送者是否为机器人或 webhook 对象，该字段存在于网关端的 dataclass 中，但在 v1 版本的协议格式中**有意不包含在网络传输数据中**——它也不在 `to_dict()` 方法的返回结果中。在将该字段加入连接器端的 `SessionSource` 对象之前，请先确保它已被添加到网关端的对应结构中并同步加入 `to_dict()` 方法的返回结果中（属于增量式修改）。
+> `is_bot` 字段用于标识消息发送者是否为机器人或属于 webhook 类型，该字段存在于网关端的 dataclass 中，但在 v1 版本的协议格式中**刻意未包含在网络传输数据中**——它也不在 `to_dict()` 方法的输出范围内。在将该字段加入连接器端的 `SessionSource` 对象之前，请务必先在网关端添加该字段并将其纳入 `to_dict()` 的输出中（属于增量式修改）。
 
-### 各平台的 SessionSource 区分标识字段
+### 各平台的 SessionSource 标识字段对照表
 
-| 平台 | chat_id | chat_type | user_id | thread_id | guild_id |
+| 平台 | chat_id | chat_type | user_id | thread_id | scope_id |
 | --- | --- | --- | --- | --- | --- |
-| **Discord** | 频道 ID | `dm`/`group`/`thread` | 发送者 ID | 线程所在频道 ID（仅在线程中存在） | **社群 ID**（用于实现服务器级会话隔离，为必填字段） |
-| **Telegram** | 聊天室 ID | `dm`/`group`/`forum` | 发件人 ID | 论坛主题 ID（仅适用于论坛） | — |
+| **Discord** | 频道 ID | `dm`/`group`/`thread` | 发送者 ID | 线程所在频道的 ID（仅在线程中存在） | **guild_id**（用于实现服务器级会话隔离，为必需字段） |
+| **Telegram** | 聊天 ID | `dm`/`group`/`forum` | 发件人 ID | 论坛主题 ID（仅用于论坛） | — |
 
-**如果将 Discord 的 `guild_id` 设置错误，可能会导致两个不同的社群被合并为同一个会话。**这是当前最严重的风险等级问题。网关的 `build_session_key()` 方法是判断数据是否符合规范的依据：对于给定的 `SessionSource` 数据，连接器经过标准化处理后生成的密钥，必须与 Python 适配器生成的密钥完全一致。（第一阶段的测试用例会确保输入相同则生成的密钥也相同。）
+**如果将 Discord 的 `guild_id` 设置错误，会导致两个不同的服务器被合并为一个会话。**这是当前最严重的风险之一。网关的 `build_session_key()` 方法是判断是否符合协议规范的依据：对于给定的 `SessionSource` 对象，连接器经过标准化处理后生成的密钥，必须与 Python 适配器生成的密钥完全一致。（第一阶段的测试用例会确保输入相同则生成的密钥也相同。）
 
 ### 机器人身份与租户概念的区分（单机器人多租户整合机制，详见附录 A）该封装将**发起方机器人身份**作为与“租户”字段**相互独立**的字段进行携带。租户信息是通过事件自身的标识符来确定的（Discord的`guild_id`、Telegram的`chat_id`、webhook路径/子域名）——**绝不会**根据传递该事件的令牌/套接字/进程来确定。这样一来，一个共享机器人便能够在不占用现有字段容量的情况下为多个租户提供服务（第6阶段）。
 
