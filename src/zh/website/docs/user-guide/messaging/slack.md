@@ -285,15 +285,33 @@ platforms:
       # (Slack's "Also send to channel" feature).
       # Only the first chunk of the first reply is broadcast.
       reply_broadcast: false
+
+      # Render agent messages as Slack Block Kit blocks (default: false).
+      # When true, the final agent message is sent with structured blocks —
+      # section headers, dividers, true nested lists (via rich_text), and
+      # native Block Kit tables — instead of flat mrkdwn text. A plain-text
+      # fallback is always sent alongside for notifications/accessibility.
+      # Tables exceeding Slack's limits (100 rows / 20 cols / 10k chars)
+      # gracefully fall back to aligned monospace.
+      rich_blocks: false
+
+      # Continuable-cron delivery surface (default: "thread").
+      # "in_channel" delivers a continuable cron job FLAT into the channel
+      # (no dedicated thread); pair with reply_in_thread: false (and
+      # require_mention: false) so a plain reply continues the job.
+      # See the cron guide → "Flat, in-channel continuation".
+      cron_continuable_surface: thread
 ```
 
 | 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
 | `platforms.slack.reply_to_mode` | `"first"` | 多部分消息的线程模式：`"off"`、`"first"` 或 `"all"` |
-| `platforms.slack.extra.reply_in_thread` | `true` | 当设置为 `false` 时，频道消息将直接回复而非以线程形式发送；已存在线程中的消息仍会以线程形式回复。 |
-| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会发布到主频道，但仅会广播第一部分内容。 |
+| `platforms.slack.extra.reply_in_thread` | `true` | 当设置为 `false` 时，频道中的消息将直接回复而非以线程形式发送。已存在线程内的消息仍会以线程形式回复。 |
+| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会同步发布到主频道。仅会广播第一部分内容。 |
+| `platforms.slack.extra.rich_blocks` | `false` | 当设置为 `true` 时，智能体发送的消息将以 [Block Kit](https://docs.slack.dev/block-kit/) 块格式呈现（包括标题、分隔符、真正的嵌套列表以及原生表格）。同时仍会发送纯文本作为备用。超过 Slack 限制的表格将自动转换为对齐的等宽字体显示。无需重新安装应用，仅需在发送端进行设置即可。 |
+| `platforms.slack.extra.cron_continuable_surface` | `"thread"` | [可延续定时任务](../features/cron.md#flat-in-channel-continuation-slack) 的消息呈现方式。`"thread"` 模式为每次任务执行单独开启一个线程（默认值）；`"in_channel"` 模式则将任务内容直接展示在频道时间轴中。若需通过普通频道回复来延续任务，需将 `in_channel` 与 `reply_in_thread: false`（以及 `require_mention: false`）一起使用。 |
 
-### 会话隔离
+### 会话隔离机制
 
 ```yaml
 # Global setting — applies to Slack and all other platforms
