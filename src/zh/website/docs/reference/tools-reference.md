@@ -6,117 +6,117 @@ description: "Authoritative reference for Hermes built-in tools, grouped by tool
 
 # 内置工具参考
 
-本页面按工具集对Hermes的内置工具进行说明。实际可用工具会因平台、凭证以及已启用的工具集而有所不同。
+本页面按工具组对Hermes的内置工具进行了文档说明。实际可用工具会因平台、凭证以及启用的工具组不同而有所差异。
 
-**当前注册工具总数：**约73种——10种浏览器工具（核心功能）+2种需CDP授权的浏览器工具，4种文件处理工具，4种Home Assistant相关工具，3种终端工具（`terminal`、`process`、`read_terminal`），2种网页工具，5种飞书工具，7种Spotify相关工具（由内置的`spotify`插件注册），5种元宝工具，9种看板工具（在看板调度器启动代理时自动注册），3种项目相关工具（桌面/GUI会话），2种Discord相关工具，以及若干独立工具（`memory`、`clarify`、`delegate_task`、`execute_code`、`cronjob`、`session_search`、`skill_view`/`skill_manage`/`skills_list`、`text_to_speech`、`image_generate`、`video_generate`、`vision_analyze`、`todo`、`computer_use`）。
+**当前注册工具总数：**约73种——10种浏览器工具（核心功能）+2种需CDP授权的浏览器工具，4种文件处理工具，4种Home Assistant相关工具，3种终端工具（`terminal`、`process`、`read_terminal`），2种网页工具，5种飞书相关工具，7种Spotify相关工具（由内置的`spotify`插件注册），5种元宝相关工具，9种看板工具（在看板调度器启动Agent时自动注册），3种项目相关工具（桌面/GUI会话专用），2种Discord相关工具，以及若干独立工具（`memory`、`clarify`、`delegate_task`、`execute_code`、`cronjob`、`session_search`、`skill_view`/`skill_manage`/`skills_list`、`text_to_speech`、`image_generate`、`video_generate`、`vision_analyze`、`todo`、`computer_use`）。
 
 :::提示 MCP工具
-除了内置工具外，Hermes还可以从MCP服务器动态加载工具。这类工具的前缀为`mcp_<server>_`（例如，针对`github` MCP服务器的工具名为`mcp_github_create_issue`）。有关配置方法，请参阅[MCP集成](/user-guide/features/mcp)。
+除内置工具外，Hermes还可以从MCP服务器动态加载工具。这类工具的前缀为`mcp_<server>_`（例如，针对`github` MCP服务器的工具名为`mcp_github_create_issue`）。相关配置方法请参阅[MCP集成指南](/user-guide/features/mcp)。
 :::
 
-## `browser`工具集
+## `browser`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
 | `browser_back` | 在浏览器历史记录中返回上一页。需先调用`browser_navigate`。 | — |
 | `browser_click` | 点击快照中通过ref ID标识的元素（例如`@e5`）。这些ref ID会以方括号形式显示在快照输出中。需先调用`browser_navigate`和`browser_snapshot`。 | — |
-| `browser_console` | 获取当前页面的浏览器控制台输出及JavaScript错误信息。会返回`console.log/warn/error/info`消息以及未被捕获的JS异常。可用于检测隐性的JavaScript错误、失败的API调用以及应用程序警告。需先… | — |
-| `browser_get_images` | 获取当前页面上所有图片的列表，包括其URL和替代文本。有助于找出需要用视觉分析工具处理的图片。需先调用`browser_navigate`。 | — |
+| `browser_console` | 获取当前页面的浏览器控制台输出及JavaScript错误信息。会返回`console.log/warn/error/info`消息以及未捕获的JS异常。可用于检测隐性的JavaScript错误、失败的API调用以及应用程序警告。需… | — |
+| `browser_get_images` | 获取当前页面上所有图片的列表，包括其URL和替代文本。可用于查找需要用视觉分析工具处理的图片。需先调用`browser_navigate`。 | — |
 | `browser_navigate` | 在浏览器中导航至指定URL。该操作会初始化会话并加载页面。必须在其他浏览器工具之前调用。对于简单的信息检索，建议使用`web_search`或`web_extract`（速度更快、成本更低）。仅在需要…时才使用浏览器工具。 | — |
 | `browser_press` | 按下键盘上的某个键。可用于提交表单（回车键）、导航（Tab键）或执行快捷键操作。需先调用`browser_navigate`。 | — |
 | `browser_scroll` | 按指定方向滚动页面。可用于查看当前视口下方或上方的更多内容。需先调用`browser_navigate`。 | — |
-| `browser_snapshot` | 获取当前页面无障碍访问结构的文本格式快照。会返回带有ref ID的交互式元素（如`@e1`、`@e2`），以便后续使用`browser_click`和`browser_type`功能。`full=false`（默认值）：显示简洁的交互式元素视图；`full=true`：显示完整视图… | — |
+| `browser_snapshot` | 获取当前页面无障碍访问结构的文本格式快照。会返回带有ref ID的交互元素（如`@e1`、`@e2`），以便后续使用`browser_click`和`browser_type`功能。`full=false`（默认值）：显示简洁的交互元素视图；`full=true`：显示完整视图… | — |
 | `browser_type` | 在通过ref ID标识的输入框中输入文本。该操作会先清空输入框，然后再输入新内容。需先调用`browser_navigate`和`browser_snapshot`。 | — |
 | `browser_vision` | 对当前页面进行截图，并使用视觉AI对其进行分析。当需要直观了解页面内容时非常有用——尤其适用于验证码、视觉验证任务、复杂布局，或文本无法准确识别等情况。 | — |
 
-## `browser`工具集（CDP授权工具）
+## `browser`工具组（CDP授权工具）
 
-这两个工具属于`browser`工具集，但仅在会话启动时能够通过 `/browser connect`、`browser.cdp_url`配置、Browserbase会话或Camofox访问到Chrome DevTools Protocol端点时才会注册。
-
-| 工具 | 描述 | 所需环境 |
-|------|-------------|----------|
-| `browser_cdp` | 发送原始的Chrome DevTools Protocol命令。作为高级`browser_*`工具无法处理的一些浏览器操作的替代方案。详情请参阅https://chromedevtools.github.io/devtools-protocol/ | CDP端点 |
-| `browser_dialog` | 对原生JavaScript对话框（如alert / confirm / prompt / beforeunload）作出响应。需先调用`browser_snapshot`——待处理的对话框会显示在其`pending_dialogs`字段中。之后再调用`browser_dialog(action='accept'\|'dismiss')`。 | CDP端点 |
-
-## `clarify`工具集
+这两个工具属于`browser`工具组，但仅在会话启动时能够通过 `/browser connect`、`browser.cdp_url`配置、Browserbase会话或Camofox访问到Chrome DevTools Protocol端点时才会注册。
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `clarify` | 在需要进一步澄清、获取反馈或做出决策时向用户提问。支持两种模式：1. **多项选择**——最多提供4个选项。用户可选择其中一个，或通过第5个“其他”选项输入自定义答案。2.… | — |
+| `browser_cdp` | 发送原始的Chrome DevTools Protocol命令。适用于那些未被高级`browser_*`工具覆盖的浏览器操作。详情请参阅https://chromedevtools.github.io/devtools-protocol/ | CDP端点 |
+| `browser_dialog` | 响应原生JavaScript对话框（alert / confirm / prompt / beforeunload）。需先调用`browser_snapshot`——待处理的对话框会显示在其`pending_dialogs`字段中。之后再调用`browser_dialog(action='accept'\|'dismiss')`。 | CDP端点 |
 
-## `code_execution`工具集
-
-| 工具 | 描述 | 所需环境 |
-|------|-------------|----------|
-| `execute_code` | 运行能够以编程方式调用Hermes工具的Python脚本。当需要在多次工具调用之间添加处理逻辑、在内容进入上下文之前对其进行过滤/简化，或实现条件分支时，可使用此工具。… | — |
-
-## `cronjob`工具集
+## `clarify`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `cronjob` | 统一的定时任务管理器。可通过`action="create"`、"`list"`、"`update"`、"`pause"`、"`resume"`、"`run"`或`"remove"`来管理任务。支持由一个或多个技能驱动的任务，若在更新时设置`skills=[]`则可清除关联的技能。定时任务会在没有当前聊天上下文的新的会话中执行。 | — |
+| `clarify` | 在需要进一步澄清、获取反馈或做出决策时向用户提问。支持两种模式：1. **多项选择**——最多提供4个选项。用户可选择其中一个选项，或通过第5个“其他”选项输入自定义答案。2.… | — |
 
-## `delegation`工具集
-
-| 工具 | 描述 | 所需环境 |
-|------|-------------|----------|
-| `delegate_task` | 启动一个或多个子代理，在独立的上下文中处理任务。每个子代理都有自己独立的对话、终端会话和工具集。最终只会返回总结结果——中间阶段的工具处理结果不会进入你的上下文窗口。有两种… | — |
-
-## `feishu_doc`工具集
-
-该工具集专为飞书文档评论智能回复处理器（`gateway/platforms/feishu_comment.py`）设计。不会在`hermes-cli`或常规飞书聊天适配器中提供。
+## `code_execution`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `feishu_doc_read` | 根据文件类型和令牌，读取飞书/企业微信文档（Docx、Doc或Sheet格式）的完整文本内容。 | 飞书应用凭证 |
+| `execute_code` | 运行能够以编程方式调用Hermes工具的Python脚本。当需要执行3次及以上工具调用，并且在调用之间加入处理逻辑，或需要在工具输出进入上下文之前对其进行过滤/简化，或需要实现条件分支时，可使用此工具。… | — |
 
-## `feishu_drive`工具集
+## `cronjob`工具组
 
-该工具集专为飞书文档评论处理器设计，用于对云盘文件进行评论的读写操作。
+| 工具 | 描述 | 所需环境 |
+|------|-------------|----------|
+| `cronjob` | 统一的定时任务管理器。可通过`action="create"`、`"list"`、`"update"`、`"pause"`、`"resume"`、`"run"`或`"remove"`来管理任务。支持基于技能的任务，这些任务可关联一个或多个技能；在调用`update`且设置`skills=[]`时，会清除所有关联的技能。定时任务会在没有当前聊天上下文的新的会话中执行。 | — |
+
+## `delegation`工具组
+
+| 工具 | 描述 | 所需环境 |
+|------|-------------|----------|
+| `delegate_task` | 启动一个或多个子Agent在独立的上下文中处理任务。每个子Agent都会拥有自己的对话窗口、终端会话和工具集。最终只会返回总结结果——中间阶段的工具处理结果不会进入你的上下文窗口。有两种… | — |
+
+## `feishu_doc`工具组
+
+该工具组专用于飞书文档评论智能回复处理模块（`gateway/platforms/feishu_comment.py`）。在`hermes-cli`或常规飞书聊天适配器中不可用。
+
+| 工具 | 描述 | 所需环境 |
+|------|-------------|----------|
+| `feishu_doc_read` | 根据文件类型和访问令牌，读取飞书/企业微信文档（Docx、Doc或Sheet格式）的完整文本内容。 | 飞书应用凭证 |
+
+## `feishu_drive`工具组
+
+该工具组也专用于飞书文档评论处理模块，用于对驱动器中的文件执行评论的读写操作。
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
 | `feishu_drive_add_comment` | 在飞书/企业微信文档或文件上添加顶层评论。 | 飞书应用凭证 |
-| `feishu_drive_list_comments` | 按时间顺序列出飞书/企业微信文件中的所有文档级评论。 | 飞书应用凭证 |
-| `feishu_drive_list_comment_replies` | 列出特定飞书评论主题下的所有回复（可针对整个文档或局部选中的内容）。 | 飞书应用凭证 |
-| `feishu_drive_reply_comment` | 在飞书评论主题下发布回复，可选择是否使用`@`提及他人。 | 飞书应用凭证 |
+| `feishu_drive_list_comments` | 按出现时间从新到旧，列出飞书/企业微信文件中的所有文档级评论。 | 飞书应用凭证 |
+| `feishu_drive_list_comment_replies` | 列出特定飞书评论主题下的所有回复（可以是整个文档的回复，也可以是局部选中的内容对应的回复）。 | 飞书应用凭证 |
+| `feishu_drive_reply_comment` | 在飞书评论主题下发布回复，可选择性添加`@`提及功能。 | 飞书应用凭证 |
 
-## `file`工具集
-
-| 工具 | 描述 | 所需环境 |
-|------|-------------|----------|
-| `patch` | 对文件进行精准的查找替换编辑。可在终端中替代sed/awk使用。该工具采用模糊匹配算法（共9种策略），因此细微的空白或缩进差异不会影响其正常运行。会返回统一格式的差异对比结果。编辑完成后还会自动进行语法检查… | — |
-| `read_file` | 以带行号且支持分页的方式读取文本文件。可在终端中替代cat/head/tail使用。输出格式为“行号\|内容”。如果未找到对应文件，会推荐相似名称的文件。处理大文件时建议使用偏移量和限制值。注意：无法读取图片… | — |
-| `search_files` | 搜索文件内容或按名称查找文件。可在终端中替代grep/rg/find/ls使用。基于Ripgrep引擎，速度优于传统shell命令。支持内容搜索（target='content'）：可在文件内部进行正则表达式搜索。输出模式包括包含完整匹配内容的行… | — |
-| `write_file` | 将内容写入文件，会完全替换文件中的现有内容。可在终端中替代echo/cat heredoc使用。该工具会自动创建所需的父目录。操作为直接覆盖整个文件——如需精准编辑，请使用`patch`工具。 | — |
-
-## `homeassistant`工具集
+## `file`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `ha_call_service` | 调用Home Assistant中的服务以控制设备。可使用`ha_list_services`查看各领域中可用的服务及其参数。 | — |
+| `patch` | 对文件进行精准的查找替换编辑。可在终端中替代sed/awk使用。该工具采用模糊匹配算法（支持9种匹配策略），因此细微的空白或缩进差异不会影响匹配结果。会返回统一格式的差分内容。编辑完成后还会自动进行语法检查… | — |
+| `read_file` | 以带行号且支持分页的方式读取文本文件。可在终端中替代cat/head/tail命令使用。输出格式为“行号\|内容”。如果未找到对应文件，会推荐相似的文件名。处理大文件时可使用offset和limit参数。注意：无法读取图片… | — |
+| `search_files` | 搜索文件内容或按名称查找文件。可在终端中替代grep/rg/find/ls命令使用。该工具基于Ripgrep实现，速度优于shell命令中的同类工具。支持内容搜索（target='content'）：可在文件内部进行正则表达式搜索。输出模式包括包含完整匹配结果的行号… | — |
+| `write_file` | 将内容写入文件，会完全替换文件中的现有内容。可在终端中替代echo/cat heredoc命令使用。该工具会自动创建所需的父目录。此功能会覆盖整个文件——如需精准编辑，请使用`patch`工具。 | — |
+
+## `homeassistant`工具组
+
+| 工具 | 描述 | 所需环境 |
+|------|-------------|----------|
+| `ha_call_service` | 调用Home Assistant中的服务以控制设备。可使用`ha_list_services`查询各设备领域中可用的服务及其参数。 | — |
 | `ha_get_state` | 获取单个Home Assistant实体的详细状态，包括所有属性（亮度、颜色、温度设定值、传感器读数等）。 | — |
-| `ha_list_entities` | 列出Home Assistant中的所有实体。可选择按领域（灯光、开关、温控设备、传感器、二进制传感器、遮光装置、风扇等）或区域名称（客厅、厨房、卧室等）进行过滤。 | — |
-| `ha_list_services` | 列出Home Assistant中可用于控制设备的所有服务（操作）。会显示每种设备类型支持的操作及其参数。可通过此功能了解如何控制通过`ha_list_entities`找到的设备。 | — |
+| `ha_list_entities` | 列出Home Assistant中的所有实体。可选择按设备类型（灯光、开关、温控设备、传感器、二进制传感器、遮光装置、风扇等）或区域名称（客厅、厨房、卧室等）进行过滤。 | — |
+| `ha_list_services` | 列出Home Assistant中可用于控制设备的所有服务（操作功能）。会显示每种设备类型支持的操作以及对应的参数。可通过此工具了解如何控制通过`ha_list_entities`查询到的设备。 | — |
 
-## `computer_use`工具集
+## `computer_use`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `computer_use` | 通过cua-driver实现后台桌面控制功能——包括截图（SOM / vision / AX）、点击/拖动/滚动/输入/按键/等待、列出应用程序、将焦点切换到指定应用等。该功能不会窃取用户的光标或键盘焦点。适用于任何具备工具处理能力的模型，支持macOS、Windows和Linux系统。 | `$PATH`路径下需安装`cua-driver`（可通过`hermes tools`命令安装）。 |
+| `computer_use` | 通过cua-driver实现后台桌面控制功能——包括截图（SOM / vision / AX模式）、点击/拖动/滚动/输入/按键/等待操作、列出应用程序、将焦点切换到指定应用。该功能不会占用用户的光标或键盘焦点，适用于任何具备工具调用能力的模型，支持macOS、Windows和Linux系统。 | `$PATH`路径下已安装`cua-driver`（可通过`hermes tools`命令安装）。 |
 
 
 :::注意
-**Honcho工具**（`honcho_profile`、`honcho_search`、`honcho_context`、`honcho_reasoning`、`honcho_conclude`）已不再属于内置工具。它们可通过Honcho内存提供者插件在`plugins/memory/honcho/`路径下使用。有关安装和使用方法，请参阅[内存提供者](../user-guide/features/memory-providers.md)。
+**Honcho工具**（`honcho_profile`、`honcho_search`、`honcho_context`、`honcho_reasoning`、`honcho_conclude`）已不再属于内置工具。它们可通过Honcho内存提供插件在`plugins/memory/honcho/`路径下使用。关于其安装与使用方法，请参阅[内存提供器指南](../user-guide/features/memory-providers.md)。
 :::
 
-## `image_gen`工具集
+## `image_gen`工具组
 
 | 工具 | 描述 | 所需环境 |
 |------|-------------|----------|
-| `image_generate` | 根据文本提示生成图像（文本转图像），或通过用户自定义的后端（FAL.ai、OpenAI、xAI、Krea）对现有图像进行编辑/转换（图像转图像）。如需编辑图像，请传入`image_url`；如需参考风格，请传入`reference_image_urls`；如仅需进行文本转图像，则无需传入这两个参数。模型由用户自行配置，代理无法选择。该工具会返回一个图像的URL或本地路径。 | FAL_KEY / OPENAI_API_KEY / xAI OAuth / KREA_API_KEY |
+| `image_generate` | 根据文本提示生成图片（文本转图像），或通过用户配置的后端（FAL.ai、OpenAI、OpenAI Codex授权、xAI、Krea）对现有图片进行编辑/变换（图像转图像）。如需编辑图片，请传入`image_url`；如需参考风格，请传入`reference_image_urls`；如仅需文本转图像，则无需传入这两个参数。模型由用户自行配置，Agent无法选择。该工具会返回单个图片的URL或本地路径。 | FAL_KEY / OPENAI_API_KEY / Codex OAuth / xAI OAuth / KREA_API_KEY |
 
-## `kanban`工具集 |当代理由以下任一方式启动时，便会注册这些工具：(a) 通过看板调度器生成（设置了 `HERMES_KANBAN_TASK` 环境变量）；或 (b) 在明确启用了 `kanban` 工具集的配置文件中运行。任务级工作节点会为其分配的任务使用生命周期管理工具；而协调器配置文件则还会拥有诸如 `kanban_list` 和 `kanban_unblock` 这样的看板路由工具。完整的流程请参阅 [Kanban 多代理功能](/user-guide/features/kanban)。
+## `kanban`工具组当代理由以下任一方式启动时，便会注册这些工具：(a) 通过看板调度器生成（设置了 `HERMES_KANBAN_TASK` 环境变量）；或 (b) 在明确启用了 `kanban` 工具集的配置文件中运行。任务级工作节点会为其分配的任务使用生命周期管理工具；而协调器配置文件则还会拥有诸如 `kanban_list` 和 `kanban_unblock` 这样的看板路由工具。完整的流程请参阅 [Kanban 多代理功能](/user-guide/features/kanban)。
 
 | 工具 | 描述 | 所需环境 |
 |------|------|----------|
