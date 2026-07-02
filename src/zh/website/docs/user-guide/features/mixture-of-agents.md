@@ -95,7 +95,30 @@ moa:
 
 - 参考模型：`openai-codex:gpt-5.5`
 - 参考模型：`openrouter:deepseek/deepseek-v4-pro`
-- 聚合模型/执行模型：`openrouter:anthropic/claude-opus-4.8`
+- 聚合/执行模型：`openrouter:anthropic/claude-opus-4.8`
+
+### 使用 `reference_max_tokens` 调整建议生成速度
+
+在每轮对话中，MoA 会并行运行参考模型（即建议生成器），随后再由聚合模型进行处理。建议生成是导致单轮延迟的主要因素——每轮的耗时与建议生成器输出的token数量密切相关，因为系统需要等待最慢的那个建议生成器完成输出。默认情况下，建议生成器的输出没有限制（即未设置 `reference_max_tokens`），因此它们可能会生成冗长、类似文章长度的建议。
+
+可以通过为预设设置 `reference_max_tokens` 来限制建议生成器的输出长度，从而获得更为简练的建议。由于聚合模型只需了解每个建议生成器的核心观点，设定一个上限（例如 `600`）即可显著缩短单轮耗时，且对建议质量的影响极小。该参数仅限制**建议生成器**的输出，而用户可见的最终答案——即聚合模型的输出，则不会受到任何限制。
+
+```yaml
+moa:
+  presets:
+    fast:
+      reference_models:
+        - provider: openrouter
+          model: anthropic/claude-opus-4.8
+        - provider: openrouter
+          model: openai/gpt-5.5
+      aggregator:
+        provider: openrouter
+        model: anthropic/claude-opus-4.8
+      reference_max_tokens: 600   # concise advice → faster turns
+```
+
+如需保持原有的无上限运行模式，可将其保留为空值（或 `0`/空白）。 
 
 ## 终端预设管理
 
