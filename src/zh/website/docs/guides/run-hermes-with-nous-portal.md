@@ -47,8 +47,8 @@ OAuth 功能需要浏览器，而回调处理则在运行 Hermes 的机器上执
 ssh -N -L 8642:127.0.0.1:8642 user@remote-host    # in a local terminal
 hermes setup --portal                              # on the remote, open the printed URL in your local browser
 
-# Option B: manual paste (for Cloud Shell, Codespaces, EC2 Instance Connect)
-hermes auth add nous --type oauth --manual-paste
+# Option B: device-code login (works from Cloud Shell, Codespaces, EC2 Instance Connect)
+hermes auth add nous --type oauth
 # Then re-run `hermes setup --portal` to wire the provider + gateway
 ```
 
@@ -184,11 +184,11 @@ hermes cron create "every day at 9am" \
 hermes portal
 ```
 
-如果浏览器无法打开或回调失败，很可能是您正在使用远程/无头主机——请参阅[通过 SSH 进行 OAuth 认证](/guides/oauth-over-ssh)，了解端口转发及手动粘贴的解决方案。
+如果浏览器无法打开或回调失败，很可能是您正在使用远程/无头主机——请参阅[通过 SSH 进行 OAuth 认证](/guides/oauth-over-ssh)，了解端口转发的相关解决方案。
 
-### 显示“Model: currently openrouter”（或其他提供商）而非“using Nous as inference provider”
+### 显示“Model: currently openrouter”（或其他提供商名称），而非“using Nous as inference provider”
 
-您的本地配置出现了偏差。虽然 OAuth 认证成功，但`model.provider`仍指向了其他提供商。解决方法如下：
+这是由于您的本地配置发生了变动。虽然 OAuth 认证正常，但`model.provider`字段仍指向了其他提供商。解决方法如下：
 
 ```bash
 hermes config set model.provider nous
