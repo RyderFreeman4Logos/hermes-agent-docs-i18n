@@ -116,15 +116,15 @@ hermes model
 # browser opens, sign in, done
 ```
 
-您现有的提供者配置将保持不变。您可以在会话进行中通过 `/model` 命令在它们之间切换，或在不同会话之间使用 `hermes model` 命令切换——此时 Portal 会成为您可用的提供者之一，而非唯一的提供者。
+您现有的提供商配置将保持不变。您可以在会话进行中通过 `/model` 命令在它们之间切换，或在不同会话间使用 `hermes model` 命令切换——此时 Portal 会成为您的可用提供商之一，而非唯一的提供商。
 
 ### 无界面模式 / SSH / 远程设置
 
-OAuth 需要浏览器，但回调处理会在运行 Hermes 的机器上执行。对于远程主机，请参考 [通过 SSH/远程主机进行 OAuth 认证](/guides/oauth-over-ssh)——Portal 与其他基于 OAuth 的提供者采用相同的配置方式（如 `ssh -L` 端口转发，以及针对 Cloud Shell / Codespaces 等仅支持浏览器的环境使用的 `--manual-paste` 参数）。
+OAuth 需要浏览器，但回环回调会在运行 Hermes 的机器上执行。对于远程主机，请参阅 [通过 SSH/远程主机进行 OAuth 认证](/guides/oauth-over-ssh)——Portal 与其他基于 OAuth 的提供商采用相同的配置方式（即通过 `ssh -L` 实现端口转发）。
 
 ### 配置文件设置
 
-如果您使用 [Hermes 配置文件](/user-guide/profiles)，Portal 的刷新令牌会通过共享令牌存储机制自动同步到所有配置文件中。只需在任何一个配置文件中登录一次，其余配置文件便会自动获取该令牌——无需为每个配置文件重复执行 OAuth 认证流程。
+如果您使用 [Hermes 配置文件](/user-guide/profiles)，Portal 的刷新令牌会通过共享令牌存储库自动同步到所有配置文件中。只需在任何配置文件中登录一次，其余配置文件便会自动获取该令牌，无需为每个配置文件重复执行 OAuth 流程。
 
 ## 日常使用 Portal
 
