@@ -100,24 +100,24 @@ nvidia/nemotron-3-ultra:free
 hermes
 ```
 
-就这样——您现在正在使用免费的 Nemotron 3 Ultra。
+就是这样——您现在正在使用免费的 Nemotron 3 Ultra。
 
 ## 后续切换使用
 
 已经配置了其他模型？
 
 - **桌面应用**：打开模型选择器，搜索 **nemotron 3 ultra**，然后选择 **免费版**。
-- **CLI / TUI**：可在会话中随时通过 `/model nvidia/nemotron-3-ultra:free` 进行切换，或运行 `/model` 打开选择器并从列表中挑选。
+- **CLI / TUI**：可在会话中进行任意时间切换，使用命令 `/model nvidia/nemotron-3-ultra:free`；或者运行 `/model` 打开选择器并从列表中挑选。
 
 ## 故障排除
 
-- **列表中看不到该模型？** 请确认已完成与 Nous Portal 的连接，并且当前使用的是 **免费计划**。在 CLI 中，执行 `hermes portal info` 可确认您已登录且数据正通过 Nous 传输。
+- **列表中未显示该模型？** 请确认已完成与 Nous Portal 的连接，并且当前使用的是 **免费套餐**。在 CLI 中，执行 `hermes portal info` 可以确认您已登录且数据正通过 Nous 传输。
 - **选错了版本？** 请重新选择 `nvidia/nemotron-3-ultra:free`——必须加上 `:free` 后缀才能保持免费使用。
-- **浏览器无法打开 / 您在远程主机上（CLI环境）？** 请参阅 [通过 SSH/远程主机进行 OAuth 认证](/guides/oauth-over-ssh)，了解端口转发及手动粘贴的解决方案。
+- **浏览器无法打开 / 您在远程主机上（使用 CLI）？** 请参阅 [通过 SSH/远程主机进行 OAuth 授权](/guides/oauth-over-ssh) 以了解端口转发解决方案。
 
 ## 相关内容
 
 - **[桌面应用](/user-guide/desktop)** —— 原生的一键式应用（支持 macOS、Windows、Linux）
 - **[通过 Nous Portal 运行 Hermes Agent](/guides/run-hermes-with-nous-portal)** —— 完整的 Portal 使用指南：模型管理、工具网关及验证流程
-- **[Nous Portal 集成](/integrations/nous-portal)** —— 订阅方案包含的功能
-- **[快速入门](/getting-started/quickstart)** —— 5分钟内完成安装并开始使用
+- **[Nous Portal 集成](/integrations/nous-portal)** —— 订阅套餐包含的功能
+- **[快速入门](/getting-started/quickstart)** —— 5 分钟内完成从安装到使用的操作
