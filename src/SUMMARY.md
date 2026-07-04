@@ -2026,7 +2026,7 @@
         - [恶意软件包调查报告](zh/optional-skills/security/oss-forensics/templates/malicious-package-report.md)
     - [Sherlock]()
       - [Sherlock OSINT用户名查询功能](zh/optional-skills/security/sherlock/SKILL.md)
-    - [Unbroker]()
+    - [Unbroker](zh/optional-skills/security/unbroker/README.md)
       - [References]()
         - [站点专用操作方案（预录制的处理流程）](zh/optional-skills/security/unbroker/references/site-playbooks.md)
         - [案例状态机](zh/optional-skills/security/unbroker/references/state-machine.md)
