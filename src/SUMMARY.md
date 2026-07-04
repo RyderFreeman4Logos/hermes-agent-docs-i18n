@@ -2027,6 +2027,7 @@
     - [Sherlock]()
       - [Sherlock OSINT用户名查询功能](zh/optional-skills/security/sherlock/SKILL.md)
     - [Unbroker](zh/optional-skills/security/unbroker/README.md)
+      - [unbroker](zh/optional-skills/security/unbroker/SKILL.md)
       - [References]()
         - [站点专用操作方案（预录制的处理流程）](zh/optional-skills/security/unbroker/references/site-playbooks.md)
         - [案例状态机](zh/optional-skills/security/unbroker/references/state-machine.md)
