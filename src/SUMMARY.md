@@ -2029,6 +2029,7 @@
     - [Unbroker]()
       - [References]()
         - [Legal]()
+          - [CCPA / CPRA（加利福尼亚州）](zh/optional-skills/security/unbroker/references/legal/ccpa.md)
           - [GDPR / UK-GDPR（路线图——第三阶段）](zh/optional-skills/security/unbroker/references/legal/gdpr.md)
       - [Templates]()
         - [Consent]()
