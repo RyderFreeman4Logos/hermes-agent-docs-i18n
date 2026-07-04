@@ -2029,6 +2029,7 @@
     - [Unbroker](zh/optional-skills/security/unbroker/README.md)
       - [unbroker](zh/optional-skills/security/unbroker/SKILL.md)
       - [References]()
+        - [取消订阅操作流程指南](zh/optional-skills/security/unbroker/references/methods.md)
         - [站点专用操作方案（预录制的处理流程）](zh/optional-skills/security/unbroker/references/site-playbooks.md)
         - [案例状态机](zh/optional-skills/security/unbroker/references/state-machine.md)
         - [Legal]()
