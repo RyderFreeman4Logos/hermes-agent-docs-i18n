@@ -2028,6 +2028,7 @@
       - [Sherlock OSINT用户名查询功能](zh/optional-skills/security/sherlock/SKILL.md)
     - [Unbroker]()
       - [References]()
+        - [案例状态机](zh/optional-skills/security/unbroker/references/state-machine.md)
         - [Legal]()
           - [CCPA / CPRA（加利福尼亚州）](zh/optional-skills/security/unbroker/references/legal/ccpa.md)
           - [加州 DROP 平台（最高效的解决方案）](zh/optional-skills/security/unbroker/references/legal/drop.md)
