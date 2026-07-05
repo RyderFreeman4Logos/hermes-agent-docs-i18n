@@ -744,17 +744,19 @@ config_overrides:
 hermes debug share [options]
 ```
 
-将调试报告（系统信息+近期日志）上传至粘贴服务后，即可获取一个可分享的链接。该功能非常适合快速提交支持请求——报告中包含了辅助人员诊断问题所需的所有信息。
+将调试报告（系统信息+近期日志）上传至粘贴服务后，即可获取一个可分享的链接。此功能非常适合快速提交支持请求——报告中包含了辅助人员诊断问题所需的所有信息。
 
 | 选项 | 描述 |
 |------|------|
 | `--lines <N>` | 每个日志文件需包含的行数（默认：200）。 |
 | `--expire <days>` | 粘贴内容的有效期，以天为单位（默认：7）。 |
-| `--local` | 直接在本地打印报告，而无需上传。 |
+| `--nous` | 上传至Nous内部的诊断存储系统，而非公共粘贴服务。当Nous支持团队要求获取私有诊断数据包时，请使用此选项。 |
+| `--local` | 在本地打印报告，而非上传。 |
+| `--no-redact` | 禁用上传时的敏感信息遮蔽功能。默认情况下，上传内容会进行遮蔽处理。 |
 
-该报告包含系统信息（操作系统、Python版本、Hermes版本），以及近期代理、网关、GUI/控制台和桌面端的日志（每个文件大小上限为512 KB），还会显示已脱敏的API密钥状态。所有密钥都会被自动处理，绝不会上传任何敏感信息。
+该报告包含系统信息（操作系统、Python版本、Hermes版本），以及近期来自代理、网关、GUI/控制台和桌面端的日志（每个文件大小上限为512 KB），还会显示经过遮蔽处理的API密钥状态。默认情况下，上传内容会进行遮蔽处理，以避免包含敏感信息。
 
-系统会按顺序尝试以下粘贴服务：paste.rs、dpaste.com。
+默认情况下，系统会按顺序尝试使用公共粘贴服务：paste.rs、dpaste.com。而使用`--nous`选项时，会将相同的调试数据包上传至Nous私有的诊断存储系统中；此时返回的查看链接仅供Nous团队使用，并且在14天后会自动删除。
 
 ### 示例
 
@@ -762,6 +764,7 @@ hermes debug share [options]
 hermes debug share              # Upload debug report, print URL
 hermes debug share --lines 500  # Include more log lines
 hermes debug share --expire 30  # Keep paste for 30 days
+hermes debug share --nous       # Upload a private diagnostics bundle for Nous support
 hermes debug share --local      # Print report to terminal (no upload)
 ```
 
