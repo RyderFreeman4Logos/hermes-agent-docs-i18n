@@ -74,6 +74,7 @@ compression:
   target_ratio: 0.20         # How much of threshold to keep as tail (default: 0.20)
   protect_last_n: 20         # Minimum protected tail messages (default: 20)
   codex_gpt55_autoraise: true  # gpt-5.5 on Codex OAuth: raise trigger to 85% (default: true)
+  codex_gpt55_autoraise_notice: true  # Show the one-time autoraise notice (default: true)
 
 # Summarization model/provider configured under auxiliary:
 auxiliary:
@@ -86,19 +87,28 @@ auxiliary:
 ### 参数详情
 
 | 参数 | 默认值 | 取值范围 | 说明 |
-|------|--------|----------|------|
-| `threshold` | `0.50` | 0.0-1.0 | 当提示词令牌数 ≥ `threshold × context_length` 时触发压缩操作 |
-| `target_ratio` | `0.20` | 0.10-0.80 | 用于控制尾部保护所需的令牌预算：`threshold_tokens × target_ratio` |
-| `protect_last_n` | `20` | ≥1 | 始终保留的最新消息的最小数量 |
-| `protect_first_n` | `3` | （固定值） | 系统提示词及首次对话内容始终会被保留 |
-| `codex_gpt55_autoraise` | `true` | 布尔值 | 对通过 ChatGPT Codex OAuth 路由使用的 gpt-5.5 模型，将触发阈值提升至 85%（详见下文）。如需保持全局默认阈值，则将其设置为 `false` |
+|-----------|---------|----------|------|
+| `threshold` | `0.50` | 0.0-1.0 | 当提示词token数 ≥ `threshold × context_length`时触发压缩操作 |
+| `target_ratio` | `0.20` | 0.10-0.80 | 用于控制尾部保护所需的token预算：`threshold_tokens × target_ratio` |
+| `protect_last_n` | `20` | ≥1 | 总是会保留的最少近期消息数量 |
+| `protect_first_n` | `3` | （固定值） | 系统提示词及首次对话内容将始终被保留 |
+| `codex_gpt55_autoraise` | `true` | 布尔值 | 对通过ChatGPT Codex OAuth接口使用的gpt-5.5模型，将触发阈值提升至85%（详见下文）。若设置为`false`，则保持全局默认阈值 |
+| `codex_gpt55_autoraise_notice` | `true` | 布尔值 | 显示针对Codex gpt-5.5模型的临时阈值提升提示。若设置为`false`，则仍维持85%的触发阈值，但不会显示相关提示信息 |
 
-### Codex gpt-5.5 的阈值自动提升机制
+### Codex gpt-5.5模型的阈值提升机制
 
-ChatGPT Codex OAuth 后端将 gpt-5.5 模型的上下文窗口大小硬性限制在 **272K**（同一接口在 OpenAI 的直接 API 以及 OpenRouter 上的上下文窗口为 1.05M，而在 GitHub Copilot 上则为 400K）。在默认 50% 的触发阈值下，压缩操作会在上下文长度达到约 136K 时触发——这仅相当于模型实际可用空间的一半。当使用 Codex OAuth 路由（`provider: openai-codex`）且模型为 gpt-5.5 时，Hermes 会将触发阈值提升至 **85%**（约 231K），并显示一次性通知及取消该设置的命令。此机制仅适用于该特定路由；在其他提供商上使用的 gpt-5.5 模型仍将遵循全局默认阈值。如需恢复为全局默认值：
+ChatGPT Codex OAuth后端将gpt-5.5模型的上下文窗口大小上限设定为**272K**
+（而在OpenAI的直接API及OpenRouter平台上，同一接口的上下文窗口为105万token；
+在GitHub Copilot平台则为40万token）。在默认50%的触发阈值下，压缩操作会在上下文窗口达到约136K时触发——这仅相当于模型实际可用空间的一半。当当前使用的是Codex OAuth接口（`provider: openai-codex`）且模型为gpt-5.5时，Hermes会将触发阈值提升至**85%**（约231K），并显示一条一次性提示信息，同时提供取消该设置的命令。此机制仅适用于该特定接口；在其他提供商上使用的gpt-5.5模型则仍遵循全局默认阈值。如需恢复为全局默认阈值：
 
 ```bash
 hermes config set compression.codex_gpt55_autoraise false
+```
+
+若要保持85%的自动提升比例，同时仅隐藏一次性通知：
+
+```bash
+hermes config set compression.codex_gpt55_autoraise_notice false
 ```
 
 ### 计算值（基于默认参数下的200万上下文模型）
@@ -288,30 +298,32 @@ marker = {"type": "ephemeral"}
 marker = {"type": "ephemeral", "ttl": "1h"}
 ```
 
-标记的添加方式会根据内容类型而有所不同：
+标记的添加方式会因内容类型而异：
 
 | 内容类型 | 标记的放置位置 |
 |-----------|----------------|
-| 字符串内容 | 会被转换为 `[{"type": "text", "text": ..., "cache_control": ...}]` 的格式 |
-| 列表内容 | 会被添加到最后一个元素的字典中 |
-| 无/空内容 | 会以 `msg["cache_control"]` 的形式添加 |
-| 工具消息 | 仅限原生 Anthropic 模型，会以 `msg["cache_control"]` 的形式添加 |
+| 字符串内容 | 会被转换为 `[{"type": "text", "text": ..., "cache_control": ...}]` |
+| 列表内容 | 会添加到最后一个元素的字典中 |
+| 无/空内容 | 以 `msg["cache_control"]` 的形式添加 |
+| 工具消息 | 以 `msg["cache_control"]` 的形式添加（仅限原生 Anthropic） |
 
 ### 考虑缓存的设计模式
 
-1. **稳定的系统提示词**：系统提示词是第一处断点，并会在所有对话轮次中被缓存。请避免在对话进行过程中修改它（压缩功能仅在首次压缩时才会附加备注）。
+1. **稳定的系统提示词**：系统提示词是第一个断点，并会在所有对话轮次中被缓存。避免在对话进行过程中修改它（压缩功能仅在首次压缩时才会附加说明）。
 
 2. **消息顺序很重要**：缓存命中需要前缀匹配。如果在中间添加或删除消息，将会使之后的所有内容缓存失效。
 
-3. **压缩与缓存的交互**：经过压缩后，被压缩区域的缓存会失效，但系统提示词缓存依然保留。通过滚动式的3条消息窗口，可在1-2轮对话后重新建立缓存。
+3. **压缩与缓存的交互**：经过压缩后，被压缩区域的缓存会失效，但系统提示词缓存仍然有效。通过滚动3条消息的窗口，可在1-2轮对话内重新建立缓存。
 
-4. **TTL设置**：默认值为 `5m`（5分钟）。对于那些用户在各轮对话之间会有间隔的长时间会话，可使用 `1h` 作为TTL值。
+4. **TTL设置**：默认值为 `5m`（5分钟）。对于用户会在各轮对话之间休息的长时间会话，可设置为 `1h`。
+
+5. **模型标识也是缓存键的一部分**：提供商端的缓存是针对处理请求的模型（以及账户/API密钥）来划分范围的。如果在对话过程中更换模型——无论是通过显式的 `/model` 切换、主模型回退，还是将凭证池切换到其他账户——那么后续请求都将无法命中缓存，需要以全额输入费用重新读取整个对话历史。这是提供商端缓存机制的固有特性，Hermes 无法避免；因此，关于 `/model`、备用提供商及凭证池的用户文档都会包含相关成本警告。请勿添加会在会话中途悄悄更换模型或凭证的功能。
 
 ### 启用提示词缓存
 
 在以下情况下，提示词缓存会自动启用：
-- 所使用的模型是Anthropic Claude系列模型（可通过模型名称识别）
-- 所使用的服务提供商支持 `cache_control` 功能（如原生Anthropic API或OpenRouter）
+- 模型为 Anthropic Claude 系列模型（通过模型名称识别）
+- 提供商支持 `cache_control` 功能（原生 Anthropic API 或 OpenRouter）
 
 ```yaml
 # config.yaml — TTL is configurable (must be "5m" or "1h")
