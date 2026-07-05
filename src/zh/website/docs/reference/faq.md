@@ -631,31 +631,35 @@ delegation:
 /model openai/gpt-5.4                   # switch back
 ```
 
-如需了解更多关于任务委派机制的详细信息，请参阅[子代理委派](../user-guide/features/delegation.md)。
+:::warning
+每次使用 `/model` 参数切换时，都会重置提示词缓存——由于缓存键中包含模型信息，因此每次切换后的第一条消息都需要重新读取整个对话历史，从而产生全额的输入费用。在长时间对话中，建议采用子代理机制（子代理拥有独立的上下文）或开启新会话，而非反复切换模型。
+:::
 
-### 在一个 WhatsApp 号码上运行多个代理（按聊天绑定）
+如需了解子代理机制的更多细节，请参阅 [子代理委托](../user-guide/features/delegation.md)。
 
-**场景：** 在 OpenClaw 中，您为不同的 WhatsApp 聊天绑定了多个独立的代理——一个用于家庭购物清单群组，另一个用于私人聊天。Hermes 能实现这一点吗？
+### 在一个 WhatsApp 号码上运行多个代理（单聊天绑定）
 
-**当前限制：** 每个 Hermes 配置文件都需要独立的 WhatsApp 号码/会话。您无法将多个配置文件绑定到同一个 WhatsApp 号码下的不同聊天中——因为 WhatsApp 接口（Baileys）要求每个号码只能使用一个已认证的会话。
+**场景：** 在 OpenClaw 中，您可能将多个独立的代理绑定到不同的 WhatsApp 聊天中——一个用于家庭购物清单群组，另一个用于私人聊天。Hermes 能实现这一点吗？
+
+**当前限制：** 每个 Hermes 配置文件都需要对应的 WhatsApp 号码和会话。您无法将多个配置文件绑定到同一个 WhatsApp 号码下的不同聊天中——因为 WhatsApp 接口（Baileys）要求每个号码只能使用一个已认证的会话。
 
 **解决方案：**
 
-1. **使用支持角色切换的单一配置文件。** 创建不同的 `AGENTS.md` 上下文文件，或使用 `/personality` 命令来根据不同聊天调整代理行为。这样代理就能识别当前所处的聊天环境并作出相应调整。
+1. **使用单个配置文件并切换人格模式。** 创建不同的 `AGENTS.md` 上下文文件，或使用 `/personality` 命令根据不同聊天调整代理行为。这样代理就能识别当前所处的聊天环境并作出相应调整。
 
-2. **为特定任务使用定时任务。** 对于购物清单管理这类任务，可以设置定时任务来监控特定聊天并管理清单——无需额外的代理。
+2. **通过定时任务处理特定任务。** 对于购物清单管理这类功能，可以设置定时任务来监控特定聊天并管理清单——无需单独的代理。
 
-3. **使用独立的 WhatsApp 号码。** 如果需要完全独立的代理，可为每个配置文件配备独立的 WhatsApp 号码。Google Voice 等服务提供的虚拟号码即可满足此需求。
+3. **使用不同的 WhatsApp 号码。** 如果需要完全独立的代理，可为每个配置文件配备专属的 WhatsApp 号码。Google Voice 等服务提供的虚拟号码也可满足此需求。
 
-4. **改用 Telegram 或 Discord。** 这些平台更自然地支持按聊天绑定——每个 Telegram 群组或 Discord 频道都有独立的会话，您可以在同一个账号上运行多个机器人令牌（每个配置文件一个）。
+4. **改用 Telegram 或 Discord。** 这些平台更自然地支持单聊天绑定——每个 Telegram 群组或 Discord 频道都有独立的会话，您可以在同一个账号上运行多个机器人令牌（每个配置文件一个）。
 
-更多详情请参阅[配置文件](../user-guide/profiles.md)和[WhatsApp 设置](../user-guide/messaging/whatsapp.md)。
+更多详细信息请参阅 [配置文件](../user-guide/profiles.md) 和 [WhatsApp 设置](../user-guide/messaging/whatsapp.md)。
 
-### 控制 Telegram 中显示的内容（隐藏日志与推理过程）
+### 控制 Telegram 中显示的内容（隐藏日志和推理过程）
 
-**场景：** 您在 Telegram 中看到的不仅是最终结果，还有网关执行日志、Hermes 的推理过程以及工具调用详情。
+**场景：** 您在 Telegram 中看到的不仅是最终输出，还有网关执行日志、Hermes 的推理过程以及工具调用详情。
 
-**解决方案：** `config.yaml` 文件中的 `display.tool_progress` 设置可控制显示的工具活动程度：
+**解决方案：** `config.yaml` 文件中的 `display.tool_progress` 设置可控制工具活动的显示程度：
 
 ```yaml
 display:
