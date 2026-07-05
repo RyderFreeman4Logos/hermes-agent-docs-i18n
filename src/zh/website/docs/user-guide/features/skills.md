@@ -62,7 +62,23 @@ hermes skills opt-in --sync      # undo: remove the marker and re-seed now
 /excalidraw
 ```
 
-内置的 `plan` 技能就是一个很好的例子。运行命令 `/plan [request]` 后，系统会加载该技能的指令，指示 Hermes 在必要时检查上下文信息，生成一份 Markdown 格式的执行计划而非直接执行任务，并将结果保存在当前工作空间或后端工作目录下的 `.hermes/plans/` 文件夹中。
+### 在单条指令中串联多个技能
+
+您可以通过在消息开头依次使用斜杠命令来调用多个技能——前导的每个 `/skill` 标识符（最多5个）都会被加载，其余部分则构成您的指令内容：
+
+```bash
+/github-pr-workflow /test-driven-development fix issue #123 and open a PR
+```
+
+解析会在遇到第一个非已安装技能的标记时停止，因此那些以“/”开头的参数（如文件路径）将不会被误处理。
+
+```bash
+/ocr-and-documents /tmp/scan.pdf extract the tables   # loads one skill; /tmp/scan.pdf is the argument
+```
+
+对于那些需要频繁使用的组合功能，建议使用[技能包](#skill-bundles)——通过一个简短的命令即可实现相同的效果。
+
+打包后的 `plan` 技能就是一个很好的例子。执行 `/plan [request]` 命令后，系统会加载该技能的指令，指示 Hermes 在必要时检查上下文信息，生成一份 Markdown 格式的执行计划而非直接执行任务，并将结果保存在当前工作空间或后端工作目录下的 `.hermes/plans/` 文件夹中。
 
 此外，您也可以通过自然对话的方式与这些技能进行交互：
 
