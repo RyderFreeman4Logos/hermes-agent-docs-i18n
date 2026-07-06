@@ -27,73 +27,71 @@
   gh search issues --repo NousResearch/hermes-agent "<your terms>"
   gh search prs --repo NousResearch/hermes-agent --state all "<your terms>"
   ```
-或者使用网页界面：[issues](https://github.com/NousResearch/hermes-agent/issues?q=) · [PRs（所有状态）](https://github.com/NousResearch/hermes-agent/pulls?q=is%3Apr)。  
-- **问题追踪系统可能与代码更新存在延迟。** 许多用户请求的功能早已在代码中实现，因此在提出新需求前，建议先通过源码搜索（如 `search_files` 或编辑器自带的 grep 功能）确认该功能是否已存在。  
-- **如果已有开放的 PR 在处理相同问题**，建议优先审查或改进该 PR，而非重复提交新的 PR。  
-- **对于规模较大的任务**，可在对应 issue 中留言说明你正在处理该问题，以免他人重复开展工作。  
+或者使用网页界面：[issues](https://github.com/NousResearch/hermes-agent/issues?q=) · [PRs (所有状态)](https://github.com/NousResearch/hermes-agent/pulls?q=is%3Apr)。  
+- **问题跟踪系统可能会落后于代码更新。** 许多用户请求的功能早已在代码中实现，因此在提出新需求前，建议先通过源代码搜索（如 `search_files` 或编辑器自带的 grep 功能）确认该功能是否已存在。  
+- **如果已有开放的 PR 在处理相同问题**，建议优先审查或改进该 PR，而非重复创建新的 PR。  
+- **对于规模较大的任务**，可在对应 issue 中留言说明你正在处理该问题，以避免他人重复开展工作。  
 
-相关内容：#38284 讨论了 Agent 端的类似机制——Hermes 会在进行深度自我排查前先检查现有的 issue 和 PR。本部分则是为人工贡献者提供的补充说明。  
+相关内容：#38284 涉及了代理端的类似机制——Hermes 会在进行深度自我排查前先检查现有的 issue 和 PR。本部分则是为人工贡献者提供的补充说明。  
 
 ---
 
-## 应该将其设为 Skill 还是 Tool？
+## 应该创建技能还是工具？
 
-这是新贡献者最常遇到的问题。答案几乎总是 **Skill**。  
+这是新贡献者最常遇到的问题。答案几乎总是**技能**。  
 
-### 何时应将其设为 Skill：  
+### 何时将其定义为技能：  
 - 该功能可通过指令 + shell 命令 + 现有工具来实现；  
-- 它封装了外部 CLI 或 API，Agent 可通过 `terminal` 或 `web_extract` 调用；  
-- 不需要为 Agent 内置自定义的 Python 集成或 API 密钥管理功能。  
-- **示例**：arXiv 搜索、git 工作流、Docker 管理、PDF 处理、通过 CLI 工具发送邮件等。  
+- 它封装了外部 CLI 或 API，代理可通过 `terminal` 或 `web_extract` 调用这些接口；  
+- 不需要为代理集成自定义的 Python 代码或 API 密钥管理功能。  
+**示例**：arXiv 搜索、git 工作流、Docker 管理、PDF 处理、通过 CLI 工具发送邮件等。  
 
-### 何时应将其设为 Tool：  
-- 需要与 API 密钥、认证流程或由 Agent harness 管理的多组件配置进行端到端集成；  
+### 何时将其定义为工具：  
+- 需要与 API 密钥、认证流程或由代理框架管理的多组件配置进行端到端集成；  
 - 需要每次都精确执行的自定义处理逻辑（而非依赖 LLM 的“尽力而为”解读）；  
-- 需要处理二进制数据、流式数据或无法通过终端传输的实时事件。  
-- **示例**：浏览器自动化（Browserbase 会话管理）、TTS（音频编码与平台推送）、视觉分析（base64 图像处理）等。  
+- 需要处理二进制数据、流式数据或实时事件，而这些数据无法通过终端传输。  
+**示例**：浏览器自动化（Browserbase 会话管理）、文本转语音（音频编码 + 平台推送）、视觉分析（base64 图像处理）等。  
 
-### Skill 是否需要打包在一起？  
+### 技能是否需要打包在一起？  
 
-打包在 `skills/` 目录中的 Skill 会随每个 Hermes 安装包一同提供。这类 Skill 应该**对大多数用户都有广泛实用性**：  
-- 文档处理、网络研究、常见开发工作流、系统管理；  
-- 被大量用户频繁使用。  
+打包在 `skills/` 目录中的技能会随每个 Hermes 安装包一同提供。这类技能应**对大多数用户都有广泛用途**，例如：文档处理、网络研究、常见开发工作流、系统管理等功能，且会被大量用户频繁使用。  
 
-如果你的 Skill 是官方提供的且很有用，但并非所有人都需要（例如付费服务集成、依赖庞大的功能），可将其放入 **`optional-skills/`** 目录——该目录中的内容会随仓库一起提供，但默认不会被激活。用户可通过 `hermes skills browse` 查看（标记为“官方”），并使用 `hermes skills install` 安装（无需第三方警告，因其具有内置信任度）。  
+如果你的技能虽官方认可且实用，但并非所有人都需要（比如某些付费服务集成或依赖较大的功能），可将其放入 **`optional-skills/`** 目录——该目录中的技能会随仓库一同提供，但默认不会被激活。用户可通过 `hermes skills browse` 查看（标记为“官方”），并使用 `hermes skills install` 安装（无需第三方警告，因其具有内置信任度）。  
 
-如果你的 Skill 是专业型、由社区贡献或针对特定场景设计，更适合放在 **Skills Hub** 中——将其上传到技能注册表，并在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可通过 `hermes skills install` 安装它。  
+如果你的技能属于专业领域、由社区贡献或针对特定场景设计，更适合放在**技能中心**——将其上传到技能注册表，并在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可通过 `hermes skills install` 安装此类技能。  
 
 ---
 
 ## 内存提供器：应作为独立插件发布  
 
-**我们不再接受新的内存提供器加入此仓库。** `plugins/memory/` 目录下已有的内置提供器（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）已停止接收新功能。如果你想添加新的内存后端，应将其作为**独立插件仓库**发布，供用户安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。  
+**我们不再接受新的内存提供器加入此仓库。** `plugins/memory/` 目录下已有的内置提供器（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）已不再接受新增。如果你想添加新的内存后端，应将其作为**独立插件仓库**发布，供用户安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。  
 
 独立内存插件需满足以下要求：  
 - 实现相同的 `MemoryProvider` ABC 接口（位于 `agent/memory_provider.py` 文件中），包括 `sync_turn`、`prefetch`、`shutdown` 方法，可选的 `post_setup(hermes_home, config)` 方法用于与设置向导集成；  
-- 使用相同的发现系统——`discover_memory_providers()` 会从用户/项目插件目录及 pip 安装路径中自动检测这类插件；  
+- 使用相同的发现系统——`discover_memory_providers()` 函数会从用户/项目插件目录及 pip 安装路径中自动检测这类插件；  
 - 通过 `post_setup()` 方法与 `hermes memory setup` 功能集成，无需修改核心代码；  
 - 可在 `cli.py` 文件中使用 `register_cli(subparser)` 方法注册自己的 CLI 子命令；  
 - 拥有与内置提供器相同的生命周期钩子和配置管理功能。  
 
-那些试图在 `plugins/memory/` 下新增目录的 PR 会被拒绝，系统会提示将相关功能发布为独立仓库。现有的内置提供器仍可保留，对其的错误修复也受到欢迎。  
+对于在 `plugins/memory/` 下新增目录的 PR，我们将予以拒绝，并提示用户将相关提供器作为独立仓库发布。现有的内置提供器仍可保留，对其的缺陷修复也欢迎提交。  
 
-这并非质量标准问题，而是耦合度与维护成本方面的考量。内存提供器是最常见的插件类型，但并非所有此类功能都应集中在同一个目录中。  
+这并非质量标准问题，而是出于耦合度和维护性考虑。内存提供器是最常见的插件类型，但并不应全部集中在这个目录下。  
 
 ---
 
 ## 第三方产品集成：也应作为独立插件发布  
 
-同样的规则也适用于**任何集成第三方产品或项目的插件**——比如可观测性/指标后端、供应商 SaaS 连接器、分析仪表板、付费服务集成等类似第三方功能。**这类插件不会被纳入此仓库。**  
+同样的规则也适用于**任何集成第三方产品或项目的插件**——比如可观测性/指标后端、供应商 SaaS 连接器、分析仪表板、付费服务集成等类似第三方功能。**这类插件不应被放入此仓库。**  
 
-原因在于维护负担，而非代码质量。每当有外部产品被整合进核心代码树，维护者就需要在快速发展的代码库中持续维护它，而且还要应对那些我们并不拥有且无法控制的后端系统。Hermes 的更新速度很快，若将第三方产品与之深度绑定，会给维护团队带来无尽的压力。  
+原因在于维护负担，而非代码质量问题。每当有外部产品被整合到核心代码树中，我们就必须在一个发展迅速的代码库中持续维护它，而且还要面对那些我们并不拥有且无法控制的后端系统。Hermes 的功能更新速度很快，若将第三方产品与其深度绑定，会给维护者带来无止境的负担。  
 
-建议将这些功能作为**独立插件仓库**发布：  
-- 实现相关的 ABC 接口，并使用现有的插件发现路径（`~/.hermes/plugins/`、项目级的 `.hermes/plugins/` 或 pip 安装路径）——详情参见[构建 Hermes 插件](https://hermes-agent.nousresearch.com/docs/guides/build-a-hermes-plugin)；  
+建议将这些插件作为**独立插件仓库**发布：  
+- 实现相应的 ABC 接口，并使用现有的插件发现路径（`~/.hermes/plugins/`、项目级的 `.hermes/plugins/` 目录或 pip 安装路径），详情参见[构建 Hermes 插件](https://hermes-agent.nousresearch.com/docs/guides/build-a-hermes-plugin)；  
 - 通过我们已提供的接口注册生命周期钩子（`pre_tool_call`、`post_tool_call`、`pre_llm_call`、`post_llm_call`、`on_session_start`、`on_session_end`）、工具（`ctx.register_tool`）以及 CLI 子命令（`ctx.register_cli_command`），无需修改核心代码；  
-- 如果你的插件需要框架尚未提供的功能，应提出需求，希望**扩展通用插件接口**（新增钩子或 `ctx` 方法），而不要在核心代码中为该插件单独编写特殊逻辑；  
+- 如果你的插件需要框架未提供的功能，应提出需求以**扩展通用插件接口**（例如新增钩子或 `ctx` 方法），而不要在核心代码中为该插件编写特殊处理逻辑；  
 - 在 [Nous Research Discord](https://discord.gg/NousResearch) 的 `#plugins-skills-and-skins` 频道中宣传你的插件，以便用户发现并安装。  
 
-一个设计良好的第三方产品插件即便通过了自动审查，也可能会因上述原因被拒绝——这属于发布位置的选择，而非对代码质量的评判。那些试图在 `plugins/` 下新增此类目录的 PR 也会被拒绝，系统会提示将相关功能发布为独立仓库。  
+即使是一个设计良好的第三方产品插件，也可能因不符合上述发布规则而被拒绝——这属于定位决策，而非对代码质量的评判。对于在 `plugins/` 下新增此类目录的 PR，我们也会予以拒绝，并提示用户将其作为独立仓库发布。  
 
 ---
 
@@ -101,16 +99,16 @@
 
 ### 先决条件  
 
-| 要求 | 备注 |
+| 要求 | 说明 |
 |------|------|
 | **Git** | 需安装 `git-lfs` 扩展 |
-| **Python 3.11+** | 若未安装，uv 会自动帮你安装 |
+| **Python 3.11–3.13** | 若缺失，uv 工具会自动安装 |
 | **uv** | 快速的 Python 包管理工具（[安装指南](https://docs.astral.sh/uv/)） |
 | **Node.js 20+** | 可选——用于浏览器工具和 WhatsApp 桥接功能（需与项目根目录的 `package.json` 中指定的引擎版本一致） |
 
 ### 使用标准安装程序进行安装  
 
-对于大多数贡献者而言，最便捷的开发环境搭建方式就是跟随普通用户的操作流程：运行标准安装程序，然后在克隆的仓库中开始开发。安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令，设定 `hermes update` 的更新方式，并将完整的 git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录中（通常为 `~/.hermes/hermes-agent`）。这样就能确保你的开发环境与 CLI、更新工具、懒加载依赖安装器、网关及文档所期望的架构保持一致。
+对于大多数贡献者而言，最简便的开发环境搭建方式就是跟随普通用户的操作流程：运行标准安装程序，然后在克隆的仓库中开始开发。安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令入口，定义 `hermes update` 的更新机制，并将完整的 git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录下（通常为 `~/.hermes/hermes-agent`）。这样，你的开发环境就能与 CLI 工具、更新程序、懒加载依赖安装器、网关及文档所期望的架构保持一致。
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
