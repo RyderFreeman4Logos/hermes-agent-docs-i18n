@@ -202,6 +202,7 @@ terminal:
   docker_extra_args:               # Extra flags appended verbatim to `docker run`
     - "--gpus=all"
     - "--network=host"
+  docker_network: true             # false = air-gap the container (--network=none)
 
   # Resource limits
   container_cpu: 1                 # CPU cores (0 = unlimited)
@@ -219,74 +220,77 @@ terminal:
   lifetime_seconds: 300            # Idle-reaper window; also feeds 2× orphan-reaper threshold
 ```
 
-**`docker_env`** 与 **`docker_forward_env`** 的区别：前者会直接注入你在配置中指定的 `KEY=value` 对（这些值来自 `config.yaml`，或通过 `TERMINAL_DOCKER_ENV='{"DEBUG":"1"}'` 以 JSON 字典形式传递）。后者则从你的 shell 或 `~/.hermes/.env` 中读取值，因此敏感信息永远不会出现在配置文件中。对于令牌类凭证，请使用 `docker_forward_env`；而对于容器所需的静态参数，则可使用 `docker_env`。
+**`docker_env`** 与 **`docker_forward_env`** 的区别：前者会注入你在配置中指定的原始 `KEY=value` 对（这些值来自 `config.yaml`，或通过 `TERMINAL_DOCKER_ENV='{"DEBUG":"1"}'` 以 JSON 字典形式传递）。后者则从你的 shell 或 `~/.hermes/.env` 中读取值，因此敏感信息永远不会出现在配置文件中。对于令牌类凭证，建议使用 `docker_forward_env`；而对于容器所需的静态参数，则可使用 `docker_env`。
 
-**`terminal.docker_extra_args`**（也可通过 `TERMINAL_DOCKER_EXTRA_ARGS='["--gpus=all"]'` 覆盖）允许你传递那些 Hermes 未将其作为标准键项提供的任意 `docker run` 参数——如 `--gpus`、`--network`、`--add-host`，以及自定义的 `--security-opt` 设置等。每个参数都必须是字符串形式，该参数列表会被追加到最终生成的 `docker run` 命令中，从而在必要时覆盖 Hermes 的默认设置。请谨慎使用此类参数——任何与沙箱安全机制相冲突的选项（如权限降级、`--user` 设置、工作区绑定挂载等）都可能悄悄降低隔离强度。
+**`terminal.docker_extra_args`**（也可通过 `TERMINAL_DOCKER_EXTRA_ARGS='["--gpus=all"]'` 覆盖）允许你传递那些 Hermes 未将其作为标准键项提供的任意 `docker run` 参数——如 `--gpus`、`--network`、`--add-host`，以及自定义的 `--security-opt` 设置等。每个参数都必须是字符串形式，该参数列表会被追加到最终生成的 `docker run` 命令中，以便在需要时覆盖 Hermes 的默认设置。请谨慎使用此功能——任何与沙箱安全机制相冲突的参数（如权限降级、`--user` 设置、工作区绑定挂载等）都可能悄悄削弱隔离效果。
 
-**系统要求：** 需要已安装并正在运行的 Docker Desktop 或 Docker Engine。Hermes 会扫描 `$PATH` 及 macOS 上常见的 Docker 安装路径（如 `/usr/local/bin/docker`、`/opt/homebrew/bin/docker`、Docker Desktop 应用程序包）。Podman 也支持直接使用：若系统中同时安装了 Docker 和 Podman，可设置 `HERMES_DOCKER_BINARY=podman`（或完整路径）来强制使用 Podman。
+**`terminal.docker_network`**（默认值为 `true`；环境变量为 `TERMINAL_DOCKER_NETWORK`）——将其设置为 `false` 可以让沙箱容器以 `--network=none` 的方式运行，从而切断代理命令的所有网络出口。这一设置适用于 `terminal`、`execute_code` 以及各类文件处理工具所使用的执行容器。由于容器会在 Hermes 进程之间保持存在，因此在已有联网容器的情况下将此值设为 `false`，会移除原有容器并启动一个全新的隔离容器（系统会记录警告信息）；此时运行在旧容器中的后台进程也会丢失。相比通过 `docker_extra_args` 传递 `--network=none`，推荐使用此键进行设置。
+
+**要求：** 需要已安装并正在运行的 Docker Desktop 或 Docker Engine。Hermes 会遍历 `$PATH` 及 macOS 上常见的 Docker 安装路径（如 `/usr/local/bin/docker`、`/opt/homebrew/bin/docker`、Docker Desktop 应用程序包）。Podman 也支持直接使用：若系统中同时安装了 Docker 和 Podman，可设置 `HERMES_DOCKER_BINARY=podman`（或完整路径）来强制使用 Podman。
 
 #### 容器生命周期
 
-每个由 Hermes 管理的容器都会被添加三个标签，以便后续进程及孤儿清理进程能够识别它：
+每个由 Hermes 管理的容器都会被标记上三个标签，以便后续进程及孤儿清理机制能够识别它：
 
-- `hermes-agent=1` — 标记该容器为 Hermes 管理；
-- `hermes-task-id=<经过过滤的任务ID>` — 用于标识每个任务的重复使用情况；
-- `hermes-profile=<经过过滤的配置文件名>` — 将重复使用和清理操作限制在当前活跃的 Hermes 配置文件范围内。
+- `hermes-agent=1` —— 标识该容器由 Hermes 管理；
+- `hermes-task-id=<经过过滤的任务ID>` —— 用于实现按任务重用的识别；
+- `hermes-profile=<经过过滤的配置文件名>` —— 将重用和清理操作限制在当前活跃的 Hermes 配置文件范围内。
 
-启动时，Hermes 会执行 `docker ps --filter label=hermes-task-id=<id> --filter label=hermes-profile=<profile>` 命令，一旦找到对应的容器就会**直接附加到该容器上**。如果容器已“退出”（例如因 Docker 守护进程重启），Hermes 会重新启动它并继续使用——文件系统状态及已安装的软件包会保留，但容器内的后台进程则不会。
+启动时，Hermes 会执行 `docker ps --filter label=hermes-task-id=<id> --filter label=hermes-profile=<profile>` 命令，一旦找到对应的容器就会**直接附加到该容器上**。如果容器已“退出”（例如 Docker 守护进程重启后），Hermes 会重新启动该容器并继续使用——文件系统状态及已安装的软件包会保留，但容器内的后台进程则不会。
 
-当某个 Hermes 进程退出——无论是通过 `/quit` 命令、关闭 TUI 会话、网关关闭，还是收到 SIGKILL 信号——在默认模式下，**容器本身不会被清理**，而是继续运行。下一个 Hermes 进程会通过标签检测在几毫秒内重新附加到该容器上。这正是“跨会话共享一个长期运行的容器”这一设计理念所要求的：只有这样，后台进程（如 npm 监听器、开发服务器、长时间运行的 pytest 等）才能在会话切换后依然存活。
+当某个 Hermes 进程退出——无论是通过 `/quit` 命令、关闭 TUI 会话、网关关闭，还是收到 SIGKILL 信号——在默认模式下，**该容器不会被清理**，仍会继续运行。下一个 Hermes 进程会通过标签识别机制在几毫秒内再次附加到该容器上。这正是“跨会话共享一个长期运行的容器”这一设计理念所要求的：只有这样，后台进程（如 npm 监听器、开发服务器、长时间运行的 pytest 测试等）才能在会话切换后依然存活。
 
 **只有在以下情况下，容器才会被终止（即先停止，再执行 `docker rm -f` 命令删除）：**
 
 | 触发条件 | 触发时机 |
 |---|---|
 | `docker_persist_across_processes: false` | 显式要求进程级隔离。此时每个 `cleanup()` 函数都会执行 `stop` + `rm -f` 操作，行为与版本 #20561 发布前的设置一致。 |
-| 孤儿清理进程（基于 `lifetime_seconds`，默认为 300 秒） | 仅当环境变量 `persist_across_processes=false` 时才会触发。处于持久模式下的容器不会被清理，可顺利度过空闲期。 |
-| 下次启动时的孤儿清理进程 | 会清理所有标记为 hermes、且已“退出”且年龄超过 `2 × lifetime_seconds`（默认为 600 秒，即 10 分钟）的容器，清理范围仅限于当前配置文件。**正在运行的容器绝不会被清理**，这是为了确保进程间的安全性。如需禁用此功能，可设置 `docker_orphan_reaper: false`。 |
-| 用户直接操作 | 执行 `docker rm -f`、`docker system prune` 命令，或重启 Docker Desktop。由于我们没有设置 `--restart=always`，因此主机重启后容器会处于“已退出”状态（其写时复制层仍会保留，并在下次启动时被重新使用，但后台进程已消失）。 |
+| 死机清理机制（`lifetime_seconds`，默认为 300 秒） | 仅当环境变量设置为 `persist_across_processes=false` 时才会触发。处于持久模式下的容器不会被清理，可顺利度过空闲期。 |
+| 下次启动时的孤儿清理机制 | 会清理所有已“退出”且年龄超过 `2 × lifetime_seconds`（默认为 600 秒，即 10 分钟）的、带有 `hermes` 标签的容器，清理范围限于当前活跃的配置文件。**正在运行的容器绝不会被清理**，这是为了确保进程间的安全性。如需禁用此功能，可设置 `docker_orphan_reaper: false`。 |
+| 用户直接操作 | 通过 `docker rm -f`、`docker system prune` 命令，或重启 Docker Desktop。由于我们未设置 `--restart=always`，因此主机重启后容器会处于“已退出”状态（其写时复制层仍会保留，并在下次启动时被重新使用，但后台进程已消失）。 |
 
 一些值得注意的边缘情况：
 
-- 若容器内的 PID 1 进程因内存不足被系统杀死，容器状态会变为“已退出”。下次重复使用时，Hermes 会重新启动该容器；文件系统状态仍可保留，但后台进程已不复存在。
-- **切换配置文件**会导致容器之间相互隔离——标记为 `hermes-profile=work` 的容器对正在运行在 `hermes-profile=research` 配置文件下的 Hermes 进程来说是不可见的。孤儿清理进程也以配置文件为单位工作，因此跨配置文件的容器不会被意外清理，但除非你在原有配置文件下重新启动 Hermes，否则它们也不会被自动清理。
+- 如果容器内的 PID 1 进程因内存不足而被系统杀死，容器状态会变为“已退出”。下次重新使用时，Hermes 会再次启动该容器；文件系统状态会保留，但后台进程则不会。
+- 切换 Hermes 配置文件会实现容器间的隔离——一个标记为 `hermes-profile=work` 的容器，对于正在使用 `hermes-profile=research` 配置文件运行的 Hermes 进程来说是不可见的。孤儿清理机制同样遵循配置文件隔离原则，因此跨配置文件的容器不会被意外清理；不过在重新以原有配置文件启动 Hermes 之前，这些容器也不会被自动清除。
 
-通过 `delegate_task(tasks=[...])` 生成的并行子代理会共享同一个容器——因此同时进行的 `cd` 操作、环境变量修改以及对同一路径的写入都可能发生冲突。如果某个子代理需要独立的沙箱环境，就必须通过 `register_task_env_overrides()` 方法注册针对该任务的镜像覆盖配置，而强化学习及基准测试环境（如 TerminalBench2、HermesSweEnv 等）则会自动为其每个任务对应的 Docker 镜像完成此类配置。
+通过 `delegate_task(tasks=[...])` 生成的并行子代理会共享同一个容器——因此同时进行的 `cd` 操作、环境变量修改以及对同一路径的写入都可能发生冲突。如果某个子代理需要独立的沙箱环境，就必须通过 `register_task_env_overrides()` 方法注册针对该任务的镜像覆盖设置；而强化学习任务及基准测试环境（如 TerminalBench2、HermesSweEnv 等）则会自动为其各自的任务 Docker 镜像完成此类设置。
 
 **安全加固措施：**
-- 使用 `--cap-drop ALL`，仅恢复 `DAC_OVERRIDE`、`CHOWN`、`FOWNER` 这三项权限；
+- 使用 `--cap-drop ALL` 禁用所有权限，仅保留 `DAC_OVERRIDE`、`CHOWN`、`FOWNER` 这三项权限；
 - 设置 `--security-opt no-new-privileges`；
 - 限制进程数量为 256 个；
-- 为 `/tmp`（512MB）、`/var/tmp`（256MB）、`/run`（64MB）设置大小限制的临时文件系统。
+- 对 `/tmp`（512MB）、`/var/tmp`（256MB）、`/run`（64MB）目录使用大小受限的临时文件系统。
 
-**凭证传递机制：** 列在 `docker_forward_env` 中的环境变量会首先从你的 shell 环境中获取值，若未找到则从 `~/.hermes/.env` 中读取。技能模块也可以声明 `required_environment_variables`，这些变量也会被自动合并进来。
+**凭证传递机制：** 列在 `docker_forward_env` 中的环境变量会首先从你的 shell 环境中读取，若未找到则从 `~/.hermes/.env` 中查找。技能组件也可以声明 `required_environment_variables`，这些变量也会被自动合并进来。
 
 #### 环境变量覆盖方式
 
-`terminal:` 下的每个键都有一个形式为 `TERMINAL_<KEY_UPPERCASE>` 的环境变量覆盖项。对于 Docker 后端而言，最常用的覆盖项如下：
+`terminal:` 下的每个键都对应一个形式为 `TERMINAL_<KEY_UPPERCASE>` 的环境变量覆盖项。对于 Docker 后端而言，最常用的覆盖项如下：
 
-| 环境变量 | 对应的配置项 | 说明 |
+| 环境变量 | 对应的配置键 | 说明 |
 |---|---|---|
 | `TERMINAL_DOCKER_IMAGE` | `docker_image` | 基础镜像 |
 | `TERMINAL_DOCKER_FORWARD_ENV` | `docker_forward_env` | JSON 数组形式，例如 `'["GITHUB_TOKEN","OPENAI_API_KEY"]'` |
 | `TERMINAL_DOCKER_ENV` | `docker_env` | JSON 字典形式，例如 `'{"DEBUG":"1"}'` |
 | `TERMINAL_DOCKER_VOLUMES` | `docker_volumes` | JSON 数组，元素为 `"host:container[:ro]"` 格式的字符串 |
 | `TERMINAL_DOCKER_EXTRA_ARGS` | `docker_extra_args` | JSON 数组 |
-| `TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE` | `docker_mount_cwd_to_workspace` | 值可为 `true` 或 `false` |
-| `TERMINAL_DOCKER_RUN_AS_HOST_USER` | `docker_run_as_host_user` | 值可为 `true` 或 `false` |
-| `TERMINAL_DOCKER_PERSIST_ACROSS_PROCESSES` | `docker_persist_across_processes` | 值可为 `true` 或 `false`，默认值为 `true` |
-| `TERMINAL_DOCKER_ORPHAN_REAPER` | `docker_orphan_reaper` | 值可为 `true` 或 `false`，默认值为 `true` |
+| `TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE` | `docker_mount_cwd_to_workspace` | 取值 `true` 或 `false` |
+| `TERMINAL_DOCKER_RUN_AS_HOST_USER` | `docker_run_as_host_user` | 取值 `true` 或 `false` |
+| `TERMINAL_DOCKER_NETWORK` | `docker_network` | 取值 `true` 或 `false`，默认为 `true`；`false` 等价于 `--network=none` |
+| `TERMINAL_DOCKER_PERSIST_ACROSS_PROCESSES` | `docker_persist_across_processes` | 取值 `true` 或 `false`，默认为 `true` |
+| `TERMINAL_DOCKER_ORPHAN_REAPER` | `docker_orphan_reaper` | 取值 `true` 或 `false`，默认为 `true` |
 | `TERMINAL_CONTAINER_CPU` | `container_cpu` | 指定的 CPU 核心数 |
 | `TERMINAL_CONTAINER_MEMORY` | `container_memory` | 指定的内存大小，单位为 MB |
 | `TERMINAL_CONTAINER_DISK` | `container_disk` | 指定的磁盘空间大小，单位为 MB |
-| `TERMINAL_CONTAINER_PERSISTENT` | `container_persistent` | 值可为 `true` 或 `false`，用于控制工作区目录的绑定挂载，与 `docker_persist_across_processes` 功能不同 |
-| `TERMINAL_LIFETIME_SECONDS` | `lifetime_seconds` | 孤儿清理进程的空闲等待时间 |
+| `TERMINAL_CONTAINER_PERSISTENT` | `container_persistent` | 取值 `true` 或 `false`，用于控制工作区目录的绑定挂载，与 `docker_persist_across_processes` 功能不同 |
+| `TERMINAL_LIFETIME_SECONDS` | `lifetime_seconds` | 容器空闲后的清理等待时间 |
 | `TERMINAL_TIMEOUT` | `timeout` | 每条命令的执行超时时间 |
-| `HERMES_DOCKER_BINARY` | 无对应配置项 | 用于强制指定特定的 docker 或 podman 可执行文件路径 |
+| `HERMES_DOCKER_BINARY` | 无对应配置键 | 用于强制指定特定的 Docker 或 Podman 可执行文件路径 |
 
 ### SSH 后端
 
-通过 SSH 在远程服务器上执行命令。该后端使用 ControlMaster 实现连接复用，具备 5 分钟的空闲保持机制。默认情况下会启用持久化 shell——这样命令执行间的状态（如当前工作目录、环境变量等）都会被保留下来。
+通过 SSH 在远程服务器上执行命令。该后端使用 ControlMaster 技术实现连接复用，具备 5 分钟的空闲保持活跃机制。默认情况下会启用持久化 shell——这样命令执行过程中的当前工作目录及环境变量等信息都会被保留下来。
 
 ```yaml
 terminal:
@@ -788,18 +792,13 @@ context:
 
 插件引擎**绝不会自动激活**——您必须明确将 `context.engine` 设置为插件名称。可通过 `hermes plugins` → Provider Plugins → Context Engine 来查看并选择可用的引擎。
 
-有关内存插件对应的单选系统，请参阅 [Memory Providers](/user-guide/features/memory-providers) 文档。
+关于内存插件所采用的类似单选系统，请参阅[内存插件](/user-guide/features/memory-providers)。
 
-## 迭代预算压力
+## 迭代预算
 
-当智能体正在处理需要多次调用工具的复杂任务时，它可能会在不知不觉中耗尽迭代预算（默认为 90 次轮次）。当预算接近临界值时，系统会自动向模型发出警告：
+当智能体处理需要多次工具调用的复杂任务时，其迭代预算（默认为90轮）可能会被耗尽。Hermes**不会**在任务进行过程中发出压力警告——早期版本会在预算使用达到70%/90%时向模型发出警告，这导致模型过早放弃复杂任务，该功能已于2026年4月被移除。
 
-| 阈值 | 等级 | 模型显示的内容 |
-|------|------|----------------|
-| **70%** | 警告 | `[BUDGET: 63/90. 27 iterations left. Start consolidating.]` |
-| **90%** | 严重警告 | `[BUDGET WARNING: 81/90. Only 9 left. Respond NOW.]` |
-
-这些警告会以 `_budget_warning` 字段的形式嵌入到最后一个工具响应的 JSON 中，而非作为单独的消息发送——这样既能保留提示词缓存，也不会破坏对话结构。
+取而代之的是，当预算真正耗尽（90/90）时，Hermes会发送一条消息要求模型完成当前任务，并允许其进行**一次补充调用**以输出最终响应。如果这次补充调用仍无法生成文本，系统会要求智能体总结其已完成的工作。
 
 ```yaml
 agent:
@@ -807,15 +806,13 @@ agent:
   api_max_retries: 3           # Retries per provider before fallback engages (default: 3)
 ```
 
-默认情况下，预算限制是开启的。智能体会将警告视为工具输出结果的一部分，从而促使它整合工作内容，在迭代次数耗尽之前给出回应。
+当迭代预算被完全耗尽时，CLI会向用户显示如下提示：`⚠ 迭代预算已用完（90/90）——响应可能不完整`。
 
-当迭代预算完全用尽时，CLI会向用户显示如下通知：`⚠ 迭代预算已用完（90/90）——回应可能不完整`。如果在执行任务过程中预算就用尽了，智能体会在停止之前生成一份已完成工作的总结。
-
-`agent.api_max_retries`用于控制Hermes在切换备用提供者之前，针对临时性错误（如速率限制、连接中断、5xx错误）对提供者API调用进行重试的次数。默认值为`3`，即总共尝试4次。如果您已配置[备用提供者](/user-guide/features/fallback-providers)并希望更快地切换，可将其设置为`0`，这样主提供者出现第一个临时性错误时就会立即转而使用备用提供者，而无需继续向不可靠的端点发送重试请求。
+`agent.api_max_retries`用于控制Hermes在触发备用提供者切换之前，针对临时性错误（如速率限制、连接中断、5xx错误）会对提供者API调用进行多少次重试。其默认值为`3`，即总共尝试4次。如果您已配置了[备用提供者](/user-guide/features/fallback-providers)并希望更快地切换到备用方案，可将该值设置为`0`，这样主提供者出现首次临时错误时就会立即切换到备用提供者，而无需继续对不可靠的端点进行重试。
 
 ## 持续目标（`/goal`）
 
-当某个持续目标处于激活状态时，Hermes会判断每个助手的回应是否满足该目标。如果未满足，它会将延续提示重新输入到同一会话中，并持续处理，直到目标完成、轮次预算耗尽，或用户暂停/取消该目标。轮次预算才是真正的最后保障——一旦判定失败，系统会选择“继续处理”，从而避免因某个不可靠的判断机制而阻碍进度。
+当某个持续目标处于激活状态时，Hermes会判断每个助手的响应是否满足该目标。如果未满足，它会将延续提示反馈至同一会话中，并持续处理，直到目标完成、轮次预算耗尽，或用户暂停/取消该目标为止。轮次预算才是真正的保障——失败时会选择“继续处理”而非终止当前流程，从而避免因判断机制出现故障而阻碍任务进展。
 
 ```yaml
 goals:
@@ -1507,6 +1504,8 @@ privacy:
 
 ```yaml
 stt:
+  enabled: true                # Auto-transcribe inbound voice messages (default: true)
+  echo_transcripts: true       # Post raw transcripts back to the chat as 🎙️ "..." (default: true)
   provider: "local"            # "local" | "groq" | "openai" | "mistral"
   local:
     model: "base"              # tiny, base, small, medium, large-v3
@@ -1515,15 +1514,17 @@ stt:
   # model: "whisper-1"         # Legacy fallback key still respected
 ```
 
-提供方运行机制：
+当网关需要为智能体转录语音消息，但又不得将原始转录内容回传至聊天界面时（例如面向客户的 WhatsApp 机器人），请将 `stt.echo_transcripts` 设置为 `false`。
 
-- `local` 模式会使用在您的设备上运行的 `faster-whisper` 工具，需通过 `pip install faster-whisper` 单独进行安装。
+各提供方的运行机制如下：
+
+- `local` 模式会使用安装在您设备上的 `faster-whisper` 工具，需通过 `pip install faster-whisper` 单独进行安装。
 - `groq` 模式则利用 Groq 提供的与 Whisper 兼容的接口，并读取 `GROQ_API_KEY` 配置键。
-- `openai` 模式会调用 OpenAI 的语音 API，同时需要配置 `VOICE_TOOLS_OPENAI_KEY`。
+- `openai` 模式会调用 OpenAI 的语音处理 API，同时需要读取 `VOICE_TOOLS_OPENAI_KEY` 配置键。
 
-当所请求的提供方不可用时，Hermes 会按照 `local` → `groq` → `openai` 的顺序自动切换备用方案。
+若所请求的提供方不可用，Hermes 会按以下顺序自动切换：`local` → `groq` → `openai`。
 
-Groq 和 OpenAI 模型的优先级设置由环境变量决定：
+Groq 与 OpenAI 模型的替换设置由环境变量控制：
 
 ```bash
 STT_GROQ_MODEL=whisper-large-v3-turbo
@@ -1840,19 +1841,32 @@ approvals:
 
 | 模式 | 行为 |
 |------|------|
-| `manual`（默认值） | 在执行任何被标记的命令之前向用户发起提示。在 CLI 环境中会显示交互式确认对话框；在消息交互场景中则会将待处理的审批请求放入队列中。 |
-| `smart` | 利用辅助大语言模型来判断被标记的命令是否真的具有危险性。低风险命令会自动获得批准，并在会话期间保持该状态；而真正具有风险的命令则会提交给用户进行决策。 |
-| `off` | 跳过所有审批检查。此设置等同于 `HERMES_YOLO_MODE=true`。**请谨慎使用。** |
+| `manual`（默认值） | 在执行任何被标记的命令之前向用户发起提示。在 CLI 环境中会显示交互式确认对话框；在消息传递场景中则会将待处理的确认请求放入队列中。 |
+| `smart` | 利用辅助大语言模型来判断被标记的命令是否真的具有危险性。低风险命令会自动获得批准，并在会话期间保持有效；而真正存在风险的命令则会提交给用户进行决策。 |
+| `off` | 跳过所有确认检查。此设置等同于 `HERMES_YOLO_MODE=true`。**请谨慎使用。** |
 
-Smart 模式对于减少重复审批带来的疲劳感尤为有效——它能让智能体在安全操作上更自主地工作，同时仍能拦截那些真正具有破坏性的命令。
+Smart 模式尤其有助于减轻用户重复确认的负担——它能让智能体在安全操作上更自主地工作，同时仍能拦截真正具有破坏性的命令。
 
 :::warning
-将 `approvals.mode` 设置为 `off` 会禁用终端命令的所有安全检查。仅可在受信任的沙箱环境中使用此设置。
+将 `approvals.mode` 设置为 `off` 会关闭对终端命令的所有安全检查。仅可在受信任的沙箱环境中使用此设置。
 :::
+
+### 拒绝规则
+
+`approvals.deny` 是一个全局模式匹配列表，可无条件阻止匹配到的终端命令执行——即便在 `--yolo`、`/yolo` 或 `mode: off` 的模式下也是如此。它相当于用户可编辑版的内置硬性拦截列表：
+
+```yaml
+approvals:
+  deny:
+    - "git push --force*"
+    - "*curl*|*sh*"
+```
+
+模式为不区分大小写的 fnmatch 通配符，在 YAML 中必须用引号括起来（单独出现的开头星号会导致解析错误）。详情请参阅[安全性 —— 用户自定义拒绝规则](/user-guide/security#user-defined-deny-rules-approvalsdeny)。
 
 ## 检查点
 
-在执行可能破坏文件的操作之前，系统会自动创建文件系统快照。详情请参阅 [检查点与回滚](/user-guide/checkpoints-and-rollback) 文档。
+在执行会破坏文件的操作之前自动创建文件系统快照。详细信息请参见[检查点与回滚](/user-guide/checkpoints-and-rollback)。
 
 ```yaml
 checkpoints:
