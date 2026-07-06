@@ -1256,6 +1256,7 @@
         - [Yuanbao](en/website/docs/user-guide/messaging/yuanbao.md)
       - [Secrets](en/website/docs/user-guide/secrets/index.md)
         - [Bitwarden Secrets Manager](en/website/docs/user-guide/secrets/bitwarden.md)
+        - [1Password](en/website/docs/user-guide/secrets/onepassword.md)
       - [Skills]()
         - [Google Workspace Skill](en/website/docs/user-guide/skills/google-workspace.md)
         - [Bundled]()
