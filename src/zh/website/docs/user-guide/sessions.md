@@ -314,19 +314,65 @@ hermes sessions rename 20250305_091523_a1b2c3d4 debugging auth flow
 # Delete ended sessions older than 90 days (default)
 hermes sessions prune
 
-# Custom age threshold
+# Custom age threshold — bare numbers are days
 hermes sessions prune --older-than 30
 
-# Only prune sessions from a specific platform
-hermes sessions prune --source telegram --older-than 60
+# Durations work too: 5h, 30m, 2d, 1w
+hermes sessions prune --older-than 12h
+
+# Delete only a specific time window (e.g. a batch of test sessions
+# created in the last 5 hours)
+hermes sessions prune --newer-than 5h
+
+# Explicit window with absolute timestamps
+hermes sessions prune --after "2026-07-05 09:00" --before "2026-07-05 14:30"
+
+# Only prune sessions from a specific platform (all ages — any filter
+# disables the implicit 90-day default)
+hermes sessions prune --source telegram
+hermes sessions prune --source cron --older-than 60   # add a time flag to narrow
+
+# More filters — all AND together
+hermes sessions prune --newer-than 5h --title "smoke test"   # title substring
+hermes sessions prune --older-than 30 --max-messages 3        # tiny sessions
+hermes sessions prune --cwd ~/scratch --end-reason done       # by cwd / end reason
+hermes sessions prune --model gpt-5 --older-than 1w           # by model (substring)
+hermes sessions prune --provider openrouter --older-than 60   # by billing provider
+hermes sessions prune --branch feature/old-experiment         # by git branch
+hermes sessions prune --user 12345678 --chat-type group       # by messaging origin
+hermes sessions prune --max-tokens 500 --older-than 7         # by token usage
+hermes sessions prune --max-cost 0.01 --max-tool-calls 0      # cheap, tool-less runs
+
+# Preview what would be deleted, without deleting anything
+hermes sessions prune --newer-than 5h --dry-run
 
 # Skip confirmation
 hermes sessions prune --older-than 30 --yes
 ```
 
+时间值（`--older-than`、`--newer-than`、`--before`、`--after`）可以接受持续时间形式（如 `5h`、`30m`、`2d`、`1w`）、纯数字天数，或 ISO 时间戳格式（如 `2026-07-05`、`2026-07-05 14:30`）。`--older-than`/`--before` 用于设定上限，而 `--newer-than`/`--after` 用于设定下限。结合两者即可定义时间范围。
+
+属性过滤器包括：`--source`（平台，精确匹配）、`--title`/`--model`/`--branch`（不区分大小写的子字符串匹配）、`--provider`（计费服务提供商，精确匹配）、`--end-reason`、`--user`、`--chat-id`、`--chat-type`（精确匹配）、`--cwd`（路径前缀），以及数值范围限制，如 `--min/--max-messages`、`--min/--max-tokens`（输入+输出总量）、`--min/--max-cost`（以美元为单位，实际成本优先，否则使用估算值），还有 `--min/--max-tool-calls`。使用任意过滤器都会取消默认的90天限制，因此仅使用 `hermes sessions prune --source cron` 或 `--model gpt-4o` 会匹配所有年龄段的会话——需添加时间标志来缩小范围。只有完全不指定参数的 `hermes sessions prune` 命令才会保留90天的时间限制。每次非 `--yes` 模式运行时，系统都会先显示匹配数量以及最旧和最新的匹配会话，然后再询问用户是否确认。
+
+默认情况下，已归档的会话会被跳过；如需同时删除这些会话，可使用 `--include-archived` 参数。
+
 :::info
-“剪枝”功能仅会删除**已结束**的会话（即那些已被手动终止或自动重置的会话），活跃中的会话绝不会被删除。
-:::
+“Prune”命令仅会删除**已结束**的会话（即明确终止或自动重置的会话），活跃会话绝不会被删除。:::
+
+### 批量归档会话
+
+如果您希望将某些会话从列表中移除但不删除实际内容，可使用 `hermes sessions archive` 命令。该命令使用与“Prune”相同的过滤器，但会将匹配的会话隐藏起来（设置与通过桌面/控制台界面单独归档会话相同的归档标志——消息和搜索功能依然保持完整）。
+
+```bash
+# Archive everything from the last 5 hours (e.g. 75 CI smoke-test sessions)
+hermes sessions archive --newer-than 5h
+
+# Archive by title substring, preview first
+hermes sessions archive --title "dry run" --dry-run
+hermes sessions archive --title "dry run" --yes
+```
+
+至少需要设置一个过滤条件——仅使用 `hermes sessions archive` 命令是无法将您的全部会话历史记录进行归档的。已归档的会话不会显示在 `hermes sessions list` 及 `/resume` 功能中，但仍然存储在数据库中，您可以通过桌面端或控制面板的会话列表将其解压恢复。 
 
 ### 会话统计信息
 
