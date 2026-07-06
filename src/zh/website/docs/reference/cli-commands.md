@@ -1320,10 +1320,11 @@ hermes sessions <subcommand>
 | 子命令 | 描述 |
 |----------|------|
 | `list` | 列出最近的会话。 |
-| `browse` | 支持搜索与继续功能的交互式会话选择器。 |
+| `browse` | 支持搜索和继续操作的交互式会话选择器。 |
 | `export <output> [--session-id ID]` | 将会话导出为 JSONL 格式。 |
 | `delete <session-id>` | 删除某个会话。 |
-| `prune` | 删除旧会话。 |
+| `prune` | 根据以下条件删除会话：时间范围 `--older-than`/`--newer-than`/`--before`/`--after`（支持 `5h`/`2d` 等时长表示、纯数字天数或 ISO 时间戳）；属性 `--source`、`--title`、`--model`、`--provider`、`--branch`、`--end-reason`、`--user`、`--chat-id`、`--chat-type`、`--cwd`；数值范围 `--min/--max-messages`、`--min/--max-tokens`、`--min/--max-cost`、`--min/--max-tool-calls`；此外还包括 `--include-archived`、`--dry-run`、`--yes` 参数。默认条件为超过 90 天的会话。 |
+| `archive` | 对符合与 `prune` 相同筛选条件的会话进行批量归档（仅隐藏，不会删除）。至少需要一个筛选条件。 |
 | `stats` | 显示会话存储的统计信息。 |
 | `rename <session-id> <title>` | 设置或更改会话标题。 |
 
