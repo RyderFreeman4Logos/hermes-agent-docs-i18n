@@ -2715,6 +2715,7 @@
         - [Yuanbao](zh/website/docs/user-guide/messaging/yuanbao.md)
       - [Secrets](zh/website/docs/user-guide/secrets/index.md)
         - [Bitwarden Secrets Manager](zh/website/docs/user-guide/secrets/bitwarden.md)
+        - [1Password](zh/website/docs/user-guide/secrets/onepassword.md)
       - [Skills]()
         - [Google Workspace 功能模块](zh/website/docs/user-guide/skills/google-workspace.md)
         - [Bundled]()
