@@ -6,26 +6,26 @@ description: "How to contribute to Hermes Agent — dev setup, code style, PR pr
 
 # 贡献指南
 
-感谢您为 Hermes Agent 做出贡献！本指南将介绍如何搭建开发环境、理解代码库以及如何让您的 Pull Request 被合并。
+感谢您为 Hermes Agent 做出贡献！本指南将介绍如何搭建开发环境、理解代码库以及如何让您的 PR 被合并。
 
 ## 贡献优先级
 
 我们按照以下顺序重视各类贡献：
 
-1. **错误修复** —— 程序崩溃、异常行为、数据丢失问题
-2. **跨平台兼容性** —— macOS、不同 Linux 发行版以及 WSL2 环境
+1. **错误修复** —— 程序崩溃、异常行为、数据丢失等问题
+2. **跨平台兼容性** —— macOS、不同 Linux 发行版及 WSL2 环境
 3. **安全性增强** —— 防止 shell 注入、命令注入及路径遍历攻击
 4. **性能与稳定性优化** —— 重试机制、错误处理以及优雅降级功能
 5. **新技能开发** —— 具有广泛实用价值的技能（详见 [创建技能](creating-skills.md)）
 6. **新工具开发** —— 这类需求较为少见，大多数功能应通过技能实现
-7. **文档完善** —— 修正错误、澄清说明以及补充新示例
+7. **文档完善** —— 修正错误、澄清内容、补充新示例
 
-## 常见的贡献方式
+## 常见的贡献路径
 
-- 若希望在不修改 Hermes 核心代码的情况下构建自定义或本地工具？请从 [构建 Hermes 插件](../guides/build-a-hermes-plugin.md) 开始。
-- 若希望为 Hermes 本身开发新的内置核心工具？请从 [添加工具](./adding-tools.md) 开始。
-- 若希望开发新技能？请从 [创建技能](./creating-skills.md) 开始。
-- 若希望开发新的推理提供程序？请从 [添加提供程序](./adding-providers.md) 开始。
+- 若希望构建自定义或本地工具且无需修改 Hermes 核心代码？请从 [构建 Hermes 插件](../developer-guide/plugins/index.md) 开始
+- 若想为 Hermes 自身开发新的内置核心工具？请从 [添加工具](./adding-tools.md) 开始
+- 若要创建新技能？请从 [创建技能](./creating-skills.md) 开始
+- 若要开发新的推理提供程序？请从 [添加提供程序](./adding-providers.md) 开始
 
 ## 开发环境搭建
 
@@ -40,7 +40,7 @@ description: "How to contribute to Hermes Agent — dev setup, code style, PR pr
 
 ### 使用标准安装程序进行安装
 
-对于大多数贡献者而言，最简便的开发环境搭建方式就是让用户遵循常规流程：运行标准安装程序，然后在克隆的代码仓库中进行开发。该安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令，标记 `hermes update` 的安装方式，并将完整的 Git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录下（通常为 `~/.hermes/hermes-agent`）。这样一来，您的开发环境就能与 CLI、更新工具、懒加载依赖安装器、网关以及文档所期望的架构保持一致。
+对于大多数贡献者而言，最简便的开发环境搭建方式与普通用户相同：运行标准安装程序，然后在克隆的代码仓库中进行开发。该安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令，标记 `hermes update` 的安装方式，并将完整的 Git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录中（通常为 `~/.hermes/hermes-agent`）。这样就能确保您的开发环境与 CLI、更新工具、懒加载依赖安装器、网关及文档所要求的结构保持一致。
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
