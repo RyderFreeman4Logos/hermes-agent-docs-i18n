@@ -2564,6 +2564,7 @@
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
       - [构建视频生成提供者插件](zh/website/docs/developer-guide/video-gen-provider-plugin.md)
       - [构建网页搜索提供者插件](zh/website/docs/developer-guide/web-search-provider-plugin.md)
+      - [Plugins](zh/website/docs/developer-guide/plugins/index.md)
     - [Getting Started]()
       - [安装](zh/website/docs/getting-started/installation.md)
       - [学习路径](zh/website/docs/getting-started/learning-path.md)
