@@ -25,10 +25,10 @@ secrets:
     project_id: "..."
 ```
 
-每个由数据源注入的凭证都会标注其来源信息——在设置流程以及“Hermes Model”中，检测到的密钥旁会显示“(来自 Bitwarden)”的提示，这样你就能随时了解该值的来源。
+每个由数据源注入的凭证都会标注其来源——在设置流程以及“Hermes Model”中，检测到的密钥旁会显示“(来自 Bitwarden)”，这样你就能随时了解该值的来源。
 
-## 自定义后端添加方式
+## 自定义后端
 
-第三方密钥管理工具以独立插件的形式提供，而非作为核心组件。此类后端需继承 `agent.secret_sources.base.SecretSource` 类（必须实现一个方法：`fetch(cfg, home_path) -> FetchResult`），并在插件的 `register(ctx)` 方法中通过 `ctx.register_secret_source(MySource())` 进行注册。调度器负责处理优先级排序、冲突解决、超时控制以及数据来源追踪——你的数据源仅负责数据获取工作。相关规范要求：`fetch()` 方法不得抛出异常，也不得弹出提示，且必须在规定的超时时间内返回结果；请参照 `tests/secret_sources/conformance.py` 中的合规性测试套件来验证你的实现是否符合标准。
+第三方密钥管理工具以独立插件的形式提供，而非作为核心代码库的一部分。后端需继承 `agent.secret_sources.base.SecretSource` 类（必须实现一个方法：`fetch(cfg, home_path) -> FetchResult`），并通过插件中的 `register(ctx)` 方法使用 `ctx.register_secret_source(MySource())` 进行注册。调度器负责处理优先级、冲突解决、超时问题以及数据来源追溯——你的数据源仅负责获取数据。关于合约规则、子进程安全辅助工具及合规性检查套件的完整指南，请参阅：[构建密钥源插件](/developer-guide/secret-source-plugin)。
 
-默认提供的插件集是封闭式的（与内存提供器的策略一致）：Bitwarden 和 1Password 直接内置在系统中。其余工具，如 Infisical、Proton Pass、HashiCorp Vault、AWS Secrets Manager 以及操作系统自带的密钥存储功能，都需放在插件仓库中；你可以在 Nous Research 的 Discord 频道（`#plugins-skills-and-skins`）里分享这些插件。
+默认提供的插件集是封闭的（与内存提供器的策略一致）：Bitwarden 和 1Password 直接内置在系统中。其他工具——如 Infisical、Proton Pass、HashiCorp Vault、AWS Secrets Manager 以及操作系统自带的密钥存储功能——则需放在插件仓库中；你可以在 Nous Research 的 Discord 频道（`#plugins-skills-and-skins`）中分享这些插件。
