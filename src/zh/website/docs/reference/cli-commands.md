@@ -115,9 +115,9 @@ hermes chat [options]
 | `--checkpoints` | 在进行可能破坏文件的更改之前启用文件系统检查点。 |
 | `--yolo` | 跳过审批提示。 |
 | `--pass-session-id` | 将会话 ID 传递至系统提示中。 |
-| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。此选项适用于独立的 CI 运行、可复现的错误报告以及第三方集成场景。 |
+| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。`.env` 文件中的凭据仍会被加载。此选项适用于独立的 CI 运行、可复现的错误报告以及第三方集成场景。 |
 | `--ignore-rules` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules`、持久化内存及预加载的技能。可与 `--ignore-user-config` 结合使用，实现完全隔离的运行环境。 |
-| `--safe-mode` | 故障排查模式：禁用所有自定义设置——包括用户配置、规则/内存注入、插件以及 MCP 服务器（该模式会自动启用 `--ignore-user-config` 和 `--ignore-rules`）。可用于判断问题是由用户设置导致的还是 Hermes 本身存在的问题。 |
+| `--safe-mode` | 故障排查模式：禁用所有自定义设置——包括用户配置、规则/内存注入、插件、Shell 钩子以及 MCP 服务器（该模式会自动启用 `--ignore-user-config` 和 `--ignore-rules`）。用于判断问题是出在用户配置上还是 Hermes 本身。 |
 | `--source <tag>` | 用于过滤的会话来源标签（默认值为 `cli`）。对于不应出现在用户会话列表中的第三方集成，可使用 `tool` 标签。 |
 | `--max-turns <N>` | 每次对话轮次中最多可进行的工具调用次数（默认值为 90，或配置文件中的 `agent.max_turns` 值）。 |
 
@@ -1235,14 +1235,14 @@ hermes mcp <subcommand>
 hermes plugins [subcommand]
 ```
 
-统一的插件管理——所有通用插件、内存提供器以及上下文引擎均集中于此。运行 `hermes plugins` 且不指定子命令时，会弹出一个包含两个区域的综合交互界面：
+统一的插件管理功能——所有通用插件、内存提供器以及上下文引擎均集中于此。运行 `hermes plugins` 且不指定子命令时，会打开一个包含两个区域的综合交互界面：
 
 - **通用插件**——通过多选复选框来启用或禁用已安装的插件；
-- **提供器插件**——针对内存提供器和上下文引擎提供单选配置。在某类别上按下 ENTER 键即可打开单选下拉菜单。
+- **提供器插件**——针对内存提供器和上下文引擎提供单选配置。在某一类别上按下 ENTER 键即可打开单选下拉菜单。
 
 | 子命令 | 描述 |
 |----------|------|
-| *(无)* | 综合交互式用户界面——通用插件开关控制 + 提供器插件配置。 |
+| *(无)* | 综合交互式用户界面——包含通用插件开关控制及提供器插件配置功能。 |
 | `install <identifier> [--force]` | 从 Git URL 或 `owner/repo` 地址安装插件。 |
 | `update <name>` | 获取已安装插件的最新更新。 |
 | `remove <name>`（别名：`rm`, `uninstall`） | 卸载已安装的插件。 |
@@ -1250,13 +1250,13 @@ hermes plugins [subcommand]
 | `disable <name>` | 禁用插件而不将其删除。 |
 | `list`（别名：`ls`） | 列出所有已安装插件的启用/禁用状态。 |
 
-提供器插件的选择内容会保存在 `config.yaml` 文件中：
+提供器插件的选择结果会保存在 `config.yaml` 文件中：
 - `memory.provider`——当前使用的内存提供器（留空则表示仅使用内置提供器）；
 - `context.engine`——当前使用的上下文引擎（`"compressor"` 表示默认内置引擎）。
 
 通用插件的禁用列表则存储在 `config.yaml` 的 `plugins.disabled` 字段中。
 
-更多详情请参阅 [插件](../user-guide/features/plugins.md) 以及 [构建 Hermes 插件](../guides/build-a-hermes-plugin.md) 文档。
+更多详情请参阅 [插件](../user-guide/features/plugins.md) 以及 [构建 Hermes 插件](../developer-guide/plugins/index.md) 文档。
 
 ## `hermes tools`
 
