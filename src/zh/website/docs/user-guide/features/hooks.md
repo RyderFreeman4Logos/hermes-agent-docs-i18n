@@ -851,15 +851,15 @@ def my_callback(session_id: str, platform: str, **kwargs):
 | `session_id` | `str` | 新会话的 ID（已更新为最新值）。 |
 | `platform` | `str` | 消息平台名称。 |
 
-**触发时机：** 在 `gateway/run.py` 中，新会话密钥分配完成后、处理下一条入站消息之前触发。在网关端，执行顺序为：首次接收到入站消息时，依次执行 `on_session_finalize(old_id)` → 密钥替换 → `on_session_reset(new_id)` → `on_session_start(new_id)`。 
+**触发时机：** 在 `gateway/run.py` 中，新会话密钥分配完成后、处理下一条传入消息之前触发。在网关端，执行顺序为：首次接收到消息时依次执行 `on_session_finalize(old_id)` → 密钥交换 → `on_session_reset(new_id)` → `on_session_start(new_id)`。 
 
 **返回值：** 该参数会被忽略。
 
-**应用场景：** 重置以 `session_id` 为键的会话级缓存，生成“会话已更换”的分析数据，为新的状态存储桶初始化数据。
+**应用场景：** 清除以 `session_id` 为键的会话级缓存，生成“会话已更换”的分析数据，为新的状态存储桶初始化数据。
 
 ---
 
-如需包含工具架构、处理函数及高级钩子模式的完整操作指南，请参阅 **[构建插件指南](/guides/build-a-hermes-plugin)**。
+如需包含工具结构、处理函数及高级钩子模式的完整操作指南，请参阅 **[构建插件指南](/developer-guide/plugins)**。
 
 ---
 
