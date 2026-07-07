@@ -6,32 +6,32 @@ description: "How to add a new tool to Hermes Agent — schemas, handlers, regis
 
 # 添加工具
 
-在编写工具之前，先问自己：**是否应该将其设计为 [技能](creating-skills.md) 呢？**
+在编写工具之前，先问自己：**是否应该将其设计为 [技能](creating-skills.md) 而非工具？**
 
 :::warning 仅限内置核心工具
 本页面用于向仓库本身添加**内置的 Hermes 工具**。
-如果您需要个人使用的、项目内部的或其他自定义工具，且不想修改 Hermes 核心代码，请使用插件机制：
+如果您需要个人使用、项目专用或其它自定义工具，且不想修改 Hermes 核心代码，请选择插件方案：
 
 - [插件](/user-guide/features/plugins)
-- [构建 Hermes 插件](/guides/build-a-hermes-plugin)
+- [构建 Hermes 插件](/developer-guide/plugins)
 
-对于大多数自定义工具的创建，建议优先使用插件。只有当您明确希望将新工具作为内置工具发布到 `tools/` 目录及 `toolsets.py` 文件中时，才需参考本页面。
+对于大多数自定义工具的创建，建议优先使用插件方案。只有当您明确希望将新工具作为内置工具发布到 `tools/` 目录及 `toolsets.py` 文件中时，才需参考本页面。
 :::
 
-当某项功能可以通过指令、Shell 命令以及现有工具（如 arXiv 搜索、Git 工作流、Docker 管理、PDF 处理等）来实现时，应将其设计为**技能**。
+当某项功能可以通过指令、Shell 命令以及现有工具（如 arXiv 搜索、Git 工作流、Docker 管理、PDF 处理等）来实现时，应将其设为**技能**。
 
-而当该功能需要借助 API 密钥进行端到端集成、包含自定义处理逻辑、涉及二进制数据处理或流式操作（如浏览器自动化、文本转语音、图像分析等）时，则应将其设计为**工具**。
+而当功能需要借助 API 密钥进行端到端集成、包含自定义处理逻辑、涉及二进制数据处理或流式操作（如浏览器自动化、文本转语音、图像分析等）时，则应将其设为**工具**。
 
 ## 概述
 
 添加工具会涉及**2 个文件**：
 
-1. **`tools/your_tool.py`** —— 处理器、架构定义、校验函数以及 `registry.register()` 调用
-2. **`toolsets.py`** —— 将工具名称添加到 `_HERMES_CORE_TOOLS`（或特定的工具集）中
+1. **`tools/your_tool.py`** —— 处理逻辑、数据结构定义、校验函数以及 `registry.register()` 调用
+2. **`toolsets.py`** —— 将工具名称添加到 `_HERMES_CORE_TOOLS` 列表中（或特定工具集中）
 
-任何在顶层包含 `registry.register()` 调用的 `tools/*.py` 文件都将在系统启动时被自动检测到——无需手动编写导入列表。
+任何包含顶层 `registry.register()` 调用的 `tools/*.py` 文件都将在系统启动时被自动识别，无需手动编写导入列表。
 
-## 第 1 步：创建内置工具文件
+## 第一步：创建内置工具文件
 
 所有工具文件都遵循相同的结构：
 
