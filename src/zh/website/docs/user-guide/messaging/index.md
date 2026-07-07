@@ -154,21 +154,21 @@ hermes gateway status       # Check default service status
 hermes gateway status --system         # Linux only: inspect the system service explicitly
 ```
 
-## 聊天命令（消息内部使用）
+## 聊天指令（消息内部使用）
 
-| 命令 | 描述 |
+| 指令 | 描述 |
 |---------|-------------|
-| `/new` 或 `/reset` | 开始全新对话 |
+| `/new` 或 `/reset` | 开始新的对话 |
 | `/model [provider:model]` | 显示或更换模型（支持 `provider:model` 语法） |
 | `/personality [name]` | 设置角色性格 |
 | `/retry` | 重新发送上一条消息 |
-| `/undo` | 删除上一次的对话内容 |
+| `/undo` | 删除上一次的交流内容 |
 | `/status` | 显示会话信息 |
-| `/whoami` | 显示当前范围内可使用的斜杠命令权限（管理员 / 用户 / 无限制） |
+| `/whoami` | 显示您在此作用域下的指令使用权限（管理员 / 用户 / 无限制） |
 | `/stop` | 停止正在运行的智能体 |
-| `/approve` | 批准待处理的危险命令 |
-| `/deny` | 拒绝待处理的危险命令 |
-| `/sethome` | 将当前聊天设置为主频道 |
+| `/approve` | 批准待处理的危险指令 |
+| `/deny` | 拒绝待处理的危险指令 |
+| `/sethome` | 将当前聊天设为主频道 |
 | `/compress` | 手动压缩对话上下文 |
 | `/title [name]` | 设置或显示会话标题 |
 | `/resume [name]` | 恢复之前命名的会话 |
@@ -180,7 +180,7 @@ hermes gateway status --system         # Linux only: inspect the system service 
 | `/background <prompt>` | 在独立的后台会话中运行提示词 |
 | `/reload-mcp` | 根据配置重新加载 MCP 服务器 |
 | `/update` | 将 Hermes Agent 更新到最新版本 |
-| `/help` | 显示可用命令列表 |
+| `/help` | 显示可用指令列表 |
 | `/<skill-name>` | 调用已安装的任意技能 |
 
 ## 会话管理
@@ -189,17 +189,25 @@ hermes gateway status --system         # Linux only: inspect the system service 
 
 会话会在消息之间持续保留，直到被手动重置。智能体会记住您的对话上下文。
 
-### 重置策略
+### 重置规则
 
-会话会根据可配置的策略进行重置：
+**默认情况下，会话不会自动重置**——上下文会一直存在，直到您手动执行 `/reset` 指令或触发上下文压缩功能。如需自动重置，可在 `~/.hermes/config.yaml` 文件的 `session_reset` 部分进行相应设置：
 
-| 策略 | 默认值 | 描述 |
-|--------|--------|-------------|
-| 每日 | 凌晨 4:00 | 每天在指定时间重置 |
-| 静止 | 1440 分钟 | 闲置 N 分钟后重置 |
-| 双重触发 | 同时满足两种条件 | 以先触发的条件为准 |
+```yaml
+session_reset:
+  mode: idle        # "idle", "daily", "both", or "none" (default)
+  idle_minutes: 1440  # for idle/both: minutes of inactivity before reset
+  at_hour: 4          # for daily/both: hour of day (0-23, local time)
+```
 
-通过 `terminal(background=true)` 启动的实时后台进程通常会防止会话被重置，从而避免丢失输出内容。为防止被遗忘的进程（如预览服务器）使会话永久保持打开状态，超过 `bg_process_max_age_hours`（默认值为 **24** 小时）的老旧后台进程将不再阻止会话重置。此类进程不会被终止，仅会被重置机制忽略。若要将此限制关闭（恢复旧行为，即任何运行中的进程都会阻止重置），可将其值设为 `0`；如果需要让某些合法的多日任务保持会话开启状态，可适当提高该数值。
+| 模式 | 描述 |
+|------|-------------|
+| `none` | 不自动重置（默认值） |
+| `daily` | 每天在指定时间重置 |
+| `idle` | 停止操作 N 分钟后重置 |
+| `both` | 以先触发的条件为准 |
+
+通过 `terminal(background=true)` 启动的持续运行后台进程通常会防止会话被重置，从而避免丢失输出内容。为防止被遗忘的进程（例如预览服务器）使会话永久保持打开状态，运行时间超过 `bg_process_max_age_hours`（默认值为 **24** 小时）的后台进程将不再阻止重置操作。该进程不会被终止，只是会被重置保护机制忽略。若要将此限制关闭，可将其设置为 `0`（此时所有正在运行的进程都会阻止重置，恢复为旧有行为）；或者，如果您需要运行持续数天的任务并希望其保持会话活跃状态，可适当提高该数值。
 
 可在 `~/.hermes/gateway.json` 中配置针对不同平台的自定义设置：
 
