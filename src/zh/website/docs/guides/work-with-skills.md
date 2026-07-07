@@ -129,9 +129,9 @@ skill_view("superpowers:writing-plans")
 skill_view("writing-plans")
 ```
 
-插件技能**不会**被列在系统提示词中，也不会出现在 `skills_list` 中。这类技能是可选的——只有当您确定某个插件提供了相关技能时，才需要显式加载它。一旦加载成功，智能体就会看到一个横幅，列出该插件下的其他关联技能。
+插件技能**不会**被列在系统提示词中，也不会出现在 `skills_list` 中。这类技能是可选的——只有当您确定某个插件提供了相关技能时，才需要手动加载它。加载成功后，智能体将会看到一个横幅，列出该插件下的其他关联技能。
 
-关于如何在自己的插件中集成技能，请参阅[构建 Hermes 插件 → 打包技能](/guides/build-a-hermes-plugin#bundle-skills)。
+关于如何在自己的插件中集成技能，请参阅[构建 Hermes 插件 → 打包技能](/developer-guide/plugins#bundle-skills)。
 
 ---
 
