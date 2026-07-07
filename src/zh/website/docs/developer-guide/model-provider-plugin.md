@@ -255,9 +255,9 @@ hermes -z "hello" --provider my-provider -m some-model
 acme-inference = "acme_hermes_plugin:register"
 ```
 
-……其中 `acme_hermes_plugin:register` 是一个调用 `register_provider(profile)` 的函数。通用的 PluginManager 会在 `discover_and_load()` 阶段加载入口插件。对于类型为 `model-provider` 的 pip 插件，仍需在清单中明确指定该类型（或依赖源文本分析机制）。
+……其中 `acme_hermes_plugin:register` 是一个调用 `register_provider(profile)` 的函数。通用的 PluginManager 会在 `discover_and_load()` 阶段加载入口插件。对于类型为 `model-provider` 的 pip 插件，您仍需在清单中明确指定该类型（或依赖源文本分析机制）。
 
-如需了解完整的入口点配置方式，请参阅 [构建 Hermes 插件](/guides/build-a-hermes-plugin#distribute-via-pip)。
+有关完整的入口点配置方式，请参阅 [构建 Hermes 插件](/developer-guide/plugins#distribute-via-pip)。
 
 ## 相关页面
 
@@ -265,4 +265,4 @@ acme-inference = "acme_hermes_plugin:register"
 - [添加 Provider](/developer-guide/adding-providers) —— 新推理后端的端到端操作清单（涵盖快速插件路径以及完整的 CLI/身份验证集成）
 - [内存 Provider 插件](/developer-guide/memory-provider-plugin)
 - [上下文引擎插件](/developer-guide/context-engine-plugin)
-- [构建 Hermes 插件](/guides/build-a-hermes-plugin) —— 通用插件开发指南
+- [构建 Hermes 插件](/developer-guide/plugins) —— 通用插件开发指南
