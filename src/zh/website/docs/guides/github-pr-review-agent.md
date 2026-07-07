@@ -286,14 +286,14 @@ hermes cron list         # Is the job enabled?
 ```
 
 ### 请求频率限制
-对于已通过身份验证的用户，GitHub允许每小时发送5,000次API请求。每次PR审核大约需要3到5次请求（包括列表信息、代码差异对比以及可选的评论）。即便每天审核100个PR，也完全在限制范围内。
+对于已通过身份验证的用户，GitHub允许每小时发送5,000次API请求。每次PR审核大约需要3到5次请求（包括列表展示、代码差异对比以及可选的评论功能）。即便每天审核100个PR，也完全在限制范围内。
 
 ---
 
 ## 接下来可以做什么？
 
-- **[基于Webhook的PR审核功能](./webhook-github-pr-review.md)** —— 当PR被创建时即可立即触发审核（需要一个公开端点）
-- **[每日简报机器人](/guides/daily-briefing-bot)** —— 将PR审核与晨间新闻摘要结合在一起
-- **[构建插件](/guides/build-a-hermes-plugin)** —— 将审核逻辑封装为可共享的插件
+- **[基于Webhook的PR审核](./webhook-github-pr-review.md)** —— 当PR被创建时即可立即收到审核通知（需要一个公共端点）
+- **[每日简报机器人](/guides/daily-briefing-bot)** —— 将PR审核功能与晨间新闻摘要整合在一起
+- **[构建插件](/developer-guide/plugins)** —— 将审核逻辑封装为可共享的插件
 - **[专用审核者配置文件](/user-guide/profiles)** —— 创建拥有独立内存和配置的专属审核者账户
-- **[备用提供商机制](/user-guide/features/fallback-providers)** —— 即使某个提供商出现故障，也能确保审核功能正常运行
+- **[备用提供方](/user-guide/features/fallback-providers)** —— 即使某个提供方出现故障，也能确保审核功能正常运行
