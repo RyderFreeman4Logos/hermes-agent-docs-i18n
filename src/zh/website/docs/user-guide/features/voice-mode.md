@@ -221,18 +221,18 @@ DISCORD_FREE_RESPONSE_CHANNELS=123456789,987654321
 
 ### 模式
 
-| 模式 | 命令 | 行为 |
-|------|---------|------|
+| 模式 | 命令 | 行为表现 |
+|------|---------|----------|
 | `off` | `/voice off` | 仅文本模式（默认） |
 | `voice_only` | `/voice on` | 仅在你发送语音消息时才会回复语音 |
-| `all` | `/voice tts` | 对每条消息均以语音形式回复 |
+| `all` | `/voice tts` | 对所有消息均以语音形式回复 |
 
 语音模式设置会在网关重启后依然保持不变。
 
 ### 平台传输方式
 
 | 平台 | 格式 | 备注 |
-|------|------|------|
+|------|---------|-------|
 | **Telegram** | 语音气泡（Opus/OGG格式） | 在聊天界面内直接播放。如需转换，ffmpeg会自动将MP3转换为Opus格式 |
 | **Discord** | 原生语音气泡（Opus/OGG格式） | 以类似用户发送的语音消息的方式在聊天界面内播放。若语音气泡API出现故障，则会回退为文件附件形式 |
 
@@ -240,35 +240,35 @@ DISCORD_FREE_RESPONSE_CHANNELS=123456789,987654321
 
 ## Discord语音频道
 
-这是最沉浸式的语音功能：机器人可加入Discord语音频道，监听用户发言，将其语音转录后通过智能体处理，最终以语音形式在频道中回复。
+这是最沉浸式的语音功能：机器人可加入Discord语音频道，监听用户讲话内容，将其转录为文本，通过智能体进行处理，最终以语音形式在频道中回复。
 
 ### 设置步骤
 
 #### 1. Discord机器人权限
 
-如果你已经为文本交流配置了Discord机器人（参见[Discord设置指南](../messaging/discord.md)），则需要为其添加语音相关权限。
+如果你已经为文本通信配置好了Discord机器人（详见[Discord设置指南](../messaging/discord.md)），则需要为其添加语音相关权限。
 
 请前往[Discord开发者门户](https://discord.com/developers/applications)，选择你的应用，进入**Installation** → **Default Install Settings** → **Guild Install**页面：
 
-在现有的文本通信权限基础上，添加以下权限：
+**在现有的文本通信权限基础上，添加以下权限：**
 
 | 权限 | 用途 | 是否必需 |
 |------|------|----------|
 | **Connect** | 加入语音频道 | 是 |
 | **Speak** | 在语音频道中播放TTS音频 | 是 |
-| **Use Voice Activity** | 检测用户是否正在发言 | 建议添加 |
+| **Use Voice Activity** | 检测用户是否正在讲话 | 建议启用 |
 
 **更新后的权限整数值：**
 
-| 等级 | 整数值 | 包含的功能 |
+| 等级 | 整数值 | 包含的权限 |
 |-------|--------|------------|
-| 仅文本模式 | `274878286912` | 查看频道、发送消息、读取历史记录、嵌入内容、附件、主题帖、表情反应 |
-| 文本+语音模式 | `274881432640` | 上述所有功能 + Connect、Speak权限 |
+| 仅文本模式 | `309237763136` | 查看频道、发送消息、读取历史记录、嵌入内容、附件、主题帖、反应功能、创建公开主题帖 |
+| 文本+语音模式 | `309240908864` | 上述所有权限 + Connect、Speak权限 |
 
 使用更新后的权限URL**重新邀请机器人**即可：
 
 ```
-https://discord.com/oauth2/authorize?client_id=YOUR_APP_ID&scope=bot+applications.commands&permissions=274881432640
+https://discord.com/oauth2/authorize?client_id=YOUR_APP_ID&scope=bot+applications.commands&permissions=309240908864
 ```
 
 请将 `YOUR_APP_ID` 替换为来自开发者门户中的您的应用 ID。
