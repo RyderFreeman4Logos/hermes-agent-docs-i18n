@@ -75,6 +75,7 @@ compression:
   protect_last_n: 20         # Minimum protected tail messages (default: 20)
   codex_gpt55_autoraise: true  # gpt-5.5 on Codex OAuth: raise trigger to 85% (default: true)
   codex_gpt55_autoraise_notice: true  # Show the one-time autoraise notice (default: true)
+  codex_app_server_auto: native  # native|hermes|off for Codex app-server thread compaction
 
 # Summarization model/provider configured under auxiliary:
 auxiliary:
@@ -87,19 +88,19 @@ auxiliary:
 ### 参数详情
 
 | 参数 | 默认值 | 取值范围 | 说明 |
-|-----------|---------|----------|------|
-| `threshold` | `0.50` | 0.0-1.0 | 当提示词token数 ≥ `threshold × context_length`时触发压缩操作 |
+|-----------|---------|-------|-------------|
+| `threshold` | `0.50` | 0.0-1.0 | 当提示词token数 ≥ `threshold × context_length`时触发压缩功能 |
 | `target_ratio` | `0.20` | 0.10-0.80 | 用于控制尾部保护所需的token预算：`threshold_tokens × target_ratio` |
-| `protect_last_n` | `20` | ≥1 | 总是会保留的最少近期消息数量 |
-| `protect_first_n` | `3` | （固定值） | 系统提示词及首次对话内容将始终被保留 |
-| `codex_gpt55_autoraise` | `true` | 布尔值 | 对通过ChatGPT Codex OAuth接口使用的gpt-5.5模型，将触发阈值提升至85%（详见下文）。若设置为`false`，则保持全局默认阈值 |
-| `codex_gpt55_autoraise_notice` | `true` | 布尔值 | 显示针对Codex gpt-5.5模型的临时阈值提升提示。若设置为`false`，则仍维持85%的触发阈值，但不会显示相关提示信息 |
+| `protect_last_n` | `20` | ≥1 | 始终保留的最新消息的最小数量 |
+| `protect_first_n` | `3` | （固定值） | 系统提示词及首次对话内容始终会被保留 |
+| `codex_gpt55_autoraise` | `true` | 布尔值 | 对通过ChatGPT Codex OAuth接口使用的gpt-5.5模型，将触发阈值提升至85%（详见下文）。设置为`false`则保持全局默认阈值 |
+| `codex_gpt55_autoraise_notice` | `true` | 布尔值 | 显示针对Codex gpt-5.5模型的临时阈值提升提示。设置为`false`则保持85%的触发阈值，但不会显示相关提示信息 |
+| `codex_app_server_auto` | `native` | `native`、`hermes`、`off` | 用于Codex应用服务器会话的线程压缩模式（详见下文） |
 
 ### Codex gpt-5.5模型的阈值提升机制
 
-ChatGPT Codex OAuth后端将gpt-5.5模型的上下文窗口大小上限设定为**272K**
-（而在OpenAI的直接API及OpenRouter平台上，同一接口的上下文窗口为105万token；
-在GitHub Copilot平台则为40万token）。在默认50%的触发阈值下，压缩操作会在上下文窗口达到约136K时触发——这仅相当于模型实际可用空间的一半。当当前使用的是Codex OAuth接口（`provider: openai-codex`）且模型为gpt-5.5时，Hermes会将触发阈值提升至**85%**（约231K），并显示一条一次性提示信息，同时提供取消该设置的命令。此机制仅适用于该特定接口；在其他提供商上使用的gpt-5.5模型则仍遵循全局默认阈值。如需恢复为全局默认阈值：
+ChatGPT Codex OAuth后端将gpt-5.5模型的上下文窗口大小严格限制在**272K**以内
+（而在OpenAI的直接API及OpenRouter平台上，同一模型对应的上下文窗口为105万token；在GitHub Copilot上则为40万token）。在默认50%的触发阈值下，当上下文长度达到约136K时就会触发压缩功能——这仅相当于模型实际可用上下文容量的一半。当当前使用的是Codex OAuth接口（`provider: openai-codex`）且模型为gpt-5.5时，Hermes会将触发阈值提升至**85%**（约231K），并显示包含取消选项的提示信息。该提示每個用户账号仅显示一次；在`$
 
 ```bash
 hermes config set compression.codex_gpt55_autoraise false
@@ -111,7 +112,16 @@ hermes config set compression.codex_gpt55_autoraise false
 hermes config set compression.codex_gpt55_autoraise_notice false
 ```
 
-### 计算值（基于默认参数下的200万上下文模型）
+### Codex 应用服务器线程压缩
+
+Codex 应用服务器会话（`api_mode: codex_app_server`，即 Codex CLI/Agent 运行时模式）与其他路由存在差异：该模式下线程上下文由 Codex Agent 直接管理，因此 Hermes 的辅助摘要工具无法对其进行压缩——即便重新生成本地转录副本，实际线程大小仍会持续增长，直至强制重置上下文。针对这种运行时模式，压缩操作通过应用服务器自身的机制来完成：
+
+- 手动压缩（`/compress`）：向应用服务器发起压缩请求（`thread/compact/start`），并等待压缩操作完成。
+- 自动压缩由 `compression.codex_app_server_auto` 参数控制：默认值为 `native`，由应用服务器自行决定压缩时机，同时 Hermes 会记录相关的压缩事件（如压缩计数、会话事件）。可将该参数设置为 `hermes`，让 Hermes 的压缩阈值触发应用服务器的压缩操作；或设置为 `off`，完全禁用 Hermes 主动的自动压缩功能（此时 Codex 仍可按原生方式执行压缩）。
+
+在这种运行时模式下，Hermes 的本地转录内容不会被重新生成——`state.db` 文件会记录压缩边界，而可见的转录内容则保持不变。其他所有路由（包括 Codex OAuth 聊天会话）仍会使用 Hermes 的摘要压缩工具。
+
+### 计算值（基于默认设置下的 200K 上下文模型）
 
 ```
 context_length       = 200,000
