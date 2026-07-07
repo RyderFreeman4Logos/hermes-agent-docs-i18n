@@ -172,15 +172,15 @@ Scheduler tick → load due jobs from jobs.json
 
 ## 推荐阅读顺序
 
-如果您是初次接触该代码库：
+如果您是代码库的新手：
 
 1. **本页面** — 了解整体架构
 2. **[Agent Loop Internals](./agent-loop.md)** — AIAgent 的工作原理
 3. **[Prompt Assembly](./prompt-assembly.md)** — 系统提示词的构建方式
 4. **[Provider Runtime Resolution](./provider-runtime.md)** — 提供者的选择机制
 5. **[Adding Providers](./adding-providers.md)** — 添加新提供者的实用指南
-6. **[Tools Runtime](./tools-runtime.md)** — 工具注册表、调度机制与运行环境
-7. **[Session Storage](./session-storage.md)** — SQLite 数据结构、FTS5 全文搜索及会话追溯功能
+6. **[Tools Runtime](./tools-runtime.md)** — 工具注册表、调度机制及运行环境
+7. **[Session Storage](./session-storage.md)** — SQLite 数据结构、FTS5 全文搜索及会话追踪
 8. **[Gateway Internals](./gateway-internals.md)** — 消息平台网关详解
 9. **[Context Compression & Prompt Caching](./context-compression-and-caching.md)** — 上下文压缩与提示词缓存技术
 10. **[ACP Internals](./acp-internals.md)** — IDE 集成功能
@@ -189,7 +189,7 @@ Scheduler tick → load due jobs from jobs.json
 
 ### Agent Loop
 
-同步协调引擎（位于 `run_agent.py` 中的 `AIAgent`）。负责处理提供者选择、提示词构建、工具执行、重试机制、回退策略、回调处理、数据压缩及持久化存储。针对不同的提供者后端，支持三种 API 模式。
+同步协调引擎（位于 `run_agent.py` 中的 `AIAgent`）。负责处理提供者选择、提示词构建、工具执行、重试机制、回退策略、回调处理、数据压缩及持久化存储。它为不同的提供者后端提供了三种 API 模式。
 
 → [Agent Loop Internals](./agent-loop.md)
 
@@ -197,57 +197,57 @@ Scheduler tick → load due jobs from jobs.json
 
 贯穿整个对话生命周期的提示词构建与维护机制：
 
-- **`system_prompt.py` + `prompt_builder.py`** — 按固定顺序组装系统提示词层级（`stable` → `context` → `volatile`）：包括身份/工具指引/技能信息、上下文文件，以及内存/个人资料/时间戳相关内容
+- **`system_prompt.py` + `prompt_builder.py`** — 按顺序组装不同层级的系统提示词（`stable` → `context` → `volatile`）：包括身份/工具指引/技能信息、上下文文件，以及内存/个人资料/时间戳相关内容
 - **`prompt_caching.py`** — 应用 Anthropic 的缓存断点机制实现前缀级缓存
-- **`context_compressor.py`** — 当上下文长度超过阈值时，对中间对话内容进行摘要处理
+- **`context_compressor.py`** — 当上下文数据量超过阈值时，对中间对话内容进行摘要处理
 
 → [Prompt Assembly](./prompt-assembly.md), [Context Compression & Prompt Caching](./context-compression-and-caching.md)
 
 ### 提供者解析模块
 
-被 CLI、网关、定时任务、ACP 以及各类辅助调用所共享的运行时解析器。它将 `(provider, model)` 元组映射为 `(api_mode, api_key, base_url)` 的格式。该模块可支持 18 种以上的提供者，同时处理 OAuth 认证流程、凭证池管理及别名解析功能。
+被 CLI、网关、cron 任务、ACP 以及各类辅助调用所共享的运行时解析器。它可将 `(provider, model)` 元组映射为 `(api_mode, api_key, base_url)` 的格式。该模块支持 18 种以上的提供者，同时处理 OAuth 认证流程、凭证池管理及别名解析功能。
 
 → [Provider Runtime Resolution](./provider-runtime.md)
 
 ### 工具系统
 
-中央工具注册表（位于 `tools/registry.py`），目前已有超过 70 种工具注册在约 28 个工具集中。每个工具文件在导入时会自动完成注册。该注册表负责处理工具结构信息的收集、调度、可用性检查以及错误封装。终端工具支持 6 种运行后端：本地模式、Docker 模式、SSH 模式、Daytona 模式、Modal 模式和 Singularity 模式。
+中央工具注册表（位于 `tools/registry.py`），目前已有超过 70 种工具注册在约 28 个工具集中。每个工具文件在导入时会自动完成注册。该注册表负责收集工具的架构信息、处理工具调度、检查工具可用性以及封装错误信息。终端工具支持 6 种运行后端（本地、Docker、SSH、Daytona、Modal、Singularity）。
 
 → [Tools Runtime](./tools-runtime.md)
 
 ### 会话持久化
 
-基于 SQLite 的会话存储机制，同时集成 FTS5 全文搜索功能。该系统具备会话追溯能力（可追踪压缩操作前后的父子会话关系）、平台隔离功能，以及带有冲突处理机制的原子写操作。
+基于 SQLite 的会话存储系统，搭配 FTS5 全文搜索功能。该系统具备会话追踪能力（可记录压缩操作前的父会话与子会话关系）、平台隔离机制，以及带有冲突处理功能的原子级写入功能。
 
 → [Session Storage](./session-storage.md)
 
 ### 消息网关
 
-作为一个长期运行的进程，该网关拥有 20 种平台适配器，可实现统一的会话路由、用户授权管理（基于白名单与私信配对机制）、斜杠命令调度、钩子系统功能、定时任务触发以及后台维护操作。
+一个长期运行的进程，内置 20 种平台适配器，可实现统一的会话路由、用户授权管理（基于允许列表及私信配对机制）、斜杠命令调度、钩子系统、定时任务触发以及后台维护功能。
 
 → [Gateway Internals](./gateway-internals.md)
 
 ### 插件系统
 
-插件来源共有三种：`~/.hermes/plugins/`（用户自定义插件）、`.hermes/plugins/`（项目级插件）以及 pip 安装的插件。插件可通过上下文 API 注册工具、钩子函数及 CLI 命令。目前存在两种专用插件类型：内存提供者插件（位于 `plugins/memory/` 目录）和上下文引擎插件（位于 `plugins/context_engine/` 目录）。这两种插件均为单选机制——同一时间仅能启用其中一个，可通过 `hermes plugins` 命令或 `config.yaml` 文件进行配置。
+插件共有三种发现途径：`~/.hermes/plugins/`（用户自定义插件）、`.hermes/plugins/`（项目级插件）以及 pip 安装的插件。插件可通过上下文 API 注册工具、钩子函数及 CLI 命令。目前存在两种专用插件类型：内存提供者（位于 `plugins/memory/` 目录）和上下文引擎（位于 `plugins/context_engine/` 目录）。这两种插件均为单选机制，同一时间只能启用其中一个，可通过 `hermes plugins` 命令或 `config.yaml` 文件进行配置。
 
-→ [Plugin Guide](/guides/build-a-hermes-plugin), [Memory Provider Plugin](./memory-provider-plugin.md)
+→ [Plugin Guide](/developer-guide/plugins), [Memory Provider Plugin](./memory-provider-plugin.md)
 
-### 定时任务系统
+### Cron 定时任务
 
-支持高级别的智能体任务处理（而非普通的 shell 脚本任务）。定时任务以 JSON 格式存储，支持多种调度格式，可附加技能函数与脚本代码，并能被发送到任意支持的平台上执行。
+属于高级别的智能体任务（而非普通 shell 脚本任务）。Cron 任务以 JSON 格式存储，支持多种调度格式，可附加技能函数与脚本代码，并能发送到任意支持的平台上执行。
 
 → [Cron Internals](./cron-internals.md)
 
 ### ACP 集成
 
-通过 stdio/JSON-RPC 接口，将 Hermes 作为编辑器原生的智能体功能集成到 VS Code、Zed 以及 JetBrains 系列软件中。
+通过 stdio/JSON-RPC 接口，将 Hermes 变为 VS Code、Zed 以及 JetBrains 系列编辑器原生的智能体功能。
 
 → [ACP Internals](./acp-internals.md)
 
 ### 轨迹数据生成
 
-可从智能体会话中生成 ShareGPT 格式的轨迹数据，用于后续训练数据的创建。
+从智能体会话中生成 ShareGPT 格式的轨迹数据，用于后续训练数据的创建。
 
 → [Trajectories & Training Format](./trajectory-format.md)
 
@@ -255,12 +255,12 @@ Scheduler tick → load due jobs from jobs.json
 
 | 原则 | 实际应用意义 |
 |------|--------------|
-| **提示词稳定性** | 对话过程中系统提示词不会发生变更。除非用户主动执行 `/model` 指令，否则不会触发任何可能破坏缓存的结构变动。 |
-| **执行过程可观测性** | 每次工具调用都会通过回调机制向用户展示执行状态。CLI 端会显示进度指示器，而网关端则会通过聊天消息反馈执行进度。 |
-| **可中断性** | 用户可通过输入指令或发送特定信号，随时取消正在进行的 API 调用或工具执行任务。 |
-| **平台无关的核心架构** | 一个 AIAgent 类即可同时服务于 CLI、网关、ACP、批处理任务以及 API 服务器。不同平台之间的差异仅体现在入口点上，而非智能体本身。 |
-| **松耦合设计** | 各种可选子系统（如 MCP、插件、内存提供者、强化学习环境等）均采用注册表模式和检查函数机制进行控制，而非硬编码依赖关系。 |
-| **个人资料隔离** | 每个个人资料（通过 `hermes -p <name>` 命令创建）都会拥有独立的 HERMES_HOME 目录、配置文件、内存数据、会话记录以及网关进程标识符。多个个人资料可同时并行运行。 |
+| **提示词稳定性** | 对话过程中系统提示词不会发生变更。除非用户主动执行 `/model` 指令，否则不会触发导致缓存失效的修改。 |
+| **执行过程可观测** | 每次工具调用都会通过回调机制向用户展示执行状态。CLI 界面和网关界面会以进度指示器或聊天消息的形式反馈处理进度。 |
+| **可中断性** | 用户可通过输入指令或发送信号，随时中断 API 调用及工具执行过程。 |
+| **核心逻辑与平台解耦** | 同一个 AIAgent 类既可用于 CLI、网关、ACP、批处理任务，也可用于 API 服务器。不同平台的差异仅体现在入口点上，而非智能体核心逻辑本身。 |
+| **松耦合设计** | 可选子系统（如 MCP、插件、内存提供者、强化学习环境等）均采用注册表模式和检查函数机制进行控制，不存在强制依赖关系。 |
+| **个人资料隔离** | 每个个人资料（通过 `hermes -p <name>` 创建）拥有独立的 HERMES_HOME 目录、配置文件、内存数据、会话记录以及网关进程 ID。多个个人资料可同时运行。 |
 
 ## 文件依赖关系链
 
