@@ -6,23 +6,23 @@ description: "How to build an image-generation backend plugin for Hermes Agent"
 
 # 构建图像生成提供者插件
 
-图像生成提供者插件用于注册后端服务，以处理所有 `image_generate` 工具调用——无论是 DALL·E、gpt-image、Grok、Flux、Imagen、Stable Diffusion、fal、Replicate，还是本地的 ComfyUI 工作流，亦或是其他任何图像生成工具。内置的提供者（OpenAI、OpenAI-Codex、xAI）均以插件形式提供。您可以通过将目录放入 `plugins/image_gen/<名称>/` 中来添加新的插件，或覆盖已有的内置插件。
+图像生成提供者插件用于注册后端服务，以处理所有的 `image_generate` 工具调用——无论是 DALL·E、gpt-image、Grok、Flux、Imagen、Stable Diffusion、fal、Replicate，还是本地的 ComfyUI 工作流，乃至其他任何图像生成工具。所有内置提供者（OpenAI、OpenAI-Codex、xAI）均以插件形式提供。您可以通过将相关目录放入 `plugins/image_gen/<名称>/` 中来添加新插件，或覆盖已有的内置插件。
 
 :::提示
-图像生成插件是 Hermes 支持的多种**后端插件**之一。其他具有更专门功能的插件还包括[内存提供者插件](/developer-guide/memory-provider-plugin)、[上下文引擎插件](/developer-guide/context-engine-plugin)以及[模型提供者插件](/developer-guide/model-provider-plugin)。常规的工具/钩子/CLI 插件则属于[构建 Hermes 插件](/guides/build-a-hermes-plugin)的范畴。
+图像生成插件是 Hermes 支持的多种**后端插件**之一。其他具有更专门功能的插件还包括[内存提供者插件](/developer-guide/memory-provider-plugin)、[上下文引擎插件](/developer-guide/context-engine-plugin)以及[模型提供者插件](/developer-guide/model-provider-plugin)。而常规的工具/钩子/CLI 插件则位于[构建 Hermes 插件](/developer-guide/plugins)相关文档中。
 :::
 
-## 发现机制原理
+## 发现机制
 
 Hermes 会在三个位置扫描图像生成后端：
 
-1. **内置插件** — `<项目目录>/plugins/image_gen/<名称>/`（带有 `kind: backend` 标识，会自动加载且始终可用）
-2. **用户自定义插件** — `~/.hermes/plugins/image_gen/<名称>/`（需通过 `plugins.enabled` 参数启用）
-3. **Pip 安装的插件** — 包含 `hermes_agent.plugins` 入口点的包
+1. **内置版本** — `<项目目录>/plugins/image_gen/<名称>/`（带有 `kind: backend` 标识，会自动加载且始终可用）
+2. **用户自定义版本** — `~/.hermes/plugins/image_gen/<名称>/`（需通过 `plugins.enabled` 参数启用）
+3. **Pip 安装版本** — 包含 `hermes_agent.plugins` 入口点的软件包
 
-每个插件中的 `register(ctx)` 函数都会调用 `ctx.register_image_gen_provider(...)`，从而将其注册到 `agent/image_gen_registry.py` 中的注册表中。活跃的提供者由 `config.yaml` 文件中的 `image_gen.provider` 参数指定；`hermes tools` 会引导用户完成选择过程。
+每个插件中的 `register(ctx)` 函数都会调用 `ctx.register_image_gen_provider(...)`，从而将其注册到 `agent/image_gen_registry.py` 中的注册表中。活跃的提供者由 `config.yaml` 文件中的 `image_gen.provider` 参数指定；`hermes tools` 会指导用户完成选择过程。
 
-`image_generate` 工具封装会向注册表查询当前活跃的提供者，并将请求转发至该提供者处处理。如果未注册任何提供者，该工具会显示一条有用的错误信息，并提示用户使用 `hermes tools` 进行操作。
+`image_generate` 工具会在运行时向注册表查询当前的活跃提供者，并将请求转发至该提供者处处理。如果未找到任何已注册的提供者，该工具会显示一条包含操作指引的错误信息，提示用户使用 `hermes tools` 进行设置。
 
 ## 目录结构
 
@@ -307,10 +307,10 @@ hermes -z "Generate an image of a corgi in a spacesuit"
 my-backend-imggen = "my_backend_imggen_package"
 ```
 
-`my_backend_imggen_package` 必须提供一个顶层 `register` 函数。有关完整的设置步骤，请参阅通用插件指南中的[通过 pip 分发](/guides/build-a-hermes-plugin#distribute-via-pip)部分。
+`my_backend_imggen_package` 必须提供一个顶层 `register` 函数。有关完整的设置流程，请参阅通用插件指南中的[通过 pip 分发](/developer-guide/plugins#distribute-via-pip)部分。
 
 ## 相关页面
 
-- [图像生成](/user-guide/features/image-generation) —— 面向用户的功能文档
-- [插件概览](/user-guide/features/plugins) —— 一览所有插件类型
-- [构建 Hermes 插件](/guides/build-a-hermes-plugin) —— 工具、钩子及 slash 命令的通用指南
+- [图像生成](/user-guide/features/image-generation) — 面向用户的功能文档
+- [插件概览](/user-guide/features/plugins) — 所有插件类型的概要介绍
+- [构建 Hermes 插件](/developer-guide/plugins) — 工具、钩子及斜杠命令的通用指南
