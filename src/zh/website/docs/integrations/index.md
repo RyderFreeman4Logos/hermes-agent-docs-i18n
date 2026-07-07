@@ -61,7 +61,7 @@ Hermes 提供完整的浏览器自动化功能，支持多种后端选项，可�
 
 ## 语音与文本转语音服务提供商
 
-支持在所有消息平台上进行文本转语音及语音转文本操作：
+支持在所有消息平台上实现文本转语音及语音转文本功能：
 
 | 提供商 | 音质 | 费用 | API 密钥 |
 |--------|------|------|---------|
@@ -72,20 +72,20 @@ Hermes 提供完整的浏览器自动化功能，支持多种后端选项，可�
 | **xAI TTS** | 良好 | 付费 | `XAI_API_KEY` |
 | **NeuTTS** | 良好 | 免费 | 无需提供 |
 
-语音转文本功能支持六种提供商：本地 faster-whisper（免费，运行在设备端）、本地命令封装工具、Groq、OpenAI Whisper API、Mistral 以及 xAI。语音消息转录功能适用于 Telegram、Discord、WhatsApp 及其他消息平台。详细信息请参阅 [语音与文本转语音](/user-guide/features/tts) 和 [语音模式](/user-guide/features/voice-mode) 文档。
+语音转文本功能支持六种提供商：本地 faster-whisper（免费，可在设备端运行）、本地命令封装工具、Groq、OpenAI Whisper API、Mistral 以及 xAI。语音消息转录功能适用于 Telegram、Discord、WhatsApp 等各类消息平台。详细信息请参阅 [语音与文本转语音](/user-guide/features/tts) 以及 [语音模式](/user-guide/features/voice-mode) 文档。
 
 ## IDE与编辑器集成
 
-- **[IDE 集成（ACP）](/user-guide/features/acp)** — 可在 VS Code、Zed 以及 JetBrains 等支持 ACP 的编辑器中使用 Hermes Agent。Hermes 作为 ACP 服务器运行，可在编辑器内展示聊天消息、工具操作记录、文件差异及终端命令。
+- **[IDE 集成（ACP）](/user-guide/features/acp)** — 可在 VS Code、Zed 以及 JetBrains 等支持 ACP 的编辑器中使用 Hermes Agent。Hermes 会作为 ACP 服务器运行，从而在编辑器内展示聊天消息、工具操作记录、文件差异对比及终端命令。
 
-## 编程式访问
+## 程序化访问
 
 - **[API 服务器](/user-guide/features/api-server)** — 将 Hermes 暴露为兼容 OpenAI 格式的 HTTP 接口。任何支持 OpenAI 格式的前端应用——如 Open WebUI、LobeChat、LibreChat、NextChat、ChatBox——均可连接并使用 Hermes 及其完整的工具集作为后端。
 
 ## 内存管理与个性化设置
 
-- **[内置内存功能](/user-guide/features/memory)** — 通过 `MEMORY.md` 和 `USER.md` 文件实现持久化的结构化记忆存储。Agent 能够保存有限量的个人笔记和用户资料数据，这些数据可在不同会话之间保留。
-- **[内存存储提供商](/user-guide/features/memory-providers)** — 可插入外部内存后端以实现更深度的个性化定制。目前支持八种提供商：Honcho（基于辩证推理）、OpenViking（分层检索）、Mem0（云端提取）、Hindsight（知识图谱）、Holographic（本地 SQLite）、RetainDB（混合搜索）、ByteRover（基于 CLI 的方案）以及 Supermemory。
+- **[内置内存功能](/user-guide/features/memory)** — 通过 `MEMORY.md` 和 `USER.md` 文件实现持久化且经过整理的内存存储。Agent 能够保存一定量的个人笔记和用户资料数据，这些数据可在不同会话之间保留。
+- **[内存提供程序](/user-guide/features/memory-providers)** — 可插入外部内存后端以实现更深度的个性化功能。目前支持八种提供程序：Honcho（基于辩证推理）、OpenViking（分层检索）、Mem0（云端信息提取）、Hindsight（知识图谱）、Holographic（本地 SQLite 存储）、RetainDB（混合搜索）、ByteRover（基于 CLI 的方案）以及 Supermemory。
 
 ## 消息平台支持
 
@@ -93,16 +93,16 @@ Hermes 作为网关机器人可在 27 种以上的消息平台上运行，所有
 
 - **[Telegram](/user-guide/messaging/telegram)**、**[Discord](/user-guide/messaging/discord)**、**[Slack](/user-guide/messaging/slack)**、**[WhatsApp](/user-guide/messaging/whatsapp)**、**[Signal](/user-guide/messaging/signal)**、**[Matrix](/user-guide/messaging/matrix)**、**[Mattermost](/user-guide/messaging/mattermost)**、**[Email](/user-guide/messaging/email)**、**[SMS](/user-guide/messaging/sms)**、**[DingTalk](/user-guide/messaging/dingtalk)**、**[Feishu/Lark](/user-guide/messaging/feishu)**、**[WeCom](/user-guide/messaging/wecom)**、**[WeCom Callback](/user-guide/messaging/wecom-callback)**、**[Weixin](/user-guide/messaging/weixin)**、**[BlueBubbles](/user-guide/messaging/bluebubbles)**、**[QQ Bot](/user-guide/messaging/qqbot)**、**[Yuanbao](/user-guide/messaging/yuanbao)**、**[Home Assistant](/user-guide/messaging/homeassistant)**、**[Microsoft Teams](/user-guide/messaging/teams)**、**[Microsoft Teams Meetings](/user-guide/messaging/teams-meetings)**、**[Microsoft Graph Webhook](/user-guide/messaging/msgraph-webhook)**、**[Google Chat](/user-guide/messaging/google_chat)**、**[LINE](/user-guide/messaging/line)**、**[ntfy](/user-guide/messaging/ntfy)**、**[SimpleX](/user-guide/messaging/simplex)**、**[Open WebUI](/user-guide/messaging/open-webui)**、**[Webhooks](/user-guide/messaging/webhooks)**
 
-平台对比表及设置指南请参阅 [消息网关概览](/user-guide/messaging) 文档。
+平台对比表及配置指南请参阅 [消息网关概览](/user-guide/messaging) 文档。
 
 ## 家居自动化
 
-- **[Home Assistant](/user-guide/messaging/homeassistant)** — 通过四个专用工具（`ha_list_entities`、`ha_get_state`、`ha_list_services`、`ha_call_service`）控制智能家居设备。当配置了 `HASS_TOKEN` 后，Home Assistant 工具集会自动启用。
+- **[Home Assistant](/user-guide/messaging/homeassistant)** — 通过四个专用工具（`ha_list_entities`、`ha_get_state`、`ha_list_services`、`ha_call_service`）控制智能家居设备。当配置了 `HASS_TOKEN` 后，Home Assistant 相关工具集会自动启用。
 
 ## 插件系统
 
-- **[插件系统](/user-guide/features/plugins)** — 无需修改核心代码，即可通过自定义工具、生命周期钩子及 CLI 命令来扩展 Hermes 功能。插件可从 `~/.hermes/plugins/`、项目内的 `.hermes/plugins/` 目录以及通过 pip 安装的插件中获取。
-- **[创建插件](/guides/build-a-hermes-plugin)** — 提供逐步指南，帮助用户使用工具、钩子及 CLI 命令创建 Hermes 插件。
+- **[插件系统](/user-guide/features/plugins)** — 无需修改核心代码，即可通过自定义工具、生命周期钩子及 CLI 命令来扩展 Hermes 功能。插件可从 `~/.hermes/plugins/`、项目本地目录下的 `.hermes/plugins/` 以及通过 pip 安装的插件入口点中找到。
+- **[创建插件](/developer-guide/plugins)** — 提供分步指南，帮助您使用工具、钩子及 CLI 命令创建 Hermes 插件。
 
 ## 训练与评估
 
