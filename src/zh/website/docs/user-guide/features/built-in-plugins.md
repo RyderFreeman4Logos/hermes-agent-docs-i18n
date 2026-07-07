@@ -7,26 +7,26 @@ description: "Plugins shipped with Hermes Agent that run automatically via lifec
 
 # 内置插件
 
-Hermes 在代码仓库中预置了一小部分插件。这些插件位于 `<repo>/plugins/<name>/` 目录下，会与用户安装在 `~/.hermes/plugins/` 中的插件一同自动加载。它们使用与第三方插件相同的接口机制——包括钩子、工具以及斜杠命令——只不过这些插件是直接内置在代码中的。
+Hermes 在代码仓库中预置了一小部分插件。这些插件位于 `<repo>/plugins/<name>/` 目录下，会与用户安装在 `~/.hermes/plugins/` 中的插件一同自动加载。它们使用与第三方插件相同的接口机制——包括钩子、工具以及斜杠命令——只不过是直接内置于代码库中。
 
-如需了解插件系统的整体架构，请参阅 [插件](/user-guide/features/plugins) 页面；若想自行编写插件，则可参考 [构建 Hermes 插件](/guides/build-a-hermes-plugin) 文档。
+如需了解插件系统的整体架构，请参阅 [插件](/user-guide/features/plugins) 页面；若想自行编写插件，则可参考 [构建 Hermes 插件](/developer-guide/plugins) 文档。
 
 ## 插件发现机制
 
 `PluginManager` 会按顺序扫描四个来源：
 
-1. **内置插件** — `<repo>/plugins/<name>/`（即本页所介绍的内容）
+1. **预置插件** — `<repo>/plugins/<name>/`（即本页所介绍的内容）
 2. **用户插件** — `~/.hermes/plugins/<name>/`
-3. **项目级插件** — `./.hermes/plugins/<name>/`（需设置 `HERMES_ENABLE_PROJECT_PLUGINS=1`）
-4. **Pip 插件入口** — `hermes_agent.plugins`
+3. **项目插件** — `./.hermes/plugins/<name>/`（需设置 `HERMES_ENABLE_PROJECT_PLUGINS=1`）
+4. **Pip 包入口** — `hermes_agent.plugins`
 
-当出现同名插件时，后续扫描到的插件会覆盖之前的版本——例如，名为 `disk-cleanup` 的用户插件将取代内置的同类插件。
+当出现同名插件时，后续扫描到的插件会覆盖之前的版本——例如，名为 `disk-cleanup` 的用户插件将会取代预置的同类插件。
 
-`plugins/memory/` 和 `plugins/context_engine/` 目录会被刻意排除在内置插件扫描范围之外。因为内存提供器和上下文引擎属于通过配置文件中的 `hermes memory setup` / `context.engine` 选项进行配置的单选型提供器，因此它们拥有独立的发现路径。
+`plugins/memory/` 和 `plugins/context_engine/` 目录会被刻意排除在预置插件扫描范围之外。因为内存提供器和上下文引擎属于通过配置文件中的 `hermes memory setup` / `context.engine` 选项进行配置的单选型提供器，因此它们拥有独立的发现路径。
 
-## 内置插件为可选启用状态
+## 预置插件为可选启用状态
 
-内置插件在初始状态下是禁用的。虽然系统能够检测到它们的存在（它们会显示在 `hermes plugins list` 列表以及交互式的 `hermes plugins` 用户界面中），但除非您明确启用它们，否则这些插件不会被加载。
+预置插件在初始状态下是禁用的。虽然系统能够检测到它们的存在（它们会显示在 `hermes plugins list` 列表以及交互式的 `hermes plugins` 用户界面中），但除非你明确启用它们，否则这些插件不会被加载。
 
 ```bash
 hermes plugins enable disk-cleanup
@@ -223,80 +223,80 @@ hermes plugins enable google_meet
 # if the meeting enforces "only invited participants can join".
 ```
 
-**通过聊天使用方式：**
+**通过聊天界面使用方式：**
 
 > “加入 meet.google.com/abc-defg-hij 并做会议记录。通话结束后，请将包含行动项的总结发给我。”
 
-该智能体将自动启动会议连接，在通话进行过程中持续将实时转录内容同步到其上下文中，待会议结束（或您要求停止时）自动生成结构化的总结报告。
+该智能体将自动帮你进入会议，同时在通话进行过程中将持续传输转录内容至其上下文环境中，待会议结束（或你要求停止时），它会自动生成结构化的总结报告。
 
-**适用场景：** 需要机器人为异步参与者进行转录和总结的定期站会；需要结构化记录的访谈类场景；任何原本就需要使用 Fireflies/Otter/Grain 工具的场景。若不希望让 AI 监听会议内容，请勿启用此功能。
+**适用场景：** 需要机器人负责转录并为异步参与者生成总结的定期站会；需要结构化记录的访谈类场景；任何原本就需要使用 Fireflies/Otter/Grain 工具的场景。若不希望让 AI 监听会议内容，请勿启用此功能。
 
-**禁用方法：** `hermes plugins disable google_meet`。所有缓存的转录文本和录音文件会保存在 `~/.hermes/cache/google_meet/` 目录中，直到您手动删除它们为止。
+**禁用方法：** 使用命令 `hermes plugins disable google_meet`。所有缓存的转录文本和录音文件会保存在 `~/.hermes/cache/google_meet/` 目录中，直至你手动删除它们。
 
 ### hermes-achievements
 
-该插件为控制面板添加了**类似 Steam 的成就栏**——根据您的实际 Hermes 会话历史记录，生成 60 多个可收集的阶梯式徽章。这些徽章涵盖工具链使用技巧、调试模式、编码连续时长、技能/内存使用情况、模型/提供方种类，以及生活习惯（如周末或夜间编程等）。该插件最初由 [@PCinkusz](https://github.com/PCinkusz) 作为外部插件开发，后来被整合进 Hermes 内部，以便与 Hermes 的功能更新保持同步。
+该插件为控制面板添加了**类似 Steam 的成就标签页**——根据你的真实 Hermes 会话历史记录，生成 60 多个可收集的阶梯式徽章。这些徽章涵盖工具链使用技巧、调试模式、编码连续时长、技能/内存使用情况、模型/提供方类型，以及生活习惯特征（如周末或夜间编程习惯）等。该插件最初由 [@PCinkusz](https://github.com/PCinkusz) 作为外部插件开发，后被整合进 Hermes 内部，以确保其功能能与 Hermes 的更新保持同步。
 
 **工作原理：**
 
-- 在控制面板后台扫描您所有的 `~/.hermes/state.db` 会话历史记录
-- 每个会话的统计数据会通过 `(started_at, last_active)` 编码进行缓存，因此后续扫描时仅会对新会话或已变更的会话重新分析
-- 首次扫描在后台线程中执行——即便数据库中存储了数千个会话，控制面板也不会因等待扫描而卡住
-- 解锁状态会被保存到 `$HERMES_HOME/plugins/hermes-achievements/state.json` 文件中
+- 在控制面板后台扫描你所有的 `~/.hermes/state.db` 会话历史记录
+- 每个会话的统计数据会通过 `(started_at, last_active)` 指纹进行缓存，因此后续扫描时仅会对新会话或已变更的会话重新分析
+- 首次扫描会在后台线程中执行——即便数据库中存储着数千个会话，控制面板也不会因等待扫描而卡住
+- 已解锁的成就状态会被保存到 `$HERMES_HOME/plugins/hermes-achievements/state.json` 文件中
 
-**等级晋升路径：** 铜级 → 银级 → 金级 → 钻石级 → 奥运级。每张徽章卡片都会显示“统计指标”部分，明确列出所追踪的具体数据。
+**等级晋升路径：** 铜级 → 银级 → 金级 → 钻石级 → 奥运级。每张徽章卡片都会显示“计数依据”部分，明确说明所追踪的具体指标。
 
-**成就状态：**
+**成就状态说明：**
 
 | 状态 | 含义 |
 |---|---|
-| 已解锁 | 已达到至少一个等级 |
+| 已解锁 | 已达成至少一个等级 |
 | 已发现 | 该成就存在，进度可见，但尚未获得 |
 | 秘密 | 在 Hermes 检测到会话历史中的相关信号之前保持隐藏状态 |
 
-**API 接口**——接口路径为 `/api/plugins/hermes-achievements/`：
+**API 接口**——所有接口均位于 `/api/plugins/hermes-achievements/` 下：
 
 | 接口地址 | 功能 |
 |---|---|
-| `GET /achievements` | 显示完整的徽章目录及每个徽章的解锁状态（在首次完整扫描进行时，会返回占位符信息） |
-| `GET /scan-status` | 查询后台扫描器的状态：`idle`/`running`/`failed`，以及上次扫描时长和运行次数 |
+| `GET /achievements` | 显示完整的徽章目录及各自的解锁状态（在首次完整扫描进行时，会返回一个临时占位符） |
+| `GET /scan-status` | 查看后台扫描器的状态：`idle`/`running`/`failed`，以及上次扫描的持续时间与执行次数 |
 | `GET /recent-unlocks` | 显示最近解锁的 20 个徽章，最新解锁的排在最前 |
 | `GET /sessions/{id}/badges` | 查看在某个特定会话中获得的徽章 |
 | `POST /rescan` | 手动触发同步重新扫描（会阻塞当前操作；适用于用户点击重新扫描按钮时） |
-| `POST /reset-state` | 清除解锁历史记录及缓存快照 |
+| `POST /reset-state` | 清除所有解锁记录及缓存快照 |
 
-**状态文件**——存储在 `$HERMES_HOME/plugins/hermes-achievements/` 目录下：
+**状态文件**——存放在 `$HERMES_HOME/plugins/hermes-achievements/` 目录下：
 
 | 文件名 | 内容 |
 |---|---|
-| `state.json` | 解锁历史记录：记录您已获得的徽章及其获得时间。此数据在 Hermes 更新后依然保持稳定 |
-| `scan_snapshot.json` | 上次完成扫描的完整数据（控制面板加载时会立即使用该数据） |
-| `scan_checkpoint.json` | 按会话编码缓存的每会话统计数据（便于快速进行快速重新扫描） |
+| `state.json` | 解锁历史记录：记录了你已获得的徽章及其获取时间。此数据在 Hermes 更新后依然保持稳定 |
+| `scan_snapshot.json` | 上次完成扫描的完整数据（控制面板加载时会立即显示该数据） |
+| `scan_checkpoint.json` | 按指纹分类的每会话统计数据缓存，可加快快速重新扫描的速度 |
 
-**性能说明：**
+**性能相关说明：**
 
-- 对约 8,000 个会话进行首次完整扫描需要几分钟时间。该扫描在控制面板首次请求时就在后台线程中执行；界面会显示占位符，并持续查询 `/scan-status` 状态
-- **首次扫描期间也会逐步显示结果**——扫描器每隔约 250 个会话就会发布一次部分快照，因此每次刷新控制面板时，都能看到更多徽章被解锁，无需长时间盯着零值等待
-- 快速重新扫描会复用那些 `started_at` + `last_active` 编码与之前检查点匹配的会话的统计数据——即便会话历史记录非常庞大，也能在几秒钟内完成扫描
-- 内存中的快照有效期为 120 秒；过期的请求会立即返回旧快照，并触发后台刷新。因此不必因为快照过期而长时间等待
+- 对约 8,000 个会话进行首次完整扫描需要几分钟时间。该扫描在控制面板首次请求时会于后台线程中执行；此时界面会显示临时占位符，同时用户可通过轮询 `/scan-status` 查看扫描进度
+- **首次扫描期间也会逐步显示结果**——扫描器会每隔约 250 个会话发布一次部分快照，因此每次刷新控制面板时，都能看到更多徽章被解锁，无需长时间盯着零值等待
+- 快速重新扫描会复用那些 `started_at` + `last_active` 指纹与缓存检查点匹配的会话的统计数据——即便会话历史记录非常庞大，也能在几秒钟内完成扫描
+- 内存中快照的有效时间为 120 秒；一旦超过时间限制，系统会立即使用旧快照并触发后台刷新。因此不必因为快照过期而长时间等待
 
-**启用方式：** 无需额外操作——`hermes-achievements` 是仅用于控制面板的插件（没有生命周期钩子，也不提供模型相关工具）。首次启动时，它会自动作为标签页添加到 `hermes dashboard` 中。`plugins.enabled` 配置项仅用于控制生命周期/工具类插件；控制面板插件则是通过其 `dashboard/manifest.json` 文件被自动识别的
+**启用方式：** 无需额外操作——`hermes-achievements` 是仅适用于控制面板的插件（没有生命周期钩子，也不提供模型相关工具）。它在首次启动时就会自动作为标签页添加到 `hermes dashboard` 中。`plugins.enabled` 配置项仅用于控制具有生命周期/工具功能的插件；控制面板插件则是通过其 `dashboard/manifest.json` 文件被识别的
 
-**选择不使用的方式：** 删除或重命名 `plugins/hermes-achievements/dashboard/manifest.json`，或者在 `~/.hermes/plugins/hermes-achievements/` 目录下创建一个同名的用户插件，且该插件不包含控制面板功能。此时 `$HERMES_HOME/plugins/hermes-achievements/` 下的插件状态文件仍会保留——重新安装插件后，您的解锁历史记录不会丢失
+**取消启用方式：** 删除或重命名 `plugins/hermes-achievements/dashboard/manifest.json` 文件，或者在 `~/.hermes/plugins/hermes-achievements/` 目录下创建一个同名的用户插件，且该插件不包含控制面板功能。此时 `$HERMES_HOME/plugins/hermes-achievements/` 下的插件状态文件依然保留——重新安装插件后，你的解锁历史记录不会丢失
 
 ## 添加打包插件
 
-打包插件的编写方式与其他 Hermes 插件完全相同——请参考[构建 Hermes 插件](/guides/build-a-hermes-plugin)文档。唯一的不同在于：
+打包插件的编写方式与其他 Hermes 插件完全相同——详情请参阅[构建 Hermes 插件](/developer-guide/plugins)文档。两者的唯一区别在于：
 
 - 插件目录位于 `<repo>/plugins/<name>/`，而非 `~/.hermes/plugins/<name>/`
-- 在 `hermes plugins list` 中，其插件类型会被标记为 `bundled`
-- 同名的用户插件会覆盖打包版本
+- 在执行 `hermes plugins list` 命令时，其来源会被标记为“bundled”（打包版）
+- 若存在同名用户插件，则该用户插件会覆盖打包版本
 
 以下情况适合将插件打包：
 
 - 该插件没有可选依赖项（或所有依赖项都已通过 `pip install .[all]` 一次性安装）
-- 其功能对大多数用户都有益，且采用“不启用则放弃”而非“选择启用”的模式
-- 其逻辑与某些生命周期钩子相关，否则智能体就需要手动记得调用这些钩子
-- 该插件能够补充核心功能，而不会增加模型可见的工具种类
+- 其功能对大多数用户都有益处，且采用“默认启用”而非“需手动选择”机制
+- 其逻辑与某些生命周期钩子紧密相关，否则智能体就需要手动去触发这些钩子
+- 该插件能够补充 Hermes 的核心功能，而不会增加模型相关工具的复杂性
 
-反例——这类插件应保持为用户可安装的独立插件，而非打包版本：需要 API 密钥的第三方集成、特定领域的专用工作流、依赖关系复杂的插件，以及任何会默认显著改变智能体行为的插件。
+反例——这类插件应保持为用户可自行安装的类型，而非打包版本：需要 API 密钥的第三方集成工具、特定领域的专用工作流、依赖关系复杂的插件，以及任何会默认显著改变智能体行为的插件。
