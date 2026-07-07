@@ -317,9 +317,9 @@ platforms:
           deliver_extra: {}     # repo + pr_number for github_comment; chat_id for others
 ```
 
-## 接下来可以做什么？
+## 接下来有哪些功能？
 
-- **[基于定时任务的 PR 审核功能](./github-pr-review-agent.md)** — 按预定时间自动检查 PR，无需公开接口  
+- **[基于定时任务的 PR 审核](./github-pr-review-agent.md)** — 按预定时间间隔自动检查 PR，无需公共接口  
 - **[Webhook 参考文档](/user-guide/messaging/webhooks)** — Webhook 平台的完整配置参考指南  
-- **[构建插件](/guides/build-a-hermes-plugin)** — 将审核逻辑封装为可共享的插件  
-- **[用户配置文件](/user-guide/profiles)** — 运行拥有独立内存和配置的专用审核者配置文件
+- **[构建插件](/developer-guide/plugins)** — 将审核逻辑封装为可共享的插件  
+- **[用户配置文件](/user-guide/profiles)** — 运行拥有独立内存和配置的专用审核员配置文件
