@@ -66,9 +66,9 @@ memory:
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（现在它会重定向到 `hermes memory setup`），但仅在将 Honcho 选为默认内存提供者后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（现在会重定向到 `hermes memory setup`），但仅在选择 Honcho 作为当前内存提供方之后才会被注册。
 
-**配置文件位置：** `$HERMES_HOME/honcho.json`（针对当前用户配置）或 `~/.honcho/config.json`（全局配置）。配置文件的加载优先级为：`$
+**配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置加载顺序为：`$
 
 ```json
 {
@@ -269,26 +269,28 @@ echo "OPENVIKING_API_KEY=..." >> ~/.hermes/.env
 ```
 
 **核心功能：**  
-- 分层上下文加载：L0（约100个标记）→ L1（约2000个标记）→ L2（完整上下文）  
-- 会话保存时自动提取内存信息（包括配置文件、偏好设置、实体、事件、案例及模式）  
-- 支持使用 `viking://` URI方案进行分层知识浏览  
+- 分层上下文加载：L0（约100个token）→ L1（约2,000个token）→ L2（完整上下文）  
+- 会话保存时自动提取内存信息（包括个人资料、偏好设置、实体、事件、案例及模式）  
+- 支持使用 `viking://` URI方案实现分层知识浏览  
 
-在本地/可信模式下，需使用 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER`；而在对等内存共享场景中，Hermes的节点标识则为 `OPENVIKING_AGENT`。  
+在本地/受信任模式下，需使用 `OPENVIKING_ACCOUNT` 和 `OPENVIKING_USER`；而 `OPENVIKING_AGENT` 则是Hermes在OpenViking中的对等节点标识，用于实现基于对等节点的内存共享。  
 
 ---
 
 ### Mem0  
 
-基于服务器端的LLM事实提取工具，具备语义搜索、重排序及自动去重功能。同时支持Mem0平台版（云端）和开源版（自托管）两种模式。  
+一种服务器端大型语言模型事实提取工具，具备语义搜索、重排序及自动去重功能。提供三种连接模式：**平台模式**（Mem0云服务）、**自托管控制台模式**（通过Docker运行的Mem0服务器），以及**OSS模式**（在本地运行Mem0，搭配自定义的大型语言模型与向量存储）。  
 
 | | |  
 |---|---|  
-| **适用场景** | 无需手动管理内存——Mem0可自动完成信息提取 | **所需条件** | 需安装 `pip install mem0ai`，并配备API密钥（平台版）或LLM/向量存储系统（开源版） |  
-| **数据存储** | Mem0云服务（平台版）或自托管存储（开源版） | **成本** | 遵循Mem0的定价标准（平台版）/免费使用（开源版） |  
+| **适用场景** | 无需手动管理内存——Mem0可自动完成信息提取 |  
+| **所需条件** | 平台模式下需安装 `pip install mem0ai` 并提供API密钥；自托管控制台模式需运行中的Mem0服务器；OSS模式则需自行配置大型语言模型与向量存储 |  
+| **数据存储位置** | Mem0云服务（平台模式）、自定义的Mem0服务器（自托管控制台模式），或本地进程内（OSS模式） |  
+| **成本** | 遵循Mem0的定价标准（平台模式）；自托管或OSS模式则免费 |  
 
-**常用工具（5个）：** `mem0_list`（分页列出所有内存记录）、`mem0_search`（平台版支持语义搜索及结果重排序）、`mem0_add`（存储原始事实数据）、`mem0_update`（通过ID更新内容）、`mem0_delete`（通过ID删除记录）  
+**配套工具（4种）：** `mem0_search`（语义搜索；平台模式下可选重排序功能，默认关闭）、`mem0_add`（存储原始事实信息）、`mem0_update`（通过ID更新信息）、`mem0_delete`（通过ID删除信息）  
 
-**平台版设置步骤：**
+**平台模式配置步骤：**
 ```bash
 hermes memory setup    # select "mem0" → "Platform"
 # Or manually:
@@ -308,39 +310,63 @@ hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-
 hermes memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
 ```
 
-**配置文件：** `$HERMES_HOME/mem0.json`（用于设置行为参数）。仅密钥 `MEM0_API_KEY` 需存放于 `~/.hermes/.env` 文件中。
+**设置（自托管控制面板）：** 连接到通过 Docker 运行的 Mem0 服务器（即该控制面板的 REST API）：
 
-| 键值 | 默认值 | 描述 |
-|-----|---------|-------------|
-| `mode` | `platform` | `platform`（Mem0 Cloud）或 `oss`（自托管） |
+```bash
+hermes memory setup    # select "mem0" → "Self-hosted server"
+# Or via flags:
+hermes memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
+```
+
+或者手动配置——可通过环境变量来实现：
+
+```bash
+echo "MEM0_HOST=http://localhost:8888" >> ~/.hermes/.env
+echo "MEM0_API_KEY=your-admin-api-key" >> ~/.hermes/.env
+```
+
+或在 `mem0.json` 中：
+
+```json
+{ "host": "http://localhost:8888", "api_key": "your-admin-api-key" }
+```
+
+该插件通过 `X-API-Key` 进行身份验证，并使用服务器的 `/search` 和 `/memories` 接口。`api_key` 为可选参数（仅当服务器设置为 `AUTH_DISABLED` 时才可省略）。请勿设置 `mode: oss` —— 因为其优先级高于 `host` 设置。
+
+**配置文件：** `$HERMES_HOME/mem0.json`（用于配置行为设置）。仅密钥 `MEM0_API_KEY` 应存储在 `~/.hermes/.env` 文件中。
+
+| 键值 | 默认值 | 说明 |
+|-----|---------|------|
+| `mode` | `platform` | `platform`（Mem0 Cloud）或 `oss`（自托管、进程内运行） |
+| `host` | — | 自托管 Mem0 服务器的 URL（Docker 控制台地址）。通过 HTTP 并使用 `X-API-Key` 进行通信；不可与 `mode: oss` 同时使用 |
 | `user_id` | `hermes-user` | 用户标识符 |
-| `agent_id` | `hermes` | Agent标识符 |
-| `rerank` | `true` | 根据相关性对搜索结果进行重新排序（仅适用于platform模式） |
+| `agent_id` | `hermes` | Agent 标识符 |
+| `rerank` | `false` | 重新排序搜索结果以提高相关性（仅适用于 `platform` 模式） |
 
-**OSS支持的提供商：**
+**OSS 支持的提供方：**
 
-| 组件 | 提供商 |
-|-----------|---------|
-| 大语言模型 | openai, ollama |
-| 嵌入模型 | openai, ollama |
+| 组件 | 提供方 |
+|-----------|--------|
+| 大语言模型 | openai、ollama |
+| 嵌入模型 | openai、ollama |
 | 向量存储 | qdrant（本地/服务器端）、pgvector |
 
-**切换模式：** 重新运行命令 `hermes memory setup mem0 --mode <platform|oss>`，或直接编辑 `mem0.json` 文件。
+**切换模式：** 重新运行命令 `hermes memory setup mem0 --mode <platform|selfhosted|oss>`，或直接编辑 `mem0.json` 文件。
 
 ---
 
 ### Hindsight
 
-具备知识图谱、实体解析及多策略检索功能的长期记忆系统。其 `hindsight_reflect` 工具可实现其他任何提供商都无法提供的跨内存信息整合功能。该系统还能通过会话级文档跟踪，自动保留完整的对话记录（包括工具调用信息）。
+具备知识图谱、实体解析及多策略检索功能的长期记忆系统。`hindsight_reflect` 工具可实现其他任何提供方都无法提供的跨内存信息整合功能。该系统还能通过会话级文档跟踪，自动保留完整的对话内容（包括工具调用记录）。
 
 | | |
 |---|---|
-| **最佳适用场景** | 基于知识图谱的检索，并需体现实体间的关联关系 |
-| **所需条件** | 云端：需从 [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io) 获取API密钥；本地：需使用大语言模型API密钥（如OpenAI、Groq、OpenRouter等） |
-| **数据存储** | Hindsight Cloud云服务或本地的嵌入式PostgreSQL数据库 |
-| **成本** | 需按Hindsight的定价标准付费（云端使用），本地部署则免费 |
+| **最佳适用场景** | 基于知识图谱的检索，需体现实体间的关联关系 |
+| **所需条件** | 云端：从 [ui.hindsight.vectorize.io](https://ui.hindsight.vectorize.io) 获取 API 密钥。本地：需要大语言模型 API 密钥（如 OpenAI、Groq、OpenRouter 等） |
+| **数据存储** | Hindsight Cloud 或本地的嵌入式 PostgreSQL 数据库 |
+| **成本** | 遵循 Hindsight 的云端定价标准，本地部署则免费 |
 
-**相关工具：** `hindsight_retain`（结合实体提取功能进行存储）、`hindsight_recall`（多策略搜索）、`hindsight_reflect`（跨内存信息整合）
+**相关工具：** `hindsight_retain`（用于存储数据并提取实体信息）、`hindsight_recall`（多策略搜索功能）、`hindsight_reflect`（跨内存信息整合功能）
 
 **设置方法：**
 ```bash
@@ -555,8 +581,8 @@ hermes memory setup
 |----------|---------|------|-------|-------------|----------------|
 | **Honcho** | 云端 | 付费 | 5 | `honcho-ai` | 辩证式用户建模 + 会话级上下文管理 |
 | **OpenViking** | 自托管 | 免费 | 5 | `openviking` + 服务器 | 文件系统层级结构 + 分层加载机制 |
-| **Mem0** | 云端/自托管 | 免费/付费 | 5 | `mem0ai` | 服务器端大语言模型提取功能 + OSS模式 |
-| **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反向合成技术 |
+| **Mem0** | 云端/自托管 | 免费/付费 | 4 | `mem0ai` | 服务器端大语言模型提取功能 + 自托管/OSS运行模式 |
+| **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反射式综合能力 |
 | **Holographic** | 本地 | 免费 | 2 | 无 | HRR代数模型 + 可信度评分系统 |
 | **RetainDB** | 云端 | 每月20美元 | 5 | `requests` | 差分压缩技术 |
 | **ByteRover** | 本地/云端 | 免费/付费 | 3 | `brv` CLI | 预压缩提取功能 |
@@ -565,6 +591,6 @@ hermes memory setup
 
 ## 配置文件隔离
 
-各提供商的数据均根据[配置文件](/user-guide/profiles)实现隔离：
+各提供商的数据会根据[配置文件](/user-guide/profiles)实现隔离：
 
 - **本地存储型提供商**（Holographic、ByteRover）会使用`$
