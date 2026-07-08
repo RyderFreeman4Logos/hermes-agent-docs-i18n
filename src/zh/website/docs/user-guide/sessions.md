@@ -271,7 +271,22 @@ Help me refactor the auth module please             2h ago        cli    2025030
 What's the weather in Las Vegas?                    3d ago        tele   20250303_101500_f
 ```
 
-### 导出会话记录
+### 导出会话
+
+`hermes sessions export` 是针对每种导出格式的命令入口，可通过 `--format` 参数进行选择：
+
+| 格式 | 输出内容 | 适用场景 |
+|------|----------|----------|
+| `jsonl`（默认） | 每个会话对应一个 JSON 对象 | 备份、在不同设备间传输 |
+| `md` / `qmd` | 每个会话对应一个 Markdown/Quarto 文件及清单文件 | 可读性强的归档、笔记记录 |
+| `html` | 单页独立格式（多会话时包含侧边栏） | 共享、浏览 |
+| `trace` | Claude Code JSONL 格式 | HF Agent Trace Viewer，配合 `--upload` 参数使用 |
+
+此外还可使用 `--only user-prompts` 参数仅导出用户输入的提示词内容（支持 jsonl 或 md 格式）。
+
+所有格式都支持相同的筛选参数：`--session-id` 用于选择单个会话，或使用完整的 `prune`/`archive` 过滤组合进行批量处理——包括 `--older-than` / `--newer-than` / `--before` / `--after`（时间范围可设置为 `5h`/`2d`/`1w`、具体天数或 ISO 时间戳）、`--source`、`--title`、`--model`、`--provider`、`--cwd`、`--min/--max-messages`、`--min/--max-tokens`、`--min/--max-cost`、`--min/--max-tool-calls`、`--user`、`--chat-id`、`--chat-type`、`--branch`、`--end-reason`。`--dry-run` 参数可预览筛选结果而不会实际写入文件。`--redact` 参数可删除导出内容中的敏感信息（如 API 密钥、令牌、凭证），建议用于任何需要共享的导出内容。注意：批量筛选仅适用于已结束的会话；未加筛选的 `export` 命令会导出所有会话内容，包括正在运行的会话。
+
+#### JSONL（默认格式）
 
 ```bash
 # Export all sessions to a JSONL file
@@ -282,9 +297,81 @@ hermes sessions export telegram-history.jsonl --source telegram
 
 # Export a single session
 hermes sessions export session.jsonl --session-id 20250305_091523_a1b2c3d4
+
+# Redact API keys/tokens/credentials from the exported content
+hermes sessions export backup.jsonl --redact
 ```
 
 导出的文件中，每行包含一个 JSON 对象，其中记载了完整的会话元数据以及所有消息内容。
+
+#### HTML 格式
+
+使用 `--format html` 选项可生成一个独立的 HTML 文件——无需任何外部依赖——该文件具有带样式的消息气泡、可折叠的工具输出；对于多会话导出场景，还配有用于在各个会话之间切换的侧边栏：
+
+```bash
+# One session as a standalone HTML page
+hermes sessions export --format html --session-id 20250305_091523_a1b2c3d4 transcript.html
+
+# All Telegram sessions from the last week in one file, secrets redacted
+hermes sessions export --format html --newer-than 1w --source telegram --redact archive.html
+```
+
+#### 仅输出提示词
+
+`--only user-prompts` 选项仅导出您输入的提示词内容——不包含助手的回复、工具的输出以及系统上下文。该功能非常适合用于构建提示词库或查看您曾经提出的请求内容。
+
+```bash
+# One JSONL record per prompt (session id, index, timestamp, text)
+hermes sessions export prompts.jsonl --session-id 20250305_091523_a1b2c3d4 --only user-prompts
+
+# Markdown, straight to stdout
+hermes sessions export - --session-id 20250305_091523_a1b2c3d4 --only user-prompts --format md
+```
+
+支持使用 `--format jsonl`（默认值）或 `md` 格式，批量导出时同样适用相同的过滤规则，并可与 `--redact` 选项结合使用。
+
+#### 跟踪记录（HF Agent Trace Viewer）
+
+使用 `--format trace` 选项可输出 Claude Code JSONL 格式的数据——这正是 Hugging Face Hub 在其 [Agent Trace Viewer](https://huggingface.co/docs/hub/agent-traces) 中自动识别的格式。您可以将这些数据保存到本地，或通过添加 `--upload` 选项将其上传至您自己的私有 `hermes-traces` 数据集（该功能会读取 `HF_TOKEN`）。
+
+```bash
+# Trace of the most recent session, to stdout
+hermes sessions export --format trace
+
+# One session to a local trace file
+hermes sessions export --format trace --session-id 20250305_091523_a1b2c3d4 trace.jsonl
+
+# Upload straight to your private HF traces dataset
+hermes sessions export --format trace --session-id 20250305_091523_a1b2c3d4 --upload
+```
+
+默认情况下，追踪数据导出内容会经过保密处理（此类数据本就应离开机器）；在人工审核之后，可使用 `--no-redact` 选项取消保密处理。除非指定了 `--public`，否则 `--upload` 选项所对应的导出内容为私有格式。通过过滤器进行批量追踪数据导出时，每次会生成一个 `<id>.trace.jsonl` 文件。
+
+#### Markdown / QMD 格式
+
+若希望在隐藏或删除旧会话之前保留可读的基于文件的存档，可使用 `--format md` 或 `--format qmd` 选项。采用 Markdown/QMD 格式导出时，每个会话会对应一个文件，这些文件会被保存在指定目录中（默认路径为 `~/.hermes/session-exports`）。
+
+```bash
+# Export one session to Markdown
+hermes sessions export --format md --session-id 20250305_091523_a1b2c3d4
+
+# Export a compression lineage as one logical document
+hermes sessions export --format md --session-id 20250305_091523_a1b2c3d4 --lineage logical
+
+# Preview ended sessions older than 90 days without writing files
+hermes sessions export --format md --older-than 90 --dry-run
+
+# Export ended Telegram sessions older than 2 weeks to QMD files
+hermes sessions export --format qmd --older-than 2w --source telegram
+
+# Export long Claude sessions, secrets redacted
+hermes sessions export --format md --model sonnet --min-messages 50 --redact
+
+# Only after verification, export and delete one explicitly named session
+hermes sessions export --format md --session-id 20250305_091523_a1b2c3d4 --delete-after-verified --yes
+```
+
+在通过 Markdown/QMD 格式导出时，每个导出的会话都会生成一个 `.md` 或 `.qmd` 文件，同时还会生成一个 `manifest.jsonl` 文件，其中包含文件路径、消息数量、链路标识以及 SHA-265 哈希值。批量导出至少需要应用一个过滤条件，否则将无法执行；纯批量导出是被禁止的。`--delete-after-verified` 选项仅能与 `--session-id` 一起使用，并且必须搭配 `--yes` 参数。`--redact` 选项会在写入文件之前自动删除消息内容及工具输出中的敏感信息（如 API 密钥、令牌、凭证等），对于任何计划共享的导出内容，均建议使用此选项。
 
 ### 删除会话
 
