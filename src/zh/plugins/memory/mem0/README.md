@@ -25,14 +25,50 @@ echo "MEM0_API_KEY=your-key" >> ~/.hermes/.env
 
 | 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
-| `mode` | `platform` | `platform`（Mem0 Cloud）或 `oss`（自托管） |
-| `user_id` | `hermes-user` | Mem0 平台上的用户标识符 |
+| `mode` | `platform` | `platform`（Mem0 云服务）或 `oss`（自托管、进程内运行） |
+| `host` | — | 自托管 Mem0 服务器的 URL（即 Docker 控制台地址）。设置该值后，将通过带有 `X-API-Key` 头部的 HTTP 协议建立连接。不可与 `mode: oss` 同时使用 |
+| `user_id` | `hermes-user` | Mem0 上的用户标识符 |
 | `agent_id` | `hermes` | Agent 的标识符 |
-| `rerank` | `true` | 根据相关性对搜索结果进行重新排序（仅适用于平台模式） |
+| `rerank` | `false` | 根据相关性对搜索结果进行重新排序（仅适用于平台模式） |
+
+该插件支持三种连接模式：
+
+- **平台模式** — 使用 Mem0 提供的云服务（`api.mem0.ai`）。需设置 `MEM0_API_KEY`。（默认模式）
+- **自托管控制台模式** — 通过 Docker 自行运行的 Mem0 服务器。需设置 `host` 参数。具体说明见下文。
+- **OSS 模式** — 结合自定义的大语言模型和向量存储在进程内运行 Mem0。需设置 `mode: oss`。具体说明见下文。
+
+## 自托管控制台（服务器）模式
+
+该模式用于将插件连接到您自行运行的独立 Mem0 服务器——即带有独立 REST API 的 Docker 部署版 Mem0 控制台/服务器。与 OSS 模式（在进程内结合自定义向量存储运行 `mem0ai`）不同，此模式下插件仅需通过 HTTP 协议与您的服务器通信。
+
+1. 从 Docker 镜像启动 Mem0 服务器（基于 FastAPI 和 pgvector 构建），记下其 URL 以及 `ADMIN_API_KEY`。
+2. 通过设置向导将插件指向该服务器即可。
+   ```bash
+   hermes memory setup    # select "mem0" → "Self-hosted server"
+   # Or non-interactive:
+   hermes memory setup mem0 --mode selfhosted --host http://localhost:8888 --api-key your-admin-api-key
+   ```
+或通过环境变量设置：
+   ```bash
+   echo "MEM0_HOST=http://localhost:8888" >> ~/.hermes/.env
+   echo "MEM0_API_KEY=your-admin-api-key" >> ~/.hermes/.env
+   ```
+或位于 `$HERMES_HOME/mem0.json` 中：
+   ```json
+   {
+     "host": "http://localhost:8888",
+     "api_key": "your-admin-api-key"
+   }
+   ```
+3. 启动一个新的 Hermes 会话并调用 `mem0_search` —— 它会连接到您的服务器。
+
+该插件会使用 `X-API-Key` 进行身份验证，并调用服务器上的 `/search` 和 `/memories` 接口。`api_key` 参数是可选的——仅当服务器处于 `AUTH_DISABLED` 模式运行时才可省略该参数。
+
+> 系统会自动将 `host` 参数设置为自托管服务器的地址。请勿设置 `mode: oss` —— OSS 模式具有优先级，会忽略 `host` 参数。
 
 ## OSS（自托管）模式
 
-使用您自己的大语言模型、嵌入器及向量存储在本地运行 Mem0。
+在本地使用您自己的大语言模型、嵌入器及向量存储来运行 Mem0。这是进程内 SDK 模式。若要连接到通过 Docker 运行的 Mem0 服务器，请参阅上文的[自托管控制台（服务器）模式](#self-hosted-dashboard-server-mode)。
 
 ### 交互式设置
 
@@ -106,17 +142,16 @@ hermes memory setup mem0 --mode oss --oss-llm-key sk-... --dry-run
 
 | 工具 | 描述 |
 |------|-------------|
-| `mem0_list` | 列出所有已存储的记忆（分页显示） |
-| `mem0_search` | 基于语义含义进行搜索 |
-| `mem0_add` | 按原文形式存储事实（无需通过大语言模型提取） |
-| `mem0_update` | 根据编号更新记忆的文本内容 |
-| `mem0_delete` | 根据编号删除记忆 |
+| `mem0_search` | 基于语义的搜索功能 |
+| `mem0_add` | 按原文存储事实信息（无需通过大语言模型提取） |
+| `mem0_update` | 根据编号更新内存中的文本内容 |
+| `mem0_delete` | 根据编号删除内存记录 |
 
 ## 故障排除
 
 ### “Mem0暂时不可用”
 
-连续5次失败后触发了断路器保护，2分钟后自动恢复。
+在连续出现5次故障后触发了断路保护机制，2分钟后将自动恢复。
 
 - **平台模式**：请检查API密钥及网络连接状态。
 - **OSS模式**：请确认您的向量存储服务（qdrant/pgvector）正在运行。
