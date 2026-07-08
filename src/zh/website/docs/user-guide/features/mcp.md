@@ -232,7 +232,7 @@ mcp_servers:
     client_cert: ["~/.certs/mcp-client.crt", "~/.certs/mcp-client.key", "${MCP_KEY_PASSWORD}"]
 ```
 
-您还可以通过使用 `client_cert`（合并后的 PEM 格式）与独立的 `client_key` 参数，将证书和私钥完全分开存储。路径支持 `~` 扩展；若文件缺失，系统会抛出明确的、与服务器相关的错误，而不会导致难以理解的 TLS 握手失败。
+您还可以通过使用 `client_cert`（合并后的 PEM 格式）与独立的 `client_key`，将证书和私钥完全分开存储。路径支持 `~` 扩展；若文件缺失，系统会抛出明确的、与服务器相关的错误，而不会出现难以理解的 TLS 握手失败现象。
 
 ## 基本配置参考
 
@@ -242,26 +242,41 @@ Hermes 会从 `~/.hermes/config.yaml` 文件中的 `mcp_servers` 部分读取 MC
 
 | 键 | 类型 | 含义 |
 |---|---|---|
-| `command` | 字符串 | 标准输入输出 MCP 服务器的可执行文件 |
-| `args` | 列表 | 标准输入输出服务器的参数 |
-| `env` | 映射对象 | 传递给标准输入输出服务器的环境变量 |
-| `url` | 字符串 | HTTP MCP 端点地址 |
-| `headers` | 映射对象 | 远程服务器的 HTTP 请求头 |
-| `client_cert` | 字符串 \| 列表 | mTLS 用的客户端证书——可以是合并后的 PEM 路径，也可以是 `[cert, key]`/`[cert, key, password]` 的格式 |
-| `client_key` | 字符串 | 客户端私钥的 PEM 格式路径（当与 `client_cert` 分开存储时使用） |
+| `command` | 字符串 | stdio MCP 服务器的可执行文件 |
+| `args` | 列表 | 传给 stdio 服务器的参数 |
+| `env` | 映射结构 | 传递给 stdio 服务器的环境变量 |
+| `url` | 字符串 | HTTP MCP 接口地址 |
+| `headers` | 映射结构 | 远程服务器的 HTTP 请求头 |
+| `client_cert` | 字符串 \| 列表 | 用于 mTLS 的客户端证书——可以是合并后的 PEM 路径，也可以是 `[cert, key]`/`[cert, key, password]` 格式 |
+| `client_key` | 字符串 | 客户端私钥的 PEM 路径（当与 `client_cert` 分开存储时使用） |
 | `timeout` | 数字 | 工具调用的超时时间 |
-| `connect_timeout` | 数字 | 初始连接超时时间 |
+| `connect_timeout` | 数字 | 初始连接超时时间（同时也会限制 MCP 的 `initialize` 握手过程） |
+| `idle_timeout_seconds` | 数字 | 若在指定秒数内没有工具调用，便会回收该 stdio 服务器（值为 `0` 表示永不回收，为默认值）。下次有工具调用时，服务器会自动透明重启。 |
+| `max_lifetime_seconds` | 数字 | 当服务器总运行时间达到此数值时，将会被回收（值为 `0` 表示永不回收，为默认值）。下次使用时会自动透明重启。 |
 | `enabled` | 布尔值 | 若设置为 `false`，Hermes 将完全跳过该服务器 |
-| `supports_parallel_tool_calls` | 布尔值 | 若设置为 `true`，该服务器上的工具可同时运行 |
-| `tools` | 映射对象 | 针对每个服务器的工具过滤规则及实用程序策略 |
+| `supports_parallel_tool_calls` | 布尔值 | 若设置为 `true`，该服务器上的工具可以并行执行 |
+| `tools` | 映射结构 | 用于针对特定服务器过滤工具及定义相关策略 |
 
-### 最简标准输入输出示例 |
+### 最简 stdio 示例
 
 ```yaml
 mcp_servers:
   filesystem:
     command: "npx"
     args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+```
+
+### 回收内存占用高的标准输入输出服务器
+
+基于浏览器的 MCP 服务器（例如 `@playwright/mcp`）在首次调用工具后会一直保持完整的 Chromium 进程运行——这会占用数百 MB 的内存且永不释放。启用自动回收功能后，当达到空闲时间或生命周期限制时，该服务器会被终止，而在下次有工具被调用时又会无缝重启（其注册的工具在整个过程中始终有效）：
+
+```yaml
+mcp_servers:
+  playwright:
+    command: "npx"
+    args: ["-y", "@playwright/mcp@latest", "--headless"]
+    idle_timeout_seconds: 900     # recycle after 15 min without a tool call
+    max_lifetime_seconds: 86400   # and at least once a day regardless
 ```
 
 ### 最简 HTTP 示例
