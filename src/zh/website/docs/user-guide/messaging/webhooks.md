@@ -70,19 +70,21 @@ curl http://localhost:8644/health
 
 ## 配置路由 {#configuring-routes}
 
-路由用于定义如何处理不同的 webhook 来源。在您的 `config.yaml` 文件中，每个路由都是 `platforms.webhook.extra.routes` 下的一个带名称的条目。
+路由用于定义如何处理不同的 webhook 来源。每个路由都是您在 `config.yaml` 文件中的 `platforms.webhook.extra.routes` 下的一个命名条目。
 
 ### 路由属性
 
 | 属性 | 是否必填 | 描述 |
 |------|----------|------|
 | `events` | 否 | 需要接收的事件类型列表（例如 `["pull_request"]`）。如果为空，则接收所有事件。事件类型可从 `X-GitHub-Event`、`X-GitLab-Event` 或请求负载中的 `event_type` 获取。 |
-| `secret` | **是** | 用于签名验证的 HMAC 密钥。如果未在路由中设置，将回退到全局 `secret` 值。如需仅用于测试，可将其设置为 `"INSECURE_NO_AUTH"`（跳过验证）。 |
-| `prompt` | 否 | 采用点号表示法访问负载字段的模板字符串（例如 `{pull_request.title}`）。如果省略此参数，则会将完整的 JSON 负载原样放入提示信息中。请注意，负载中的字段是不可信的——详见 [“已认证不代表可信”](#authenticated-does-not-mean-trusted)。 |
-| `skills` | 否 | 为 Agent 运行加载的技能名称列表。 |
-| `deliver` | 否 | 响应的发送目标：`github_comment`、`telegram`、`discord`、`slack`、`signal`、`sms`、`whatsapp`、`matrix`、`mattermost`、`homeassistant`、`email`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot` 或默认值 `log`。 |
-| `deliver_extra` | 否 | 额外的发送配置——键值取决于 `deliver` 的类型（例如 `repo`、`pr_number`、`chat_id`）。其值支持与 `prompt` 相同的 `{dot.notation}` 模板。 |
-| `deliver_only` | 否 | 如果设置为 `true`，则完全跳过 Agent 运行——此时渲染后的 `prompt` 模板将直接作为要发送的实际消息。这种方式无需消耗 LLM 资源，响应速度可在几分之一秒内完成。具体使用场景请参阅 [直接发送模式](#direct-delivery-mode)。此功能要求 `deliver` 必须是真实的目标地址（不能为 `log`）。 |
+| `secret` | **是** | 用于签名验证的 HMAC 密钥。如果未在路由中设置，将回退使用全局 `secret`。如需仅用于测试，可将其设置为 `"INSECURE_NO_AUTH"`（跳过验证）。 |
+| `prompt` | 否 | 使用点号语法访问负载的模板字符串（例如 `{pull_request.title}`）。如果省略此参数，则会将完整的 JSON 负载原样放入提示信息中。需注意，负载中的字段是不可信的——详见 [“已认证不代表可信”](#authenticated-does-not-mean-trusted)。 |
+| `filters` | 否 | 在身份验证、请求体过滤和事件过滤之后，以及在由智能体处理或直接发送响应之前执行的声明式负载过滤器。不匹配的情况会返回 `{"status":"ignored","reason":"filter"}`，并返回 HTTP 200 状态码。 |
+| `script` | 否 | 位于 `~/.hermes/scripts/` 目录下的过滤/转换脚本。Webhook 负载会以 JSON 格式通过标准输入传递给该脚本。脚本的输出 JSON 会在模板渲染之前替换原始负载；如果输出为文本，则会作为 `script_output` 暴露；若输出为空、为 `[SILENT]` 状态或退出码非零，则会忽略该 Webhook。 |
+| `skills` | 否 | 用于在智能体运行时加载的技能名称列表。 |
+| `deliver` | 否 | 响应的发送目标：`github_comment`、`telegram`、`discord`、`slack`、`signal`、`sms`、`whatsapp`、`matrix`、`mattermost`、`homeassistant`、`email`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot`，或默认值 `log`。 |
+| `deliver_extra` | 否 | 额外的发送配置——具体键值取决于 `deliver` 的类型（例如 `repo`、`pr_number`、`chat_id`）。其值支持与 `prompt` 相同的 `{dot.notation}` 模板语法。 |
+| `deliver_only` | 否 | 如果设置为 `true`，则完全跳过智能体处理——直接使用渲染后的 `prompt` 模板作为要发送的实际消息。这种方式无需消耗 LLM 资源，响应速度可在秒级完成。具体使用场景可参考 [直接发送模式](#direct-delivery-mode)。此时要求 `deliver` 必须是真实的目标地址（不能为 `log`）。 |
 
 ### 完整示例
 
@@ -114,18 +116,84 @@ platforms:
           events: ["push"]
           secret: "deploy-secret"
           prompt: "New push to {repository.full_name} branch {ref}: {head_commit.message}"
+          filters:
+            - field: "ref"
+              equals: "refs/heads/main"
           deliver: "telegram"
 ```
 
+### 载荷过滤器
+
+当某个提供方发送的内容较为丰富的事件流，但仅部分载荷需要唤醒智能体或触发“仅交付”模式时，可使用 `filters` 功能。这些过滤器会在签名验证、消息体解析以及事件处理之后，但在提示语渲染、重试机制启用、智能体调度或直接消息交付之前执行。
+
+```yaml
+platforms:
+  webhook:
+    extra:
+      routes:
+        todoist:
+          events: ["item:updated"]
+          secret: "todoist-secret"
+          filters:
+            - field: "payload.labels"
+              contains: "hermes"
+            - any:
+                - field: "payload.priority"
+                  equals: 4
+                - field: "payload.project_id"
+                  in_file: "~/.hermes/data/todoist/watchlist.json"
+          prompt: "Todoist task changed: {payload.content}"
+```
+
+支持的运算符：
+
+- `exists: true|false`
+- `missing: true`
+- `equals` / `not_equals`
+- 适用于字符串、列表及字典键的 `contains`
+- 适用于内联列表的 `in`
+- 适用于 JSON 数组、JSON 对象（使用键值）或换行分隔的文本文件的 `in_file`
+- `regex`
+- `all`、`any` 以及 `not` 组
+
+字段路径采用点号表示法。`payload.foo` 会在存在顶层 `payload` 对象时从其读取数据，而对于扁平结构的数据则直接从 webhook 的根部分中读取。`event` / `event_type` 会与解析后的事件类型相匹配，而 `headers.<Name>` 用于读取请求头信息。
+
+### 脚本过滤器与转换功能
+
+当声明式过滤器无法满足需求时，可使用脚本功能。脚本必须存储在当前激活配置文件的 `~/.hermes/scripts/` 目录下；相对路径将在此目录中解析，且禁止访问该目录之外的路径。`.sh` 和 `.bash` 脚本会通过 bash 执行，而其他所有扩展名的脚本则通过当前的 Python 解释器运行。
+
+路由传递的负载数据会以 JSON 格式发送到标准输入流中：
+
+```python
+# ~/.hermes/scripts/todoist-hermes-label.py
+import json
+import sys
+
+payload = json.load(sys.stdin)
+labels = payload.get("payload", {}).get("labels", [])
+if "hermes" not in labels:
+    print("[SILENT]")
+    raise SystemExit(0)
+
+payload["body"] = payload["payload"]["content"]
+print(json.dumps(payload))
+```
+
+脚本输出结果：
+
+- JSON 格式的标准输出将替代 `prompt` 和 `deliver_extra` 所使用的负载内容。
+- 非 JSON 格式的文本标准输出则作为 `script_output` 添加到负载中。
+- 若标准输出为空、内容为 `[SILENT]`、`{"__hermes_ignore__": true}`、发生超时、脚本不存在或退出码非零，系统将返回 HTTP 200 状态码，并附带信息 `{"status":"ignored","reason":"script"}`。
+
 ### 提示词模板
 
-提示词会使用点号语法来访问 webhook 请求体中的嵌套字段：
+提示词采用点号语法来访问 webhook 负载中的嵌套字段：
 
-- `{pull_request.title}` 会对应到 `payload["pull_request"]["title"]`
-- `{repository.full_name}` 会对应到 `payload["repository"]["full_name"]`
-- `{__raw__}` —— 一种特殊标记，用于以缩进格式输出**整个请求体**（内容长度超过4000字符时会截断）。在需要完整上下文的监控警报或通用 webhook 场景中非常有用。
-- 若某个键不存在，则会以 `{key}` 的形式原样保留（不会报错）
-- 嵌套的字典和列表会被序列化为 JSON 格式，长度超过2000字符时也会被截断
+- `{pull_request.title}` 对应 `payload["pull_request"]["title"]`
+- `{repository.full_name}` 对应 `payload["repository"]["full_name"]`
+- `{__raw__}` —— 一种特殊标记，用于以缩进格式输出**整个负载内容**（最多显示 4000 个字符）。适用于需要完整上下文的监控警报或通用 webhook 场景。
+- 若某个键不存在，则会以 `{key}` 的形式原样保留（不会报错）。
+- 嵌套的字典和列表会被序列化为 JSON 格式，最多显示 2000 个字符。
 
 您可以将 `{__raw__}` 与常规模板变量混合使用：
 
