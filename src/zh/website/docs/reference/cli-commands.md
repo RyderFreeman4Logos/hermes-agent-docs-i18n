@@ -643,14 +643,15 @@ hermes webhook subscribe <name> [options]
 |------|------|
 | `--prompt` | 包含 `{dot.notation}` 格式占位符的提示词模板。 |
 | `--events` | 需要接收的事件类型，以逗号分隔（例如 `issues,pull_request`）。留空则表示接收所有事件。 |
-| `--description` | 供人类阅读的描述文本。 |
+| `--description` | 供人类阅读的描述文字。 |
 | `--skills` | 运行代理时需加载的技能名称，以逗号分隔。 |
-| `--deliver` | 输出目标：`log`（默认值）、`telegram`、`discord`、`slack`、`github_comment`。 |
+| `--deliver` | 消息发送目标：`log`（默认值）、`telegram`、`discord`、`slack`、`github_comment`。 |
 | `--deliver-chat-id` | 跨平台发送时的目标聊天室/频道 ID。 |
 | `--secret` | 自定义 HMAC 密钥。如未指定则自动生成。 |
-| `--deliver-only` | 跳过代理处理，直接将处理后的 `--prompt` 内容作为普通消息发送。无需使用大型语言模型，发送速度可达亚秒级。此选项要求 `--deliver` 指定有效的目标（不能为 `log`）。 |
+| `--deliver-only` | 跳过代理处理，直接将处理后的 `--prompt` 内容作为原始消息发送。无需调用大型语言模型，发送速度可达亚秒级。此模式要求 `--deliver` 指定有效的目标（不能为 `log`）。 |
+| `--script` | 来自 `~/.hermes/scripts/` 目录的过滤/转换脚本。Webhook 的请求数据会以 JSON 格式通过标准输入传递；标准输出中的 JSON 内容将替代原始请求数据，若标准输出为空、为 `[SILENT]` 格式或退出码非零，则忽略该 Webhook 请求。详情请参阅 [脚本过滤与转换](../user-guide/messaging/webhooks.md#script-filters-and-transforms)。 |
 
-订阅信息会保存在 `~/.hermes/webhook_subscriptions.json` 文件中，通过 webhook 适配器可实现热加载，无需重启网关。
+订阅信息会保存在 `~/.hermes/webhook_subscriptions.json` 文件中，Webhook 适配器可无需重启网关即可实现热加载。
 
 ## `hermes doctor`
 
