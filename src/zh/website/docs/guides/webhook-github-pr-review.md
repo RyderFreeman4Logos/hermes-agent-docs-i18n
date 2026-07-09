@@ -172,29 +172,37 @@ curl -s -X POST http://localhost:8644/webhooks/github-pr-review \
 tail -f "${HERMES_HOME:-$HOME/.hermes}/logs/gateway.log"
 ```
 
-:::note
-`hermes webhook test <name>` 仅适用于通过 `hermes webhook subscribe` 创建的**动态订阅**。它不会读取 `config.yaml` 中定义的路由。
+:::note  
+`hermes webhook test <name>` 仅适用于通过 `hermes webhook subscribe` 创建的**动态订阅**。它不会读取 `config.yaml` 中定义的路由。  
 :::
 
 ---
 
-## 筛选特定操作
+## 筛选特定操作  
 
-GitHub 会为多种操作发送 `pull_request` 事件，例如：`opened`、`synchronize`、`reopened`、`closed`、`labeled` 等。`events` 列表仅能通过 `X-GitHub-Event` 请求头值进行筛选——无法在路由层面按操作子类型进行筛选。
+GitHub 会为多种操作发送 `pull_request` 事件，例如：`opened`、`synchronize`、`reopened`、`closed`、`labeled` 等。`events` 列表可通过 `X-GitHub-Event` 请求头值进行筛选，而路由级别的 `filters` 则可以依据 `action` 等负载字段进一步缩小范围。  
 
-第一步中的提示已解决了这一问题，它会指示智能体在遇到 `closed` 和 `labeled` 事件时提前停止处理。
+第一步中的提示已对此进行了处理，即指示智能体在遇到 `closed` 和 `labeled` 事件时提前停止处理。  
 
-:::warning 智能体仍会运行并消耗令牌
-虽然“在此处停止”的指令可以避免无意义的处理，但智能体仍会为每个 `pull_request` 事件执行完全部流程，而不会因操作类型不同而有所区别。GitHub Webhook 仅能按事件类型（如 `pull_request`、`push`、`issues` 等）进行筛选，无法按操作子类型（如 `opened`、`closed`、`labeled`）筛选。在路由层面也不存在针对子操作的筛选功能。对于代码库规模较大的项目，要么接受这一成本，要么通过 GitHub Actions 工作流在上游有条件地调用您的 Webhook URL 来进行筛选。
+:::warning 智能体仍会运行并消耗令牌  
+虽然“在此处停止”的指令可以避免无意义的处理，但智能体仍会为每一个 `pull_request` 事件执行完整流程，而不会因操作类型不同而改变行为。建议在智能体启动之前就进行筛选：
+
+```yaml
+filters:
+  - field: "action"
+    in: ["opened", "synchronize", "reopened"]
+```
+
+对于存储量极大的代码库，您仍然可以通过 GitHub Actions 工作流来实现上游筛选，该工作流会根据条件调用您的 webhook URL。
 :::
 
-> 该系统不支持 Jinja2 或条件模板语法。仅支持 `{field}` 和 `{nested.field}` 这两种替换方式。其他所有内容都会原样传递给智能体。
+> 该系统不支持 Jinja2 或条件模板语法。仅支持 `{field}` 和 `{nested.field}` 这两种替换方式，其他所有内容都会原样传递给智能体。
 
 ---
 
-## 使用技能以确保一致的审核风格
+## 使用技能以保持一致的审查风格
 
-加载 [Hermes 技能](/user-guide/features/skills)，为智能体设定统一的审核角色。在 `config.yaml` 的 `platforms.webhook.extra.routes` 中，为对应路由添加 `skills` 参数即可：
+加载 [Hermes 技能](/user-guide/features/skills)，为智能体设定统一的审查角色。在 `config.yaml` 文件的 `platforms.webhook.extra.routes` 中为对应路由添加 `skills` 参数即可：
 
 ```yaml
 platforms:
