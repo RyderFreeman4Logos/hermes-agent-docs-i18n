@@ -77,15 +77,15 @@ npm run dist:linux   # AppImage + deb + rpm
 npm run pack         # unpacked app under release/ (no installer)
 ```
 
-安装程序是手动构建并上传到 GitHub Releases 的。当环境中存在相应的凭据（macOS 为 `CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_*`，Windows 为 `WIN_CSC_*`）时，macOS/Windows 版本的签名与公证操作会自动完成。
+安装程序是手动构建并上传到 GitHub Releases 的。当环境中存在相应的凭证（macOS 下为 `CSC_LINK` / `CSC_KEY_PASSWORD` / `APPLE_*`，Windows 下为 `WIN_CSC_*`）时，macOS/Windows 版本的签名与公证操作会自动完成。
 
 ### 工作原理
 
-该打包应用包含了 Electron shell 以及基于 React 开发的原生聊天界面。首次启动时，它会将 Hermes Agent 运行时安装到 `HERMES_HOME` 目录中（即 macOS 系统的 `~/.hermes`，Windows 系统的 `%LOCALAPPDATA%\hermes`）——这一路径与 CLI 安装所使用的路径相同，因此两种安装方式可以相互替代。后端定位机制会优先查找 `HERMES_DESKTOP_HERMES_ROOT` 指定的路径，其次是已完成的管理式安装路径，接着是 `PATH` 环境变量中可找到的 `hermes` 实例（除非设置了 `HERMES_DESKTOP_IGNORE_EXISTING=1`），最后则是为打包工具或故障排查而专门设置的 `HERMES_DESKTOP_HERMES` 命令覆盖值。前端界面（位于 `src/` 目录中的 React 组件）会通过 [`apps/shared`](../shared/) 中的框架无关客户端与应用自动启动的无头后端进行通信——该无头后端即负责运行 `hermes serve` 进程，为前端提供 `tui_gateway` JSON-RPC/WebSocket API 接口——同时该应用会复用已有的 Agent 运行时，而不会嵌入 `hermes --tui` 命令。该应用属于**独立运行型**：它拥有自己的 `hermes serve` 后端，无需打开或依赖网页控制台界面。（为确保向后兼容性，那些早于 `serve` 命令出现的运行时版本会自动回退到无头模式的 `dashboard --no-open` 模式——相关实现可见于 `electron/backend-command.cjs` 文件——因此升级过程中进行安装也不会出现故障。）安装、后端定位以及自我更新的相关逻辑均集中在 `electron/main.cjs` 文件中。
+该打包应用包含了 Electron 框架以及基于 React 开发的原生聊天界面。首次启动时，它会将 Hermes Agent 运行时安装到 `HERMES_HOME` 目录中（即 macOS 系统的 `~/.hermes`，Windows 系统的 `%LOCALAPPDATA%\hermes`）——这一路径与通过 CLI 安装时的路径相同，因此两种安装方式可以相互替代。后端查找顺序首先优先考虑 `HERMES_DESKTOP_HERMES_ROOT` 指定的路径，其次是已完成的管理式安装路径，接着是 `PATH` 环境变量中可找到的 `hermes` 命令（除非设置了 `HERMES_DESKTOP_IGNORE_EXISTING=1`），最后则是为打包工具或故障排查而设置的显式 `HERMES_DESKTOP_HERMES` 覆盖指令。前端界面（位于 `src/` 目录中的 React 组件）会通过 [`apps/shared`](../shared/) 中与框架无关的客户端（该客户端也被网页控制台所使用），与应用自动启动的无头后端进行通信——该后端即负责提供 `tui_gateway` JSON-RPC/WebSocket API 的 `hermes serve` 进程。应用会复用已安装的 Agent 运行时，而不会嵌入 `hermes --tui` 命令。该应用是**完全自包含的**：它自身运行 `hermes serve` 后端，无需打开也不依赖网页控制台界面。（为保持向后兼容性，若使用的运行时版本早于支持 `serve` 命令的版本，系统会自动回退到使用无头模式的 `dashboard --no-open` ——详情见 `electron/backend-command.ts` ——因此升级过程中安装不会出现问题。）安装、后端查找以及自动更新相关的逻辑均位于 `electron/main.ts` 文件中。
 
 ### 验证步骤
 
-在提交 Pull Request 之前请先运行此脚本（虽然代码检查工具可能会提示一些已有警告，但该脚本本身必须能正常退出）：
+在提交 Pull Request 之前请先运行此命令（虽然代码检查工具可能会显示一些已有警告，但该命令本身应能正常执行并结束）：
 
 ```bash
 npm run fix
