@@ -65,7 +65,23 @@ hermes webhook subscribe <name> \
   --secret "optional-custom-secret"
 ```
 
-返回 webhook 地址及 HMAC 密钥。用户需将其服务配置为向该地址发送 POST 请求。
+该功能会返回 webhook URL 与 HMAC 密钥，用户需将其服务配置为向该地址发送 POST 请求。
+
+### 在智能体运行前过滤或转换负载数据
+
+有两种机制可用于筛选海量事件流（例如 Todoist/GitHub 每次更新都会触发事件），从而仅让相关的负载数据唤醒智能体：
+
+- **声明式 `filters`**（仅适用于 config.yaml 路由）：定义针对负载字段、事件类型或请求头条件的列表，支持 `equals`、`not_equals`、`contains`、`exists`、`missing`、`in`、`in_file`、`regex` 等运算符，并可通过 `all`/`any`/`not` 进行条件组合。不符合条件的事件将返回 HTTP 200 状态码并被忽略。
+- **路由脚本**（在订阅时使用 `--script` 参数，或在 config 路由中指定 `script:`）：位于 `~/.hermes/scripts/` 目录下的脚本会通过标准输入以 JSON 格式接收负载数据。脚本会先处理 JSON 格式的数据，再用于生成提示模板；若标准输出为空、返回 `[SILENT]` 状态或非零退出码，则该 webhook 请求将被忽略。此类脚本默认使用 bash 解释执行 `.sh`/`.bash` 文件，其他格式则用 Python 处理。脚本不得存放于 `~/.hermes/scripts/` 目录之外（以防止路径遍历攻击）。
+
+```bash
+hermes webhook subscribe todoist-hermes \
+  --prompt "Task changed: {payload.content}" \
+  --script "todoist-hermes-label.py" \
+  --deliver telegram --deliver-chat-id "12345"
+```
+
+完整过滤语法说明：https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks#payload-filters
 
 ### 列出订阅项
 ```bash
