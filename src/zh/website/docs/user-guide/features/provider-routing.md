@@ -1,18 +1,18 @@
 ---
 title: Provider Routing
-description: Configure OpenRouter provider preferences to optimize for cost, speed, or quality.
+description: Configure OpenRouter or Nous Portal provider preferences to optimize for cost, speed, or quality.
 sidebar_label: Provider Routing
 sidebar_position: 7
 ---
 
-# 提供商路由
+# 提供商路由功能
 
-当使用 [OpenRouter](https://openrouter.ai) 作为您的 LLM 提供商时，Hermes Agent 支持**提供商路由**功能——可实现对处理请求的底层 AI 提供商进行精细控制，并设定相应的优先级。
+当您将 [OpenRouter](https://openrouter.ai) 或 [Nous Portal](/integrations/nous-portal) 作为 LLM 提供商时，Hermes Agent 支持**提供商路由功能**——可实现对处理请求的底层 AI 提供商进行精细控制，并设定相应的优先级。
 
-OpenRouter 能将请求路由至多个提供商（例如 Anthropic、Google、AWS Bedrock、Together AI）。通过提供商路由，您可以根据成本、速度或质量需求进行优化，或强制满足特定的提供商要求。
+OpenRouter 会将请求分发至多个提供商（例如 Anthropic、Google、AWS Bedrock、Together AI）。通过提供商路由功能，您可以根据成本、速度或质量需求进行优化，或强制指定使用特定的提供商。
 
 :::提示
-通过 [Nous Portal](/integrations/nous-portal) 转发的请求仍会遵循各模型的路由规则及优先级配置——此外，Portal 的订阅用户在使用按令牌计费的提供商服务时还可享受 9 折优惠。
+通过 Nous Portal 转发的请求也会遵循相同的提供商偏好设置——此外，Portal 的订阅用户在使用按令牌计费的提供商时还能享受 10% 的折扣。
 :::
 
 ## 配置方法
@@ -30,20 +30,20 @@ provider_routing:
 ```
 
 :::info  
-提供商路由功能仅在使用 OpenRouter 时生效。对于直接连接的提供商（例如直接连接到 Anthropic API），该功能不会产生任何影响。  
+提供方路由功能仅在使用 OpenRouter 或 Nous Portal 时生效。对于直接连接提供方的场景（例如直接调用 Anthropic API），该功能则不起作用。  
 :::
 
-## 选项  
+## 选项
 
-### `sort`  
+### `sort`
 
-用于控制 OpenRouter 如何为你的请求对可用提供商进行排序。  
+用于控制 OpenRouter 如何为你的请求对可用提供方进行排序。
 
 | 值 | 描述 |
 |-------|-------------|
 | `"price"` | 按价格从低到高排序 |
 | `"throughput"` | 按每秒处理速度从快到快排序 |
-| `"latency"` | 按首次获取响应的时间从短到短排序 |
+| `"latency"` | 按首次响应时间从短到短排序 |
 
 ```yaml
 provider_routing:
@@ -52,13 +52,13 @@ provider_routing:
 
 ### `only`
 
-提供商名称的白名单。一旦设置，系统将**仅**使用这些指定的提供商，其余所有提供商均会被排除。
+提供商标识符的白名单。设置该参数后，**仅**会使用列在白名单中的提供商，其余所有提供商均会被排除。请使用 OpenRouter 显示的每个提供商的小写标识符。
 
 ```yaml
 provider_routing:
   only:
-    - "Anthropic"
-    - "Google"
+    - "anthropic"
+    - "google"
 ```
 
 ### `ignore`
@@ -68,8 +68,8 @@ provider_routing:
 ```yaml
 provider_routing:
   ignore:
-    - "Together"
-    - "DeepInfra"
+    - "together"
+    - "deepinfra"
 ```
 
 ### `order`
@@ -79,9 +79,9 @@ provider_routing:
 ```yaml
 provider_routing:
   order:
-    - "Anthropic"
-    - "Google"
-    - "AWS Bedrock"
+    - "anthropic"
+    - "google"
+    - "amazon-bedrock"
 ```
 
 ### `require_parameters`
@@ -138,7 +138,7 @@ provider_routing:
 ```yaml
 provider_routing:
   only:
-    - "Anthropic"
+    - "anthropic"
 ```
 
 ### 避免使用特定提供方
@@ -148,8 +148,8 @@ provider_routing:
 ```yaml
 provider_routing:
   ignore:
-    - "Together"
-    - "Lepton"
+    - "together"
+    - "lepton"
   data_collection: "deny"
 ```
 
@@ -160,19 +160,19 @@ provider_routing:
 ```yaml
 provider_routing:
   order:
-    - "Anthropic"
-    - "Google"
+    - "anthropic"
+    - "google"
   require_parameters: true
 ```
 
 ## 工作原理
 
-在每次 API 调用中，提供程序路由偏好设置都会通过 `extra_body.provider` 字段传递给 OpenRouter API。这一机制同时适用于以下两种模式：
+在代理的聊天请求及迭代次数统计信息中，提供程序路由偏好会通过 `extra_body.provider` 字段传递给 OpenRouter 或 Nous Portal。（`extra_body` 是 OpenAI Python SDK 的参数，在 JSON 请求中会作为顶层的 `provider` 对象出现。）诸如压缩和标题生成之类的辅助任务，则通过 `auxiliary.<task>.extra_body` 进行独立配置。
 
-- **CLI 模式**——配置位于 `~/.hermes/config.yaml` 文件中，在启动时加载；
-- **Gateway 模式**——使用相同的配置文件，但在网关启动时加载。
+- **CLI 模式** — 在 `~/.hermes/config.yaml` 中进行配置，系统启动时加载
+- **Gateway 模式** — 使用相同的配置文件，在网关启动时加载
 
-路由配置会从 `config.yaml` 中读取，并在创建 `AIAgent` 对象时作为参数传入。
+路由配置会从 `config.yaml` 中读取，并在创建 `AIAgent` 对象时作为参数传递。
 
 ```
 providers_allowed  ← from provider_routing.only
@@ -189,7 +189,7 @@ provider_data_collection    ← from provider_routing.data_collection
 ```yaml
 provider_routing:
   sort: "price"
-  ignore: ["Together"]
+  ignore: ["together"]
   require_parameters: true
   data_collection: "deny"
 ```
@@ -197,8 +197,8 @@ provider_routing:
 
 ## 默认行为
 
-在未配置 `provider_routing` 部分时（即默认情况），OpenRouter 会使用其内置的默认路由逻辑，该逻辑通常能够自动在成本与可用性之间实现平衡。
+在未配置 `provider_routing` 部分时（即默认情况），聚合器会使用其内置的默认路由逻辑，该逻辑通常能够自动在成本与可用性之间实现平衡。
 
 :::提示 提供商路由与回退机制的区别
-供应商路由用于指定 **OpenRouter 内部的哪些子提供商** 来处理您的请求。若希望在实际使用的模型出现故障时自动切换到完全不同的提供商，请参阅[回退提供商](/user-guide/features/fallback-providers)。
+供应商路由用于决定由 **OpenRouter 或 Nous Portal 后端的哪些子提供商** 来处理您的请求。若希望在主服务发生故障时自动切换到完全不同的提供商，请参阅[回退提供商](/user-guide/features/fallback-providers)。
 :::
