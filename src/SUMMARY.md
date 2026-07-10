@@ -1979,7 +1979,7 @@
     - [Duckduckgo Search]()
       - [DuckDuckGo 搜索功能](zh/optional-skills/research/duckduckgo-search/SKILL.md)
     - [Gitnexus Explorer]()
-      - [Skill](zh/optional-skills/research/gitnexus-explorer/SKILL.md)
+      - [GitNexus Explorer](zh/optional-skills/research/gitnexus-explorer/SKILL.md)
     - [Osint Investigation]()
       - [OSINT调查——公共记录交叉验证](zh/optional-skills/research/osint-investigation/SKILL.md)
       - [References]()
