@@ -63,6 +63,8 @@ npm run dev          # Vite renderer + Electron, which boots the Python backend
 可将该应用指向特定的源代码检出位置，或将其隔离在沙箱环境中，从而与真实的配置环境分开。
 
 ```bash
+# throwaway HERMES_HOME, separate Electron userData, distinct app name to avoid the single-instance lock
+../scripts/dev-sandbox.sh npm run dev
 HERMES_DESKTOP_HERMES_ROOT=/path/to/clone npm run dev
 HERMES_HOME=/tmp/throwaway npm run dev
 npm run dev:fake-boot   # exercise the startup overlay with deterministic delays
