@@ -47,7 +47,7 @@ python batch_runner.py --list_distributions
 {"prompt": "Debug this error: TypeError: cannot unpack non-iterable NoneType object"}
 ```
 
-条目可可选地包含以下内容：
+各字段可按需包含以下内容：
 - `image` 或 `docker_image`：用于该提示词沙箱环境的容器镜像（支持 Docker、Modal 和 Singularity 后端）
 - `cwd`：任务终端会话的工作目录覆盖值
 
@@ -57,33 +57,33 @@ python batch_runner.py --list_distributions
 |------|--------|------|
 | `--dataset_file` | （必填） | JSONL 数据集的路径 |
 | `--batch_size` | （必填） | 每批处理的提示词数量 |
-| `--run_name` | （必填） | 本次运行的名称（用于输出目录和检查点保存） |
+| `--run_name` | （必填） | 本次运行的名称（用于输出目录及检查点保存） |
 | `--distribution` | `"default"` | 用于随机抽取的工具集分布 |
 | `--model` | `claude-sonnet-4.6` | 要使用的模型 |
 | `--base_url` | `https://openrouter.ai/api/v1` | API 基础地址 |
 | `--api_key` | （环境变量） | 模型的 API 密钥 |
-| `--max_turns` | `10` | 每个提示词最多允许的工具调用次数 |
-| `--num_workers` | `4` | 并行工作进程数 |
+| `--max_turns` | `10` | 每个提示词允许的最大工具调用轮数 |
+| `--num_workers` | `4` | 并行工作的进程数量 |
 | `--resume` | `false` | 是否从检查点继续运行 |
 | `--verbose` | `false` | 是否启用详细日志记录 |
 | `--max_samples` | 全部 | 仅处理数据集中的前 N 个样本 |
-| `--max_tokens` | 模型默认值 | 每条模型响应的最大字符数 |
+| `--max_tokens` | 模型默认值 | 每条模型响应的最大Token数 |
 
 ### 提供商路由（OpenRouter）
 
 | 参数 | 描述 |
 |------|------|
 | `--providers_allowed` | 用逗号分隔的允许使用的提供商（例如：`"anthropic,openai"`） |
-| `--providers_ignored` | 用逗号分隔的应忽略的提供商（例如：`"together,deepinfra"`） |
-| `--providers_order` | 用逗号分隔的优先提供商顺序 |
+| `--providers_ignored` | 用逗号分隔的需忽略的提供商（例如：`"together,deepinfra"`） |
+| `--providers_order` | 用逗号分隔的优先级顺序 |
 | `--provider_sort` | 按 `"价格"`、`"吞吐量"` 或 `"延迟"` 排序 |
 
 ### 推理控制
 
 | 参数 | 描述 |
 |------|------|
-| `--reasoning_effort` | 推理强度级别：`none`、`minimal`、`low`、`medium`、`high`、`xhigh` |
-| `--reasoning_disabled` | 完全禁用推理/思考相关的token生成 |
+| `--reasoning_effort` | 推理强度：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`、`ultra` |
+| `--reasoning_disabled` | 完全禁用推理/思考相关的Token生成 |
 
 ### 高级选项
 
@@ -91,17 +91,17 @@ python batch_runner.py --list_distributions
 |------|------|
 | `--ephemeral_system_prompt` | 执行过程中使用的系统提示词，但不会被保存到运行轨迹中 |
 | `--log_prefix_chars` | 日志预览中显示的字符数（默认：100） |
-| `--prefill_messages_file` | 包含少量样本预填充信息的 JSON 文件路径，用于引导模型生成答案 |
+| `--prefill_messages_file` | 包含少量样本预填充信息的 JSON 文件路径，用于引导模型 |
 
 ## 工具集分布
 
-每个提示词都会从指定的**分布**中随机抽取一组工具集。这样能确保训练数据涵盖多种不同的工具组合。可使用 `--list_distributions` 查看所有可用的分布。
+每个提示词都会从指定的**分布**中随机抽取一组工具集。这样做可确保训练数据涵盖多种不同的工具组合。可使用 `--list_distributions` 查看所有可用的分布。
 
 在当前的实现方式中，各分布会为**每一个单独的工具集**分配一个概率值。采样器会独立地为每个工具集进行随机选择，同时保证至少启用一个工具集。这与手动编写的预构建组合表有所不同。
 
 ## 输出格式
 
-所有输出都会保存到 `data/<run_name>/` 目录下：
+所有输出内容都将保存至 `data/<run_name>/` 目录下：
 
 ```text
 data/my_run/
