@@ -51,23 +51,23 @@ delegation.status       subagent.interrupt      spawn_tree.save / list / load
 terminal.resize         clipboard.paste         image.attach
 ```
 
-`session.active_list`、`session.activate` 和 `session.close` 是 TUI 会话切换器所使用的进程级实时会话控制功能。若需查找已保存的对话记录，请使用 `session.list` / `/resume`；这些功能仅适用于当前在 TUI 网关进程中打开的会话。
+`session.active_list`、`session.activate` 和 `session.close` 是 TUI 会话切换器所使用的进程级实时会话控制函数。若需查找已保存的对话记录，请使用 `session.list` / `/resume`；这些函数仅适用于当前在 TUI 网关进程中打开的会话。
 
 ### 流回的事件
 
-`message.delta`、`message.complete`、`tool.start`、`tool.progress`、`tool.complete`、`approval.request`、`clarify.request`、`sudo.request`、`secret.request`、`gateway.ready`，以及会话生命周期和错误相关事件。
+包括 `message.delta`、`message.complete`、`tool.start`、`tool.progress`、`tool.complete`、`approval.request`、`clarify.request`、`sudo.request`、`sudo.expire`、`secret.request`、`secret.expire`、`gateway.ready`，以及会话生命周期相关事件和错误事件。过期事件会携带原始的 `{ request_id }`；外部主机只需清除对应的待处理提示即可。
 
 ### Pi 风格的 RPC 映射
 
-Pi-mono RPC 规范中的每个命令（[问题 #360](https://github.com/NousResearch/hermes-agent/issues/360)）在 TUI 网关中都有对应的实现方式：
+Pi-mono RPC 规范中的每个命令（[问题 #360](https://github.com/NousResearch/hermes-agent/issues/360)）在 TUI 网关中都有对应的实现：
 
-| Pi 命令 | Hermes 对应功能 |
+| Pi 命令 | Hermes 对应函数 |
 |----------|-------------------|
-| `prompt` | `prompt.submit`（或 ACP `session/prompt`） |
+| `prompt` | `prompt.submit`（或 ACP 的 `session/prompt`） |
 | `steer` | `session.steer` |
 | `follow_up` | 在当前轮次结束后排队执行的 `prompt.submit` |
 | `abort` | `session.interrupt` |
-| `set_model` | 用于 `/model <provider:model>` 的 `command.dispatch`（会话进行中且持久有效） |
+| `set_model` | 对于 `/model <provider:model>` 命令，使用 `command.dispatch`（在会话进行中且效果持久） |
 | `compact` | `session.compress` |
 | `get_state` | `session.status` |
 | `get_messages` | `session.history` |
