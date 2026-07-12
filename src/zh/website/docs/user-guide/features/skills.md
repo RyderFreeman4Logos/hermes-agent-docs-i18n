@@ -271,6 +271,7 @@ metadata:
 │   │   ├── references/            # Additional docs
 │   │   ├── templates/             # Output formats
 │   │   ├── scripts/               # Helper scripts callable from the skill
+│   │   ├── examples/              # Referenced example outputs
 │   │   └── assets/                # Supplementary files
 │   └── vllm/
 │       └── SKILL.md
@@ -285,11 +286,13 @@ metadata:
 └── .bundled_manifest              # Tracks seeded bundled skills
 ```
 
+通过第三方 URL 或 GitHub 安装的方式引入的技能包，会包含 `SKILL.md` 文件，以及其在 `references/`、`templates/`、`scripts/`、`assets/` 和 `examples/` 目录下所引用的所有本地文件。未被引用的仓库文件则不会被复制。Hermes 会扫描整个隔离后的技能包，并将来源 URL、内容哈希值、扫描器版本、检测结果、时间戳以及内容为最新还是缓存状态等信息记录在 `skills/.hub/lock.json` 文件中。
+
 ## 外部技能目录
 
-如果您在Hermes之外维护技能——例如，某个被多个AI工具共享的`~/.agents/skills/`目录——您可以告知Hermes同时扫描这些目录。
+如果您在 Hermes 之外维护技能包——例如在多个 AI 工具共用的 `~/.agents/skills/` 目录中——可以告知 Hermes 同时扫描这些目录。
 
-只需在`~/.hermes/config.yaml`文件的`skills`部分添加`external_dirs`字段即可：
+只需在 `~/.hermes/config.yaml` 文件的 `skills` 部分添加 `external_dirs` 参数即可：
 
 ```yaml
 skills:
@@ -482,7 +485,7 @@ hermes skills install openai/skills/k8s           # Install with security scan
 hermes skills install official/security/1password
 hermes skills install skills-sh/vercel-labs/json-render/json-render-react --force
 hermes skills install well-known:https://mintlify.com/docs/.well-known/skills/mintlify
-hermes skills install https://sharethis.chat/SKILL.md              # Direct URL (single-file SKILL.md)
+hermes skills install https://sharethis.chat/SKILL.md              # Direct URL (+ referenced support files)
 hermes skills install https://example.com/SKILL.md --name my-skill # Override name when frontmatter has none
 hermes skills list --source hub                   # List hub-installed skills
 hermes skills check                               # Check installed hub skills for upstream updates
@@ -496,26 +499,26 @@ hermes skills snapshot export setup.json          # Export skill config
 hermes skills tap add myorg/skills-repo           # Add a custom GitHub source
 ```
 
-### 支持的 hub 来源
+### 支持的 Hub 来源
 
 | 来源 | 示例 | 备注 |
 |------|---------|-------|
 | `official` | `official/security/1password` | Hermes 自带的可选技能。 |
 | `skills-sh` | `skills-sh/vercel-labs/agent-skills/vercel-react-best-practices` | 可通过命令 `hermes skills search <查询词> --source skills-sh` 进行搜索。当 skills.sh 的标识符与仓库文件夹名称不同时，Hermes 会自动解析该别名形式的技能。 |
 | `well-known` | `well-known:https://mintlify.com/docs/.well-known/skills/mintlify` | 直接从网站上的 `/.well-known/skills/index.json` 文件提供技能。可通过该网站或文档的 URL 进行搜索。 |
-| `url` | `https://sharethis.chat/SKILL.md` | 指向单文件 `SKILL.md` 的直接 HTTP(S) URL。名称解析顺序为：前置信息 → URL 标识符 → 交互式提示 → `--name` 参数。 |
-| `github` | `openai/skills/k8s` | 直接从 GitHub 仓库/路径安装技能或自定义插件。 |
-| `clawhub`、`lobehub`、`browse-sh` | 各平台专用标识符 | 用于社区或市场平台的集成。 |
+| `url` | `https://sharethis.chat/SKILL.md` | 指向 `SKILL.md` 文件的直接 HTTP(S) 地址，以及明确指定的支持文件。名称解析顺序为：前置信息 → URL 标识符 → 交互式提示 → `--name` 参数。 |
+| `github` | `openai/skills/k8s` | 直接从 GitHub 仓库/路径安装技能，同时也支持自定义集成。 |
+| `clawhub`、`lobehub`、`browse-sh` | 各平台专属标识符 | 用于社区或市场平台的集成。 |
 
-### 集成的 hub 与注册中心
+### 集成的 Hub 与注册中心
 
-Hermes 目前已与以下技能生态系统及发现源实现集成：
+目前，Hermes 已与以下技能生态系统及发现源实现集成：
 
 #### 1. 官方可选技能（`official`）
 
 这类技能由 Hermes 仓库本身维护，安装时具有内置的信任度。
 
-- 目录列表：[官方可选技能目录](../../reference/optional-skills-catalog)
+- 目录：[官方可选技能目录](../../reference/optional-skills-catalog)
 - 仓库中的对应路径：`optional-skills/`
 - 示例：
 
@@ -622,15 +625,15 @@ hermes skills inspect browse-sh/airbnb.com/search-listings-ddgioa
 hermes skills install browse-sh/airbnb.com/search-listings-ddgioa
 ```
 
-标识符的格式为 `browse-sh/<hostname>/<task-id>`，与 browse.sh 目录所展示的标识符一致。内容的解析是通过各技能的详细信息端点来完成的（`/api/skills/<slug>` → `skillMdUrl`），而非通过该目录对应的 GitHub `sourceUrl`。
+标识符的格式为 `browse-sh/<主机名>/<任务ID>`，与 browse.sh 目录所展示的短链接一致。内容的解析是通过各技能的详细接口（`/api/skills/<slug>` → `skillMdUrl`）来完成的，而非通过目录对应的 GitHub `sourceUrl`。
 
 #### 9. 直接 URL（`url`）
 
-可直接从任何 HTTP(S) URL 下载单文件格式的 `SKILL.md` —— 当技能创建者在自己的网站上托管该技能时，此方式非常实用（无需在平台列表中注册，也无需输入 GitHub 路径）。Hermes 会获取该 URL，解析其中的 YAML 前置数据，并对其进行安全扫描，之后完成安装。
+可以直接从任何 HTTP(S) URL 安装 `SKILL.md` —— 当作者在自己的网站上托管该技能时，这种方式非常实用（无需通过中心平台列表，也无需输入 GitHub 路径）。Hermes 还会自动获取 `references/`、`templates/`、`scripts/`、`assets/` 和 `examples/` 目录下被明确引用的文件，进而扫描并安装整个文件包。
 
-- Hermes 源标识：`url`
+- Hermes 源标识符：`url`
 - 标识符：即该 URL 本身（无需添加前缀）
-- 适用范围：仅限**单文件格式的 `SKILL.md`**。包含 `references/` 或 `scripts/` 文件的多文件格式技能需要使用清单文件，应通过上述其他来源之一进行发布。
+- 范围：`SKILL.md` 以及允许列表中所有被明确引用的支持文件。Hermes 不会列出或复制主机上的其他无关文件。
 
 ```bash
 hermes skills install https://sharethis.chat/SKILL.md
