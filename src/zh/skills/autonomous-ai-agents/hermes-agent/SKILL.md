@@ -283,7 +283,7 @@ hermes uninstall            Uninstall Hermes
 /config              Show config (CLI)
 /model [name]        Show or change model
 /personality [name]  Set personality
-/reasoning [level]   Set reasoning (none|minimal|low|medium|high|xhigh|show|hide)
+/reasoning [level]   Set reasoning (none|minimal|low|medium|high|xhigh|max|ultra|show|hide)
 /verbose             Cycle: off → new → all → verbose
 /voice [on|off|tts]  Voice mode
 /yolo                Toggle approval bypass
@@ -539,10 +539,10 @@ hermes config set privacy.redact_pii false   # disable (default)
 
 ### 命令审批提示
 
-默认情况下（`approvals.mode: manual`），Hermes 会在执行被标记为具有破坏性作用的 shell 命令（如 `rm -rf`、`git reset --hard` 等）之前向用户发起确认提示。可选的模式如下：
+默认情况下（`approvals.mode: smart`），Hermes 会请求辅助大语言模型来评估那些被标记为具有破坏性风险的shell命令（如 `rm -rf`、`git reset --hard` 等）。可选择的模式如下：
 
-- `manual` — 始终进行提示（默认值）
-- `smart` — 利用辅助大型语言模型自动批准低风险命令，仅对高风险命令进行提示
+- `smart` — 对低风险命令自动批准，拒绝高风险命令，在不确定时向用户发起提示（默认模式）
+- `manual` — 始终向用户发起提示
 - `off` — 跳过所有审批提示（相当于 `--yolo`）
 
 ```bash
@@ -968,7 +968,7 @@ monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
 
 如需示例代码，请参阅 `tests/agent/test_prompt_builder.py::TestEnvironmentHints`。
 
-### 系统提示的运行环境模块
+### 系统提示中的执行环境部分
 
 关于主机/后端的实际信息（操作系统、`$
 
