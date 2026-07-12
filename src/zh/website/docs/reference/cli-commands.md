@@ -1032,7 +1032,7 @@ hermes skills inspect official/security/1password
 hermes skills inspect skills-sh/vercel-labs/json-render/json-render-react
 hermes skills install official/migration/openclaw-migration
 hermes skills install skills-sh/anthropics/skills/pdf --force
-hermes skills install https://sharethis.chat/SKILL.md                     # Direct URL (single-file SKILL.md)
+hermes skills install https://sharethis.chat/SKILL.md                     # Direct URL (+ referenced support files)
 hermes skills install https://example.com/SKILL.md --name my-skill        # Override name when frontmatter has none
 hermes skills check
 hermes skills update
@@ -1046,11 +1046,11 @@ hermes skills opt-in --sync            # undo: remove marker and re-seed now
 
 备注：  
 - `--force` 可用于覆盖第三方或社区技能中非危险级别的策略限制。  
-- `--force` 无法更改被标记为“危险”的扫描结果。  
-- `--source skills-sh` 会从公共的 `skills.sh` 目录中搜索技能。  
-- `--source well-known` 允许将 Hermes 指向暴露 `/.well-known/skills/index.json` 文件的网站。  
-- `--source browse-sh` 会从 [browse.sh](https://browse.sh) 提供的包含200多种针对特定网站的浏览器自动化技能的目录中搜索。这些技能的标识符格式为 `browse-sh/airbnb.com/search-listings-ddgioa`。  
-- 若提供 `http(s)://…/*.md` 格式的网址，可直接安装单文件形式的 SKILL.md。当前端数据中未包含 `name:` 字段且该网址的标识符无效时，交互式终端会提示用户输入名称；而非交互式界面（如 TUI 内的 `/skills install` 命令或网关平台）则需使用 `--name <x>` 参数指定名称。  
+- `--force` 无法覆盖被标记为“危险”的扫描结果。  
+- `--source skills-sh` 会搜索公共的 `skills.sh` 目录。  
+- `--source well-known` 允许将 Hermes 指向提供 `/.well-known/skills/index.json` 文件的网站。  
+- `--source browse-sh` 会从 [browse.sh](https://browse.sh) 的目录中查找 200 多种针对特定网站的浏览器自动化技能，其标识符格式为 `browse-sh/airbnb.com/search-listings-ddgioa`。  
+- 如果传递 `http(s)://…/*.md` 格式的 URL，系统会将 `SKILL.md` 文件以及其中明确引用的文件安装到 `references/`、`templates/`、`scripts/`、`assets/` 和 `examples/` 目录下。若前端元数据中未指定 `name:` 且该 URL 的标识符无效，交互式终端会提示用户输入名称；而非交互式使用场景（如 TUI 内的 `/skills install` 命令或网关平台）则需使用 `--name <x>` 参数指定名称。  
 
 ## `hermes bundles`
 
