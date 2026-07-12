@@ -160,39 +160,39 @@ npm run test:watch
 - 队列/历史记录导航功能也仅在非多行输入模式下有效。
 - `PgUp` / `PgDn` 操作由终端模拟器处理，TUI 层不支持这些功能。
 
-### 提示与选择模式| 场景                     | 按键                | 行为描述                                           |
-| --------------------------- | ------------------- | -------------------------------------------------- |
-| 审批提示框                 | `Up/Down`, `Enter`  | 移动并确认所选的审批选项                           |
-| 审批提示框                 | `o`, `s`, `a`, `d`  | 快速选择“一次性”、“会话有效”、“始终允许”、“拒绝”     |
-| 审批提示框                 | `Esc`, `Ctrl+C`     | 拒绝审批                                           |
-| 需选择选项的澄清提示框     | `Up/Down`, `Enter`  | 移动并确认所选选项                                 |
-| 需选择选项的澄清提示框     | 单位数              | 快速选择对应的编号选项                           |
-| 需选择选项的澄清提示框     | 输入“Other”后按 `Enter` | 切换到自由文本输入模式                             |
-| 进入自由文本输入模式       | `Enter`             | 提交已输入的答案                                   |
-| sudo/密钥输入提示框         | `Enter`             | 提交已输入的值                                     |
-| sudo/密钥输入提示框         | `Ctrl+C`            | 通过发送空响应取消操作                             |
-| 恢复选择器功能             | `Up/Down`, `Enter`  | 移动并继续选择之前的会话                           |
-| 恢复选择器功能             | `1-9`               | 快速选择前九个可见的会话之一                       |
-| 恢复选择器功能             | `Esc`, `Ctrl+C`     | 关闭选择器                                         |
+### 提示与选择模式| 场景                         | 按键                | 行为描述                                         |
+| ---------------------------- | ------------------- | ------------------------------------------------- |
+| 审批提示框                   | `Up/Down`, `Enter`  | 移动并确认所选的审批选项                         |
+| 审批提示框                   | `o`, `s`, `a`, `d`  | 快速选择“一次性”、“会话有效”、“始终允许”、“拒绝”   |
+| 审批提示框                   | `Esc`, `Ctrl+C`     | 拒绝                                             |
+| 带选项的澄清提示框           | `Up/Down`, `Enter`  | 移动并确认所选的选项                             |
+| 带选项的澄清提示框           | 单位数              | 快速选择对应的编号选项                         |
+| 带选项的澄清提示框           | 输入“Other”后按 `Enter` | 切换到自由文本输入模式                           |
+| 进入自由文本模式             | `Enter`             | 提交输入的答案                                   |
+| sudo/密钥提示框               | `Enter`             | 提交输入的值                                     |
+| sudo/密钥提示框               | `Ctrl+C`            | 通过发送空响应取消                             |
+| 恢复选择器功能               | `Up/Down`, `Enter`  | 移动并继续选择已选会话                           |
+| 恢复选择器功能               | `1-9`               | 快速选择前九个可见会话中的任意一个                 |
+| 恢复选择器功能               | `Esc`, `Ctrl+C`     | 关闭选择器                                       |
 
 备注：
 
-- 自由文本输入模式及掩码式提示框均使用 `ink-text-input` 组件，因此文本编辑遵循该组件的默认绑定规则，而非 `components/textInput.tsx` 的规则。
+- 自由文本模式及带掩码的提示框均使用 `ink-text-input` 组件，因此文本编辑遵循该组件的默认绑定规则，而非 `components/textInput.tsx` 的规则。
 - 当有阻塞性提示框打开时，主聊天输入的热键功能会被暂时禁用。
-- 目前该客户端中的澄清模式没有专用的取消快捷键。sudo和密钥输入提示框仅通过应用层的阻塞处理机制提供 `Ctrl+C` 取消功能。
+- 目前客户端中，澄清模式没有专用的取消快捷键。sudo和密钥提示框仅通过应用层的阻塞处理函数提供 `Ctrl+C` 取消功能。
 
 ### 交互规则
 
-- 当智能体正在处理任务时输入的纯文本会被暂存，而非立即发送。
-- 斜杠命令及 `!cmd` 格式的指令不会被暂存，即使在智能体正在运行时也会立即执行。
-- 每次智能体回复后，队列中的内容会自动清除，除非当前有正在编辑的待处理项。
-- `Up/Down` 键优先用于编辑队列中的消息，历史记录仅在没有待编辑队列内容时才会显示。
-- 在编辑队列中的草稿时，其原有的 `!cmd` 和 `{!cmd}` 格式内容会保持不变。Shell命令及插值功能会在该草稿实际被发送时才执行。
-- 如果将队列中的某项内容调入输入框并重新输入纯文本，该队列项将被替换，从队列预览中移除，并提升到优先级以立即发送。如果智能体仍处于忙碌状态，编辑后的内容会被移到队列最前端，在当前任务处理完成后发送。
-- 补全请求的触发会有60毫秒的延迟处理。以 `/` 开头的输入会使用 `complete.slash` 机制；以 `./`、`../`、`~/`、`/` 或 `@` 开头的后缀 token 会使用 `complete.path` 机制。
-- 粘贴的文本会直接内联插入到草稿中，不会被换行符拆分。
-- `Cmd/Ctrl+G`（在VSCode/Cursor中为 `Alt+G`，该组合键会拦截“查找下一个”功能的主键输入）会将当前草稿内容，包括多行缓冲区内容，写入临时文件，暂停 Ink 组件的运行，启动 `$EDITOR` 编辑器；如果编辑器正常退出，则恢复TUI界面并提交已保存的文本。
-- 输入历史记录会存储在 `~/.hermes/.hermes_history` 目录下，或 `HERMES_HOME` 指定的路径中。
+- 当智能体正在处理任务时输入的纯文本会被放入队列，而非立即发送。
+- 斜杠命令及 `!cmd` 格式的指令不会被放入队列，即使在任务执行中也会立即执行。
+- 每次智能体回复后队列内容会自动清空，除非当前有正在编辑的队列项。
+- `Up/Down` 键优先用于编辑队列中的消息，而历史记录仅在无待编辑队列项时才会显示。
+- 在编辑队列中的草稿时，其原有的 `!cmd` 和 `{!cmd}` 格式内容会被保留。只有当该队列项真正被发送时，Shell命令及插值功能才会生效。
+- 如果将队列中的某项内容加载到输入框后再输入纯文本，该队列项将被替换，从队列预览中移除，并提升为下一个待发送项。如果智能体仍处于忙碌状态，编辑后的内容会被移到队列最前端，在当前任务完成后发送。
+- 补全请求的延迟时间为60毫秒。以 `/` 开头的输入会使用 `complete.slash` 函数处理；以 `./`、`../`、`~/`、`/` 或 `@` 开头的尾部标记则使用 `complete.path` 函数处理。
+- 粘贴的文本会直接插入到草稿中，不会被换行符拆分。
+- `Cmd/Ctrl+G`（在VSCode/Cursor中为 `Alt+G`，该快捷键会拦截“查找下一个”功能的主键输入）会将当前草稿内容，包括多行缓冲区内容，写入临时文件，暂停Ink组件运行，启动 `$EDITOR` 编辑器；如果编辑器正常退出，则恢复TUI界面并提交保存的文本。
+- 输入历史记录存储在 `~/.hermes/.hermes_history` 文件中，或 `HERMES_HOME` 指定的路径下。
 
 ## 渲染方式
 
@@ -203,23 +203,23 @@ npm run test:watch
 
 该Markdown渲染器可处理标题、列表、块引文、表格、代码块、差异高亮显示、内联代码、强调文本、链接以及普通URL。
 
-工具/状态相关的操作会在实时活动栏中显示。对话记录行则始终聚焦在用户与智能体的轮次切换上。
+工具/状态相关的操作会显示在实时活动栏中，而对话记录行则始终聚焦在用户与智能体的交互轮次上。
 
-## 提示流控制
+## 提示流处理
 
 Python网关可以暂停主循环并请求结构化输入：
 
-- `approval.request`：允许一次性通过、会话有效时允许、始终允许，或拒绝；
-- `clarify.request`：从预设选项中选择，或输入自定义答案；
-- `sudo.request`：输入掩码后的密码；
-- `secret.request`：输入指定环境变量的掩码值；
+- `approval.request`：允许“一次性”、“会话有效”、“始终允许”或“拒绝”；
+- `clarify.request`：从选项中选择或输入自定义答案；
+- `sudo.request`：输入带掩码的密码；
+- `secret.request`：输入指定环境变量的带掩码值；
 - `session.list`：供 `SessionPicker` 组件在调用 `/resume` 时使用。
 
-这些均为 `app.tsx` 文件中的状态驱动型UI分支，并非独立的页面。
+这些均为 `app.tsx` 文件中的状态型UI分支，并非独立的页面。
 
-## 命令列表
+## 命令
 
-以下命令由TUI客户端直接处理。未被识别的命令会通过 `slash.exec` 和 `command.dispatch` 机制传递给Python网关处理。
+以下命令由TUI客户端直接处理。未被识别的命令会通过 `slash.exec` 和 `command.dispatch` 传递给Python网关处理。
 
 ### 核心命令（`core.ts`）
 `/help`, `/quit`（别名 `/exit`）、`/update`、`/clear`（别名 `/new`）、
@@ -229,7 +229,7 @@ Python网关可以暂停主循环并请求结构化输入：
 `/status`、`/title`、`/fortune`、`/redraw`、`/terminal-setup`
 
 ### 计费相关命令（`billing.ts`）
-`/billing` —— 管理Nous终端的计费功能，包括购买额度、自动充值及设置使用限额
+`/billing` —— 管理Nous终端的计费功能，包括购买积分、自动充值及设置使用限额
 
 ### 会话相关命令（`session.ts`）
 `/model`、`/sessions`（别名 `/switch`、`/session`、`/resume`）、
@@ -242,8 +242,8 @@ Python网关可以暂停主循环并请求结构化输入：
 `/rollback`、`/agents`（别名 `/tasks`）、`/replay`、`/replay-diff`、
 `/skills`、`/reload-skills`（别名 `/reload_skills`）、`/plugins`、`/tools`
 
-### 额度管理命令（`credits.ts`）
-`/credits` —— 查看Nous账户余额及为浏览器充值
+### 积分相关命令（`credits.ts`）
+`/credits` —— 查看Nous积分余额及为浏览器充值
 
 ### 设置相关命令（`setup.ts`）
 `/setup` —— 启动外部 `hermes setup` 向导，该向导运行期间会暂停Ink组件的功能
@@ -258,68 +258,70 @@ Python网关可以暂停主循环并请求结构化输入：
 1. `slash.exec`
 2. `command.dispatch`
 
-这样一来，Python网关便可以管理别名、插件、技能以及基于注册表的命令，而无需在TUI客户端中重复实现相关逻辑。
+这样一来，Python网关即可处理别名、插件、技能以及基于注册表的命令，而无需在TUI客户端中重复实现相同逻辑。
 
 ## 事件体系
 
-当前客户端处理的主要事件类型如下：
+客户端目前处理的常见事件类型如下：
 
-| 事件类型                     | 携带的数据内容                                                               |
+| 事件类型                     | 数据内容                                                                     |
 | ---------------------------- | --------------------------------------------------------------------------- |
-| `gateway.ready`               | `{ skin? }`                                                                 |
-| `skin.changed`               | `{ skin }`                                                                  |
-| `session.info`               | 用于显示横幅以及工具/技能面板的会话元数据                             |
-| `message.start`              | 开始智能体消息流式输出                                                   |
-| `message.delta`              | `{ text, rendered? }`                                                       |
-| `message.complete`            | `{ text, rendered?, usage, status }`                                        |
-| `thinking.delta`             | `{ text }`                                                                  |
-| `reasoning.delta`            | `{ text, verbose? }`                                                        |
-| `reasoning.available`         | `{ text, verbose? }`                                                        |
-| `status.update`              | `{ kind, text }`                                                            |
-| `notification.show`          | `{ id, key, kind, level, text, ttl_ms? }`                                   |
-| `notification.clear`          | `{ key }`                                                                   |
-| `tool.start`                 | `{ tool_id, name, context?, args_text? }`                                   |
-| `tool.generating`             | `{ name }`                                                                  |
-| `tool.progress`              | `{ name, preview }`                                                         |
-| `tool.complete`              | `{ tool_id, name, error?, summary?, duration_s?, inline_diff?, todos? }`    |
-| `clarify.request`            | `{ question, choices?, request_id }`                                        |
-| `approval.request`           | `{ command, description, allow_permanent? }`                                |
-| `sudo.request`               | `{ request_id }`                                                            |
-| `secret.request`             | `{ prompt, env_var, request_id }`                                           |
-| `background.complete`        | `{ task_id, text }`                                                         |
+| `gateway.ready`            | `{ skin? }`                                                                 |
+| `skin.changed`             | `{ skin }`                                                                  |
+| `session.info`             | 用于显示横幅以及工具/技能面板的会话元数据                         |
+| `message.start`            | 开始智能体消息流输出                                             |
+| `message.delta`            | `{ text, rendered? }`                                                       |
+| `message.complete`         | `{ text, rendered?, usage, status }`                                        |
+| `thinking.delta`           | `{ text }`                                                                  |
+| `reasoning.delta`          | `{ text, verbose? }`                                                        |
+| `reasoning.available`      | `{ text, verbose? }`                                                        |
+| `status.update`            | `{ kind, text }`                                                            |
+| `notification.show`        | `{ id, key, kind, level, text, ttl_ms? }`                                   |
+| `notification.clear`       | `{ key }`                                                                   |
+| `tool.start`               | `{ tool_id, name, context?, args_text? }`                                   |
+| `tool.generating`          | `{ name }`                                                                  |
+| `tool.progress`            | `{ name, preview }`                                                         |
+| `tool.complete`            | `{ tool_id, name, error?, summary?, duration_s?, inline_diff?, todos? }`    |
+| `clarify.request`          | `{ question, choices?, request_id }`                                        |
+| `approval.request`         | `{ command, description, allow_permanent? }`                                |
+| `sudo.request`             | `{ request_id }`                                                            |
+| `sudo.expire`              | `{ request_id }` 清除已超时的sudo提示框                             |
+| `secret.request`           | `{ prompt, env_var, request_id }`                                           |
+| `secret.expire`            | `{ request_id }` 清除已超时的密钥提示框                           |
+| `background.complete`      | `{ task_id, text }`                                                         |
 | `billing.step_up.verification` | `{ verification_url, user_code }`                                       |
-| `review.summary`             | `{ text }`                                                                  |
-| `browser.progress`           | `{ message }`                                                               |
-| `voice.status`               | `{ state }`                                                                 |
-| `voice.transcript`            | `{ text, no_speech_limit? }`                                                |
-| `subagent.spawn_requested`    | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
-| `subagent.start`              | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
-| `subagent.thinking`          | `{ text }`                                                                  |
-| `subagent.tool`               | `{ tool_name?, tool_preview?, text? }`                                      |
-| `subagent.progress`           | `{ text }`                                                                  |
-| `subagent.complete`           | `{ status, summary?, text?, duration_seconds? }`                            |
-| `error`                     | `{ message }`                                                               |
-| `gateway.stderr`             | 由子组件的标准错误输出汇总而成                                         |
-| `gateway.protocol_error`      | 由格式错误的标准输出汇总而成                                         |
-| `gateway.start_timeout`       | `{ cwd?, python?, stderr_tail? }`                                           |
+| `review.summary`           | `{ text }`                                                                  |
+| `browser.progress`         | `{ message }`                                                               |
+| `voice.status`             | `{ state }`                                                                 |
+| `voice.transcript`         | `{ text, no_speech_limit? }`                                                |
+| `subagent.spawn_requested` | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
+| `subagent.start`           | `{ subagent_id?, task_index, goal?, depth?, parent_id? }`                   |
+| `subagent.thinking`        | `{ text }`                                                                  |
+| `subagent.tool`            | `{ tool_name?, tool_preview?, text? }`                                      |
+| `subagent.progress`        | `{ text }`                                                                  |
+| `subagent.complete`        | `{ status, summary?, text?, duration_seconds? }`                            |
+| `error`                    | `{ message }`                                                               |
+| `gateway.stderr`           | 由子组件的标准错误流合成而来                                     |
+| `gateway.protocol_error`   | 由格式错误的标准输出流合成而来                                     |
+| `gateway.start_timeout`    | `{ cwd?, python?, stderr_tail? }`                                           |
 
 ## 主题模型
 
-客户端初始会使用 `theme.ts` 文件中定义的 `DEFAULT_THEME` 主题，随后再从 `gateway.ready` 事件中合并网关侧的主题数据。
+客户端初始使用 `theme.ts` 文件中的 `DEFAULT_THEME` 主题，随后会从 `gateway.ready` 事件中合并网关提供的主题数据。
 
-当前可覆盖的品牌定制项包括：
+当前可覆盖的品牌相关配置包括：
 
 - 智能体名称
 - 提示符符号
-- 欢迎文本
-- 告别文本
+- 欢迎语
+- 告别语
 
-当前可覆盖的颜色自定义项包括：
+当前可覆盖的颜色相关配置包括：
 
-- 横幅标题、强调色、边框颜色、背景色及暗化效果
-- 标签、确认按钮、错误提示、警告提示的颜色
+- 横幅标题、强调色、边框颜色、背景色及透明度设置
+- 标签、确定按钮、错误提示、警告提示的颜色设置
 
-`branding.tsx` 文件会利用这些自定义值来生成logo、会话面板以及更新通知等内容。
+`branding.tsx` 文件会利用这些配置来生成Logo、会话面板以及更新通知等内容。
 
 ## 文件结构映射
 
