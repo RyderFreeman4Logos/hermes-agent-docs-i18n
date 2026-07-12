@@ -30,7 +30,7 @@ Hermes Agent 采用纵深防御型安全模型设计。本页面涵盖了从命�
 
 ```yaml
 approvals:
-  mode: manual                    # manual | smart | off
+  mode: smart                     # smart | manual | off
   timeout: 60                     # seconds to wait for user response (default: 60)
   cron_mode: deny                 # deny | approve — what cron jobs do when they hit a dangerous command
   mcp_reload_confirm: true        # /reload-mcp asks before invalidating the MCP tool cache
@@ -39,19 +39,19 @@ approvals:
 
 完整键值设置如下：
 
-| 键 | 默认值 | 控制功能 |
+| 键名 | 默认值 | 控制功能 |
 |---|---|---|
-| `mode` | `manual` | 危险 Shell 命令的审批策略——详见下表。 |
-| `timeout` | `60` | Hermes 在超时前等待审批回复的时间（秒）。 |
-| `cron_mode` | `deny` | 当 [cron 任务](./features/cron.md) 触发危险命令提示时，无界面模式下的处理方式。`deny` 会阻止该命令执行（Agent 需寻找其他解决方案）；`approve` 则自动批准所有在 cron 环境中执行的命令。 |
-| `mcp_reload_confirm` | `true` | 当该值为 `true` 时，执行 `/reload-mcp` 命令时会先进行确认提示。重新构建 MCP 工具集会清除提供程序提示缓存（工具结构信息存储在系统提示中），因此后续消息会重新发送完整的输入令牌。选择“始终批准”的用户可将此键值改为 `false`。 |
-| `destructive_slash_confirm` | `true` | 当该值为 `true` 时，具有破坏性的会话操作命令（如 `/clear`、`/new`、`/reset`、`/undo`）在删除对话状态前会先弹出确认提示。支持通过 Telegram、Discord 和 Slack 的原生是/否按钮选择“仅批准一次”/“始终批准”/“取消”三种选项；其他平台则显示文本选项。选择“始终批准”的用户可将此键值改为 `false`。TUI 模式会使用自身的模态弹窗（如需关闭该功能，可设置 `HERMES_TUI_NO_CONFIRM=1`）。 |
+| `mode` | `smart` | 危险 shell 命令的审批策略——详见下表。 |
+| `timeout` | `60` | Hermes 在超时前等待用户审批回复的时间（秒）。 |
+| `cron_mode` | `deny` | 当 [定时任务](./features/cron.md) 触发危险命令提示时，无界面模式下的处理方式。`deny` 会阻止该命令执行（Agent 需寻找其他解决方案）；`approve` 则自动批准定时任务中的所有命令。 |
+| `mcp_reload_confirm` | `true` | 当此值为 `true` 时，执行 `/reload-mcp` 命令时会先询问用户是否确认重新构建 MCP 工具集。重新构建会清除提供程序提示缓存（工具结构定义存储在系统提示中），因此后续消息会重新发送完整的输入令牌。选择“始终批准”的用户可将此键值改为 `false`。 |
+| `destructive_slash_confirm` | `true` | 当此值为 `true` 时，用于清除对话状态的破坏性命令（如 `/clear`、/new`、/reset`、/undo`）在执行前会先提示用户确认。系统会通过 Telegram、Discord 和 Slack 的原生是/否按钮呈现三选一对话框（一次性批准 / 始终批准 / 取消），其他平台则显示文本选项。选择“始终批准”的用户可将此键值改为 `false`。TUI 模式则使用自身的模态覆盖界面（可通过设置 `HERMES_TUI_NO_CONFIRM=1` 关闭此确认功能）。 |
 
 | 模式 | 行为表现 |
 |------|----------|
-| **manual**（默认） | 对所有危险命令始终向用户请求批准 |
-| **smart** | 利用辅助 LLM 评估风险。低风险命令（例如 `python -c "print('hello')"`）会自动获得批准，真正危险的命令则会自动被拒绝。对于风险不确定的命令，则会转为由人工进行确认。 |
-| **off** | 禁用所有审批检查——相当于以 `--yolo` 参数运行。所有命令都会在无需提示的情况下直接执行。 |
+| **smart**（默认） | 使用辅助大语言模型来评估风险。低风险命令（例如 `python -c "print('hello')"`）仅针对该命令自动获得批准，而真正危险的命令则会直接被拒绝。对于不确定的命令，则会提交给人工审核。 |
+| **manual** | 对于危险命令，始终要求用户手动确认后再执行。 |
+| **off** | 禁用所有审批检查——相当于以 `--yolo` 参数运行。所有命令都无需提示即可执行。 |
 
 :::warning
 将 `approvals.mode` 设置为 `off` 会禁用所有安全提示。仅可在可信环境（如 CI/CD、容器等）中使用。
@@ -61,11 +61,11 @@ approvals:
 
 YOLO 模式可绕过当前会话中**所有**危险命令的审批提示。可通过以下三种方式启用该模式：
 
-1. **CLI 参数**：使用 `hermes --yolo` 或 `hermes chat --yolo` 启动会话 
-2. **斜杠命令**：在会话中输入 `/yolo` 即可切换开启/关闭状态
-3. **环境变量**：设置 `HERMES_YOLO_MODE=1`
+1. **CLI 参数**：使用 `hermes --yolo` 或 `hermes chat --yolo` 启动会话。
+2. **斜杠命令**：在会话中进行时输入 `/yolo` 即可切换开启/关闭状态。
+3. **环境变量**：设置 `HERMES_YOLO_MODE=1`。
 
-`/yolo` 命令为**切换型**命令——每次使用都会改变模式状态：
+`/yolo` 命令为**切换型**指令——每次使用都会改变模式状态，即开启或关闭。
 
 ```
 > /yolo
