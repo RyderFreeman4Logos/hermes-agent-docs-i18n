@@ -1129,19 +1129,19 @@ AUXILIARY_VISION_MODEL=openai/gpt-4o
 
 ### 提供商选项
 
-这些选项适用于**辅助任务配置**（`auxiliary:`、`compression:`）以及主要的备用提供商设置（`fallback_providers:` 或旧版的 `fallback_model:`），并不适用于主配置项 `model.provider`。
+这些选项适用于**辅助任务配置**（`auxiliary:`, `compression:`）以及主要的备用入口（`fallback_providers:` 或旧版的 `fallback_model:`），并不适用于主设置的 `model.provider`。
 
 | 提供商 | 描述 | 要求 |
 |----------|-------------|------|
 | `"auto"` | 选择最佳可用选项（默认值）。系统会依次尝试 OpenRouter、Nous 和 Codex。 | — |
-| `"openrouter"` | 强制使用 OpenRouter——可路由至任何模型（如 Gemini、GPT-4o、Claude 等）。 | `OPENROUTER_API_KEY` |
+| `"openrouter"` | 强制使用 OpenRouter——可路由至任何模型（Gemini、GPT-4o、Claude 等）。 | `OPENROUTER_API_KEY` |
 | `"nous"` | 强制使用 Nous Portal。 | `hermes auth` |
-| `"codex"` | 强制使用 Codex OAuth（需 ChatGPT 账户）。支持视觉处理功能（如 gpt-5.3-codex）。 | `hermes model` → Codex |
-| `"minimax-oauth"` | 强制使用 MiniMax OAuth（通过浏览器登录，无需 API 密钥）。辅助任务会使用 MiniMax-M2.7-highspeed 模型。 | `hermes model` → MiniMax（OAuth） |
-| `"xai-oauth"` | 强制使用 xAI Grok OAuth（SuperGrok 或 X Premium+ 用户可通过浏览器登录，无需 API 密钥）。同一 OAuth 令牌可同时用于聊天、文本转语音、图像处理、视频处理及文字转录等功能。 | `hermes model` → xAI Grok OAuth（SuperGrok / Premium+） |
-| `"main"` | 使用您当前配置的自定义/主端点。该端点可以由 `OPENAI_BASE_URL` + `OPENAI_API_KEY` 指定，也可以通过 `hermes model` / `config.yaml` 保存的自定义端点指定。适用于 OpenAI、本地模型或任何兼容 OpenAI 的 API。**仅适用于辅助任务——不适用于 `model.provider`。** | 自定义端点的凭证及基础 URL |
+| `"codex"` | 强制使用 Codex OAuth（需 ChatGPT 账户）。支持视觉处理功能（gpt-5.3-codex）。 | `hermes model` → Codex |
+| `"minimax-oauth"` | 强制使用 MiniMax OAuth（通过浏览器登录，无需 API 密钥）。辅助任务会使用 MiniMax-M2.7-highspeed。 | `hermes model` → MiniMax (OAuth) |
+| `"xai-oauth"` | 强制使用 xAI Grok OAuth（SuperGrok 或 X Premium+ 用户可通过浏览器登录，无需 API 密钥）。同一个 OAuth 令牌可用于聊天、文本转语音、图像处理、视频处理及文字转录等功能。 | `hermes model` → xAI Grok OAuth (SuperGrok / Premium+) |
+| `"main"` | 使用您当前配置的自定义/主端点。该端点可来自 `OPENAI_BASE_URL` + `OPENAI_API_KEY`，也可来自通过 `hermes model` / `config.yaml` 保存的自定义端点。适用于 OpenAI、本地模型或任何兼容 OpenAI 的 API。**仅适用于辅助任务——不适用于 `model.provider`。** | 自定义端点的凭证及基础 URL |
 
-当您希望某些辅助任务绕过默认的路由机制时，主提供商目录中的直接 API 密钥提供商也可在此处使用。一旦配置了 `GMI_API_KEY`，则 `"gmi"` 选项也可正常使用：
+当您希望某些辅助任务绕过默认的路由机制时，主提供商目录中的直接 API 密钥提供商也可在此处使用。例如，配置好 `GMI_API_KEY` 后即可使用 `gmi`，配置好 `FIREWORKS_API_KEY` 后则可使用 `fireworks`：
 
 ```yaml
 auxiliary:
@@ -1150,11 +1150,11 @@ auxiliary:
     model: "anthropic/claude-opus-4.6"
 ```
 
-对于 GMI 辅助路由功能，需使用 GMI 的 `/v1/models` 接口返回的精确模型编号。
+对于 GMI 辅助路由功能，需使用 GMI 的 `/v1/models` 接口返回的精确模型编号。而 Fireworks 模型的编号则采用对应提供方的标准斜杠格式，例如 `accounts/fireworks/models/glm-5p2`。
 
 ### 常见配置方式
 
-**使用自定义直接接口**（相较于 `provider: "main"`，这种方式在处理本地或自托管 API 时更为清晰）：
+**直接使用自定义接口端点**（相较于 `provider: "main"`，这种方式在处理本地或自托管 API 时更为清晰）：
 ```yaml
 auxiliary:
   vision:
@@ -1247,16 +1247,16 @@ auxiliary:
 
 ```yaml
 agent:
-  reasoning_effort: ""   # empty = medium (default). Options: none, minimal, low, medium, high, xhigh (max)
+  reasoning_effort: ""   # empty = medium. Options: none, minimal, low, medium, high, xhigh, max, ultra
 ```
 
-当该参数未设置（即默认值）时，推理强度将默认为“medium”——这一平衡值适用于大多数任务。若手动设置数值，则会覆盖默认值：更高的推理强度虽能在复杂任务中提升结果质量，但会带来更多的Token消耗和延迟。
+当该参数未设置（即默认值）时，推理强度将默认为“中等”——这一平衡水平适用于大多数任务。若手动设置数值，则会覆盖默认值：更高的推理强度虽能在复杂任务中提升结果质量，但也会增加Token消耗和响应延迟。
 
-:::注意：基于OpenRouter的自适应思维模型（Claude 4.6+及Fable/Mythos系列）
-这类模型采用*自适应*思维模式，不支持常规的`reasoning.effort`字段——OpenRouter会对这些模型忽略该字段。Hermes会自动将您的`reasoning_effort`参数映射为OpenRouter的`verbosity`参数（该参数对应Anthropic的`output_config.effort`），因此原有的“低”/“中”/“高”/“x高”选项依然有效，无需额外配置。若设置为`none`（或未设置），模型将沿用其自身的自适应默认值。（虽然协议层支持`max`值，但它并非可选择的`reasoning.effort`数值；`x高`则是可配置的最高强度值。）而原生的Anthropic提供程序可直接控制推理强度，因此不会受到影响。
+:::注意 通过 OpenRouter 调用自适应思维模型（Claude 4.6+ 及 Fable/Mythos 系列模型）
+这类模型采用*自适应*思维方式，不支持常规的 `reasoning.effort` 参数——OpenRouter 会忽略该参数。Hermes 会自动将您的 `reasoning_effort` 参数映射为 OpenRouter 的 `verbosity` 参数（该参数对应 Anthropic 的 `output_config.effort`），因此只需调整同一个参数即可适配所选模型支持的各个强度级别。若设置为 `none`（或未设置），模型将沿用其自身的自适应默认设置。而原生的 Anthropic 提供商可直接控制推理强度，因此不会受到影响。
 :::
 
-您还可以通过 `/reasoning` 命令在运行时更改推理强度：
+您也可以通过 `/reasoning` 命令在运行时更改推理强度：
 
 ```
 /reasoning           # Show current effort level and display state
@@ -1836,24 +1836,24 @@ security:
 
 ```yaml
 approvals:
-  mode: manual   # manual | smart | off
+  mode: smart   # smart | manual | off
 ```
 
 | 模式 | 行为 |
 |------|------|
-| `manual`（默认值） | 在执行任何被标记的命令之前向用户发起提示。在 CLI 环境中会显示交互式确认对话框；在消息传递场景中则会将待处理的确认请求放入队列中。 |
-| `smart` | 利用辅助大语言模型来判断被标记的命令是否真的具有危险性。低风险命令会自动获得批准，并在会话期间保持有效；而真正存在风险的命令则会提交给用户进行决策。 |
-| `off` | 跳过所有确认检查。此设置等同于 `HERMES_YOLO_MODE=true`。**请谨慎使用。** |
+| `smart`（默认值） | 使用辅助大语言模型来判断被标记的命令是否真的具有危险性。低风险命令将仅针对该命令自动获得批准；真正有风险的命令则会被拒绝；无法确定的命令则会提交给用户决策。 |
+| `manual` | 在执行任何被标记的命令之前先向用户发起提示。在命令行界面中会显示交互式批准对话框；在消息传递场景下，则会将待处理的批准请求放入队列中。 |
+| `off` | 跳过所有批准检查。此设置等同于 `HERMES_YOLO_MODE=true`。**请谨慎使用。** |
 
-Smart 模式尤其有助于减轻用户重复确认的负担——它能让智能体在安全操作上更自主地工作，同时仍能拦截真正具有破坏性的命令。
+智能模式尤其有助于减少重复批准带来的繁琐感——它能让智能体在安全操作上更自主地工作，同时依然能够拦截真正具有破坏性的命令。
 
 :::warning
-将 `approvals.mode` 设置为 `off` 会关闭对终端命令的所有安全检查。仅可在受信任的沙箱环境中使用此设置。
+将 `approvals.mode` 设置为 `off` 会禁用所有终端命令的安全检查。仅可在受信任的沙箱环境中使用此设置。
 :::
 
 ### 拒绝规则
 
-`approvals.deny` 是一个全局模式匹配列表，可无条件阻止匹配到的终端命令执行——即便在 `--yolo`、`/yolo` 或 `mode: off` 的模式下也是如此。它相当于用户可编辑版的内置硬性拦截列表：
+`approvals.deny` 是一个全局模式匹配列表，可无条件阻止匹配到的终端命令执行——即便在 `--yolo`、`/yolo` 或 `mode: off` 的情况下也是如此。它相当于用户可编辑版的内置硬性黑名单：
 
 ```yaml
 approvals:
