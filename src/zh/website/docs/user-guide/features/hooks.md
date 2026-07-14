@@ -369,38 +369,38 @@ def register(ctx):
 
 **所有钩子的通用规则：**
 
-- 回调函数接收**关键字参数**。为确保向后兼容，务必接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
-- 如果某个回调函数发生**崩溃**，系统会将其记录下来并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体崩溃。
-- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具调用，而 [`pre_llm_call`](#pre_llm_call) 可以向 LLM 调用中**注入上下文**。其余所有钩子均为仅执行一次即忽略的观察者。
-- 观察者回调函数会自动接收到 `telemetry_schema_version` 参数。若该参数存在，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可识别的标识符，无需解析其字符串格式。
+- 回调函数接收**关键字参数**。为确保向后兼容性，始终应接受 `**kwargs` 参数——未来版本可能会添加新参数，而不会影响您的插件正常运行。
+- 如果某个回调发生**崩溃**，系统会记录该错误并跳过该回调。其他钩子及智能体仍可正常工作。表现异常的插件绝不会导致智能体故障。
+- 有两个钩子的返回值会影响行为：[`pre_tool_call`](#pre_tool_call) 可以**阻止**工具调用，而 [`pre_llm_call`](#pre_llm_call) 可以在向 LLM 发送请求时**注入上下文**。其余所有钩子均为仅执行一次即忽略的观察者。
+- 观察者回调函数会自动接收 `telemetry_schema_version` 参数。当该参数存在时，`turn_id`、`api_request_id`、`task_id`、`session_id` 和 `api_call_count` 则作为独立的关联字段。请将 `api_request_id` 视为不可见的标识符，无需解析其字符串格式。
 
 ### 快速参考表
 
-| 钩子名称 | 触发时机 | 返回值 |
-|----------|----------|--------|
-| [`pre_tool_call`](#pre_tool_call) | 任何工具执行之前 | `{"action": "block", "message": str}`，用于拒绝该工具调用 |
+| 钩子 | 触发时机 | 返回值 |
+|------|-----------|---------|
+| [`pre_tool_call`](#pre_tool_call) | 任何工具执行之前 | `{"action": "block", "message": str}`，用于拒绝该调用 |
 | [`post_tool_call`](#post_tool_call) | 任何工具返回之后 | 被忽略 |
 | [`pre_llm_call`](#pre_llm_call) | 每轮对话中，在工具调用循环之前仅触发一次 | `{"context": str}`，用于在用户消息前添加上下文 |
 | [`post_llm_call`](#post_llm_call) | 每轮对话中，在工具调用循环之后仅触发一次 | 被忽略 |
-| [`pre_verify`](#pre_verify) | 智能体编辑代码后、进行验证或完成工作之前，每轮对话中触发一次 | `{"action": "continue", "message": str}`，用于继续执行 |
+| [`pre_verify`](#pre_verify) | 智能体编辑完代码后、进行验证或完成工作之前，每轮对话中仅触发一次 | `{"action": "continue", "message": str}`，用于继续执行 |
 | [`on_session_start`](#on_session_start) | 创建新会话时（仅第一轮对话） | 被忽略 |
 | [`on_session_end`](#on_session_end) | 会话结束时 | 被忽略 |
-| [`on_session_finalize`](#on_session_finalize) | CLI/gateway 销毁正在使用的会话时（如刷新、保存数据或生成统计信息） | 被忽略 |
-| [`on_session_reset`](#on_session_reset) | Gateway 更换新的会话密钥时（例如通过 `/new` 或 `/reset` 指令） | 被忽略 |
+| [`on_session_finalize`](#on_session_finalize) | CLI 或网关关闭正在使用的会话时（用于刷新、保存数据或统计信息） | 被忽略 |
+| [`on_session_reset`](#on_session_reset) | 网关更换新的会话密钥时（例如通过 `/new` 或 `/reset` 指令） | 被忽略 |
 | [`subagent_start`](#subagent_start) | 已创建 `delegate_task` 子任务并即将运行时 | 被忽略 |
 | [`subagent_stop`](#subagent_stop) | `delegate_task` 子任务已退出时 | 被忽略 |
-| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | Gateway 收到用户消息后、进行身份验证和任务分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程 |
-| [`pre_approval_request`](#pre_approval_request) | 需要用户批准的危险命令在发送提示或通知之前 | 被忽略 |
-| [`post_approval_response`](#post_approval_response) | 用户对审批提示作出响应（或超时）时 | 被忽略 |
-| [`transform_tool_result`](#transform_tool_result) | 任何工具返回之后、结果传递给模型之前 | `str`，用于替换结果；`None`，表示保持原样 |
-| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，数据被截断、去除 ANSI 格式或进行屏蔽之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
-| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后、最终响应发送之前 | `str`，用于替换响应文本；`None`/空字符串，表示保持原样 |
+| [`pre_gateway_dispatch`](#pre_gateway_dispatch) | 网关收到用户消息后、进行身份验证和请求分发之前 | `{"action": "skip" \| "rewrite" \| "allow", ...}`，用于控制流程 |
+| [`pre_approval_request`](#pre_approval_request) | 需要做出批准决策时，包括智能模式下的自动决策 | 被忽略 |
+| [`post_approval_response`](#post_approval_response) | 已做出批准决策（或提示超时）时 | 被忽略 |
+| [`transform_tool_result`](#transform_tool_result) | 任何工具返回后、结果传回模型之前 | `str`，用于替换结果；`None`，表示保持原样 |
+| [`transform_terminal_output`](#transform_terminal_output) | 在 `terminal` 工具内部，数据被截断、去除 ANSI 格式或进行内容屏蔽之前 | `str`，用于替换原始输出；`None`，表示保持原样 |
+| [`transform_llm_output`](#transform_llm_output) | 工具调用循环结束后、最终响应发送之前 | `str`，用于替换响应文本；`None` 或空字符串，表示保持原样 |
 
 ---
 
 ### `pre_tool_call`
 
-在**每次工具执行之前立即触发**——无论是内置工具还是插件提供的工具均适用。
+在**每次工具执行之前立即触发**——无论是内置工具还是插件提供的工具。
 
 **回调函数签名：**
 
@@ -1044,9 +1044,9 @@ def register(ctx):
 
 ### `pre_approval_request`
 
-该指令会在审批请求展示给用户**之前立即触发**——适用于所有交互场景：命令行界面、Ink TUI、各类网关平台（Telegram、Discord、Slack、WhatsApp、Matrix等），以及ACP客户端（VS Code、Zed、JetBrains）。
+在发起审批请求之前触发。该钩子适用于所有交互式界面——包括交互式 CLI、Ink TUI、网关平台以及 ACP 客户端——同时也适用于在无人工干预情况下、通过 `approvals.mode=smart` 机制做出的决策（即 `surface="smart"` 情况）。在智能模式下，此钩子会在调用辅助 LLM 之前执行。
 
-这是集成自定义通知功能的理想位置——例如，可以添加一个macOS菜单栏应用来弹出允许/拒绝的通知，或创建审计日志以记录每一条包含详细上下文的审批请求。
+此处正是集成自定义通知器的理想位置——例如，可以创建一个能在 macOS 菜单栏中显示允许/拒绝通知的应用，或者记录包含上下文信息的每条审批请求的审计日志。
 
 **回调函数签名：**
 
@@ -1064,16 +1064,16 @@ def my_callback(
 
 | 参数 | 类型 | 描述 |
 |-----------|------|-------------|
-| `command` | `str` | 需要审批的 Shell 命令 |
-| `description` | `str` | 该命令被标记的原因（当多个模式同时匹配时，这些原因会合并显示） |
-| `pattern_key` | `str` | 触发审批的主要模式键（例如 `"rm_rf"`、`"sudo"`） |
-| `pattern_keys` | `list[str]` | 所有匹配的模式键 |
-| `session_key` | `str` | 会话标识符，有助于针对单次聊天精准发送通知 |
-| `surface` | `str` | `"cli"` 表示交互式 CLI/TUI 提示；`"gateway"` 表示异步平台审批 |
+| `command` | `str` | 正在被评估的终端命令或 `execute_code` 脚本。在将数据发送给观察者之前，智能检测和网关相关的载荷内容会被屏蔽处理。即使启用了 `security.redact_secrets`，也必须对智能观察者的输入内容进行屏蔽；若屏蔽失败，则会跳过智能钩子机制。 |
+| `description` | `str` | 该命令被标记的原因（当多个匹配模式同时存在时，这些原因会合并显示）。 |
+| `pattern_key` | `str` | 触发审批操作的主要模式键（例如 `"rm_rf"`、`"sudo"`）。 |
+| `pattern_keys` | `list[str]` | 所有匹配到的模式键。 |
+| `session_key` | `str` | 会话标识符，有助于针对单次聊天精准发送通知。 |
+| `surface` | `str` | 表示触发方式：`"cli"` 表示交互式 CLI/TUI 提示；`"gateway"` 表示异步平台审批；`"smart"` 表示由辅助大语言模型自动做出批准或拒绝决策。 |
 
-**返回值：** 无需考虑。此处的钩子仅具有观察功能，无法否决审批或预先回复。若需在工具进入审批系统之前进行拦截，请使用 [`pre_tool_call`](#pre_tool_call)。
+**返回值：** 该参数会被忽略。此处的钩子仅用于观察者功能，无法否决审批结果或提前给出答复。若需在工具进入审批系统之前进行拦截，请使用 [`pre_tool_call`](#pre_tool_call) 函数。 
 
-**应用场景：** 桌面通知、推送提醒、审计日志记录、Slack Webhook、升级路由处理、指标统计。
+**应用场景：** 桌面通知、推送提醒、审计日志记录、Slack Webhook 集成、问题升级路由以及性能指标统计。 
 
 **示例——在 macOS 上发送桌面通知：**
 
@@ -1094,9 +1094,9 @@ def register(ctx):
 
 ### `post_approval_response`
 
-在用户对审批提示作出响应后（或该提示超时后）触发。
+在人工审批或智能审批决策作出后（或在提示超时后）触发。
 
-**回调签名：**
+**回调函数签名：**
 
 ```python
 def my_callback(
@@ -1111,15 +1111,16 @@ def my_callback(
 ):
 ```
 
-与 `pre_approval_request` 使用相同的关键字参数，此外还需包含：
+与该参数所使用的 `pre_approval_request` 完全相同，此外还需包含以下内容：
 
-| 参数 | 类型 | 描述 |
-|-----------|------|-------------|
-| `choice` | `str` | 必须为 `"once"`、`"session"`、`"always"`、`"deny"` 或 `"timeout"` 之一 |
+| 参数 | 类型 | 说明 |
+|-----------|------|------|
+| `choice` | `str` | 引导式决策模式使用 `"once"`、`"session"`、`"always"`、`"deny"` 或 `"timeout"`；智能决策模式则使用 `"smart_approve"` 或 `"smart_deny"` |
+| `decided_by` | `str` | 智能决策模式时为 `"aux_llm"`；引导式决策模式下该参数不存在 |
 
-**返回值：** 无需返回值。
+**返回值：** 无需返回任何值。
 
-**应用场景：** 关闭对应的桌面通知，将最终决策记录到审计日志中，更新相关指标，以及继续执行速率限制机制。
+**应用场景：** 关闭对应的桌面通知，将最终决策结果记录到审计日志中，更新相关指标数据，以及推进速率限制机制的后续处理。
 
 ```python
 def log_decision(command, choice, session_key, **kwargs):
