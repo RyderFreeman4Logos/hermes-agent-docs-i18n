@@ -102,24 +102,24 @@ hermes chat [options]
 
 | 选项 | 描述 |
 |------|------|
-| `-q`, `--query "..."` | 单次执行的非交互式提示。 |
+| `-q`, `--query "..."` | 单次使用的非交互式提示。 |
 | `-m`, `--model <model>` | 覆盖本次运行的模型。 |
 | `-t`, `--toolsets <csv>` | 启用以逗号分隔的工具集列表。 |
-| `--provider <provider>` | 强制指定提供方：`auto`、`openrouter`、`nous`、`openai-codex`、`copilot-acp`、`copilot`、`anthropic`、`gemini`、`huggingface`、`novita`（别名 `novita-ai`、`novitaai`）、`openai-api`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`kilocode`、`xiaomi`、`arcee`、`gmi`、`alibaba`、`alibaba-coding-plan`（别名 `alibaba_coding`）、`deepseek`、`nvidia`、`ollama-cloud`、`xai`（别名 `grok`）、`xai-oauth`（别名 `grok-oauth`）、`qwen-oauth`、`bedrock`、`opencode-zen`、`opencode-go`、`azure-foundry`、`lmstudio`、`stepfun`、`tencent-tokenhub`（别名 `tencent`、`tokenhub`）。 |
+| `--provider <provider>` | 强制指定提供方：`auto`、`openrouter`、`nous`、`openai-codex`、`copilot-acp`、`copilot`、`anthropic`、`gemini`、`huggingface`、`novita`（别名 `novita-ai`、`novitaai`）、`openai-api`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`kilocode`、`xiaomi`、`arcee`、`gmi`、`upstage`（别名 `solar`）、`alibaba`、`alibaba-coding-plan`（别名 `alibaba_coding`）、`deepseek`、`nvidia`、`ollama-cloud`、`xai`（别名 `grok`）、`xai-oauth`（别名 `grok-oauth`）、`qwen-oauth`、`bedrock`、`opencode-zen`、`opencode-go`、`azure-foundry`、`lmstudio`、`stepfun`、`tencent-tokenhub`（别名 `tencent`、`tokenhub`）。 |
 | `-s`, `--skills <name>` | 为当前会话预加载一个或多个技能（可重复指定或用逗号分隔）。 |
 | `-v`, `--verbose` | 显示详细输出。 |
-| `-Q`, `--quiet` | 程序化模式：隐藏横幅/加载指示器/工具预览。 |
+| `-Q`, `--quiet` | 程序化模式：隐藏横幅、加载指示器及工具预览。 |
 | `--image <path>` | 为单个查询附加本地图片。 |
 | `--resume <session>` / `--continue [name]` | 直接从 `chat` 模式恢复会话。 |
 | `--worktree` | 为本次运行创建独立的 Git 工作树。 |
 | `--checkpoints` | 在进行可能破坏文件的更改之前启用文件系统检查点。 |
 | `--yolo` | 跳过审批提示。 |
-| `--pass-session-id` | 将会话 ID 传递至系统提示中。 |
-| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。`.env` 文件中的凭据仍会被加载。此选项适用于独立的 CI 运行、可复现的错误报告以及第三方集成场景。 |
+| `--pass-session-id` | 将会话 ID 传递到系统提示中。 |
+| `--ignore-user-config` | 忽略 `~/.hermes/config.yaml` 文件，使用内置默认设置。不过 `.env` 文件中的凭据仍会被加载。此选项适用于独立的 CI 运行、可复现的错误报告以及第三方集成场景。 |
 | `--ignore-rules` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules`、持久化内存及预加载的技能。可与 `--ignore-user-config` 结合使用，实现完全隔离的运行环境。 |
-| `--safe-mode` | 故障排查模式：禁用所有自定义设置——包括用户配置、规则/内存注入、插件、Shell 钩子以及 MCP 服务器（该模式会自动启用 `--ignore-user-config` 和 `--ignore-rules`）。用于判断问题是出在用户配置上还是 Hermes 本身。 |
+| `--safe-mode` | 故障排查模式：禁用所有自定义设置——包括用户配置、规则/内存注入、插件、Shell 钩子以及 MCP 服务器（该模式会自动启用 `--ignore-user-config` 和 `--ignore-rules`）。可用于判断问题源于用户设置还是 Hermes 本身。 |
 | `--source <tag>` | 用于过滤的会话来源标签（默认值为 `cli`）。对于不应出现在用户会话列表中的第三方集成，可使用 `tool` 标签。 |
-| `--max-turns <N>` | 每次对话轮次中最多可进行的工具调用次数（默认值为 90，或配置文件中的 `agent.max_turns` 值）。 |
+| `--max-turns <N>` | 每次对话轮次中最多允许的工具调用次数（默认值为 90，或配置文件中的 `agent.max_turns` 设置值）。 |
 
 示例：
 
