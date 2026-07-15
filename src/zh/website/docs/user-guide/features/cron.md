@@ -686,26 +686,30 @@ cronjob(action="create", name="daily-digest",
         prompt="Write the daily digest using the outputs above.")
 ```
 
-本次运行时，相关任务最近完成的输出结果会被作为上下文插入提示语上方。每个上游条目都必须是有效的任务 ID 或名称（参见 `cronjob action="list"`）。注意：该功能仅读取*最近已完成*的输出结果，而不会等待同一时间戳内仍在运行的上游任务。
+本次运行时，相关任务最近完成的输出结果会被作为上下文注入到提示语上方。每一个上游条目都必须是有效的任务 ID 或名称（参见 `cronjob action="list"`）。注意：该功能仅读取*最近已完成*的输出结果，而不会等待同一时间刻仍在运行的上游任务。
 
 ## 任务存储
 
-任务存储在 `~/.hermes/cron/jobs.json` 文件中。任务运行产生的输出则保存至 `~/.hermes/cron/output/{job_id}/{timestamp}.md` 路径下。
+任务存储在 `~/.hermes/cron/jobs.json` 文件中。任务运行产生的输出则会被保存到 `~/.hermes/cron/output/{job_id}/{timestamp}.md` 路径下。
 
-任务中的 `model` 和 `provider` 字段可设置为 `null`。若省略这些字段，Hermes 会在执行时从全局配置中自动获取对应值；只有当为特定任务设置了自定义值时，这些字段才会出现在任务记录中。
+:::tip
+建议通过 `cronjob` 工具、`hermes cron edit` 或 `/cron` 命令让智能体来管理任务，而非直接修改 `jobs.json` 文件。当[文件写入安全机制](../security.md#file-write-safety)阻止了写入操作时（例如设置了 `HERMES_WRITE_SAFE_ROOT` 环境变量），直接编辑可能会在无任何提示的情况下失败；而[文件变更验证器](../configuration.md#file-mutation-verifier)生成的反馈则是确认内容未被保存的权威依据。
+:::
+
+任务中的 `model` 和 `provider` 字段可以设置为 `null`。如果省略这些字段，Hermes 会在执行时从全局配置中自动获取对应值。只有当为特定任务设置了自定义值时，这些字段才会出现在任务记录中。
 
 该存储机制采用原子文件写入方式，因此即使写入过程被中断，也不会留下未完成的任务文件。
 
 ## 独立提示语依然重要
 
 :::warning 重要提示
-定时任务是在全新的代理会话中运行的。因此，提示语中必须包含代理所需的所有信息，尤其是那些无法通过已加载的技能获取的内容。
+定时任务是在全新的智能体会话中运行的。因此，提示语中必须包含智能体所需的所有信息，尤其是那些无法通过已加载的技能获取的内容。
 :::
 
-**错误示例：** `"Check on that server issue"`
+**错误示例：** `"检查那台服务器的问题"`
 
-**正确示例：** `"以用户 'deploy' 的身份 SSH 登录到服务器 192.168.1.100，使用 'systemctl status nginx' 命令检查 nginx 是否正在运行，并验证 https://example.com 是否返回 HTTP 200 状态码。"`
+**正确示例：** `"以 'deploy' 用户身份 SSH 登录到服务器 192.168.1.100，使用 'systemctl status nginx' 命令查看 nginx 是否正在运行，并确认 https://example.com 能返回 HTTP 200 状态码。"`
 
 ## 安全性
 
-在创建或更新定时任务时，系统会对其提示语进行扫描，以检测注入攻击和凭证窃取的迹象。那些包含隐形 Unicode 特技、SSH 后门尝试或明显用于窃取机密信息的代码片段都会被拦截。
+在创建或更新定时任务提示语时，系统会对其进行检查，以识别是否存在注入攻击或凭证窃取的迹象。那些包含隐形 Unicode 特技、SSH 后门尝试或明显用于窃取机密信息的代码片段都会被拦截。
