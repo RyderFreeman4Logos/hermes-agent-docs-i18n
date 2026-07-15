@@ -60,14 +60,14 @@ uv run hermes chat --query 'Reply exactly ok' --provider custom --model qwen3.6:
 ```bash
 uv build --wheel
 python -m pip install --force-reinstall dist/hermes_agent-*.whl
-python -m pip install "nemo-relay==0.3"
+python -m pip install "nemo-relay>=0.5,<1.0"
 hermes plugins enable observability/nemo_relay
 ```
 
-如果未安装 `nemo-relay`，该插件将无法正常启动。请安装该组件，并使用官方的 NeMo Relay 0.3 PyPI 版本对其进行测试：
+如果未安装 `nemo-relay`，该插件将无法正常启动。请安装版本号在 0.5 及以上、且经过官方支持的 NeMo Relay 0.x 系列版本。
 
 ```bash
-pip install "nemo-relay==0.3"
+pip install "nemo-relay>=0.5,<1.0"
 ```
 
 ## 导出配置
@@ -144,16 +144,53 @@ enabled = true
 mode = "observe_only"
 ```
 
-当启用自适应组件且已安装的 NeMo Relay 运行时提供了 `llm.execute(...)` / `tools.execute(...)` 接口时，Hermes 会通过这些中间件边界来路由大语言模型与工具的执行流程。观察者钩子仍会发送会话、轮次、审批以及子代理相关的标记；而对于那些已由 NeMo Relay 管理的执行任务，插件则无需再手动发起 `llm.call` 和 `tools.call` 操作。将 `tool_parallelism.mode` 设置为 `"observe_only"` 可以在保持对工具调度过程进行观察的同时，依然包裹真实的执行边界。
+当启用自适应组件且已安装的 NeMo Relay 运行时提供了 `llm.execute(...)` / `tools.execute(...)` 接口时，Hermes 会通过这些中间件边界来路由大语言模型及工具的执行流程。观察者钩子仍会发送会话、轮次、审批以及子代理相关的标记；而对于那些已由 NeMo Relay 承担管理的执行任务，插件则无需再手动发起 `llm.call` 和 `tools.call` 操作。将 `tool_parallelism.mode` 设置为 `"observe_only"` 可以在保持对工具调度过程进行观察的同时，依然封装真实的执行边界。
+
+### 动态插件
+
+Hermes 能够识别 NeMo Relay 0.6 及更高版本中提供的动态插件激活 API。可通过 Hermes 自带的 `[[dynamic_plugins]]` 配置项来定义原生插件或工作进程插件，这些配置项需与 Python 绑定的激活规范字段相匹配：
+
+```toml
+[[dynamic_plugins]]
+plugin_id = "example-plugin"
+kind = "rust_dynamic"
+manifest_ref = "./example-plugin/relay-plugin.toml"
+
+[dynamic_plugins.config]
+mode = "enabled"
+```
+
+对于 Worker 插件，还需提供由生命周期管理的 `environment_ref`：
+
+```toml
+[[dynamic_plugins]]
+plugin_id = "example-worker"
+kind = "worker"
+manifest_ref = "./example-worker/relay-plugin.toml"
+environment_ref = "/absolute/path/from-nemo-relay-plugins-inspect"
+
+[dynamic_plugins.config]
+mode = "enabled"
+```
+
+首先使用 `nemo-relay plugins add` 命令为工作节点配置插件，然后从 `nemo-relay plugins inspect <plugin-id> --json` 的 JSON 输出中复制 `data.source.environment_ref`。Relay 会在启动时拒绝任何自定义的 Python 环境。
+
+`manifest_ref` 和 `environment_ref` 的相对路径是相对于实际的 `plugins.toml` 文件来确定的。
+
+Relay 中的标准化网关 `[[plugins.dynamic]]` 记录无法与 Hermes 自有的相关部分互换。该网关会将这些记录与用于启用功能、定义信任策略以及管理工作节点环境的独立生命周期状态相结合；目前的 Python 绑定尚未提供相应的解析功能。Hermes 会针对 `[[plugins.dynamic]]` 提供可操作的诊断信息而非直接忽略或绕过生命周期策略。在 Relay 能够为嵌入主机提供共享的文件与生命周期解析功能之前，请继续使用 `[[dynamic_plugins]]`。
+
+Hermes 会在注册其管理的大型语言模型及工具执行中间件之前先激活这些插件，并在整个运行时期间保持其激活状态。在关闭系统时，它会先关闭会话导出器、清空 Relay 的订阅者列表，随后关闭插件激活状态，从而在卸载插件代码之前移除回调函数。
+
+NeMo Relay 0.5 版本的 Python 绑定不支持动态激活功能。当存在动态插件配置但对应的绑定缺少激活 API 时，Hermes 会记录一条可操作的警告信息，并继续执行常规的静态组件配置，因此 ATOF 和 ATIF 监控功能依然可用。在这种降级模式下不会加载任何动态插件。
 
 如需查看完整的 Hermes 中间件通用规范，请参阅 [`docs/middleware/README.md`](../../../docs/middleware/README.md)。
 
-## 标准本地示例
+## 标准化本地示例
 
-本节中的仅观察模式示例使用了官方的 `nemo-relay==0.3` 发行版，以及通过兼容 OpenAI 的 API 提供服务的本地 Ollama 模型。
+本节中的仅观察类示例使用了从 0.5 版开始支持的 NeMo Relay 0.x 发行版，以及通过兼容 OpenAI 的 API 提供服务的本地 Ollama 模型。
 
 ```bash
-pip install "nemo-relay==0.3"
+pip install "nemo-relay>=0.5,<1.0"
 
 export HERMES_HOME=/tmp/hermes-nemo-relay-docs/hermes-home
 mkdir -p "$HERMES_HOME"
@@ -211,7 +248,7 @@ session_id: docs-parent-session
 parent received nested subagent result.
 ```
 
-已过处理的 ATOF 摘要：
+已过滤的 ATOF 摘要：
 
 ```jsonl
 {"kind":"scope","category":"tool","name":"delegate_task","scope_category":"start","metadata":{"session_id":"docs-parent-session","tool_call_id":"call_delegate"},"data":{"goal":"Run the command `printf docs_nested_leaf_function` using the terminal tool.","toolsets":["terminal"]}}
@@ -378,11 +415,11 @@ Hermes tool call
       -> Hermes tool dispatcher next_call(...)
 ```
 
-该插件仍会为会话、轮次、审批以及子代理生成观察者标记。在启用自适应托管执行模式时，它会跳过手动调用的`llm.call`和`tools.call`观察者时间段，从而避免针对同一执行过程产生重复的LLM/工具事件。
+该插件仍会为会话、轮次、审批以及子代理生成观察者标记。当启用自适应托管执行模式时，它会跳过手动调用的 `llm.call` 和 `tools.call` 观察者时间跨度，从而避免针对同一执行过程产生重复的 LLM/工具事件。
 
 ### 本地自适应端到端模式
 
-该示例同时支持在本地Hermes运行环境中导出NeMo Relay的可观测性数据，并应用自适应执行中间件。此方案需要一个支持`[components.config.tool_parallelism]`配置的NeMo Relay运行时；而之前仅用于实现可观测性功能的示例所使用的`nemo-relay==0.3`版本并不支持该自适应配置。
+该示例可在本地运行 Hermes 的同时，实现 NeMo Relay 可观测性数据的导出以及自适应执行中间件功能。此方案需要使用支持 `[components.config.tool_parallelism]` 配置的 NeMo Relay 运行时，目前从 0.5 版本开始的相应 0.x 系列版本均满足该要求。
 
 ```bash
 export HERMES_HOME=/tmp/hermes-middleware-test/hermes-home
