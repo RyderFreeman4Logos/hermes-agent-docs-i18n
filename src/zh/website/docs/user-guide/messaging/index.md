@@ -158,13 +158,13 @@ hermes gateway status --system         # Linux only: inspect the system service 
 
 | 指令 | 描述 |
 |---------|-------------|
-| `/new` 或 `/reset` | 开始新的对话 |
+| `/new` 或 `/reset` | 开始全新对话 |
 | `/model [provider:model]` | 显示或更换模型（支持 `provider:model` 语法） |
 | `/personality [name]` | 设置角色性格 |
 | `/retry` | 重新发送上一条消息 |
-| `/undo` | 删除上一次的交流内容 |
+| `/undo` | 删除上一次的对话内容 |
 | `/status` | 显示会话信息 |
-| `/whoami` | 显示您在此作用域下的指令使用权限（管理员 / 用户 / 无限制） |
+| `/whoami` | 显示您在此作用域下的指令访问权限（管理员 / 用户 / 无限制） |
 | `/stop` | 停止正在运行的智能体 |
 | `/approve` | 批准待处理的危险指令 |
 | `/deny` | 拒绝待处理的危险指令 |
@@ -172,14 +172,14 @@ hermes gateway status --system         # Linux only: inspect the system service 
 | `/compress` | 手动压缩对话上下文 |
 | `/title [name]` | 设置或显示会话标题 |
 | `/resume [name]` | 恢复之前命名的会话 |
-| `/usage` | 显示当前会话的令牌使用情况 |
+| `/usage` | 显示当前会话的令牌使用情况（`/usage reset [--force]` 可重置已预留的 Codex 限额） |
 | `/insights [days]` | 显示使用情况分析数据 |
 | `/reasoning [level\|show\|hide]` | 调整推理强度或切换推理显示状态 |
 | `/voice [on\|off\|tts\|join\|leave\|status]` | 控制消息语音回复及 Discord 语音频道功能 |
 | `/rollback [number]` | 列出或恢复文件系统检查点 |
 | `/background <prompt>` | 在独立的后台会话中运行提示词 |
 | `/reload-mcp` | 根据配置重新加载 MCP 服务器 |
-| `/update` | 将 Hermes Agent 更新到最新版本 |
+| `/update` | 将 Hermes Agent 更新至最新版本 |
 | `/help` | 显示可用指令列表 |
 | `/<skill-name>` | 调用已安装的任意技能 |
 
@@ -187,11 +187,11 @@ hermes gateway status --system         # Linux only: inspect the system service 
 
 ### 会话持久性
 
-会话会在消息之间持续保留，直到被手动重置。智能体会记住您的对话上下文。
+会话会在消息之间持续存在，直到被手动重置。智能体会记住您的对话上下文。
 
 ### 重置规则
 
-**默认情况下，会话不会自动重置**——上下文会一直存在，直到您手动执行 `/reset` 指令或触发上下文压缩功能。如需自动重置，可在 `~/.hermes/config.yaml` 文件的 `session_reset` 部分进行相应设置：
+**默认情况下，会话不会自动重置**——上下文会一直保留，直到您手动执行 `/reset` 指令或触发上下文压缩功能。如需自动重置，可在 `~/.hermes/config.yaml` 文件的 `session_reset` 部分进行配置：
 
 ```yaml
 session_reset:
