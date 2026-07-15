@@ -6,23 +6,24 @@ description: "Security model, dangerous command approval, user authorization, co
 
 # 安全性
 
-Hermes Agent 采用纵深防御型安全模型设计。本页面涵盖了从命令审批、容器隔离到消息平台用户授权等各个安全层面。
+Hermes Agent 采用多层防御的安全模型设计。本页面涵盖了从命令审批、容器隔离到消息平台用户授权等所有安全边界。
 
 ## 概述
 
-该安全模型包含七层防护机制：
+该安全模型包含八层防护机制：
 
-1. **用户授权** — 确定谁有权与智能体交互（白名单机制、私信配对）
+1. **用户授权** — 确定谁有权与智能体交互（允许列表、私信配对）
 2. **危险命令审批** — 对具有破坏性的操作进行人工干预审核
-3. **容器隔离** — 通过 Docker/Singularity/Modal 沙箱技术及强化配置实现隔离
-4. **MCP 凭证过滤** — 为 MCP 子进程设置独立的环境变量隔离机制
-5. **上下文文件扫描** — 检测项目文件中的提示注入风险
-6. **会话间隔离** — 各会话之间无法访问彼此的数据或状态；定时任务存储路径经过特殊处理，可抵御路径遍历攻击
-7. **输入净化** — 对终端工具后端的工作目录参数进行白名单验证，防止 shell 注入攻击
+3. **文件写入保护** — 为 `write_file`/`patch` 操作设置拒绝列表及可选的写入沙箱
+4. **容器隔离** — 使用 Docker/Singularity/Modal 技术并配置强化安全设置实现沙箱隔离
+5. **MCP 凭据过滤** — 为 MCP 子进程实现环境变量隔离
+6. **上下文文件扫描** — 检测项目文件中的命令注入风险
+7. **会话间隔离** — 各会话无法访问彼此的数据或状态；定时任务存储路径经过特殊处理以防止路径遍历攻击
+8. **输入净化** — 对终端工具后端的当前工作目录参数进行允许列表验证，防止shell注入攻击
 
 ## 危险命令审批
 
-在执行任何命令之前，Hermes 会先将其与预定义的危险模式列表进行比对。若检测到匹配项，用户必须手动进行批准。
+在执行任何命令之前，Hermes 会先将其与预定义的危险模式列表进行比对。若发现匹配项，用户必须手动批准该命令才能执行。
 
 ### 审批模式
 
@@ -226,30 +227,72 @@ command_allowlist:
   - systemctl
 ```
 
-这些模式会在启动时被加载，并在后续的所有会话中自动生效。
+这些模式会在启动时被加载，并在后续的所有会话中自动获得授权。
 
-:::提示
-使用 `hermes config edit` 可以查看或从永久允许列表中移除相关模式。
+:::tip
+使用 `hermes config edit` 可以查看或从永久允许列表中移除这些模式。
+:::
+
+## 文件写入安全机制 {#file-write-safety}
+
+在 `write_file` 或 `patch` 函数尝试写入磁盘之前，Hermes 会先将该目标路径与拒绝列表以及可选的沙箱环境进行比对。如果写入操作被阻止，系统会立即向智能体返回错误——**不会出现授权提示**，也无法通过聊天界面进行绕过。模型仍可能声称编辑操作已成功；当 `display.file_mutation_verifier` 处于开启状态（默认值）时，应优先相信[文件变更验证器底部信息](./configuration.md#file-mutation-verifier)，而非智能体的总结内容。
+
+### 受保护的路径（始终被阻止）
+
+即使未设置 `HERMES_WRITE_SAFE_ROOT`，以下类别的路径也始终会被拒绝写入：
+
+| 类别 | 示例 |
+|----------|----------|
+| 操作系统凭证存储目录 | `~/.ssh/`, `~/.aws/`, `~/.kube/`, `/etc/sudoers`, `~/.netrc` |
+| Hermes 系统凭证存储目录 | `auth.json`、`.env`、`.anthropic_oauth.json`、位于 HERMES_HOME 目录下的 `mcp-tokens/` 和 `pairing/`（包括当前激活的配置文件及全局根目录） |
+| 项目级机密文件 | 磁盘上任何位置的 `.env`、`.env.local`、`.env.production`、`.envrc` 文件 |
+
+即使将 `HERMES_WRITE_SAFE_ROOT` 设置为 `$HOME`，安全根目录内的敏感路径依然会被阻止写入，例如无法向 `~/.ssh/id_rsa` 写入内容。
+
+对于违反安全根目录规则的写入操作，系统会返回错误信息：`Write denied: '…' is outside HERMES_WRITE_SAFE_ROOT (…)`。而针对凭证路径的阻止则会显示：`Write denied: '…' is a protected system/credential file.`
+
+### HERMES_WRITE_SAFE_ROOT（可选沙箱功能）
+
+一旦设置了该参数，`write_file` 和 `patch` 函数仅能对指定目录前缀内的路径进行操作。任何位于该范围之外的路径都将被**完全阻止**，不会经过危险命令授权流程。
+
+- 在[官方 Docker 镜像](https://github.com/NousResearch/hermes-agent)中会自动设置该参数（值为 `HERMES_WRITE_SAFE_ROOT=/opt/data`）
+- 在 Unix 系统上可使用冒号 `:` 分隔多个根目录，在 Windows 系统上则使用分号 `;`
+- **请勿随意在 `~/.hermes/.env` 文件中修改此设置。** 如果将其设置为项目目录，智能体将无法写入该前缀之外的文件，例如 `~/.hermes/cron/jobs.json`、配置文件中的技能信息以及其他 Hermes 系统状态数据。
+
+如需同时允许在工作区目录和 Hermes 主目录进行写入操作：
+
+```bash
+export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
+```
+
+将该变量重置为默认值即可恢复无限制写入功能（但仍受 protected-path 拒绝列表的限制）。完整参考文档请见：[HERMES_WRITE_SAFE_ROOT](../reference/environment-variables.md#hermes_write_safe_root)。
+
+### Cron 及其他 Hermes 状态文件
+
+请勿直接要求智能体 `patch` `~/.hermes/cron/jobs.json` 文件。应使用 `cronjob` 工具、[`hermes cron`](./features/cron.md) 或 `/cron` 命令——它们会通过支持的 API 来更新任务存储。当写入保护机制禁止直接编辑时，其他 Hermes 控制文件也应遵循相同规则。
+
+:::注意：这是多层防御措施，而非绝对隔离
+写入保护仅适用于 `write_file` 和 `patch` 操作。`terminal` 工具以相同的操作系统用户身份运行，仍可通过 Shell 命令读取或覆盖被禁止的路径。拒绝列表旨在减少意外损坏，并为模型提供明确的停止信号；它并不能对恶意或已被攻破的智能体进行真正隔离。
 :::
 
 ## 用户授权（网关）
 
-在运行消息网关时，Hermes 通过分层授权机制来控制谁能够与机器人交互。
+在运行消息网关时，Hermes 通过分层授权系统来控制谁能够与机器人交互。
 
 ### 授权检查顺序
 
  `_is_user_authorized()` 方法会按以下顺序进行检查：
 
-1. **平台级的全允许标志**（例如：`DISCORD_ALLOW_ALL_USERS=true`）
-2. **私信配对已批准列表**（通过配对码获批的用户）
-3. **平台特定的允许列表**（例如：`TELEGRAM_ALLOWED_USERS=12345,67890`）
+1. **平台级全允许标志**（例如 `DISCORD_ALLOW_ALL_USERS=true`）
+2. **私信配对批准列表**（通过配对码获批的用户）
+3. **平台特定的允许列表**（例如 `TELEGRAM_ALLOWED_USERS=12345,67890`）
 4. **全局允许列表**（`GATEWAY_ALLOWED_USERS=12345,67890`）
 5. **全局全允许设置**（`GATEWAY_ALLOW_ALL_USERS=true`）
 6. **默认值：拒绝**
 
 ### 平台允许列表
 
-在 `~/.hermes/.env` 文件中以逗号分隔的形式设置允许的用户 ID：
+可在 `~/.hermes/.env` 文件中以逗号分隔的形式设置允许的用户 ID：
 
 ```bash
 # Platform-specific allowlists
