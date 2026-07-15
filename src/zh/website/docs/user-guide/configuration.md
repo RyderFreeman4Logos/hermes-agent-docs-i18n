@@ -1266,9 +1266,40 @@ agent:
 /reasoning hide      # Hide model thinking
 ```
 
+#### 每个模型的推理策略自定义
+
+您可以为不同的模型设置不同的推理强度级别。当您希望复杂模型进行高强度推理，而快速处理的模型则采用中等强度推理时，此功能非常实用：
+
+```yaml
+agent:
+  reasoning_effort: "medium"       # global default
+  reasoning_overrides:
+    "openrouter/anthropic/claude-opus-4.5": "xhigh"
+    "openai/gpt-5": "low"
+    "claude-sonnet-4.6": "high"    # bare model name also works
+```
+
+关键词匹配具有**拼写容错性**——任何合理的拼写形式都能被识别：
+- `claude-opus-4.5`、`claude-opus-4-5`、`claude-opus.4.5`（点号和连字符可互换）
+- `anthropic/claude-opus-4.5`、`openrouter/anthropic/claude-opus-4.5`（提供方前缀可选）
+- 完全一致的拼写形式会优先于变体形式被识别。
+
+:::note
+`hermes config set`命令不支持对`reasoning_overrides`键进行设置——需直接编辑YAML文件。这是因为模型名称通常包含点号（例如`claude-opus-4.5`），而这与CLI的点号键语法存在冲突。
+:::
+
+**优先级顺序：**
+
+1. 会话级别的`/reasoning --session`覆盖设置（仅适用于网关）
+2. 来自`agent.reasoning_overrides`的模型级覆盖设置（支持拼写容错）
+3. 全局配置`agent.reasoning_effort`
+4. 提供方的默认设置
+
+此类覆盖设置会自动应用于所有场景：CLI启动时、消息网关中、桌面端/TUI界面、定时任务中、会话期间通过`/model`切换模型时，以及启用备用模型时。
+
 ## 工具调用强制机制
 
-部分模型有时会以文本形式描述其预期操作，而非真正调用相关工具（例如只说“我会运行测试……”而不实际调用终端）。工具调用强制机制通过系统提示进行引导，促使模型重新采用实际调用工具的方式来执行任务。
+某些模型有时会以文本形式描述其预期操作，而非实际调用工具（例如只说“我会运行测试……”而不真正调用终端命令）。工具调用强制机制会注入系统提示引导，促使模型重新执行实际的工具调用操作。
 
 ```yaml
 agent:
@@ -1410,15 +1441,31 @@ display:
   • concepts/rag-pipeline.md — [patch] Could not find match for old_string
 ```
 
-将 `file_mutation_verifier: false`（或 `HERMES_FILE_MUTATION_VERIFIER=0`）设置为抑制页脚显示。该验证机制仅在回合结束时存在真正的错误时才会触发——如果在同一回合内模型重新尝试修复失败的任务并成功完成，则不会对该文件触发该验证。
+如需隐藏页脚，可设置 `file_mutation_verifier: false`（或 `HERMES_FILE_MUTATION_VERIFIER=0`）。该验证机制仅在回合结束时出现真正故障时才会触发——如果在同一回合内模型重新尝试修复失败的内容并成功，则不会对该文件触发该验证。
+
+**请优先信任验证结果而非模型的总结信息。** 即使助手在结束时会表示任务已完成，页脚仍表明所列文件在磁盘上并未被修改。常见原因包括：
+
+- **写入被拒绝**——路径位于凭证拒绝列表中，或处于 `HERMES_WRITE_SAFE_ROOT` 范围之外（详见[文件写入安全机制](./security.md#file-write-safety)）
+- **补丁不匹配**——`old_string` 与磁盘上的文件内容不一致
+- **语法校验失败**——候选内容在写入前未能通过 JSON/YAML/TOML 格式验证
+
+当写入操作被阻止时，页脚会显示如下示例内容：
+
+```
+⚠️ File-mutation verifier: 2 file(s) were NOT modified this turn despite any wording above that may suggest otherwise. Run `git status` or `read_file` to confirm.
+  • ~/.hermes/cron/jobs.json — [patch] Write denied: '…' is outside HERMES_WRITE_SAFE_ROOT (/path/to/project)
+  • ~/.hermes/scripts/monitor.py — [write_file] Write denied: '…' is outside HERMES_WRITE_SAFE_ROOT (/path/to/project)
+```
+
+如果对 Hermes 状态的写入操作（如定时任务、技能，以及位于 `~/.hermes/` 目录下的脚本）出现失败，请检查您的环境中是否设置了 `HERMES_WRITE_SAFE_ROOT`。对于定时任务的修改，建议使用 `cronjob` 工具或 `hermes cron edit` 命令，而非直接修改 `jobs.json` 文件。
 
 ### 静态消息的界面语言设置
 
-`display.language` 设置用于翻译少量面向用户的静态消息，包括 CLI 的确认提示、若干网关斜杠命令的回复内容（如重启通知、“审批已过期”、“目标已完成”等）。该设置**不**用于翻译智能体的回复、日志行、工具输出、错误回溯信息或斜杠命令的描述——这些内容仍将保持英文。如果您希望智能体本身用其他语言回复，只需在提示词或系统消息中明确指定即可。
+`display.language` 设置用于翻译少量面向用户的静态消息——包括 CLI 的审批提示、部分网关斜杠命令的回复内容（例如重启排空操作的通知、“审批已过期”、“目标已完成”等）。该设置**不会**翻译智能体回复、日志行、工具输出、错误堆栈信息或斜杠命令的描述，这些内容仍将保持英文。如果您希望智能体本身用其他语言回复，只需在提示语或系统消息中明确指定即可。
 
-支持的值包括：`en`（默认）、`zh`（简体中文）、`zh-hant`（繁体中文）、`ja`（日语）、`de`（德语）、`es`（西班牙语）、`fr`（法语）、`tr`（土耳其语）、`uk`（乌克兰语）、`af`（南非荷兰语）、`ko`（韩语）、`it`（意大利语）、`ga`（爱尔兰语）、`pt`（葡萄牙语）、`ru`（俄语）、`hu`（匈牙利语）。对于未知的值，系统将默认回退为英文。
+支持的值包括：`en`（默认）、`zh`（简体中文）、`zh-hant`（繁体中文）、`ja`（日语）、`de`（德语）、`es`（西班牙语）、`fr`（法语）、`tr`（土耳其语）、`uk`（乌克兰语）、`af`（南非荷兰语）、`ko`（韩语）、`it`（意大利语）、`ga`（爱尔兰语）、`pt`（葡萄牙语）、`ru`（俄语）、`hu`（匈牙利语）。对于未知的值，系统将自动回退为英文。
 
-您也可以通过 `HERMES_LANGUAGE` 环境变量为当前会话单独设置该语言，该值会覆盖配置文件中的设定。
+您也可以通过 `HERMES_LANGUAGE` 环境变量为当前会话单独设置该值，该值会优先于配置文件中的设置。
 
 ```yaml
 display:
