@@ -1632,6 +1632,8 @@
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Blender Mcp]()
       - [Blender MCP](zh/optional-skills/creative/blender-mcp/SKILL.md)
+      - [References]()
+        - [Blender MCP — 常见问题与经验总结](zh/optional-skills/creative/blender-mcp/references/pitfalls.md)
     - [Concept Diagrams]()
       - [概念图绘制](zh/optional-skills/creative/concept-diagrams/SKILL.md)
       - [Examples]()
