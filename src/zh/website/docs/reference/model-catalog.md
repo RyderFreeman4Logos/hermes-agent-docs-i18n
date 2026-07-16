@@ -29,6 +29,7 @@ https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
     "openrouter": {
       "metadata": {},
       "models": [
+        {"id": "z-ai/glm-5.2",         "description": "default", "default": true},
         {"id": "moonshotai/kimi-k2.6", "description": "recommended", "metadata": {}},
         {"id": "openai/gpt-5.4",       "description": ""}
       ]
@@ -36,6 +37,7 @@ https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
     "nous": {
       "metadata": {},
       "models": [
+        {"id": "z-ai/glm-5.2", "default": true},
         {"id": "anthropic/claude-opus-4.7"},
         {"id": "moonshotai/kimi-k2.6"}
       ]
@@ -46,24 +48,25 @@ https://hermes-agent.nousresearch.com/docs/api/model-catalog.json
 
 字段说明：
 
-- **`version`** — 整数类型的架构版本号。后续架构更新时会提升此版本号；Hermes 会拒绝解析其不识别的版本号的清单文件，并回退到硬编码的快照版本。
-- **`metadata`** — 位于清单文件、提供方及模型层级的结构化字典，支持任意键名。Hermes 会忽略未知字段，因此您可以直接为对应条目添加注释（如 `"tier": "paid"`、`"tags": [...]` 等），而无需协调架构变更。
-- **`description`** — 仅适用于 OpenRouter。该字段用于确定选择器标签的显示文本（如 `"recommended"`、`"free"` 或留空）。Nous Portal 不使用此字段——免费套餐的权限判定是直接从 Portal 的定价接口动态获取的。
-- **定价信息与上下文长度** 不包含在清单文件中，这些数据会在数据获取时从提供方的实时 API（如 `/v1/models` 接口、models.dev）中获取。
+- **`version`** — 整数类型的架构版本号。后续架构更新时会提升此版本；Hermes 会拒绝解析其不认识的版本号，转而使用硬编码的快照版本。
+- **`metadata`** — 位于清单、提供方及模型层面的结构化字典，支持任意键值对。Hermes 会忽略未知字段，因此您无需协调架构变更即可添加注释（如 `"tier": "paid"`、`"tags": [...]` 等）。
+- **`description`** — 仅适用于 OpenRouter。该字段用于确定选择器标签的显示文本（如 `"recommended"`、`"free"`、`"default"` 或留空）。Nous Portal 不使用此字段——免费套餐的判定是通过 Portal 的定价接口实时完成的。
+- **`default`** — 每个提供方最多只能有一个条目设置为 `"default": true"`。该模型即为**默认默选模型**：当用户未选择任何模型时，Hermes 会自动选用它（如 GUI 入门确认界面、未指定模型的提供方配置、`model.default` 为空的情况）。该模型在运行时仅通过只读缓存读取（通过 `get_default_model_from_cache` 函数），因此无需访问网络；若缓存中不存在对应清单，Hermes 会回退到仓库中的 `PREFERRED_SILENT_DEFAULT_MODEL` 常量值，该值必须与标记的默认模型一致。这一设计使得维护人员无需发布新版本即可更换默认默选模型。此类模型通常为性能良好且成本较低的型号，绝非最昂贵的旗舰产品。
+- **定价信息及上下文长度**并不包含在清单中，这些数据会在获取时从提供方的实时 API（如 `/v1/models` 接口、models.dev）中获取。
 
-## 数据获取行为
+## 获取行为
 
-| 触发场景 | 行为表现 |
+| 触发场景 | 行为说明 |
 |---|---|
-| 调用 `/model` 或 `hermes model` 命令 | 若磁盘缓存已过期则重新获取数据，否则直接使用缓存 |
-| 磁盘缓存为最新状态（未超过有效期限） | 不进行网络请求 |
-| 缓存存在但网络连接失败 | 无声回退至缓存，并仅记录一条日志信息 |
-| 网络连接失败且无缓存 | 无声回退至仓库内的快照版本 |
-| 清单文件通过架构验证失败 | 视为无法访问 |
+| 调用 `/model` 或 `hermes model` | 若磁盘缓存已过期则重新获取数据，否则直接使用缓存 |
+| 磁盘缓存为最新状态（未超过有效期） | 不进行网络请求 |
+| 缓存存在但网络连接失败 | 无声地回退到缓存，并仅记录一条日志 |
+| 网络连接失败且无缓存 | 无声地回退到仓库中的快照版本 |
+| 清单的架构验证失败 | 视为无法访问 |
 
 缓存存储路径：`~/.hermes/cache/model_catalog.json`。
 
-## 配置选项
+## 配置项
 
 ```yaml
 model_catalog:
