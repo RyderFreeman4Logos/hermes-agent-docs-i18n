@@ -921,7 +921,7 @@ $ hermes model
 [ ] profile_describer    currently: auto / main model
 ```
 
-选择任务，选定提供方（OAuth流程会自动打开浏览器；使用API密钥的提供方则会弹出提示），再挑选模型。这些设置会同步保存到`config.yaml`文件中的`auxiliary.<task>.*`路径下。其操作逻辑与选择主模型的方式相同——无需学习额外的语法。
+选择任务后，接着选定提供方（OAuth流程会自动打开浏览器；使用API密钥的提供方则会弹出提示），最后挑选模型。这些设置会同步保存到`config.yaml`文件中的`auxiliary.<task>.*`路径下。其操作逻辑与选择主模型的方式相同——无需学习额外的语法。
 
 ### 视频教程
 
@@ -937,31 +937,49 @@ $ hermes model
 
 ### 通用的配置模式
 
-Hermes中的所有模型配置项——无论是辅助任务、压缩处理还是备用方案——都采用相同的三个参数：
+Hermes中的所有模型槽位——无论是辅助任务、压缩处理还是备用模型——都采用相同的三个配置项：
 
-| 参数名 | 功能说明 | 默认值 |
-|-------|----------|--------|
+| 键值 | 功能说明 | 默认值 |
+|-----|-----------|---------|
 | `provider` | 用于身份验证和请求路由的提供方 | `"auto"` |
 | `model` | 需要调用的模型 | 对应提供方的默认模型 |
-| `base_url` | 自定义的OpenAI兼容接口地址（可覆盖提供方设置的地址） | 未设置 |
+| `base_url` | 自定义的兼容OpenAI的接口地址（可覆盖提供方设置的地址） | 未设置 |
 
-当设置了`base_url`后，Hermes会忽略指定的提供方，直接调用该自定义接口（身份验证会使用`api_key`或`OPENAI_API_KEY`）。若仅设置了`provider`，则Hermes会使用该提供方内置的身份验证机制及基础地址。
+辅助任务块还会额外包含一个`reasoning_effort`配置项：
 
-可用于辅助任务的提供方包括：`auto`、`main`，以及[提供方注册表](/reference/environment-variables)中的所有提供方——如`openrouter`、`nous`、`openai-codex`、`copilot`、`copilot-acp`、`anthropic`、`gemini`、`qwen-oauth`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`deepseek`、`nvidia`、`xai`、`xai-oauth`、`ollama-cloud`、`alibaba`、`bedrock`、`huggingface`、`arcee`、`xiaomi`、`kilocode`、`opencode-zen`、`opencode-go`、`azure-foundry`——此外还包括您在`custom_providers`列表中定义的任何自定义提供方（例如`provider: "beans"`）。
+| 键值 | 功能说明 | 默认值 |
+|-----|-----------|---------|
+| `reasoning_effort` | 控制该任务对应的LLM调用时的思考强度：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`、`ultra` | 未设置（采用提供方的默认值） |
+
+这一配置相当于全局`agent.reasoning_effort`的任务级对应版本：当你的主模型是计算成本较高的推理模型时，可通过将压缩处理的思考强度设置为`low`，或将视觉处理的相关参数设为`none`，从而降低次要任务的延迟和成本，同时不会影响主对话功能。该机制适用于所有辅助任务块（如`vision`、`web_extract`、`compression`、`title_generation`、`curator`、`background_review`等），以及三种辅助数据格式（对话补全、Codex响应、Anthropic消息）。若在同一任务中同时设置了`extra_body.reasoning`，其优先级将高于上述简写配置。
+
+Mixture-of-Agents是唯一的例外：在这种架构下，混合智能体的推理深度是在MoA预设文件中的每个槽位单独配置的（即`moa.presets.<name>.reference_models[].reasoning_effort` / `aggregator.reasoning_effort`），而非在`moa_reference`/`moa_aggregator`辅助块中设置——详情请参阅[混合智能体功能](/user-guide/features/mixture-of-agents)。
+
+```yaml
+auxiliary:
+  compression:
+    reasoning_effort: "low"    # summaries don't need deep thinking
+  vision:
+    reasoning_effort: "none"   # disable thinking for image description
+```
+
+当设置了 `base_url` 后，Hermes 会忽略指定的 provider，直接调用该端点（并通过 `api_key` 或 `OPENAI_API_KEY` 进行身份验证）。若仅设置了 `provider`，则 Hermes 会使用该 provider 内置的身份验证机制及基础 URL。
+
+可用于辅助任务的 provider 包括：`auto`、`main`，以及 [provider registry](/reference/environment-variables) 中列出的所有 provider——如 `openrouter`、`nous`、`openai-codex`、`copilot`、`copilot-acp`、`anthropic`、`gemini`、`qwen-oauth`、`zai`、`kimi-coding`、`kimi-coding-cn`、`minimax`、`minimax-cn`、`minimax-oauth`、`deepseek`、`nvidia`、`xai`、`xai-oauth`、`ollama-cloud`、`alibaba`、`bedrock`、`huggingface`、`arcee`、`xiaomi`、`kilocode`、`opencode-zen`、`opencode-go`、`azure-foundry`——或是您在 `custom_providers` 列表中定义的任何自定义 provider（例如 `provider: "beans"`）。
 
 :::提示 MiniMax OAuth
-`minimax-oauth`通过浏览器OAuth方式进行登录（无需API密钥）。运行`hermes model`后选择**MiniMax (OAuth)**即可完成身份验证。辅助任务会自动使用`MiniMax-M2.7-highspeed`模型。详情请参阅[MiniMax OAuth指南](../guides/minimax-oauth.md)。
+`minimax-oauth` 通过浏览器 OAuth 方式登录（无需 API 密钥）。运行 `hermes model` 后选择 **MiniMax (OAuth)** 即可完成身份验证。辅助任务会自动使用 `MiniMax-M2.7-highspeed`。详情请参阅 [MiniMax OAuth 指南](../guides/minimax-oauth.md)。
 :::
 
 :::提示 xAI Grok OAuth
-`xai-oauth`支持SuperGrok和X Premium+订阅用户通过浏览器OAuth登录（同样无需API密钥）。运行`hermes model`后选择**xAI Grok OAuth (SuperGrok / Premium+)**即可完成身份验证。同一个OAuth令牌可重复用于所有直接与xAI平台交互的场景，包括聊天、辅助任务、文本转语音、图像生成、视频生成以及语音转文字功能。详情请参阅[xAI Grok OAuth指南](../guides/xai-grok-oauth.md)；如果Hermes运行在远程主机上，请参考[通过SSH/远程主机进行OAuth认证](../guides/oauth-over-ssh.md)。
+`xai-oauth` 为 SuperGrok 及 X Premium+ 订阅用户提供浏览器 OAuth 登录功能（同样无需 API 密钥）。运行 `hermes model` 后选择 **xAI Grok OAuth (SuperGrok / Premium+)** 即可完成身份验证。同一个 OAuth 令牌可重复用于所有直接与 xAI 接口的操作，包括聊天、辅助任务、文本转语音、图像生成、视频生成以及文字转录等功能。详情请参阅 [xAI Grok OAuth 指南](../guides/xai-grok-oauth.md)；若 Hermes 运行在远程主机上，请参考 [通过 SSH/远程主机进行 OAuth 认证](../guides/oauth-over-ssh.md)。
 :::
 
-:::警告 `"main"`仅适用于辅助任务
-`"main"`提供方选项的含义是“使用我的主Agent所使用的提供方”——该选项仅可在`auxiliary:`、`compression:`以及主要备用方案配置项（`fallback_providers:`或旧版的`fallback_model:`）中使用。它**不**可作为顶层`model.provider`设置的有效值。如果您使用自定义的OpenAI兼容接口地址，请在`model:`部分将`provider`设置为`custom`。所有主流模型提供方的选项可查阅[AI提供方列表](/integrations/providers)。
+:::警告 `"main"` 仅适用于辅助任务
+`"main"` 这一 provider 选项的含义是“使用我的主代理所使用的 provider”——它仅能在 `auxiliary:`、`compression:` 以及主要的回退配置项（`fallback_providers:` 或旧版的 `fallback_model:`）中使用。它**不**可作为顶层 `model.provider` 设置的有效值。如果您使用的是自定义的 OpenAI 兼容端点，请在 `model:` 部分将 `provider` 设置为 `custom`。所有主要的模型 provider 选项详见 [AI Providers](/integrations/providers)。
 :::
 
-### 辅助任务配置完整参考手册
+### 完整的辅助任务配置参考
 
 ```yaml
 auxiliary:
