@@ -6,10 +6,10 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 
 # Slack 设置
 
-通过 Socket 模式将 Hermes Agent 作为机器人连接到 Slack。Socket 模式使用 WebSocket 而非公共 HTTP 端点，因此您的 Hermes 实例无需公开访问——它可以在防火墙后面、笔记本电脑上或私有服务器上运行。
+通过 Socket 模式将 Hermes Agent 作为机器人连接到 Slack。Socket 模式使用 WebSocket 而非公共 HTTP 端点，因此您的 Hermes 实例无需公开访问——它可以在防火墙后、笔记本电脑上或私有服务器上运行。
 
-:::warning 传统 Slack 应用已弃用
-基于 RTM API 的传统 Slack 应用已于 **2025 年 3 月完全弃用**。Hermes 使用带有 Socket 模式的现代 Bolt SDK。如果您有旧的传统应用，必须按照以下步骤创建一个新应用。
+:::warning 传统 Slack 应用已废弃
+基于 RTM API 的传统 Slack 应用已于 **2025 年 3 月完全废弃**。Hermes 使用带有 Socket 模式的现代 Bolt SDK。如果您有旧的传统应用，必须按照以下步骤创建一个新的应用。
 :::
 
 ## 概览
@@ -19,23 +19,24 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 | **库** | Python 版的 `slack-bolt` / `slack_sdk`（Socket 模式） |
 | **连接方式** | WebSocket — 无需公共 URL |
 | **所需授权令牌** | 机器人令牌（`xoxb-`）+ 应用级令牌（`xapp-`） |
-| **用户标识** | Slack 用户 ID（例如 `U01ABC2DEF3`） |
+| **用户标识** | Slack 成员 ID（例如 `U01ABC2DEF3`） |
 
 ---
 
 ## 第 1 步：创建 Slack 应用
 
-最快捷的方法是粘贴 Hermes 为您生成的清单文件。该文件会一次性声明所有内置的 slash 命令（如 `/btw`、 `/stop`、 `/model` 等）、所有必需的 OAuth 权限范围、所有事件订阅，并启用 Socket 模式。
+最快捷的方法是粘贴 Hermes 为您生成的清单文件。该文件会一次性声明所有内置的 slash 命令（如 `/btw`、`/stop`、`/model` 等）、所有必需的 OAuth 权限范围、所有事件订阅，并启用 Socket 模式。
 
 ### 方案 A：使用 Hermes 生成的清单文件（推荐）
 
-1. 生成清单文件：
+1. 生成清单文件。新的 Slack 应用必须使用 Agent 视图来创建：
    ```bash
-   hermes slack manifest --write
+   hermes slack manifest --agent-view --write
    ```
-该操作会生成 `~/.hermes/slack-manifest.json` 文件，并输出可直接粘贴的配置说明。
+该操作会生成 `~/.hermes/slack-manifest.json` 文件，并输出可直接粘贴的配置说明。那些仍使用 Slack 旧版助手界面的现有应用，在准备好迁移之前可省略 `--agent-view` 参数。
+
 2. 访问 [https://api.slack.com/apps](https://api.slack.com/apps)，选择**创建新应用** → **从应用清单创建**。
-3. 选择对应的工作空间，粘贴 JSON 内容，仔细检查后点击**下一步** → **创建**。
+3. 选择对应的工作空间，粘贴 JSON 内容，进行审核后点击**下一步** → **创建**。
 4. 直接跳至**步骤 6：将应用安装到工作空间**。该清单已自动处理了权限范围、事件及斜杠命令的相关配置。
 
 ### 方案 B：从零开始（手动创建）
@@ -43,24 +44,24 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 1. 访问 [https://api.slack.com/apps](https://api.slack.com/apps)
 2. 点击**创建新应用**
 3. 选择**从零开始**
-4. 输入应用名称（例如“Hermes Agent”），并选择对应的工作空间
+4. 输入应用名称（例如“Hermes Agent”），并选定对应的工作空间
 5. 点击**创建应用**
 
-随后会进入应用的**基本信息**页面，接下来请按照以下步骤 2–6 操作。
+随后会进入应用的**基本信息**页面，接着按照下方的步骤 2–6 操作即可。
 
 ---
 
 ## 步骤 2：配置机器人令牌的权限范围
 
-在侧边栏中导航至**功能 → OAuth 和权限**。滚动到**权限范围 → 机器人令牌权限范围**，并添加以下项：
+在侧边栏中导航至**功能 → OAuth 与权限**。向下滚动到**权限范围 → 机器人令牌权限范围**，并添加以下项：
 
 | 权限范围 | 用途 |
 |---------|------|
 | `chat:write` | 以机器人身份发送消息 |
 | `app_mentions:read` | 检测在频道中被@提及的情况 |
-| `channels:history` | 读取机器人所在公共频道的消息记录 |
+| `channels:history` | 读取机器人所在公共频道的消息 |
 | `channels:read` | 列出并获取公共频道的信息 |
-| `groups:history` | 读取机器人被邀请加入的私密频道的消息记录 |
+| `groups:history` | 读取机器人被邀请加入的私密频道的消息 |
 | `im:history` | 读取直接消息的历史记录 |
 | `im:read` | 查看基本的直接消息信息 |
 | `im:write` | 打开并管理直接消息 |
@@ -70,8 +71,8 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 | `files:read` | 读取并下载附件，包括语音笔记/音频文件 |
 | `files:write` | 上传文件（图片、音频、文档） |
 
-:::注意 缺少权限范围 = 缺少相应功能
-如果没有 `channels:history` 和 `groups:history`，机器人**将无法接收频道中的消息**——它仅能在直接消息中运行。若缺少 `files:read`，Hermes 虽可进行聊天，但**无法可靠地读取用户上传的附件**。这些是最常被忽略的权限范围。
+:::caution 缺少权限范围 = 缺少相应功能
+如果未添加 `channels:history` 和 `groups:history`，机器人**将无法接收频道中的消息**——它仅能在直接消息中运行。若缺少 `files:read`，Hermes 虽可进行聊天，但**无法可靠地读取用户上传的附件**。这些是最常被忽略的权限范围。
 :::
 
 **可选权限范围：**
@@ -84,18 +85,18 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 
 ## 步骤 3：启用 Socket 模式
 
-Socket 模式允许机器人通过 WebSocket 连接，而无需使用公开 URL。
+Socket 模式允许机器人通过 WebSocket 连接，而无需公开 URL。
 
 1. 在侧边栏中，进入**设置 → Socket 模式**
 2. 将**启用 Socket 模式**切换为开启状态
 3. 系统会提示您创建一个**应用级令牌**：
    - 为其命名，例如 `hermes-socket`（名称并无特殊要求）
-   - 添加**`connections:write`**权限范围
+   - 添加 **`connections:write`** 权限范围
    - 点击**生成**
 4. **复制该令牌**——其开头为 `xapp-`。这就是您的 `SLACK_APP_TOKEN`。
 
-:::提示
-您随时可以在**设置 → 基本信息 → 应用级令牌**中查找或重新生成应用级令牌。
+:::tip
+您随时可以在**设置 → 基本信息 → 应用级令牌**处查找或重新生成应用级令牌。
 :::
 
 ---
@@ -113,13 +114,13 @@ Socket 模式允许机器人通过 WebSocket 连接，而无需使用公开 URL�
 | `message.im` | **是** | 机器人可接收直接消息 |
 | `message.mpim` | **是** | 机器人可接收其被加入的**群组直接消息**中的内容 |
 | `message.channels` | **是** | 机器人可接收其被加入的**公共频道**中的消息 |
-| `message.groups` | **推荐** | 机器人可接收其被邀请加入的**私密频道**中的消息 |
+| `message.groups` | **建议添加** | 机器人可接收其被邀请加入的**私密频道**中的消息 |
 | `app_mention` | **是** | 防止在机器人被@提及时出现 Bolt SDK 错误 |
 
 4. 点击页面底部的**保存更改**
 
-:::危险 缺少事件订阅是最常见的配置问题
-如果机器人能在直接消息中正常工作，但**无法在频道中发送消息**，那几乎可以肯定是因为您忘记了添加 `message.channels`（针对公共频道）和/或 `message.groups`（针对私密频道）。没有这些事件，Slack 就不会将频道中的消息传递给机器人。
+:::danger 缺少事件订阅是最常见的配置问题
+如果机器人能在直接消息中正常工作，但**在频道中无法接收消息**，那几乎可以肯定是因为您忘记了添加 `message.channels`（针对公共频道）和/或 `message.groups`（针对私密频道）。如果没有这些事件，Slack 就不会将频道中的消息传递给机器人。
 :::
 
 
@@ -127,15 +128,15 @@ Socket 模式允许机器人通过 WebSocket 连接，而无需使用公开 URL�
 
 ## 步骤 5：启用“消息”标签页
 
-此步骤可让用户向机器人发送直接消息。若未启用，用户在尝试给机器人发直接消息时将会看到**“已关闭向此应用发送消息的功能”**的提示。
+此步骤可让用户向机器人发送直接消息。若未启用，用户在尝试给机器人发直接消息时将会看到**“已关闭向该应用发送消息的功能”**的提示。
 
 1. 在侧边栏中，进入**功能 → 应用主页**
-2. 滚动到**显示标签页**选项
+2. 滚动到**显示标签页**部分
 3. 将**消息标签页**切换为开启状态
 4. 勾选**“允许用户通过消息标签页发送斜杠命令和消息”**
 
-:::危险 若未完成此步骤，直接消息功能将完全被阻断
-即使已配置所有正确的权限范围和事件订阅，如果未启用“消息”标签页，Slack 仍不会允许用户向机器人发送直接消息。这是 Slack 平台的要求，而非 Hermes 的配置问题。
+:::danger 若未完成此步骤，直接消息将完全无法发送
+即便已配置所有正确的权限范围和事件订阅，只要未启用“消息”标签页，Slack 也不会允许用户向机器人发送直接消息。这是 Slack 平台的要求，而非 Hermes 的配置问题。
 :::
 
 ---
@@ -144,12 +145,12 @@ Socket 模式允许机器人通过 WebSocket 连接，而无需使用公开 URL�
 
 1. 在侧边栏中，进入**设置 → 安装应用**
 2. 点击**安装到工作空间**
-3. 查看权限设置后点击**允许**
+3. 查看相关权限设置后点击**允许**
 4. 授权完成后，您会看到一个以 `xoxb-` 开头的**机器人用户 OAuth 令牌**
 5. **复制该令牌**——这就是您的 `SLACK_BOT_TOKEN`。
 
-:::提示
-如果后续更改了权限范围或事件订阅，**必须重新安装应用**才能使更改生效。安装应用页面会显示相关提示。
+:::tip
+如果日后需要更改权限范围或事件订阅，必须**重新安装应用**才能使更改生效。安装应用页面会显示相关提示。
 :::
 
 ---
@@ -160,7 +161,7 @@ Hermes 在构建白名单时使用的是 Slack 的**成员 ID**（而非用户�
 
 要查找成员 ID：
 
-1. 在 Slack 中点击用户的姓名或头像
+1. 在 Slack 中点击该用户的姓名或头像
 2. 点击**查看完整资料**
 3. 点击**⋮**（更多）按钮
 4. 选择**复制成员 ID**
@@ -198,15 +199,31 @@ hermes gateway install      # Install as a user service
 sudo hermes gateway install --system   # Linux only: boot-time system service
 ```
 
-## 第 9 步：将机器人邀请到频道中
+:::提示 Codex推理耗时与安全性设置
+对于基于Codex的Slack对等代理频道，建议将`agent.reasoning_effort`设置为`high`或更低值。当设置为`xhigh`时，代理会在整个轮次中都在进行隐式推理，而不会输出任何可见的助手文本；此时Hermes会隐藏线程中的相关“轮次未完成”警告，仅将诊断信息记录在网关日志中。
+:::
 
-启动网关后，您需要将该机器人**邀请**到希望其响应的任意频道中：
+---
+
+## 第9步：将机器人邀请到频道
+
+启动网关后，您需要**将机器人邀请**到希望其响应的任意频道中：
 
 ```
 /invite @Hermes Agent
 ```
 
-该机器人**不会**自动加入频道，您必须逐一将其邀请到各个频道中。
+该机器人**不会**自动加入频道，您必须逐个将其邀请到各个频道中。
+
+```bash
+hermes slack manifest --agent-view --write
+```
+
+请在**Features → App Manifest**中更新清单文件，随后在 Slack 提示时重新安装应用。Agent 模式无法切换回 Assistant 模式，用户在进行切换后可能需要强制刷新 Slack。生成的 Agent 清单文件会订阅 `message.im`、`app_home_opened` 和 `app_context_changed` 事件，这样 Hermes 即可识别出“消息”标签页中的私信，并在用户发出指令时获取其当前的 Slack 上下文信息。Hermes 仅将该上下文作为标签提供，而不会读取所查看频道的聊天历史记录。
+
+### 更新后的斜杠命令刷新方法
+
+当 Hermes 添加了新命令（例如执行 `hermes update` 后），需重新生成清单文件并更新您的 Slack 应用：
 
 ```bash
 hermes slack manifest --write
@@ -295,6 +312,19 @@ platforms:
       # gracefully fall back to aligned monospace.
       rich_blocks: false
 
+      # Append Slack-native feedback controls to final Block Kit replies.
+      # Requires rich_blocks: true. Default: false.
+      feedback_buttons: false
+
+      # Suggested prompts pinned at the top of Agent view's Messages tab.
+      # Either a list of {title, message} rows, or a titled object:
+      # {title: "Start here", prompts: [{title: "Plan", message: "..."}]}
+      suggested_prompts: []
+
+      # Title Agent/Assistant DM threads from the first user message.
+      # Default: true. Set false to leave Slack's default thread titles.
+      assistant_thread_titles: true
+
       # Continuable-cron delivery surface (default: "thread").
       # "in_channel" delivers a continuable cron job FLAT into the channel
       # (no dedicated thread); pair with reply_in_thread: false (and
@@ -306,12 +336,15 @@ platforms:
 | 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
 | `platforms.slack.reply_to_mode` | `"first"` | 多部分消息的线程模式：`"off"`、`"first"` 或 `"all"` |
-| `platforms.slack.extra.reply_in_thread` | `true` | 当设置为 `false` 时，频道中的消息将直接回复而非以线程形式发送。已存在线程内的消息仍会以线程形式回复。 |
-| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会同步发布到主频道。仅会广播第一部分内容。 |
-| `platforms.slack.extra.rich_blocks` | `false` | 当设置为 `true` 时，智能体发送的消息将以 [Block Kit](https://docs.slack.dev/block-kit/) 块格式呈现（包括标题、分隔符、真正的嵌套列表以及原生表格）。同时仍会发送纯文本作为备用。超过 Slack 限制的表格将自动转换为对齐的等宽字体显示。无需重新安装应用，仅需在发送端进行设置即可。 |
-| `platforms.slack.extra.cron_continuable_surface` | `"thread"` | [可延续定时任务](../features/cron.md#flat-in-channel-continuation-slack) 的消息呈现方式。`"thread"` 模式为每次任务执行单独开启一个线程（默认值）；`"in_channel"` 模式则将任务内容直接展示在频道时间轴中。若需通过普通频道回复来延续任务，需将 `in_channel` 与 `reply_in_thread: false`（以及 `require_mention: false`）一起使用。 |
+| `platforms.slack.extra.reply_in_thread` | `true` | 当设置为 `false` 时，频道消息将直接回复而非以线程形式发送。已存在线程中的消息仍会以线程形式回复。 |
+| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会发布到主频道。仅会广播第一部分内容。 |
+| `platforms.slack.extra.rich_blocks` | `false` | 当设置为 `true` 时，智能体消息将以 [Block Kit](https://docs.slack.dev/block-kit/) 块格式呈现（包括标题、分隔符、真正的嵌套列表以及原生表格）。同时始终会发送纯文本作为备用格式。超过 Slack 限制的表格将回退为对齐的等宽字体格式。无需重新安装应用，仅需在发送端进行更改即可。 |
+| `platforms.slack.extra.feedback_buttons` | `false` | 当与 `rich_blocks` 一起设置为 `true` 时，会在最终回复中添加 Slack 原生的反馈控件。 |
+| `platforms.slack.extra.suggested_prompts` | `[]` | 最多可提供四个 `{title, message}` 格式的提示，用于智能体/助手的私信入口；可接受列表形式或 `{title, prompts}` 格式。 |
+| `platforms.slack.extra.assistant_thread_titles` | `true` | 当设置为 `true` 时，会根据第一个用户消息为智能体/助手的私信线程命名。 |
+| `platforms.slack.extra.cron_continuable_surface` | `"thread"` | [可延续的定时任务](../features/cron.md#flat-in-channel-continuation-slack) 的发送方式。`"thread"` 选项会为每次任务发送创建一个专用线程（默认值）；`"in_channel"` 选项则直接将任务内容发布到频道时间线中。若要使普通的频道回复能够延续任务，需将 `in_channel` 与 `reply_in_thread: false`（以及 `require_mention: false`）一起使用。 |
 
-### 会话隔离机制
+### 会话隔离
 
 ```yaml
 # Global setting — applies to Slack and all other platforms
