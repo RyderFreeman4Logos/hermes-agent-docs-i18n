@@ -113,27 +113,59 @@ gateway.multiplex_profiles is on. ... Remove platforms.webhook from profile
 'coder's config.yaml (configure it only on the default profile).
 ```
 
-本规则所涵盖的端口绑定平台包括：`webhook`、`api_server`、`msgraph_webhook`、`feishu`、`wecom_callback`、`bluebubbles`、`sms`。仅可在**默认配置文件**中为这些平台中的任意一个进行配置；每个配置文件均可通过其 `/p/<profile>/` 前缀访问。
+本规则所覆盖的端口绑定型平台包括：`webhook`、`api_server`、`msgraph_webhook`、`feishu`、`wecom_callback`、`bluebubbles`、`sms`。只需在**默认配置文件**中设置这些平台的参数即可；每个配置文件均可通过其 `/p/<profile>/` 前缀进行访问。
 
 #### 3. 每个凭据对应的平台仍需为每个配置文件配备独立令牌
 
-轮询/连接型平台（如 Telegram、Discord、Slack、Matrix、Signal 等）支持多路复用，但为每个此类平台启用的配置文件都必须提供**独立的**机器人令牌——同一个令牌无法被两个配置文件同时使用。如果两个配置文件配置了相同的 `(platform, token)` 组合，系统会在启动时立即报错并指出这两个配置文件（详见[令牌冲突防护机制](#token-conflict-safety)——规则本身并未改变，只是现在在同一个进程内部进行强制管控）。
+轮询/连接型平台（如 Telegram、Discord、Slack、Matrix、Signal 等）支持多路复用机制，但为每个此类平台启用的配置文件都必须提供**独立的**机器人令牌——同一个令牌无法被两个配置文件同时使用。如果两个配置文件使用了相同的 `(平台, 令牌)` 组合，系统会在启动时立即报错并指出这两个配置文件（详情请参见[令牌冲突防护机制](#token-conflict-safety)——相关规则并未改变，只是现在在同一个进程内部执行该约束）。
 
 #### 4. 会话键以配置文件为命名空间
 
-每个配置文件的会话都存储在 `agent:<profile>:…` 命名空间下，因此同一平台/聊天窗口中的两个配置文件的会话不会在共享的会话存储中发生冲突。**默认**配置文件会原封不动地保留原有的 `agent:main:…` 命名空间，因此基于默认配置文件的现有会话不会受到影响——无需迁移，也不会出现历史记录丢失的情况。
+每个配置文件的会话都存储在 `agent:<profile>:…` 这一命名空间下，因此同一平台/聊天中的不同配置文件不会在共享的会话存储中产生冲突。**默认**配置文件会原封不动地保留原有的 `agent:main:…` 命名空间，因此基于默认配置文件的现有会话不会受到影响——无需迁移，也不会出现历史记录丢失的问题。
 
 #### 5. 单一进程ID/锁机制及统一状态查询接口
 
-整个系统仅存在一个进程级的进程ID和锁机制（即位于默认主目录下的多路复用器）。`hermes status` 命令可显示该多路复用器及其服务的所有配置文件；而 `hermes status -p <name>` 命令则可查看指定配置文件的状态。不过每个配置文件仍会在自己的目录下生成独立的 `runtime_status.json` 文件，因此现有的针对单个配置文件的状态查询工具仍可正常使用。
+整个系统仅存在一个进程级的 PID 和锁机制（即位于默认主目录下的多路复用器）。`hermes status` 命令可显示该多路复用器及其服务的所有配置文件；而 `hermes status -p <name>` 命令则可查看指定配置文件的状态。不过每个配置文件仍会在自身的目录下生成独立的 `runtime_status.json` 文件，因此现有的针对单个配置文件的查询工具依然可以正常使用。
 
 #### 未发生变更的内容
 
-按配置文件隔离的 `.env` 凭据机制依然保留，甚至更为严格：每个配置文件中的键值只会在其自身作用域内解析，绝不会被合并到共享的环境中（这也意味着 MCP 服务器和看板工作进程等子进程只能访问其所在配置文件的机密信息）。看板功能、基于配置文件的技能/内存/SOUL 管理以及模型路由等功能，其行为方式都与使用独立网关时完全一致。
+针对每个配置文件的 `.env` 令牌隔离机制依然保留，甚至更为严格：每个配置文件中的变量仅在其自身作用域内有效，绝不会被合并到共享的环境中（这也意味着 MCP 服务器和看板工作进程等子进程也只会访问其所在配置文件的机密信息）。看板功能、按配置文件划分的技能/内存/SOUL 资源，以及模型路由机制，其表现方式都与使用独立网关时完全一致。
+
+### 将共享机器人对话路由到不同配置文件（`profile_routes`）
+
+多路复用机制会根据**凭据**（即每个配置文件对应的独立机器人令牌）或**URL 前缀**（HTTP 平台为 `/p/<profile>/`）来选择对应的配置文件。当多个社群共享**同一个**机器人令牌时——例如一个 Discord 机器人需要服务多个群组——可以通过 `gateway.profile_routes` 参数将特定的群组/频道/帖子路由到不同的配置文件中。
+
+```yaml
+gateway:
+  multiplex_profiles: true
+  profile_routes:
+    # An entire Discord server → one profile
+    - name: acme-server
+      platform: discord
+      guild_id: "1234567890"
+      profile: acme
+
+    # One channel in that server → a different profile
+    - name: acme-support
+      platform: discord
+      guild_id: "1234567890"
+      chat_id: "9876543210"
+      profile: acme-support
+
+    # A Telegram group (no guild concept — chat_id only)
+    - name: tg-group
+      platform: telegram
+      chat_id: "-1001234567890"
+      profile: tg-profile
+```
+
+路由的匹配遵循最具体优先的原则（`thread_id` > `chat_id` > `guild_id`），所有声明的字段都必须同时满足条件；以频道为键的路由还会匹配父频道下的线程或论坛帖子。无法匹配到任何路由的消息将保留于默认/活跃配置文件中。而经过路由分配的配置文件则能享有上文所述的完全独立性（包括配置、技能、内存、凭证以及会话命名空间）。该路由机制适用于所有平台适配器，而不仅限于 Discord。
+
+`profile_routes` 功能需要开启 `gateway.multiplex_profiles: true`；若关闭多路复用功能，则这些路由将被忽略。如果路由指定的配置文件在磁盘上并不存在，网关会记录包含该配置文件名称及来源的警告信息，并自动回退到默认的主配置文件。
 
 ## 同时启动、停止或重启所有网关
 
-CLI 已提供针对单个配置文件的生命周期管理命令。若需对所有配置文件执行相同操作，可将其封装在 Shell 循环中实现。请将以下代码保存到 `~/.local/bin/hermes-gateways` 文件中，并为其添加执行权限：
+CLI 已提供针对单配置文件的生命周期管理命令。若需对所有配置文件执行相应操作，可将其包裹在 Shell 循环中。请将以下代码片段保存至 `~/.local/bin/hermes-gateways` 并赋予执行权限：
 
 ```sh
 #!/bin/sh
