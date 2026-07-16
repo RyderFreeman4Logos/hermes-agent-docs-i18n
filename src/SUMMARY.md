@@ -1632,7 +1632,7 @@
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Blender Mcp]()
-      - [Blender MCP](zh/optional-skills/creative/blender-mcp/SKILL.md)
+      - [Blender MCP 技能](zh/optional-skills/creative/blender-mcp/SKILL.md)
       - [References]()
         - [Blender MCP — 常见问题与经验总结](zh/optional-skills/creative/blender-mcp/references/pitfalls.md)
     - [Concept Diagrams]()
