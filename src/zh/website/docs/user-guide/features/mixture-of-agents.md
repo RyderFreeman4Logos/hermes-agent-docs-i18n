@@ -121,7 +121,32 @@ moa:
       reference_max_tokens: 600   # concise advice → faster turns
 ```
 
-如需保持原有的无上限运行模式，可将其保留为空值（或 `0`/空白）。 
+若保持原有的无上限运行模式，可将其留空（或设置为`0`/空白）。
+
+### 每个槽位的推理强度
+
+参考槽位和聚合槽位也可设置`reasoning_effort`参数。当您希望同一模型以不同的深度参与推理，或要求聚合槽位比参考槽位进行更复杂的思考时，可使用此参数。其有效值与Hermes系统的常规推理控制选项一致：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`和`max`。
+
+```yaml
+moa:
+  presets:
+    deep_review:
+      reference_models:
+        - provider: openai-codex
+          model: gpt-5.6-sol
+          reasoning_effort: low
+        - provider: openai-codex
+          model: gpt-5.6-sol
+          reasoning_effort: xhigh
+        - provider: xai-oauth
+          model: grok-4.5
+      aggregator:
+        provider: openai-codex
+        model: gpt-5.6-sol
+        reasoning_effort: high
+```
+
+若要使用该字段对应的 Provider 或 Hermes 默认值，可省略 `reasoning_effort` 参数。  
 
 ## 终端预设管理
 
