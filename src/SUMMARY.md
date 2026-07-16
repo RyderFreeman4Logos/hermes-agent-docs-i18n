@@ -1634,6 +1634,7 @@
     - [Blender Mcp]()
       - [Blender MCP 技能](zh/optional-skills/creative/blender-mcp/SKILL.md)
       - [References]()
+        - [必备的 bpy API 参考手册](zh/optional-skills/creative/blender-mcp/references/bpy-api.md)
         - [Blender MCP — 常见问题与经验总结](zh/optional-skills/creative/blender-mcp/references/pitfalls.md)
         - [Blender 模板方案](zh/optional-skills/creative/blender-mcp/references/recipes.md)
     - [Concept Diagrams]()
