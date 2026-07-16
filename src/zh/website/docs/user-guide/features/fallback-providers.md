@@ -340,25 +340,27 @@ auxiliary:
     fallback_chain:
       - provider: openai
         model: gpt-4o-mini
+        timeout: 240            # optional — this candidate's own deadline (seconds)
 ```
 
-您无需配置 `fallback_chain` 即可实现回退机制——主代理的安全防护机制依然会正常运行。仅当您明确希望采用不同于默认的顺序时，才使用该配置。
+无需配置 `fallback_chain` 即可实现回退功能——主代理的安全防护机制始终会正常运行。仅当您明确希望采用不同于默认的顺序时，才需使用该配置。
 
-### 会触发回退的提供商配额错误
+每个 `fallback_chain` 条目还可自行指定 `timeout` 值（单位：秒）。若未设置，则回退候选项将继承任务级别的超时时间——该时间可能是为主要服务提供商调整过的。通过为每个条目指定独立的超时时间，那些处理速度较慢但更为可靠的回退方案（例如大上下文摘要工具）就能获得其实际所需的处理时间，而不会因主服务的超时限制而中断工作。
 
-Hermes 将以下错误视为与 402 信用耗尽具有同等严重程度的状况（不属于临时性速率限制）：
+### 触发回退的服务提供商配额错误
 
+Hermes 将以下错误视为相当于 402 状态码的配额耗尽问题（并非临时性速率限制）：
 - Bedrock / LiteLLM：`Too many tokens per day`、`daily limit`、`tokens per day`
 - Vertex AI / GCP：`quota exceeded`、`resource exhausted`、`RESOURCE_EXHAUSTED`
 - 通用类型：`daily quota`、`quota_exceeded`
 
-如果您的提供商对配额耗尽情况使用了不同的错误描述，而 Hermes 仍未触发回退机制，则属于缺陷——请附上完整的错误信息提交问题报告。
+如果您的服务提供商对配额耗尽问题使用了不同的错误提示，而 Hermes 仍未触发回退，则属于程序缺陷——请附上确切的错误信息提交问题报告。
 
 ---
 
 ## 上下文压缩回退机制
 
-上下文压缩功能通过 `auxiliary.compression` 配置块来指定由哪个模型及提供商负责执行摘要生成：
+上下文压缩功能通过 `auxiliary.compression` 配置块来决定由哪种模型和服务提供商负责执行摘要生成任务：
 
 ```yaml
 auxiliary:
@@ -406,4 +408,4 @@ cronjob(
 )
 ```
 
-如需了解完整的配置详情，请参阅[定时任务（Cron）](/user-guide/features/cron)文档。
+如需了解完整的配置详情，请参阅[定时任务（Cron）](/user-guide/features/cron)。
