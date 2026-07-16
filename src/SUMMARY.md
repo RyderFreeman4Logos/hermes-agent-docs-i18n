@@ -2392,6 +2392,8 @@
       - [GitHub 仓库管理](zh/skills/github/github-repo-management/SKILL.md)
       - [References]()
         - [GitHub REST API 快速参考手册](zh/skills/github/github-repo-management/references/github-api-cheatsheet.md)
+  - [Hermes Desktop Plugins]()
+    - [Hermes 桌面端插件技能](zh/skills/hermes-desktop-plugins/SKILL.md)
   - [Media]()
     - [Description](zh/skills/media/DESCRIPTION.md)
     - [Gif Search]()
