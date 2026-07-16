@@ -24,13 +24,15 @@ platforms:
   webhook:
     enabled: true
     extra:
-      host: "0.0.0.0"
       port: 8644
       secret: "generate-a-strong-secret-here"
 ```
 
-### 方案 3：环境变量
-在 `${HERMES_HOME:-~/.hermes}/.env` 文件中添加如下内容：
+省略 `host` 参数时，系统将采用双栈默认设置，同时在 IPv4 和 IPv6 地址上监听。
+仅当您有意限制绑定地址时，才需指定具体地址。
+
+### 方式三：环境变量
+在 `${HERMES_HOME:-~/.hermes}/.env` 文件中添加相应配置：
 ```bash
 WEBHOOK_ENABLED=true
 WEBHOOK_PORT=8644
