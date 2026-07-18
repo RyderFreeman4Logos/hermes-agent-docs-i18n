@@ -6,7 +6,7 @@ sidebar_position: 0
 
 # 集成功能
 
-Hermes Agent 可连接外部系统，用于实现 AI 推理、工具服务器调用、IDE 工作流集成以及程序化访问等功能。这些集成扩展了 Hermes 的功能范围及其可运行的场景。
+Hermes Agent 能够连接外部系统，以实现人工智能推理、工具服务器交互、IDE 工作流集成以及程序化访问等功能。这些集成扩展了 Hermes 的功能范围及其可运行的场景。
 
 :::提示 从这里开始
 如果您只能设置一个集成，建议先配置 [Nous Portal](/integrations/nous-portal)——通过一次 OAuth 登录即可使用 300 多种模型，以及四种工具网关功能（网页搜索、图像生成、文本转语音和浏览器自动化）。
@@ -14,19 +14,19 @@ Hermes Agent 可连接外部系统，用于实现 AI 推理、工具服务器调
 
 ## AI 提供商与路由机制
 
-Hermes 开箱即支持多种 AI 推理提供商。您可以通过 `hermes model` 命令进行交互式配置，也可直接在 `config.yaml` 文件中设置。
+Hermes 开箱即支持多种人工智能推理提供商。您可以通过 `hermes model` 命令进行交互式配置，也可以在 `config.yaml` 文件中直接设置。
 
-- **[AI 提供商](/user-guide/features/provider-routing)** — 支持 OpenRouter、Anthropic、OpenAI、Google 以及所有兼容 OpenAI 的接口。Hermes 能自动识别各提供商的视觉处理、流式处理和工具调用等能力。
-- **[提供商路由](/user-guide/features/provider-routing)** — 可精细控制由哪些底层提供商处理您的 OpenRouter 请求。您可以通过排序、白名单、黑名单以及明确的优先级设置，来优化成本、速度或服务质量。
-- **[备用提供商](/user-guide/features/fallback-providers)** — 当主模型出现错误时，系统会自动切换到备用的 LLM 提供商。该功能包括主模型故障时的备用方案，以及针对视觉处理、数据压缩和网页提取等任务的独立备用方案。
+- **[AI 提供商](/integrations/providers)** — 包括 OpenRouter、Anthropic、OpenAI、Google 以及所有兼容 OpenAI 的接口。Hermes 能自动识别各提供商所支持的功能，如视觉处理、流式处理和工具调用能力。
+- **[提供商路由](/user-guide/features/provider-routing)** — 允许您精细控制由哪些底层提供商来处理 OpenRouter 请求。通过排序、白名单、黑名单以及明确的优先级设置，您可以优化成本、速度或服务质量。
+- **[备用提供商](/user-guide/features/fallback-providers)** — 当主模型出现故障时，系统会自动切换到备用的 LLM 提供商。该功能既包括主模型的备用方案，也包括针对视觉处理、数据压缩和网页提取等独立任务的备用方案。
 
 ## 工具服务器（MCP）
 
-- **[MCP 服务器](/user-guide/features/mcp)** — 通过模型上下文协议将 Hermes 与外部工具服务器连接起来。无需编写自定义的 Hermes 工具，即可调用来自 GitHub、数据库、文件系统、浏览器环境、内部 API 等来源的工具。该功能支持标准输入输出和流式传输两种方式，同时具备按服务器筛选工具以及基于能力特征的资源/提示词注册功能。
+- **[MCP 服务器](/user-guide/features/mcp)** — 通过模型上下文协议，将 Hermes 与外部工具服务器相连。无需编写专门的 Hermes 工具，即可使用来自 GitHub、数据库、文件系统、浏览器环境、内部 API 等来源的工具。该功能支持标准输入输出传输和流式传输两种方式，同时具备按服务器筛选工具以及基于功能特性注册资源/提示词的功能。
 
 ## 网页搜索后端
 
-`web_search` 和 `web_extract` 工具支持八种不同的后端提供商，可通过 `config.yaml` 或 `hermes tools` 命令进行配置：
+`web_search` 和 `web_extract` 工具支持八种不同的后端提供商，您可以通过 `config.yaml` 或 `hermes tools` 命令进行配置：
 
 | 后端提供商 | 环境变量 | 搜索功能 | 提取功能 | 爬取功能 |
 |---------|---------|--------|---------|-------|
