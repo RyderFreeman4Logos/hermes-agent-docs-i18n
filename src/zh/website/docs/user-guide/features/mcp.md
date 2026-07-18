@@ -174,16 +174,31 @@ mcp_servers:
     auth: oauth
 ```
 
-首次连接时，Hermes 会输出授权 URL，并在可能的情况下自动打开您的浏览器，同时在本地回环端口等待 OAuth 回调。令牌会被缓存在 `~/.hermes/mcp-tokens/<server>.json` 文件中，权限设置为 0o600；后续运行时会自动重用这些令牌，直到刷新失败为止。
+首次连接时，Hermes会输出授权URL，并在可能的情况下自动打开您的浏览器，同时在本地回环端口等待OAuth回调。令牌会被缓存于`~/.hermes/mcp-tokens/<server>.json`文件中，权限设置为0o600；后续运行时会自动重用这些令牌，直到刷新失败为止。
 
-**远程/无头主机场景。** 当 Hermes 在与浏览器不同的机器上运行时，回环回调无法连接到您的笔记本电脑。此时可通过以下两种方式完成认证流程：
+**远程/无界面主机环境。** 当Hermes在不同于浏览器的机器上运行时，回环回调无法连接到您的笔记本电脑。此时可通过以下两种方式完成授权流程：
 
-- **粘贴回传（无需额外设置）：** 在交互式终端中，Hermes 会在授权 URL 旁显示“或在此处粘贴重定向 URL…”的提示。在浏览器中打开该 URL 并完成授权，随后复制浏览器最终跳转到的完整 URL（重定向页面会显示连接错误，这是正常现象），并将其粘贴到终端提示处即可。仅包含 `?code=…&state=…` 的查询字符串也同样适用。
-- **SSH 端口转发：** 在另一个终端中执行命令 `ssh -N -L <port>:127.0.0.1:<port> user@host`，之后让重定向流程正常进行。
+- **直接粘贴（无需额外设置）：** 在交互式终端中，Hermes会在授权URL旁显示“或在此处粘贴重定向URL……”的提示。打开该URL进行授权，复制浏览器最终跳转到的完整地址（由于会出现连接错误，这是正常现象），然后将其粘贴到提示框中。仅包含`?code=…&state=…`参数的查询字符串也同样适用。
+- **SSH端口转发：** 在另一个终端中执行命令`ssh -N -L <port>:127.0.0.1:<port> user@host`，之后即可让正常的重定向流程继续进行。
+- **代理回调（`redirect_uri`）：** 如果有公共HTTPS端点负责将请求转发到目标主机（例如Tailscale Funnel或指向回调端口的反向代理），只需设置`oauth.redirect_uri`，浏览器便会自动将用户重定向至Hermes，无需任何隧道连接或手动粘贴操作。
 
-如需完整的操作指南，包括无需 DCR 的服务器（如 Slack）、预注册的 `client_id`/`client_secret` 设置、作用域自定义，以及通过 `hermes mcp login <server>` 进行重新认证的方法，请参阅 [通过 SSH/远程主机进行 OAuth 认证](../../guides/oauth-over-ssh.md#mcp-servers) 文档。
+```yaml
+mcp_servers:
+  myserver:
+    url: "https://mcp.example.com/mcp"
+    auth: oauth
+    oauth:
+      redirect_port: 8765                                # fixed port for the proxy to target
+      redirect_uri: "https://oauth.example.ts.net/callback"
+```
 
-**需要注意的陷阱——不支持自动注册的提供商（如 Google Drive、Atlassian）。** 某些服务器会拒绝 `auth: oauth` 所依赖的动态客户端注册流程（RFC 7591）——Google 官方的 Drive 服务器（`https://drivemcp.googleapis.com/mcp/v1`）会返回 `400 Bad Request` 错误，因此不会创建 OAuth 客户端，也无法获取令牌。其表现较为隐蔽：这些服务器即便在未进行认证的情况下也会返回 `tools/list` 的响应，因此 `hermes mcp login` 虽然能列出工具并看似成功，但后续的任何实际工具调用都会超时。目前 `hermes mcp login` 已能检测到这种情况（它会检查磁盘上是否真的存在令牌），并提示用户自行配置 OAuth 客户端。您可以在对应提供商的控制台创建客户端，然后将其添加到配置中即可。
+对于完全无界面的网关（即仅作为消息机器人，完全没有交互式终端），可选的 [`mcp-oauth-remote-gateway` 技能](../skills/optional/mcp/mcp-mcp-oauth-remote-gateway.md)会引导智能体手动完成相关流程，并在Hermes要求的位置填写令牌。
+
+**注意事项——WAF会拒绝`127.0.0.1`格式的重定向URI。**部分服务提供商在其授权服务器前部署了WAF，这类WAF会拦截查询字符串中包含`127.0.0.1`的任何授权请求（Reclaim.ai的AWS API Gateway就是典型例子——所有尝试在到达OAuth应用之前都会返回`{"message":"Forbidden"}`）。此时可设置`oauth.redirect_host: localhost`，改用`http://localhost:<port>/callback`作为重定向地址；不过无论哪种方式，回调监听器仍然会绑定`127.0.0.1`地址。
+
+如需完整的操作指南，包括无需DCR的服务器（如Slack）的使用方法、预注册的`client_id`/`client_secret`设置、作用域自定义，以及通过`hermes mcp login <server>`进行重新授权的操作，请参阅[通过SSH/远程主机实现OAuth](../../guides/oauth-over-ssh.md#mcp-servers)。
+
+**注意事项——不支持自动注册的服务提供商（如Google Drive、Atlassian）。**某些服务器会拒绝`auth: oauth`机制所依赖的动态客户端注册流程（RFC 7591）——Google官方的Drive服务器（`https://drivemcp.googleapis.com/mcp/v1`）会返回`400 Bad Request`错误，因此既不会创建OAuth客户端，也无法获取令牌。其症状较为隐蔽：这些服务器即便在没有认证的情况下也会返回`tools/list`响应，因此`hermes mcp login`似乎能正常列出工具，但后续的任何实际工具调用都会超时。目前`hermes mcp login`已能检测到这种情况（它会检查是否有令牌真正被保存到磁盘），并提示用户自行创建OAuth客户端。您可以在对应服务提供商的控制台创建客户端，然后将其添加到配置中：
 
 ```yaml
 mcp_servers:
