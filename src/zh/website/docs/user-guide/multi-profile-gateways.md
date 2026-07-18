@@ -105,35 +105,38 @@ POST http://host:8644/webhooks/<route>
 POST http://host:8644/p/coder/webhooks/<route>
 ```
 
-前缀中存在未知或未配置的配置文件时，系统会返回 `404` 错误。由于共享的监听器已以此方式为所有配置文件提供服务，因此**辅助配置文件本身绝不能启用端口绑定功能**——否则将构成配置错误，导致网关无法启动，并会同时显示该配置文件名称与相关平台名称。
+前缀中存在未知或未配置的配置文件时，系统会返回 `404` 错误。由于共享的监听器已通过这种方式为所有配置文件提供服务，因此**辅助配置文件本身不得启用端口绑定功能**——若如此操作将导致配置错误，使得整个辅助配置文件被跳过，而默认配置文件及其他正常运行的配置文件仍可继续工作。该警告会同时指出被跳过的配置文件以及所有存在冲突的端口绑定平台。
 
 ```
-Profile 'coder' enables the port-binding platform 'webhook', but
-gateway.multiplex_profiles is on. ... Remove platforms.webhook from profile
-'coder's config.yaml (configure it only on the default profile).
+Skipping secondary profile 'coder' due to port-binding config error: Profile
+'coder' enables port-binding platform(s) webhook, but gateway.multiplex_profiles
+is on. ... Remove these platform entries from profile 'coder's config.yaml or
+configure them only on the default profile.
 ```
 
-本规则所覆盖的端口绑定型平台包括：`webhook`、`api_server`、`msgraph_webhook`、`feishu`、`wecom_callback`、`bluebubbles`、`sms`。只需在**默认配置文件**中设置这些平台的参数即可；每个配置文件均可通过其 `/p/<profile>/` 前缀进行访问。
+本规则所涵盖的端口绑定平台包括：`webhook`、`api_server`、`msgraph_webhook`、`feishu`、`wecom_callback`、`bluebubbles`、`sms`、`whatsapp_cloud`、`line`。这些平台的配置**仅可在默认配置文件中**进行；每个配置文件均可通过其 `/p/<profile>/` 前缀访问。
+
+仅有共享监听器冲突会导致对应配置文件被跳过，而安全配置错误仍会引发严重后果：例如，若某个“开放型”自定策略平台未设置 `GATEWAY_ALLOW_ALL_USERS` 或相应的平台专用全允许选项，仍会阻止网关启动，而不会默许使用该不安全的配置文件。
 
 #### 3. 每个凭据对应的平台仍需为每个配置文件配备独立令牌
 
-轮询/连接型平台（如 Telegram、Discord、Slack、Matrix、Signal 等）支持多路复用机制，但为每个此类平台启用的配置文件都必须提供**独立的**机器人令牌——同一个令牌无法被两个配置文件同时使用。如果两个配置文件使用了相同的 `(平台, 令牌)` 组合，系统会在启动时立即报错并指出这两个配置文件（详情请参见[令牌冲突防护机制](#token-conflict-safety)——相关规则并未改变，只是现在在同一个进程内部执行该约束）。
+轮询/连接型平台（如 Telegram、Discord、Slack、Matrix、Signal 等）采用多路复用机制运行良好，但每个启用此类功能的配置文件都必须提供**独立的**机器人令牌——同一令牌无法同时被两个配置文件使用。如果两个配置文件配置了相同的 `(platform, token)` 组合，系统会在启动时立即报错并指出这两个配置文件（详见[令牌冲突处理机制](#token-conflict-safety)——规则本身并未改变，只是现在在同一个进程内执行该规则）。
 
 #### 4. 会话键以配置文件为命名空间
 
-每个配置文件的会话都存储在 `agent:<profile>:…` 这一命名空间下，因此同一平台/聊天中的不同配置文件不会在共享的会话存储中产生冲突。**默认**配置文件会原封不动地保留原有的 `agent:main:…` 命名空间，因此基于默认配置文件的现有会话不会受到影响——无需迁移，也不会出现历史记录丢失的问题。
+每个配置文件的会话都存储在 `agent:<profile>:…` 命名空间下，因此同一平台/聊天中的不同配置文件不会在共享的会话存储中发生冲突。**默认**配置文件会原封不动地保留原有的 `agent:main:…` 命名空间，因此基于默认配置文件的现有会话不会受到影响——无需迁移，也不会留下孤立的历史记录。
 
-#### 5. 单一进程ID/锁机制及统一状态查询接口
+#### 5. 单一进程 ID/锁机制及统一状态显示
 
-整个系统仅存在一个进程级的 PID 和锁机制（即位于默认主目录下的多路复用器）。`hermes status` 命令可显示该多路复用器及其服务的所有配置文件；而 `hermes status -p <name>` 命令则可查看指定配置文件的状态。不过每个配置文件仍会在自身的目录下生成独立的 `runtime_status.json` 文件，因此现有的针对单个配置文件的查询工具依然可以正常使用。
+整个系统仅存在一个进程级的 PID 和锁机制（即位于默认主目录下的多路复用器）。`hermes status` 命令可显示该多路复用器及其服务的所有配置文件；而 `hermes status -p <name>` 命令则可查看指定配置文件的状态。不过每个配置文件仍会在自身目录下生成独立的 `runtime_status.json` 文件，因此现有的针对单个配置文件的查询工具仍可正常使用。
 
 #### 未发生变更的内容
 
-针对每个配置文件的 `.env` 令牌隔离机制依然保留，甚至更为严格：每个配置文件中的变量仅在其自身作用域内有效，绝不会被合并到共享的环境中（这也意味着 MCP 服务器和看板工作进程等子进程也只会访问其所在配置文件的机密信息）。看板功能、按配置文件划分的技能/内存/SOUL 资源，以及模型路由机制，其表现方式都与使用独立网关时完全一致。
+各配置文件间的 `.env` 环境变量隔离机制依然保留，甚至更为严格：每个配置文件中的环境变量仅在其自身作用域内解析，绝不会被合并到共享环境中（这也意味着 MCP 服务器和看板工作进程等子进程也只会访问其所在配置文件的机密信息）。看板功能、按配置文件划分的技能/内存/SOUL 资源，以及模型路由机制，其表现方式都与使用独立网关时完全一致。
 
-### 将共享机器人对话路由到不同配置文件（`profile_routes`）
+### 将共享机器人聊天路由到不同配置文件（`profile_routes`）
 
-多路复用机制会根据**凭据**（即每个配置文件对应的独立机器人令牌）或**URL 前缀**（HTTP 平台为 `/p/<profile>/`）来选择对应的配置文件。当多个社群共享**同一个**机器人令牌时——例如一个 Discord 机器人需要服务多个群组——可以通过 `gateway.profile_routes` 参数将特定的群组/频道/帖子路由到不同的配置文件中。
+多路复用机制会根据**凭据**（即每个配置文件对应的独立机器人令牌）或**URL 前缀**（HTTP 平台为 `/p/<profile>/`）来选择对应的配置文件。当多个社群共享**同一个**机器人令牌时——例如一个 Discord 机器人同时服务于多个群组——可通过 `gateway.profile_routes` 参数将特定的群组/频道/帖子路由到不同的配置文件中：
 
 ```yaml
 gateway:
