@@ -32,13 +32,17 @@ description: "Configure Hermes Agent — config.yaml, providers, models, API key
 ```bash
 hermes config              # View current configuration
 hermes config edit         # Open config.yaml in your editor
+hermes config get KEY      # Print a resolved value
 hermes config set KEY VAL  # Set a specific value
+hermes config unset KEY    # Remove a user-set value
 hermes config check        # Check for missing options (after updates)
 hermes config migrate      # Interactively add missing options
 
 # Examples:
+hermes config get model
 hermes config set model anthropic/claude-opus-4
 hermes config set terminal.backend docker
+hermes config unset terminal.backend
 hermes config set OPENROUTER_API_KEY sk-or-...  # Saves to .env
 ```
 
@@ -95,18 +99,20 @@ delegation:
 
 ```yaml
 updates:
-  pre_update_backup: false       # Create a full HERMES_HOME zip before every update
-  backup_keep: 5                 # Keep this many pre-update backup zips
+  pre_update_backup: quick       # quick (state snapshot, default) | full (snapshot + HERMES_HOME zip) | off
+  backup_keep: 5                 # Keep this many full pre-update backup zips
   non_interactive_local_changes: stash  # stash | discard
 ```
 
-在通过 Git 安装的情况下，Hermes 会在检出更新分支或拉取代码之前，自动将已跟踪的修改文件以及未跟踪的文件暂存起来。在恢复这些暂存内容之前，交互式终端会先给出确认提示。而非交互式更新方式（如桌面/聊天应用、网关，或使用 `--yes` 参数）则会使用 `updates.non_interactive_local_changes` 参数：若选择 `stash`，则会在成功拉取代码后恢复本地的代码修改；若选择 `discard`，则会在成功拉取后直接丢弃此次更新所产生的暂存内容。仅限于那些本地代码修改根本无需保留的托管式安装环境中才应使用 `discard`。
+`pre_update_backup` 是唯一的预更新安全控制选项：`quick`（默认值）会将关键状态文件（配对数据、定时任务、配置文件、认证信息；超过 1 GiB 的文件将被跳过）快照保存到 `state-snapshots/` 目录中；`full` 模式除了执行快速快照外，还会将整个 `HERMES_HOME` 目录压缩并存入 `backups/` 目录，对于目录规模较大的情况，该模式可能需要更长的处理时间；`off` 则会关闭这两种功能。系统也会兼容旧版本的布尔值设置（`true` 对应 `full`，`false` 对应 `off`）。
 
-在执行暂存操作之前，Hermes 还会恢复因 npm install/build 操作而产生的已跟踪的 `package-lock.json` 差异文件。在进行更新之前，请先将有意进行的锁文件修改提交或手动暂存。
+对于通过 git 安装的版本，Hermes 会在检出更新分支或拉取代码之前自动暂存已修改的跟踪文件以及未跟踪文件。在交互式终端更新过程中，系统会先提示用户确认是否恢复这些暂存文件。而非交互式更新方式（如桌面/聊天应用、网关，或使用 `--yes` 参数）则会采用 `updates.non_interactive_local_changes` 设置：`stash` 模式会在拉取成功后恢复本地对源代码的修改，而 `discard` 模式则会在拉取成功后直接丢弃更新过程中产生的暂存文件。仅在没有保留本地修改需求的托管安装环境中才建议使用 `discard` 模式。
+
+在执行暂存操作之前，Hermes 还会恢复因 npm install/build 操作而产生的已跟踪的 `package-lock.json` 差异文件。在进行更新之前，请先将有意修改的锁文件内容提交或手动暂存。
 
 ## 终端后端配置
 
-Hermes 支持六种终端后端。每种后端都决定了代理的 Shell 命令实际在何处执行——可以是您的本地机器、Docker 容器、通过 SSH 连接的远程服务器、Modal 云沙箱（直接连接或通过 Nous 管理的网关）、Daytona 工作空间，或是 Singularity/Apptainer 容器。
+Hermes 支持六种终端后端类型。每种后端都决定了代理程序的 shell 命令实际在何处执行——可以是本地机器、Docker 容器、通过 SSH 连接的远程服务器、Modal 云沙箱（直接连接或通过 Nous 管理的网关）、Daytona 工作空间，或是 Singularity/Apptainer 容器。
 
 ```yaml
 terminal:
@@ -921,14 +927,16 @@ $ hermes model
 [ ] profile_describer    currently: auto / main model
 ```
 
-选择任务后，接着选定提供方（OAuth流程会自动打开浏览器；使用API密钥的提供方则会弹出提示），最后挑选模型。这些设置会同步保存到`config.yaml`文件中的`auxiliary.<task>.*`路径下。其操作逻辑与选择主模型的方式相同——无需学习额外的语法。
+选择任务后，接着选定提供方（OAuth 流式会自动打开浏览器；使用 API 密钥的提供方则会弹出提示），最后挑选模型。这些设置将会保存到 `config.yaml` 文件中的 `auxiliary.<task>.*` 部分。其操作流程与选择主模型的方式相同——无需学习额外的语法。
+
+如果您不希望 Hermes 在首次交互后自动生成标题，可设置 `auxiliary.title_generation.enabled: false`。仍可通过 `/title` 命令或使用 “hermes sessions rename” 功能手动设置标题。
 
 ### 视频教程
 
 <div style={{position: 'relative', width: '100%', aspectRatio: '16 / 9', marginBottom: '1.5rem'}}>
   <iframe
     src="https://www.youtube.com/embed/NoF-YajElIM"
-    title="Hermes Agent — 辅助模型使用教程"
+    title="Hermes Agent — 辅助模型教程"
     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0}}
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowFullScreen
@@ -937,23 +945,23 @@ $ hermes model
 
 ### 通用的配置模式
 
-Hermes中的所有模型槽位——无论是辅助任务、压缩处理还是备用模型——都采用相同的三个配置项：
+Hermes 中的所有模型槽位——无论是辅助任务、压缩处理还是备用模型——都使用相同的三个配置项：
 
-| 键值 | 功能说明 | 默认值 |
-|-----|-----------|---------|
+| 键名 | 功能 | 默认值 |
+|-----|-------------|---------|
 | `provider` | 用于身份验证和请求路由的提供方 | `"auto"` |
 | `model` | 需要调用的模型 | 对应提供方的默认模型 |
-| `base_url` | 自定义的兼容OpenAI的接口地址（可覆盖提供方设置的地址） | 未设置 |
+| `base_url` | 自定义的 OpenAI 兼容接口地址（可覆盖提供方设置的地址） | 未设置 |
 
-辅助任务块还会额外包含一个`reasoning_effort`配置项：
+辅助任务块还会额外包含一个 `reasoning_effort` 配置项：
 
-| 键值 | 功能说明 | 默认值 |
-|-----|-----------|---------|
-| `reasoning_effort` | 控制该任务对应的LLM调用时的思考强度：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`、`ultra` | 未设置（采用提供方的默认值） |
+| 键名 | 功能 | 默认值 |
+|-----|-------------|---------|
+| `reasoning_effort` | 控制该任务对应的 LLM 调用的思考强度：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`、`ultra` | 未设置（采用提供方的默认值） |
 
-这一配置相当于全局`agent.reasoning_effort`的任务级对应版本：当你的主模型是计算成本较高的推理模型时，可通过将压缩处理的思考强度设置为`low`，或将视觉处理的相关参数设为`none`，从而降低次要任务的延迟和成本，同时不会影响主对话功能。该机制适用于所有辅助任务块（如`vision`、`web_extract`、`compression`、`title_generation`、`curator`、`background_review`等），以及三种辅助数据格式（对话补全、Codex响应、Anthropic消息）。若在同一任务中同时设置了`extra_body.reasoning`，其优先级将高于上述简写配置。
+该配置相当于全局 `agent.reasoning_effort` 的任务级对应版本：当您的主模型是计算成本较高的推理模型时，可通过将压缩处理的思考强度设置为 `low`，或将视觉处理的相关设置设为 `none`，从而降低次要任务的延迟与成本，同时不会影响主对话的运行方式。此功能适用于所有辅助任务块（如 `vision`、`web_extract`、`compression`、`title_generation`、`curator`、`background_review` 等），也支持三种辅助数据格式（对话补全、Codex 响应、Anthropic 消息）。若在同一任务中同时设置了 `extra_body.reasoning`，其优先级将高于上述简写配置。
 
-Mixture-of-Agents是唯一的例外：在这种架构下，混合智能体的推理深度是在MoA预设文件中的每个槽位单独配置的（即`moa.presets.<name>.reference_models[].reasoning_effort` / `aggregator.reasoning_effort`），而非在`moa_reference`/`moa_aggregator`辅助块中设置——详情请参阅[混合智能体功能](/user-guide/features/mixture-of-agents)。
+Mixture-of-Agents 是唯一的例外：在这种架构下，混合智能体的推理深度是在 MoA 预设文件中的每个槽位单独配置的（即 `moa.presets.<name>.reference_models[].reasoning_effort` / `aggregator.reasoning_effort`），而非在 `moa_reference`/`moa_aggregator` 辅助块中设置——详情请参阅 [混合智能体](/user-guide/features/mixture-of-agents) 文档。
 
 ```yaml
 auxiliary:
@@ -1035,6 +1043,7 @@ auxiliary:
   # Auto-generated session titles. Empty language follows the conversation;
   # set e.g. "English" or "Japanese" to pin titles to one language.
   title_generation:
+    enabled: true              # set false to disable auto-title generation
     provider: "auto"
     model: ""
     base_url: ""
@@ -1428,6 +1437,7 @@ display:
   platforms: {}           # Per-platform display overrides (see below)
   tool_progress_overrides: {}  # DEPRECATED — use display.platforms instead
   interim_assistant_messages: true  # Gateway: send natural mid-turn assistant updates as separate messages
+  show_commentary: true   # Codex models: deliver commentary-channel progress narration as visible mid-turn updates
   skin: default           # Built-in or custom CLI skin (see user-guide/features/skins)
   personality: "kawaii"  # Legacy cosmetic field still surfaced in some summaries
   compact: false          # Compact output mode (less whitespace)
@@ -1538,11 +1548,13 @@ display:
       tool_progress: 'off'    # quiet in shared Slack workspace
 ```
 
-若未进行自定义设置，各平台将自动采用全局的 `tool_progress` 值。有效的平台标识符包括：`telegram`、`discord`、`slack`、`signal`、`whatsapp`、`matrix`、`mattermost`、`email`、`sms`、`homeassistant`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot`。为保持向后兼容性，旧的 `display.tool_progress_overrides` 键仍会被加载，但该键现已过时，首次加载时会迁移至 `display.platforms` 中。
+若未进行自定义设置，各平台将自动采用全局的 `tool_progress` 值。有效的平台标识包括：`telegram`、`discord`、`slack`、`signal`、`whatsapp`、`matrix`、`mattermost`、`email`、`sms`、`homeassistant`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot`。为保持向后兼容性，旧的 `display.tool_progress_overrides` 键仍会被加载，但它已过时，首次启动时会迁移至 `display.platforms` 中。
 
-Signal 被列为有效的平台标识符，是因为其允许针对不同平台单独保存设置；不过目前的 Signal 适配器无法编辑已发送的消息，也无法显示工具进度提示框。因此建议将 Signal 的 `tool_progress` 设置为 `off`；若需实时查看每个工具调用的执行情况，请使用命令行工具或具备编辑功能的消息平台。
+Signal 被列为有效的平台标识，是因为其允许针对不同平台单独保存设置；不过目前的 Signal 适配器无法编辑已发送的消息，也无法显示工具进度提示框。因此建议将 Signal 的 `tool_progress` 设置为 `off`；若需实时查看每个工具调用的执行情况，请使用命令行工具或具备编辑功能的消息平台。
 
-`interim_assistant_messages` 功能仅适用于网关。启用该功能后，Hermes 会将处理完成的对话中途助手更新内容以独立聊天消息的形式发送出去。此功能与 `tool_progress` 无关，也不需要网关进行流式传输。
+`interim_assistant_messages` 功能仅适用于网关。启用该功能后，Hermes 会将已完成的中途助手更新以独立聊天消息的形式发送出去。此功能与 `tool_progress` 无关，也不需要网关进行流式传输。
+
+`show_commentary`（默认值为 `true`）用于控制 Codex 响应模型所生成的注释通道——即这些模型在展示私有推理过程的同时会附上的详细进度描述。启用该功能后，每条完整的注释消息都会作为可见的中途更新发送出来（在网关端这也需要启用 `interim_assistant_messages`）。如果觉得多余的描述干扰了使用体验，可将其设置为 `false`：此时注释将转而通过推理通道显示，且仅当 `show_reasoning` 被启用时才会呈现。
 
 ## 隐私保护
 
