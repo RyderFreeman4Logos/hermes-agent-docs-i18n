@@ -71,45 +71,45 @@ hermes portal info        # inspect login + routing at any time
 
 尚未订阅？请访问 [portal.nousresearch.com/manage-subscription](https://portal.nousresearch.com/manage-subscription) 进行订阅。
 
-**详细信息请参阅：** 专门的 [Nous Portal集成页面](/integrations/nous-portal)（包含订阅内容、模型目录及故障排除指南），以及分步指导的 [使用Nous Portal运行Hermes Agent指南](/guides/run-hermes-with-nous-portal)。
+**详细信息请参阅：** 专门的 [Nous Portal集成页面](/integrations/nous-portal)（涵盖订阅内容、模型目录及故障排除），以及分步指导的 [使用Nous Portal运行Hermes Agent指南](/guides/run-hermes-with-nous-portal)。
 
-**客户端标识。** Hermes Agent发出的所有Portal请求都会自动携带`client=hermes-client-v<版本号>`标签（例如`client=hermes-client-v0.13.0`），该版本号与您安装的版本保持一致。此标签会出现在所有Portal交互路径中——包括主聊天循环、辅助调用、压缩摘要生成以及网页提取功能——从而帮助Portal端的监控系统区分Hermes的请求与其他客户端。无需任何配置，当您执行`hermes update`命令时，该标签会自动更新。
+**客户端标识。** Hermes Agent发送至Portal的每个请求都会携带一个`client=hermes-client-v<版本号>`标签（例如`client=hermes-client-v0.13.0`），该版本号会自动与您安装的版本对应。此标签会出现在所有Portal交互路径中——包括主聊天循环、辅助调用、压缩摘要生成以及网页提取功能——从而帮助Portal端的监控系统区分Hermes的请求与其他客户端。无需任何配置，当您执行`hermes update`命令时，该标签会自动更新。
 
-**JWT认证（自动处理）。** Hermes优先使用带作用域的`inference:invoke`类型JWT处理Portal请求，若使用旧式的不可见会话密钥路径，则作为备用方案。无需额外配置——凭据由OAuth流程统一管理，并会自动轮换。已被撤销的刷新令牌会被隔离，以防止重复使用导致的循环问题。
+**JWT认证（自动处理）。** Hermes优先使用带有限定范围的`inference:invoke`类型JWT处理Portal请求，若使用旧式的不可见会话密钥路径，则作为备用方案。无需额外配置——凭据由OAuth流程管理，并会自动透明地轮换。已被撤销的刷新令牌会被隔离，以防止重复使用导致的循环问题。
 
 :::info Codex说明
-OpenAI Codex提供端通过设备码进行认证（需打开指定网址并输入验证码）。Hermes会将生成的凭据存储在`~/.hermes/auth.json`路径下的专属认证存储中；如果存在来自`~/.codex/auth.json`的现有Codex CLI凭据，Hermes也会自动导入。无需安装Codex CLI。
+OpenAI Codex提供方通过设备码进行认证（需打开指定网址并输入代码）。Hermes会将生成的凭据存储在`~/.hermes/auth.json`中的专用认证存储区中；如果存在来自`~/.codex/auth.json`的现有Codex CLI凭据，它也会自动导入。无需安装Codex CLI。
 
-如果令牌刷新过程中出现终端错误（如HTTP 4xx错误、`invalid_grant`、授权已被撤销等），Hermes会将该刷新令牌标记为无效，并停止重复使用它，避免出现大量重复的认证失败。此时后续请求会显示需要重新输入凭据的提示。若需重新通过设备码登录，可执行`hermes auth add codex-oauth`（或通过`hermes model` → OpenAI Codex选项操作）；一旦下次请求成功，该被隔离的令牌就会被清除。
+如果令牌刷新过程中出现终端错误（如HTTP 4xx错误、`invalid_grant`、授权已被撤销等），Hermes会将该刷新令牌标记为无效，并停止重复使用它，避免出现大量相同的认证失败情况。此时下一个请求会显示需要重新输入凭据的提示。要重新进行设备码登录，请执行`hermes auth add openai-codex`（或通过`hermes model` → OpenAI Codex）操作；一旦下次交互成功，该被隔离的令牌就会被清除。
 :::
 
 :::warning
-即便使用Nous Portal、Codex或自定义端点，某些工具（如视觉处理、网页摘要生成、MoA功能）仍会调用独立的“辅助”模型。默认情况下（`auxiliary.*.provider: "auto"`），Hermes会将这些任务路由到您在`hermes model`中选择的**主聊天模型**。您也可以为每个任务单独指定更便宜或更快速的模型（例如OpenRouter上的Gemini Flash模型）——详情请参阅[辅助模型](/user-guide/configuration#auxiliary-models)。
+即便使用Nous Portal、Codex或自定义端点，某些工具（如视觉处理、网页摘要生成、MoA功能）仍会调用独立的“辅助”模型。默认情况下（`auxiliary.*.provider: "auto"`），Hermes会将这些任务路由到您在`hermes model`中选择的**主聊天模型**。您可以单独为每个任务指定更便宜或更快速的模型（例如OpenRouter上的Gemini Flash）——详情请参阅[辅助模型](/user-guide/configuration#auxiliary-models)。
 :::
 
 :::tip Nous工具网关
-已订阅付费版Nous Portal的用户还可以使用**[工具网关](/user-guide/features/tool-gateway)**——该功能可让您通过订阅服务使用网页搜索、图像生成、文本转语音以及浏览器自动化等功能，无需额外API密钥。在首次安装时，执行`hermes setup --portal`命令即可一次性完成登录、设置Nous作为服务提供方并启用工具网关。现有用户则可通过`hermes model`选项或针对特定工具通过`hermes tools`选项来启用该功能。随时可通过`hermes portal info`命令查看当前的路由情况。
+已订阅付费Nous Portal的用户还可以使用**[工具网关](/user-guide/features/tool-gateway)**——该功能可让您通过订阅服务获取网页搜索、图像生成、文本转语音以及浏览器自动化等功能，无需额外API密钥。在首次安装时，执行`hermes setup --portal`命令即可一次性完成登录、设置Nous作为服务提供方并启用该网关。现有用户则可通过`hermes model`或针对特定工具使用`hermes tools`来启用该功能。随时可以通过`hermes portal info`查看请求的路由情况。
 :::
 
-### 两种用于模型管理的命令
+### 用于模型管理的两个命令
 
-Hermes提供了**两种**模型管理命令，各自具有不同的用途：
+Hermes提供了**两个**模型管理命令，各自具有不同的功能：
 
 | 命令 | 执行位置 | 功能说明 |
-|---------|-----------|----------|
-| **`hermes model`** | 终端终端（在任何会话之外） | 完整的设置向导——用于添加服务提供方、执行OAuth认证、输入API密钥以及配置接口地址 |
-| **`/model`** | Hermes聊天会话内部 | 快速在**已配置好的**服务提供方和模型之间切换 |
+|---------|----------|----------|
+| **`hermes model`** | 终端（在任何会话之外） | 完整的设置向导——用于添加服务提供方、执行OAuth认证、输入API密钥以及配置端点 |
+| **`/model`** | Hermes聊天会话内部 | 快速在**已配置好**的服务提供方和模型之间切换 |
 
-如果您想切换到尚未配置的服务提供方（例如目前仅配置了OpenRouter，但希望使用Anthropic的模型），则需要使用`hermes model`命令，而非`/model`。请先退出当前会话（使用`Ctrl+C`或`/quit`命令），然后执行`hermes model`完成服务提供方的设置，之后再启动新的会话。
+如果您试图切换到尚未设置的提供方（例如目前仅配置了OpenRouter，但想使用Anthropic），则需要使用`hermes model`命令，而非`/model`。请先退出当前会话（使用`Ctrl+C`或`/quit`），然后执行`hermes model`完成提供方设置，之后再启动新会话。
 
 ### Anthropic（原生支持）
 
-可直接通过Anthropic API使用Claude模型——无需通过OpenRouter代理。该方式支持三种认证方法：
+可直接通过Anthropic API使用Claude模型——无需OpenRouter代理。该方式支持三种认证方法：
 
 :::caution 需要Claude Max的“额外使用额度”
-当您通过`hermes model` → Anthropic OAuth方式认证（或执行`hermes auth add anthropic --type oauth`命令）后，Hermes会以Claude Code的身份向您的Anthropic账户发起请求。**此功能仅适用于使用了Claude Max套餐且购买了额外使用额度的用户。** Claude Max基础套餐所包含的默认使用额度不会被Hermes消耗，只有您额外购买的额度才会被使用。Claude Pro订阅用户无法使用此方式。
+当您通过`hermes model` → Anthropic OAuth方式认证（或执行`hermes auth add anthropic --type oauth`命令）后，Hermes会将请求作为Claude Code请求发送至您的Anthropic账户。**此功能仅适用于使用了Claude Max套餐且购买了额外使用额度的用户。** Claude Max基础套餐的默认使用额度（即Claude Code默认包含的用量）不会被Hermes消耗，只有您额外购买的额度才会被使用。Claude Pro订阅用户无法使用此方式。
 
-如果您没有Claude Max套餐及额外额度，可使用`ANTHROPIC_API_KEY`密钥——此时请求将按照该密钥对应组织的标准API定价进行计费（价格与Claude订阅计划无关）。
+如果您没有Claude Max套餐及额外额度，则需使用`ANTHROPIC_API_KEY`——此时请求将按照该密钥所属组织的标准API定价（与Claude订阅计划无关）按令牌数量计费。
 :::
 
 ```bash
@@ -838,36 +838,49 @@ hermes model
 # If LM Studio server auth is enabled, enter LM_API_KEY when prompted
 ```
 
-Hermes 会自动加载上下文长度为 64K 的 LM Studio 模型。
+默认情况下，Hermes会要求LM Studio在首次请求之前，先加载上下文长度为64K的选定模型。
 
-若要在 LM Studio 中更改上下文长度：
+要在LM Studio中更改上下文长度：
 
 1. 点击模型选择器旁边的齿轮图标；
-2. 将“上下文长度”设置为至少 64000，以确保流畅的使用体验；
-3. 重新加载模型，使更改生效；
-4. 如果您的设备无法支持 64000 的上下文长度，可考虑使用上下文长度较大但规模较小的模型。
+2. 为获得更流畅的体验，将“上下文长度”设置为至少64000；
+3. 重新加载模型以使更改生效；
+4. 如果您的设备无法支持64000的上下文长度，建议选择上下文长度较大的较小模型。
 
-或者，您也可以通过 CLI 命令实现：`lms load model-name --context-length 64000`
+或者，您也可以通过CLI命令操作：`lms load model-name --context-length 64000`
 
-您还可以使用 CLI 来预估模型是否适用该配置：`lms load model-name --context-length 64000 --estimate-only`
+您还可以使用CLI命令来预估模型是否适用：`lms load model-name --context-length 64000 --estimate-only`
 
-如需为每个模型设置永久默认值：请进入“我的模型”选项卡 → 选择对应模型后的齿轮图标 → 设置上下文长度。
+如需为每个模型设置永久性默认值：请进入“我的模型”选项卡，点击对应模型的齿轮图标，然后设置上下文长度。
 :::
 
-**工具调用功能：** 自 LM Studio 0.3.6 版本起支持。经过原生工具调用训练的模型（如 Qwen 2.5、Llama 3.x、Mistral、Hermes）会自动被识别，并显示工具标识符；其他模型则使用通用替代方案，其可靠性可能较低。
+如果您使用了LM Studio的即时加载/自动释放功能，并希望让LM Studio在常规聊天请求中自动管理模型的加载与释放，那么可以跳过Hermes要求的预先加载步骤：
+
+```bash
+hermes config set model.lmstudio_load_mode jit
+```
+
+可通过以下命令将其恢复为默认的显式预加载行为：
+
+```bash
+hermes config set model.lmstudio_load_mode explicit
+```
+
+**工具调用功能：** 自 LM Studio 0.3.6 版本起支持。经过原生工具调用训练的模型（如 Qwen 2.5、Llama 3.x、Mistral、Hermes）会自动被识别，并显示对应的工具标识徽章；其他模型则会使用通用的备用方案，其可靠性可能较低。
 
 ---
 
 ### WSL2 网络设置（Windows 用户）
 
-由于 Hermes Agent 需要 Unix 环境，Windows 用户需在 WSL2 中运行该代理。如果您的模型服务器（如 Ollama、LM Studio 等）运行在**Windows 主机**上，您就需要搭建网络桥接——WSL2 使用带有独立子网的虚拟网络适配器，因此 WSL2 内部的 `localhost` 指的是 Linux 虚拟机，而非 Windows 主机。
+由于 Hermes Agent 需要 Unix 环境，Windows 用户需在 WSL2 中运行该代理。如果您的模型服务器（如 Ollama、LM Studio 等）运行在**Windows 主机**上，就需要搭建网络桥接——WSL2 使用带有独立子网的虚拟网络适配器，因此 WSL2 内部的 `localhost` 指的是 Linux 虚拟机，而非 Windows 主机。
 
-:::提示：如果模型服务器也在 WSL2 中运行（vLLM、SGLang 和 llama-server 通常如此），则 `localhost` 可正常使用——因为它们共享同一个网络命名空间，无需参考本节内容。
+:::提示：模型服务器也在 WSL2 中运行？无需担心。
+如果您的模型服务器同样运行在 WSL2 中（vLLM、SGLang 和 llama-server 通常如此），则 `localhost` 可以正常使用——因为它们共享同一个网络命名空间，可直接跳过本节内容。
 :::
 
-#### 方案 1：镜像网络模式（推荐）
+#### 方案一：镜像网络模式（推荐）
 
-该功能适用于**Windows 11 22H2 及更高版本**。镜像模式可使 Windows 和 WSL2 之间的 `localhost` 实现双向通信，是最简单的解决方案。
+该功能适用于**Windows 11 22H2 及更高版本**。通过镜像模式，可使 Windows 与 WSL2 之间的 `localhost` 实现双向通信——这是最简单的解决方案。
 
 1. 创建或编辑 `%USERPROFILE%\.wslconfig` 文件（例如：`C:\Users\YourName\.wslconfig`）：
    ```ini
