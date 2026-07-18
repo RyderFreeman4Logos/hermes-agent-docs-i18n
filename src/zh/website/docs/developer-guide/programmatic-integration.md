@@ -96,32 +96,32 @@ GET  /v1/models                  Lists hermes-agent
 GET  /health, /health/detailed
 ```
 
-设置、请求头（`X-Hermes-Session-Id`、`X-Hermes-Session-Key`）以及前端集成方式：[API服务器](../user-guide/features/api-server)。
+设置、请求头（`X-Hermes-Session-Id`、`X-Hermes-Session-Key`）以及前端集成方式：[API Server](../user-guide/features/api-server)。
 
 ---
 
 ## 我该选择哪种方案？
 
-- **您正在开发IDE插件，且该IDE已支持ACP协议** → 选择ACP方案。无需在IDE端进行任何协议处理。
-- **您正在开发自定义桌面端/网页端/TUI主机，并希望使用Hermes的所有功能**（斜杠命令、审批流程、信息澄清、多智能体协作、会话分支等）→ 选择TUI网关JSON-RPC方案。
-- **您需要兼容OpenAI的前端、与语言无关的HTTP客户端，或基于curl的自动化工具** → 选择API服务器方案。
-- **您希望以Python原进程方式嵌入Hermes，而不使用子进程** → 直接导入`run_agent.AIAgent`模块。详情请参阅[智能体循环机制](./agent-loop)。
+- **您正在开发 IDE 插件，且该 IDE 已支持 ACP 协议** → 使用 ACP。IDE 端无需处理任何协议相关逻辑。
+- **您正在开发自定义桌面端/网页端/TUI 客户端，并希望使用 Hermes 的所有功能**（斜杠命令、审批流程、信息澄清、多智能体协作、会话分支等）→ 使用 TUI gateway JSON-RPC。
+- **您需要兼容 OpenAI 的前端界面、与语言无关的 HTTP 客户端，或基于 curl 的自动化脚本** → 使用 API server。
+- **您希望以 Python 内嵌方式运行智能体而无需创建子进程** → 直接导入 `run_agent.AIAgent`。详情请参阅 [Agent Loop](./agent-loop)。
 
 ---
 
 ## 模型热切换
 
-在会话进行中切换模型在所有接口上均支持——其底层实现即为 `/model` 斜杠命令。
+在会话进行中切换模型在任何场景下均支持——其底层实现即为 `/model` 斜杠命令。
 
-- **CLI/TUI**：使用 `/model claude-sonnet-4` 或 `/model openrouter:anthropic/claude-sonnet-4.6`
-- **TUI网关RPC**：通过 `command.dispatch` 方法传递 `{"command": "/model claude-sonnet-4"}` 参数
-- **ACP**：IDE会将斜杠命令作为提示语发送，由智能体负责处理
-- **API服务器**：在请求体中添加 `model` 字段，或设置 `X-Hermes-Model` 头部参数
+- **CLI/TUI**：输入 `/model claude-sonnet-4` 或 `/model openrouter:anthropic/claude-sonnet-4.6`
+- **TUI gateway RPC**：通过 `command.dispatch` 方法传递 `{"command": "/model claude-sonnet-4"}` 参数
+- **ACP**：IDE 会将斜杠命令作为提示发送给智能体，由其负责执行相应操作
+- **API server**：需在请求正文中添加 `model` 字段
 
-系统已内置基于提供方类型的自动适配机制——相同的模型名称会自动选择适合当前使用提供方的格式。详情可参考 `hermes_cli/model_switch.py` 文件。
+系统已内置基于提供方类型的自动适配机制——相同的模型名称会自动选择适用于当前提供方的正确格式。详情可参阅 `hermes_cli/model_switch.py`。
 
 ---
 
 ## 关于 `--mode rpc` 的说明
 
-Hermes 并不提供 `--mode rpc` 参数。上述三种协议已覆盖所有常见使用场景：ACP适用于IDE协议客户端，TUI网关适用于标准输入输出JSON-RPC主机，API服务器则适用于HTTP接口。如果您发现现有方案无法满足特定需求，请针对您正在开发的实际应用提交问题报告。
+Hermes 并不提供 `--mode rpc` 参数。上述三种协议已能覆盖所有常见使用场景：ACP 适用于 IDE 协议客户端，TUI gateway 适用于支持标准输入输出 JSON-RPC 的主机，API server 适用于 HTTP 接口。如果您发现现有方案无法满足特定需求，请针对您正在开发的实际应用场景提交问题报告。
