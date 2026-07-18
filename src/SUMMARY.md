@@ -2599,6 +2599,7 @@
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
       - [构建视频生成提供者插件](zh/website/docs/developer-guide/video-gen-provider-plugin.md)
       - [构建网页搜索提供者插件](zh/website/docs/developer-guide/web-search-provider-plugin.md)
+      - [Worktrees环境下的TUI与桌面应用](zh/website/docs/developer-guide/worktree-ui-dev.md)
       - [Plugins](zh/website/docs/developer-guide/plugins/index.md)
     - [Getting Started]()
       - [安装](zh/website/docs/getting-started/installation.md)
