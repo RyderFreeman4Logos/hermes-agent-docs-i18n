@@ -474,59 +474,59 @@ Append to _queued_events[session_key] (overflow tail)
 def build_session_context(source, config, session_entry=None) -> SessionContext
 ```
 
-1. 从配置中获取已连接的平台列表。  
-2. 为每个平台收集其主频道信息。  
+1. 从配置中收集已连接的平台信息。  
+2. 为每个平台收集其主频道列表。  
 3. 通过 `is_shared_multi_user_session()` 函数确定是否使用 `shared_multi_user_session`。  
 4. 若提供了 `session_entry`，则附加会话元数据（键、ID及时间戳）。
 
-### 个人身份信息遮蔽（`build_session_context_prompt`）
+### 个人身份信息脱敏（`build_session_context_prompt`）
 
-动态系统提示部分（`## Current Session Context`）在发送给大型语言模型之前，可选择性地遮蔽以下个人身份识别信息：
-
-- 用户 ID → `user_<12位十六进制>`（前缀为 SHA-256 值）  
+动态系统提示部分（`## Current Session Context`）在发送给大型语言模型之前，可选择性地对以下内容进行个人身份信息脱敏处理：  
+- 用户 ID → `user_<12位十六进制>`（带有 SHA-256 前缀）  
 - 聊天 ID → `<平台名>:<12位十六进制>` 或仅 `<12位十六进制>`  
 
-无需遮蔽的平台包括：Discord（因需原始 ID 以实现 `@mentions` 功能），以及所有未被标记为 `pii_safe` 的插件注册平台。  
-此类遮蔽操作仅适用于系统提示文本；路由信息、会话密钥及适配器操作始终使用原始值。
+无需脱敏的平台包括：Discord（因需原始 ID 以实现 `@mentions` 功能），以及所有未被标记为 `pii_safe` 的插件注册平台。  
+脱敏操作仅适用于系统提示文本；路由信息、会话密钥及适配器操作始终使用原始值。
 
 ---
 
 ## 10. 会话过期监控器
 
-`_session_expiry_watcher` 任务会在网关的事件循环中每 300 秒（5 分钟）执行一次。
+`_session_expiry_watcher` 任务会在网关事件循环中每 300 秒（5 分钟）执行一次。
 
 ### 主要职责
 
-1. **处理已过期的会话** — 对于那些满足 `_is_session_expired()` 返回 `True` 且 `expiry_finalized` 为 `False` 的会话条目：
-   - 调用 `on_session_finalize` 插件钩子，执行清理及通知相关操作。
-   - 清理缓存的 AIAgent 资源（关闭工具资源、终止内存提供器服务）。
-   - 删除对应的缓存会话条目。
-   - 清除针对该会话的各类覆盖设置（如 `_session_model_overrides`、推理规则覆盖等）。
-   - 将 `expiry_finalized` 设置为 `True` 并持久化保存。
+1. **处理已过期的会话** —— 对于那些满足 `_is_session_expired()` 返回 `True` 且 `expiry_finalized` 为 `False` 的会话条目，执行以下操作：  
+   - 调用 `on_session_finalize` 插件钩子（用于清理资源及发送通知）。  
+   - 清理缓存的 AIAgent 资源（关闭工具相关资源，停止内存提供器运行）。  
+   - 删除该会话的缓存条目。  
+   - 清除针对该会话的各类覆盖设置（如 `_session_model_overrides`、推理规则覆盖等）。  
+   - 将 `expiry_finalized` 设为 `True` 并将相关数据持久化存储到 `sessions.json` 和 `state.db` 中。  
+   - 通过 `promote_to_session_reset()` 函数将该会话在 `state.db` 中的状态标记为 `end_reason='session_reset'` —— 该操作有条件限制：仅那些处于活跃状态或因可恢复的意外原因（如 `agent_close`、`ws_orphan_reap`）而结束的会话才会被标记，因此由明确边界条件触发的会话（如 `compression`、`session_switch` 等）不会被覆盖。这样即可永久记录会话重置情况，防止旧路由恢复机制利用完整历史记录重新启动已过期的会话（参见编号 #61220、#61993、#63539）。
 
-2. **清理闲置的缓存代理** — 调用 `_sweep_idle_cached_agents()` 函数，移除那些已闲置超过 `_AGENT_CACHE_IDLE_TTL_SECS`（3600 秒/1 小时）的代理，无论其会话重置策略如何。此举可防止拥有长期有效会话的网关出现内存无限制增长的情况。
+2. **清理闲置的缓存代理** —— 调用 `_sweep_idle_cached_agents()` 函数，移除那些已闲置超过 `_AGENT_CACHE_IDLE_TTL_SECS`（3600 秒/1 小时）的代理，无论其会话重置策略如何。此举可避免在存在长期运行会话的网关中内存持续增长。
 
-3. **删除过期的会话条目** — 根据 `config.session_store_max_age_days` 的设置，每小时调用 `session_store.prune_old_entries()` 函数，避免 `sessions.json` 文件大小无限增大。
+3. **删除过期的会话条目** —— 根据 `config.session_store_max_age_days` 的设置，每小时调用 `session_store.prune_old_entries()` 函数删除过期条目，防止 `sessions.json` 文件体积无限增大。
 
 ### 故障处理机制
 
-- 每个会话的重试次数：每次失败的处理操作最多会连续重试 3 次。  
-- 若连续 3 次尝试均失败，则将该会话条目的 `expiry_finalized` 强制设置为 `True`，以防止无限循环的重试现象。
+- 每个会话的重试次数：每次失败的处理操作最多连续重试 3 次。  
+- 若连续 3 次尝试均失败，则强制将该会话标记为 `expiry_finalized=True`，以避免无限循环的重试。
 
 ---
 
 ## 11. 代理缓存
 
-网关通过以 `session_key` 为键的最近最少使用（LRU）缓存机制来存储 `AIAgent` 实例，从而实现跨轮次提示内容的缓存。
+网关会维护一个基于 `session_key` 的 LRU 缓存，用于存储 `AIAgent` 实例，从而在多轮对话之间保持提示语的缓存效果。
 
 ### 缓存属性
 
 - **最大容量**：128 个条目（由 `_AGENT_CACHE_MAX_SIZE` 控制）。  
-- **淘汰策略**：最近最少使用（通过 `OrderedDict` 实现 LRU 算法）。  
+- **淘汰策略**：最近最少使用（通过 `OrderedDict` 实现 LRU 机制）。  
 - **闲置超时时间**：3600 秒（1 小时），由 `_session_expiry_watcher` 负责监控。  
-- **线程安全机制**：使用 `_agent_cache_lock` 确保多线程环境下的操作安全。
+- **线程安全锁**：使用 `_agent_cache_lock` 确保多线程环境下的操作安全。
 
-### 缓存生命周期管理
+### 缓存生命周期
 
 ```
 Message arrives
