@@ -1,75 +1,76 @@
 # 添加新的消息平台
 
-将平台添加到Hermes网关有两种方式：
+将平台添加到 Hermes 网关有两种方式：
 
-## 插件路径（推荐用于社区/第三方开发）
+## 插件路径（推荐用于社区及第三方开发者）
 
-在`~/.hermes/plugins/`目录下创建一个插件文件夹（对于内置插件，则位于`plugins/platforms/`下），其中需包含`plugin.yaml`和`adapter.py`文件。该适配器需继承自`BasePlatformAdapter`，并通过`register(ctx)`入口点中的`ctx.register_platform()`方法进行注册。这种方式**无需对Hermes核心代码进行任何修改**。
+在 `~/.hermes/plugins/` 目录下创建一个插件目录（对于预打包的插件，则位于 `plugins/platforms/` 下），并在其中放入 `plugin.yaml` 和 `adapter.py` 文件。该适配器需继承自 `BasePlatformAdapter`，并通过 `register(ctx)` 函数中的 `ctx.register_platform()` 方法进行注册。这种方式**无需对 Hermes 核心代码进行任何修改**。
 
-插件系统会自动处理诸多任务：适配器创建、配置解析、用户授权、定时任务发送、消息发送路由、系统提示、状态显示、网关设置等。
+插件系统会自动处理诸多任务：适配器的创建、配置解析、用户授权、定时任务发送、消息发送路由、系统提示信息展示、状态显示以及网关设置等。
 
-**还有一些可选的钩子函数，可满足大多数适配器的特殊需求：**
+此外，还有一些可选的钩子函数，可满足大多数适配器的需求：
 
-- `env_enablement_fn: () -> Optional[dict]` — 在适配器构建之前，根据环境变量为`PlatformConfig.extra`（以及可选的`home_channel`字典）赋值。若没有此函数，仅依赖环境变量的配置在SDK实例化之前不会显示在`hermes gateway status`或`get_connected_platforms()`的输出中。
-- `apply_yaml_config_fn: (yaml_cfg, platform_cfg) -> Optional[dict]` — 将该平台的`config.yaml`中的键转换为环境变量，或直接为`PlatformConfig.extra`赋值。这样插件就可以自行定义YAML格式，而无需为每个平台在核心的`gateway/config.py`中添加大量冗余代码。允许修改`os.environ`（建议使用`not os.getenv(...)`进行保护，以确保环境变量优先于YAML配置）；返回的字典会被合并到`PlatformConfig.extra`中。该函数在`load_gateway_config()`函数中调用，位于通用共享键处理流程之后、`_apply_env_overrides()`之前。
-- `cron_deliver_env_var: str` — 指定`*_HOME_CHANNEL`类型环境变量的名称。当设置此变量后，标记为`deliver=<name>`的定时任务将直接使用该变量，而无需修改`cron/scheduler.py`中硬编码的配置列表。
-- `standalone_sender_fn: async (...) -> dict` — 用于为独立于网关运行的定时任务提供进程外发送功能。如果没有此函数，虽然`deliver=<name>`形式的任务能够正常触发，但实际发送操作会返回“平台‘<name>’没有可用的适配器”这样的错误信息。如需实现完整的定时任务支持，需将此函数与`cron_deliver_env_var`配合使用。具体函数签名请参阅文档网站。
-- `plugin.yaml`中的`requires_env`/`optional_env`富字典字段 — 用于自动填充`hermes_cli/config.py`中的`OPTIONAL_ENV_VARS`，从而使设置向导能够正确显示相关描述、提示信息、密码输入选项及URL地址。
+- `env_enablement_fn: () -> Optional[dict]` — 在适配器构建之前，根据环境变量为 `PlatformConfig.extra`（以及可选的 `home_channel` 字典）赋值。若没有此函数，仅依赖环境变量的配置在 SDK 实例化之前不会显示在 `hermes gateway status` 或 `get_connected_platforms()` 的输出中。
+- `apply_yaml_config_fn: (yaml_cfg, platform_cfg) -> Optional[dict]` — 将该平台的 `config.yaml` 中的键值转换为环境变量，或直接为 `PlatformConfig.extra` 赋值。这样插件就可以自行定义 YAML 结构，而无需为每个平台都在核心的 `gateway/config.py` 中添加大量样板代码。允许修改 `os.environ`（建议使用 `not os.getenv(...)` 这样的保护机制以确保环境变量优先于 YAML 设置）；返回的字典会被合并到 `PlatformConfig.extra` 中。该函数会在 `load_gateway_config()` 函数中、通用共享键处理流程之后以及 `_apply_env_overrides()` 之前被调用。
+- `cron_deliver_env_var: str` — 指定 `*_HOME_CHANNEL` 类型环境变量的名称。当设置了该变量后，带有 `deliver=<name>` 参数的定时任务将会被路由到该变量，而无需修改 `cron/scheduler.py` 中硬编码的配置列表。
+- `standalone_sender_fn: async (...) -> dict` — 用于为那些在网关之外独立运行的定时任务提供进程外发送功能。如果没有此函数，虽然带有 `deliver=<name>` 参数的任务能够正常触发，但实际发送操作会返回 “No live adapter for platform ‘<name>’” 的错误信息。如需实现完整的定时任务支持，需将该函数与 `cron_deliver_env_var` 一起使用。具体函数签名请参阅文档网站。
+- `plugin.yaml` 中的 `requires_env` / `optional_env` 富文本字段 — 用于自动填充 `hermes_cli/config.py` 文件中的 `OPTIONAL_ENV_VARS`，从而使设置向导能够正确显示相关的描述、提示、密码输入选项以及 URL 地址。
 
-**通过子类化实现针对特定平台的用户体验优化。** 当某个平台存在基础适配器无法预判的严格时间限制时（例如LINE的60秒单次回复令牌、WhatsApp的24小时会话窗口等），适配器可以通过重写 `_keep_typing` 方法，在达到特定阈值时添加一个浮动提示框，而无需增加额外的参数。务必始终调用 `await super()._keep_typing(...)`，以确保打字状态指示器持续运行，并在 `finally` 块中终止自定义的辅助任务。完整的实现模式可见`plugins/platforms/line/`目录中的示例（包括45秒时的模板按钮回传、`RequestCache`状态机、以及针对无对应处理函数的`/stop`请求的`interrupt_session_activity`重写方法），详细的实现步骤说明请参阅开发者指南。
+**为特定平台定制用户界面。** 当某个平台存在基础适配器无法预判的严格时间限制时（例如 LINE 的 60 秒单次回复令牌、WhatsApp 的 24 小时会话窗口等），适配器可以通过重写 `_keep_typing` 方法，在达到特定阈值时添加一个正在输入的提示气泡，而无需增加额外的参数。务必始终调用 `await super()._keep_typing(...)` 以确保输入心跳信号持续发送，并在 `finally` 块中终止自定义的辅助任务。完整的实现模式可见 `plugins/platforms/line/` 目录（例如 45 秒时触发模板按钮回调、`RequestCache` 状态机、以及为 `/stop` 类型请求提供的 `interrupt_session_activity` 重写功能），详细的实现步骤说明请参阅开发者指南。
 
-**具有相同行为的兄弟适配器。** 当某个平台提供两种传输方式供用户选择时——例如非官方API与官方API、轮询模式与WebSocket模式、库A与库B——最佳的结构是创建两个共享同一行为混入类的适配器。WhatsApp就是如此：`gateway/platforms/whatsapp.py`（Baileys桥接方案）和`gateway/platforms/whatsapp_cloud.py`（Meta云API方案）都继承自`gateway/platforms/whatsapp_common.py`中的`WhatsAppBehaviorMixin`类。该混入类负责处理权限控制、允许列表管理、提及消息解析、广播过滤以及符合WhatsApp风格的Markdown格式转换——所有与平台协议无关的功能都由它统一处理。每个适配器则负责自身的传输逻辑。两个适配器都会注册不同的`Platform.*`枚举值，这样网关就可以针对不同的电话号码同时运行这两种适配器。混入类必须在基类列表中**位于最前面**——即采用`class WhatsAppAdapter(Mixin, BasePlatformAdapter)`的写法——这样才能确保混入类中的`format_message`方法能覆盖`BasePlatformAdapter`中的默认实现。
+**具有相同行为的兄弟适配器。** 当某个平台提供两种传输方式供用户选择时——例如非官方 API 与官方 API、轮询模式与 WebSocket 模式、库 A 与库 B——最佳的结构是创建两个共享同一行为混入类的适配器。WhatsApp 就采用了这种设计：`gateway/platforms/whatsapp.py`（Baileys 网关）和 `gateway/platforms/whatsapp_cloud.py`（Meta Cloud API）都继承自 `gateway/platforms/whatsapp_common.py` 中的 `WhatsAppBehaviorMixin` 类。该混入类负责处理权限控制、允许列表管理、提及信息解析、广播过滤以及符合 WhatsApp 风格的 Markdown 转换等功能——所有这些功能都与具体的平台协议无关。每个适配器则负责处理自身的传输方式。这两个适配器都会注册不同的 `Platform.*` 枚举值，这样网关就可以针对不同的电话号码同时运行这两种适配器。混入类必须在基类列表中位于最前面——即采用 `class WhatsAppAdapter(Mixin, BasePlatformAdapter)` 的写法——这样才能确保混入类中的 `format_message` 方法能够覆盖 `BasePlatformAdapter` 中的默认实现。
 
-完整的可运行示例请参阅`plugins/platforms/irc/`、`plugins/platforms/teams/`和`plugins/platforms/google_chat/`目录，包含代码示例和钩子函数文档的完整插件指南请访问`website/docs/developer-guide/adding-platform-adapters.md`。
+完整的可运行示例请参阅 `plugins/platforms/irc/`、`plugins/platforms/teams/` 和 `plugins/platforms/google_chat/` 目录，包含代码示例和钩子函数文档的完整插件指南则可在 `website/docs/developer-guide/adding-platform-adapters.md` 中找到。
 
 ---
 
 ## 内置路径（仅限核心贡献者）
 
-将平台直接集成到Hermes核心代码中的检查清单。在开发内置适配器时，请以此清单作为参考——其中的每一项都是实际的集成点。若遗漏任何一项，都可能导致功能异常、缺失某些特性或出现行为不一致的问题。
+将平台直接集成到 Hermes 核心中的检查清单。在开发内置适配器时，请以此清单作为参考——其中的每一项都代表着一个实际的集成点。若遗漏任何一项，都可能导致功能异常、缺失某些特性或出现行为不一致的问题。
 
 ---
 
 ## 1. 核心适配器（`gateway/platforms/<platform>.py`）
 
-该适配器是`gateway/platforms/base.py`中`BasePlatformAdapter`类的子类。
+该适配器是 `gateway/platforms/base.py` 中 `BasePlatformAdapter` 类的子类。
 
-### 必需方法
+### 必需的方法
 
 | 方法 | 功能 |
 |------|------|
 | `__init__(self, config)` | 解析配置并初始化状态。需调用 `super().__init__(config, Platform.YOUR_PLATFORM)` |
-| `connect() -> bool` | 连接到目标平台并启动监听器。成功连接后返回True |
-| `disconnect()` | 停止监听器、关闭连接并取消所有任务 |
+| `connect() -> bool` | 连接到目标平台并启动监听器。成功连接后返回 True |
+| `disconnect()` | 停止监听器、关闭连接并取消相关任务 |
 | `send(chat_id, text, ...) -> SendResult` | 发送文本消息 |
-| `send_typing(chat_id)` | 发送打字中提示 |
+| `send_typing(chat_id)` | 发送正在输入的提示 |
 | `send_image(chat_id, image_url, caption) -> SendResult` | 发送图片 |
 | `get_chat_info(chat_id) -> dict` | 返回指定聊天的 `{name, type, chat_id}` 信息 |
 
-### 可选方法（基础类中已提供默认占位实现）
+### 可选的方法（基础类中已提供默认实现）
 
 | 方法 | 功能 |
 |------|------|
 | `send_document(chat_id, path, caption)` | 发送文件附件 |
 | `send_voice(chat_id, path)` | 发送语音消息 |
 | `send_video(chat_id, path, caption)` | 发送视频 |
-| `send_animation(chat_id, path, caption)` | 发送GIF/动画图片 |
+| `send_animation(chat_id, path, caption)` | 发送 GIF 动图 |
 | `send_image_file(chat_id, path, caption)` | 从本地文件发送图片 |
 
-### 交互式用户体验（若您的平台支持可点击按钮，建议实现）
+### 交互式用户界面（如果您的平台支持可点击按钮，建议使用）
 
-如果您的平台支持包含交互式按钮或菜单的消息，实现这些方法可以让智能体提供更出色的用户体验。即使未对这些方法进行自定义，系统也会自动降级为纯文本显示。
+如果您的平台支持包含交互式按钮或菜单的消息，实现这些功能可以让智能体提供更出色的用户体验。即使未进行自定义设置，这些功能也会自动降级为纯文本显示：
 
 | 方法 | 功能 |
 |------|------|
-| `send_clarify(chat_id, question, choices, clarify_id, session_key, ...)` | 将“澄清”工具中的多选问题以可点击按钮的形式呈现。需配合相应的入口处理逻辑，将按钮点击事件路由到`tools.clarify_gateway.resolve_gateway_clarify`函数进行处理。 |
-| `send_exec_approval(chat_id, command, session_key, description, ...)` | 将危险命令的审批流程以“批准”/“拒绝”按钮的形式呈现。入口处理逻辑会将点击事件路由到`tools.approval.resolve_gateway_approval`函数。 |
-| `send_slash_confirm(chat_id, title, message, session_key, confirm_id, ...)` | 将斜杠命令的确认操作（例如 `/reload-mcp`）以“一次性”/“始终”/“取消”按钮的形式呈现。入口处理逻辑会将点击事件路由到`tools.slash_confirm.resolve`函数。 |
-| `send_model_picker(...)` | 交互式“模型”选择器，被Telegram和Discord所使用。 |
+| `send_clarify(chat_id, question, choices, clarify_id, session_key, ...)` | 将 “clarify” 工具中的多选问题以可点击按钮的形式呈现。需配合相应的入口处理逻辑，将按钮点击事件路由到 `tools.clarify_gateway.resolve_gateway_clarify` 函数进行处理。 |
+| `send_exec_approval(chat_id, command, session_key, description, ...)` | 将危险命令的确认操作以“批准”/“拒绝”按钮的形式呈现。入口处理逻辑会将请求路由到 `tools.approval.resolve_gateway_approval` 函数。 |
+| `send_slash_confirm(chat_id, title, message, session_key, confirm_id, ...)` | 将斜杠命令的确认操作（例如 `/reload-mcp`）以“一次性”/“始终”/“取消”按钮的形式呈现。入口处理逻辑会将请求路由到 `tools.slash_confirm.resolve` 函数。 |
+| `send_model_picker(...)` | 交互式的 “/model” 模型选择器。Telegram 和 Discord 都使用此功能。 |
+| `send_choice_picker(...)` | 用于有限选项命令（如 `/reasoning`、 `/fast`）的扁平单层级选择器。Telegram 使用内嵌键盘，Discord 使用选择菜单，Matrix 则使用反应功能来实现。不支持该功能的平台会自动降级为文本状态卡片显示。 |
 
-参考实现示例请参阅`gateway/platforms/telegram.py`、`discord.py`和`whatsapp_cloud.py`文件。各适配器之间都采用相同的按钮回调标识规则（`cl:<id>:<idx>`、`appr:<id>:<choice>`、`sc:<choice>:<id>`），请确保遵循该规则，以便网关端的处理函数无需修改即可正常工作。
+参考实现示例可见 `gateway/platforms/telegram.py`、`discord.py` 和 `whatsapp_cloud.py` 文件。各适配器之间都遵循相同的按钮回调标识规则（`cl:<id>:<idx>`、`appr:<id>:<choice>`、`sc:<choice>:<id>`），请确保使用一致的标识格式，这样网关端的处理函数无需修改即可正常工作。
 
-### 必需函数
+### 必需的函数
 
 ```python
 def check_<platform>_requirements() -> bool:
@@ -158,7 +159,7 @@ PLATFORM_HINTS = {
 }
 ```
 
-若缺少此项，智能体将无法识别自己当前处于您的平台上，进而可能使用不合适的格式（例如在无法渲染 Markdown 的平台上使用 Markdown 格式）。
+若缺少此配置，智能体将无法识别自己当前所处的平台，进而可能使用不合适的格式（例如在无法渲染 Markdown 的平台上使用 Markdown 格式）。
 
 ```python
 "hermes-your-platform": {
