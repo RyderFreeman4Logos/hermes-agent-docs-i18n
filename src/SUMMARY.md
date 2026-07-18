@@ -1807,6 +1807,7 @@
       - [References]()
         - [FastMCP CLI 参考手册](zh/optional-skills/mcp/fastmcp/references/fastmcp-cli.md)
     - [Mcp Oauth Remote Gateway]()
+      - [远程 Hermes 网关上的 MCP OAuth](zh/optional-skills/mcp/mcp-oauth-remote-gateway/SKILL.md)
       - [References]()
         - [Stripe MCP（`mcp.stripe.com`）——周期性OAuth会话撤销问题及受限密钥的解决方案](zh/optional-skills/mcp/mcp-oauth-remote-gateway/references/stripe-mcp-oauth-revocation.md)
     - [Mcporter]()
