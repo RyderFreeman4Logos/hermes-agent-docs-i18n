@@ -231,17 +231,17 @@ hermes config set model.aliases.grok x-ai/grok-4
 hermes model            # Interactive provider + model picker (the canonical way to switch defaults)
 ```
 
-`hermes model` 会引导您完成以下步骤：选择服务提供商、进行身份验证（OAuth 流程会自动打开浏览器；而使用 API 密钥的服务提供商则会提示输入密钥），随后从该提供商提供的模型目录中挑选特定的模型。所选模型的信息会被写入 `~/.hermes/config.yaml` 文件中的 `model.provider` 和 `model.model` 字段。
+`hermes model` 会指导您选择提供商，完成身份验证（OAuth 流程会自动打开浏览器；而使用 API 密钥的提供商则会提示输入密钥），随后从该提供商提供的精选模型目录中挑选具体的模型。所选模型的信息会被写入 `~/.hermes/config.yaml` 文件中的 `model.provider` 和 `model.default` 字段。
 
-若不想启动选择界面即可查看所有服务提供商及模型，可使用控制面板或以下的 REST 接口。要查看 CLI 当前实际使用的模型信息，可运行 `hermes config show | grep '^model\.'` 以及 `hermes status` 命令。
+若不想启动选择器即可查看所有提供商和模型，可使用控制面板或以下的 REST 接口。要查看 CLI 当前实际使用的设置，可执行 `hermes config get model --json` 和 `hermes status` 命令。
 
-### 直接编辑配置文件
+### 直接编辑配置
 
-直接修改 `~/.hermes/config.yaml` 文件，然后重启读取该文件的程序。完整的配置结构规范请参考 [配置参考文档](./configuration.md)。
+可直接修改 `~/.hermes/config.yaml` 文件，然后重启读取该文件的进程。完整的配置结构请参考 [配置参考文档](./configuration.md)。
 
 ### REST API
 
-控制面板使用了三个接口。这些接口非常适合用于编写脚本：
+控制面板使用了三个接口，非常适合用于编写脚本：
 
 ```bash
 # List authenticated providers + curated model lists
