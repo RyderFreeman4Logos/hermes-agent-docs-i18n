@@ -213,73 +213,79 @@ hermes cron status
 
 ### 网关调度器行为
 
-在每个时间间隔内，Hermes 会执行以下操作：
+在每个调度周期中，Hermes会执行以下操作：
 
 1. 从 `~/.hermes/cron/jobs.json` 中加载任务列表；
 2. 将每个任务的 `next_run_at` 时间与当前时间进行比对；
-3. 为每个即将运行的任务启动一个新的 `AIAgent` 会话；
+3. 为每个即将到期的任务启动一个新的 `AIAgent` 会话；
 4. 可选地将一个或多个附加的技能注入到该新会话中；
 5. 运行提示语并等待处理完成；
 6. 返回最终响应结果；
 7. 更新任务运行元数据及下一次调度时间。
 
-`~/.hermes/cron/.tick.lock` 文件用于锁定资源，防止多个调度周期同时重复执行同一批任务。
+文件锁 `~/.hermes/cron/.tick.lock` 的存在可防止多个调度周期同时尝试运行同一批任务。
+
+### 执行历史记录
+
+在任务由执行器或服务提供者处理之前，Hermes会先将每次尝试调度的记录保存到本地数据库 `~/.hermes/cron/executions.db` 中。这些记录会依次经历 `claimed`、`running` 状态，最终进入不可更改的终止状态之一：`completed`（已完成）、`failed`（失败）或 `unknown`（未知）。系统重启后，只有当原始进程 ID 及进程启动特征信息能够证明该任务已不再被运行时，Hermes才会将那些被放弃的任务标记为 `unknown` 状态。这类记录仅作为审计日志存在，不会被自动重新执行。
+
+可通过命令 `hermes cron runs [job-id] --limit 20`（别名：`history`）查看最近的调度尝试记录。终端历史记录有长度限制，但正在运行的任务记录不会被删除。这些历史记录也会被包含在快速备份中。
 
 ## 输出目标选项
 
-在安排任务时，您可以指定输出去往何处：
+在安排任务时，您可以指定输出内容的去向：
 
 | 选项 | 描述 | 示例 |
 |------|------|------|
 | `"origin"` | 返回任务创建的源头 | 消息平台上的默认选项 |
-| `"local"` | 仅保存到本地文件（`~/.hermes/cron/output/`） | CLI 的默认选项 |
-| `"telegram"` | Telegram 主频道 | 使用 `TELEGRAM_HOME_CHANNEL` 变量 |
-| `"telegram:123456"` | 按 ID 指定的特定 Telegram 聊天 | 直接发送至该聊天 |
-| `"telegram:-100123:17585"` | 按格式 `chat_id:thread_id` 指定的特定 Telegram 主题 | 发送至对应主题会话 |
-| `"discord"` | Discord 主频道 | 使用 `DISCORD_HOME_CHANNEL` 变量 |
-| `"discord:#engineering"` | 按频道名称指定的特定 Discord 频道 | 发送至指定频道 |
-| `"slack"` | Slack 主频道 |  |
-| `"whatsapp"` | WhatsApp 主账号 |  |
-| `"signal"` | Signal 应用 |  |
-| `"matrix"` | Matrix 主房间 |  |
-| `"mattermost"` | Mattermost 主频道 |  |
-| `"email"` | 邮件 |  |
-| `"sms"` | 通过 Twilio 发送短信 |  |
-| `"homeassistant"` | Home Assistant 系统 |  |
-| `"dingtalk"` | DingTalk 工作台 |  |
-| `"feishu"` | Feishu/Lark 办公平台 |  |
-| `"wecom"` | WeCom 工作台 |  |
-| `"weixin"` | 微信 |  |
-| `"bluebubbles"` | BlueBubbles（iMessage） |  |
-| `"qqbot"` | QQ 客户端（腾讯 QQ） |  |
-| `"all"` | 发送至所有已连接的频道 | 在实际执行时动态确定目标 |
-| `"telegram,discord"` | 发送至指定的多个频道 | 用逗号分隔的列表 |
-| `"origin,all"` | 同时发送至任务源头及所有其他已连接频道 | 可组合任意选项 |
+| `"local"` | 仅保存到本地文件（`~/.hermes/cron/output/`） | CLI模式下的默认选项 |
+| `"telegram"` | 发送到 Telegram 主频道 | 使用 `TELEGRAM_HOME_CHANNEL` 变量 |
+| `"telegram:123456"` | 按 ID 发送到特定的 Telegram 聊天室 | 直接发送 |
+| `"telegram:-100123:17585"` | 按格式 `chat_id:thread_id` 发送到特定的 Telegram 主题频道 | |
+| `"discord"` | 发送到 Discord 主频道 | 使用 `DISCORD_HOME_CHANNEL` 变量 |
+| `"discord:#engineering"` | 按频道名称发送到特定的 Discord 频道 | |
+| `"slack"` | 发送到 Slack 主频道 | |
+| `"whatsapp"` | 发送到 WhatsApp 主账号 | |
+| `"signal"` | 发送到 Signal 应用 | |
+| `"matrix"` | 发送到 Matrix 主房间 | |
+| `"mattermost"` | 发送到 Mattermost 主频道 | |
+| `"email"` | 通过邮件发送 | |
+| `"sms"` | 通过 Twilio 服务发送短信 | |
+| `"homeassistant"` | 发送到 Home Assistant 系统 | |
+| `"dingtalk"` | 发送到 DingTalk 平台 | |
+| `"feishu"` | 发送到飞书/Lark 平台 | |
+| `"wecom"` | 发送到企业微信 | |
+| `"weixin"` | 发送到微信 | |
+| `"bluebubbles"` | 发送到 BlueBubbles（iMessage） | |
+| `"qqbot"` | 发送到 QQ 聊天机器人 | |
+| `"all"` | 发送到所有已连接的频道 | 在实际调度时再确定具体目标 |
+| `"telegram,discord"` | 发送到指定的多个频道 | 用逗号分隔的列表 |
+| `"origin,all"` | 同时发送到任务源头及所有其他已连接频道 | 可组合任意选项 |
 
-代理的最终响应会自动发送到配置好的 `deliver:` 目标地址——代理本身不会主动发送消息，因此无需在定时任务提示语中添加任何发送逻辑。
+代理的最终响应会自动发送到配置好的 `deliver:` 目标地址——代理本身不会主动发送消息，因此无需在调度提示语中添加任何发送逻辑。
 
 ### 路由意图（`all`）
 
-使用 `all` 选项后，您只需提交一个定时任务，即可将其发送到所有已配置的消息频道，而无需逐一指定频道名称。该选项会在**实际执行时动态确定目标**，因此，在您设置 `TELEGRAM_HOME_CHANNEL` 之前创建的任务，会在下次调度时才开始通过 Telegram 发送。
+使用 `all` 选项可以将单个定时任务发送到所有已配置的消息频道，而无需逐一指定频道名称。该选项会在**实际调度时**确定具体目标，因此在您设置 `TELEGRAM_HOME_CHANNEL` 之前创建的任务，在下次调度周期才会开始通过 Telegram 发送消息。
 
-语义说明：`all` 会扩展为所有已配置了主频道的平台。即使设置为 `0` 也无妨，此时任务不会产生任何输出目标，系统会将其记录为发送失败。
+语义说明：`all` 会扩展为所有已配置了主频道的平台。即使设置为 `0` 也无需担心，此时任务不会产生任何输出目标，且会在系统层面被记录为发送失败。
 
-`all` 选项可与明确的指定目标共同使用。例如，`origin,all` 表示将消息发送至任务源头频道以及所有其他已连接的频道，同时通过 `(平台, 聊天 ID, 主题 ID)` 的组合来避免重复发送。
+`all` 选项可与明确的频道目标一起使用。例如，`origin,all` 会将消息发送到任务源头频道以及所有其他已连接的频道，同时通过 `(平台, 聊天ID, 主题ID)` 组合来避免重复发送。
 
 ### Telegram 定时任务主题（`TELEGRAM_CRON_THREAD_ID`）
 
-当启用 Telegram 主题模式后，根私信对话将被用作系统大厅——发送到该处的回复会被系统拒绝，并附带大厅提醒，同时 `reply_to_message_id` 信息也会被丢弃，因此您无法回复进入主聊天的定时任务消息。
+当启用 Telegram 主题模式后，私信对话框会被保留作为系统公告区——发送到该区域的回复会收到公告提醒并被拒绝，且 `reply_to_message_id` 信息也会被移除，因此无法对进入主聊天区的定时任务消息进行回复。
 
-建议将定时任务指向专用的论坛主题：
+建议将定时任务指向专门的论坛主题：
 
-1. 在 Telegram 中打开机器人的私信对话，创建一个名为“Cron”之类的主题。长按主题标题 → 选择**复制链接**，链接末尾的数字即为该主题的 `message_thread_id`。
-2. 在您的 `.env` 文件中设置 `TELEGRAM_CRON_THREAD_ID=<该 ID>`。
+1. 在 Telegram 中打开机器人的私信对话框，创建一个名为“Cron”之类的主题。长按主题标题 → 选择**复制链接**，链接末尾的数字即为该主题的 `message_thread_id`。
+2. 在您的 `.env` 文件中设置 `TELEGRAM_CRON_THREAD_ID=<该ID>`。
 
-此设置仅适用于定时任务的输出发送。其他场景下使用的 `TELEGRAM_HOME_CHANNEL_THREAD_ID`（如重启通知）则保持不变。若明确指定了 `deliver="telegram:chat_id:thread_id"`，则该指定会优先于环境变量设置。现在，对定时任务消息的回复将会发送到对应的主题会话中，您可以直接对其进行处理。
+此设置仅适用于定时任务的输出发送。其他场景（如重启通知）所使用的 `TELEGRAM_HOME_CHANNEL_THREAD_ID` 值保持不变。如果明确指定了 `deliver="telegram:chat_id:thread_id"` 的目标，该设置仍会优先生效。现在，对定时任务消息的回复会直接发送到对应的主题会话中，便于您直接处理。
 
-### 响应格式封装
+### 响应内容封装
 
-默认情况下，发送出的定时任务输出会带有标题和页脚，以便接收方知晓该内容来自定时任务：
+默认情况下，发送的定时任务输出内容都会被添加页眉和页脚，以便接收方能够识别其来自定时任务。
 
 ```
 Cronjob Response: Morning feeds
