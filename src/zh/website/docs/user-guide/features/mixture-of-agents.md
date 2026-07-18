@@ -121,11 +121,11 @@ moa:
       reference_max_tokens: 600   # concise advice → faster turns
 ```
 
-若保持原有的无上限运行模式，可将其留空（或设置为`0`/空白）。
+若保持原有的无上限运行模式，可将其保留为空值（或 `0`/空白）。
 
 ### 每个槽位的推理强度
 
-参考槽位和聚合槽位也可设置`reasoning_effort`参数。当您希望同一模型以不同的深度参与推理，或要求聚合槽位比参考槽位进行更复杂的思考时，可使用此参数。其有效值与Hermes系统的常规推理控制选项一致：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`和`max`。
+参考槽位和聚合槽位也可设置 `reasoning_effort` 参数。当您希望同一模型以不同的深度参与推理，或者要求聚合槽位比参考槽位进行更复杂的思考时，可使用该参数。其有效值与 Hermes 的常规推理控制选项一致：`none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max` 和 `ultra`。
 
 ```yaml
 moa:
