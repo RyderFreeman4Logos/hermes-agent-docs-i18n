@@ -27,107 +27,112 @@ hermes skills install official/mlops/flash-attention
 hermes skills uninstall <skill-name>
 ```
 
-## autonomous-ai-agents
+## 自主AI智能体
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**antigravity-cli**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli) | 操作 Antigravity CLI（agy）：插件、认证与沙箱功能。 |
-| [**blackbox**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-blackbox) | 将编程任务委托给 Blackbox AI CLI 智能体。该多模型智能体内置评估机制，可让多个大语言模型处理任务并选出最佳结果。需使用 blackbox CLI 以及 Blackbox AI API 密钥。 |
-| [**grok**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-grok) | 将编程任务委托给 xAI Grok Build CLI（支持功能与 Pull Request 处理）。 |
-| [**honcho**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-honcho) | 使用 Hermes 配置并利用 Honcho 记忆功能——实现跨会话用户建模、多身份隔离、观察配置、辩证推理、会话总结以及上下文使用量限制。适用于 Honcho 的搭建与故障排查等场景。 |
-| [**openhands**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-openhands) | 将编程任务委托给 OpenHands CLI（支持模型无关操作，兼容 LiteLLM）。 |
+| [**antigravity-cli**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli) | 操作Antigravity CLI（agy）：插件、认证与沙箱功能。 |
+| [**blackbox**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-blackbox) | 将编程任务委托给Blackbox AI CLI智能体。该多模型智能体内置评估器，可让多个大语言模型处理任务并选出最佳结果。需使用blackbox CLI及Blackbox AI API密钥。 |
+| [**grok**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-grok) | 将编程任务委托给xAI Grok Build CLI（用于功能开发与代码提交）。 |
+| [**honcho**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-honcho) | 配置并使用Hermes中的Honcho记忆系统——实现跨会话用户建模、多身份隔离、观察配置、辩证推理、会话总结以及上下文预算管控。适用于Honcho的搭建与故障排查等场景。 |
+| [**openhands**](/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-openhands) | 将编程任务委托给OpenHands CLI（支持多种模型，采用LiteLLM技术）。 |
 
-## blockchain
-
-| 技能 | 描述 |
-|-------|-------------|
-| [**evm**](/docs/user-guide/skills/optional/blockchain/blockchain-evm) | 仅读型 EVM 客户端：可查询 8 条区块链上的钱包信息、代币数据及Gas费用。 |
-| [**hyperliquid**](/docs/user-guide/skills/optional/blockchain/blockchain-hyperliquid) | 提供 Hyperliquid 市场数据、账户历史记录及交易审查功能。 |
-| [**solana**](/docs/user-guide/skills/optional/blockchain/blockchain-solana) | 可查询带有美元定价的 Solana 区块链数据——包括钱包余额、带价值标注的代币组合、交易详情、NFT信息、大额交易检测以及实时网络统计。基于 Solana RPC 与 CoinGecko 数据源，无需 API 密钥。 |
-
-## communication
+## 区块链
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**one-three-one-rule**](/docs/user-guide/skills/optional/communication/communication-one-three-one-rule) | 一种用于技术方案制定与权衡分析的结构化决策框架。当用户需要在多种方案（架构决策、工具选择、重构策略、迁移路径等）之间做出抉择时，该技能可... |
+| [**evm**](/docs/user-guide/skills/optional/blockchain/blockchain-evm) | 仅读型EVM客户端：可查询8条区块链上的钱包信息、代币数据及Gas费用。 |
+| [**hyperliquid**](/docs/user-guide/skills/optional/blockchain/blockchain-hyperliquid) | 提供Hyperliquid市场数据、账户历史记录及交易审核功能。 |
+| [**solana**](/docs/user-guide/skills/optional/blockchain/blockchain-solana) | 可查询Solana区块链数据，并以美元为单位显示数值——包括钱包余额、带价值标签的代币组合、交易详情、NFT信息、大额交易检测以及实时网络统计。基于Solana RPC与CoinGecko数据源，无需API密钥。 |
 
-## creative
-
-| 技能 | 描述 |
-|-------|-------------|
-| [**baoyu-article-illustrator**](/docs/user-guide/skills/optional/creative/creative-baoyu-article-illustrator) | 用于文章插图创作：确保字体、风格与色彩方案的一致性。 |
-| [**baoyu-comic**](/docs/user-guide/skills/optional/creative/creative-baoyu-comic) | 制作知识漫画：涵盖教育类、传记类及教程类内容。 |
-| [**blender-mcp**](/docs/user-guide/skills/optional/creative/creative-blender-mcp) | 通过 blender MCP 目录驱动 Blender，支持使用 bpy 脚本。 |
-| [**concept-diagrams**](/docs/user-guide/skills/optional/creative/creative-concept-diagrams) | 能生成扁平化、极简风格且考虑明暗效果的 SVG 图表，以独立 HTML 文件形式输出。采用统一的教育类视觉语言，包含 9 种语义色彩渐变、句首大写排版以及自动暗色模式。最适合用于教育类及... |
-| [**creative-ideation**](/docs/user-guide/skills/optional/creative/creative-creative-ideation) | 通过特定的创意方法生成灵感点子。 |
-| [**hyperframes**](/docs/user-guide/skills/optional/creative/creative-hyperframes) | 使用 HyperFrames 创建基于 HTML 的视频合成内容，包括动画标题卡、社交平台用叠加元素、带字幕的出镜视频、音频响应式视觉效果以及着色器过渡效果。视频内容的真实数据源为 HTML 文件。适用于用户需要... |
-| [**kanban-video-orchestrator**](/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator) | 基于 Hermes Kanban 平台规划、搭建并监控多智能体视频制作流程。适用于需要制作各类视频的用户——叙事电影、产品/营销视频、音乐视频、解说视频、ASCII/终端艺术作品，以及抽象/生成式视觉内容等... |
-| [**meme-generation**](/docs/user-guide/skills/optional/creative/creative-meme-generation) | 通过选择模板并使用 Pillow 工具叠加文本来生成真实的迷因图片，可输出真正的 .png 格式迷因文件。 |
-| [**pixel-art**](/docs/user-guide/skills/optional/creative/creative-pixel-art) | 支持使用不同时代风格的色彩方案（NES、Game Boy、PICO-8）创作像素艺术作品。 |
-
-## devops
+## 沟通协作
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**inference-sh-cli**](/docs/user-guide/skills/optional/devops/devops-cli) | 通过 inference.sh CLI（infsh）运行 150 多种 AI 应用——包括图像生成、视频制作、大语言模型应用、搜索功能、3D 功能以及社交自动化工具。基于终端工具实现，相关触发词包括：inference.sh、infsh、AI 应用、flux、veo、图像生成、视频生成、seedrea 等... |
-| [**docker-management**](/docs/user-guide/skills/optional/devops/devops-docker-management) | 对 Docker 容器、镜像、卷、网络以及 Compose 集群进行管理——涵盖生命周期操作、故障排查、清理工作以及 Dockerfile 优化。 |
-| [**hermes-s6-container-supervision**](/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision) | 可修改、调试或扩展 Hermes Agent Docker 镜像内的 s6-overlay 监控结构——用于添加新服务、调试 Profile Gateway，以及理解 Architecture B 主程序架构模式。 |
-| [**pinggy-tunnel**](/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel) | 通过 Pinggy 工具实现无需安装即可在本地通过 SSH 建立隧道。 |
-| [**watchers**](/docs/user-guide/skills/optional/devops/devops-watchers) | 能轮询 RSS、JSON API 以及 GitHub 数据，并自动去除重复内容。 |
+| [**one-three-one-rule**](/docs/user-guide/skills/optional/communication/communication-one-three-one-rule) | 一种用于技术方案制定与权衡分析的结构化决策框架。当用户需要在多种方案（架构决策、工具选择、重构策略、迁移路径等）之间做出抉择时，该技能可帮助... |
 
-## dogfood
+## 创意内容生成
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**adversarial-ux-test**](/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test) | 扮演产品中最难打交道、对技术最不熟悉的用户来测试产品。以该角色浏览应用，找出所有用户体验痛点，再通过务实性分析筛选出真正的问题，剔除无关噪音。可生成具有可操作性的任务清单... |
+| [**baoyu-article-illustrator**](/docs/user-guide/skills/optional/creative/creative-baoyu-article-illustrator) | 用于文章插图制作：确保类型、风格与色彩方案的一致性。 |
+| [**baoyu-comic**](/docs/user-guide/skills/optional/creative/creative-baoyu-comic) | 制作知识漫画：适用于教育、传记及教程类内容。 |
+| [**blender-mcp**](/docs/user-guide/skills/optional/creative/creative-blender-mcp) | 通过catalog blender MCP驱动Blender，支持使用bpy脚本。 |
+| [**concept-diagrams**](/docs/user-guide/skills/optional/creative/creative-concept-diagrams) | 能生成扁平化、极简风格且具备明暗区分的SVG图表，以独立HTML文件形式输出。采用统一的教育类视觉语言，包含9种语义色彩渐变、规范的大小写排版以及自动暗色模式。最适合用于教育类及... |
+| [**creative-ideation**](/docs/user-guide/skills/optional/creative/creative-creative-ideation) | 通过多种创意实践方法生成创意点子。 |
+| [**hyperframes**](/docs/user-guide/skills/optional/creative/creative-hyperframes) | 使用HyperFrames创建基于HTML的视频合成内容，包括动画标题卡、社交平台用叠加元素、带字幕的对话视频、音频响应式视觉效果以及着色器过渡动画。视频内容的真实数据来源为HTML文件。适用于用户需要... |
+| [**kanban-video-orchestrator**](/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator) | 基于Hermes Kanban系统规划、搭建并监控多智能体视频制作流程。适用于需要制作各类视频的用户——剧情电影、产品/营销视频、音乐视频、说明视频、ASCII/终端艺术作品，以及抽象/生成式视觉内容等。 |
+| [**meme-generation**](/docs/user-guide/skills/optional/creative/creative-meme-generation) | 通过选择模板并使用Pillow工具添加文字，生成真实的迷因图片，可输出实际的.png格式迷因文件。 |
+| [**pixel-art**](/docs/user-guide/skills/optional/creative/creative-pixel-art) | 支持使用不同时代风格的色彩方案（NES、Game Boy、PICO-8风格）制作像素艺术。 |
 
-## email
-
-| 技能 | 描述 |
-|-------|-------------|
-| [**agentmail**](/docs/user-guide/skills/optional/email/email-agentmail) | 通过 AgentMail 为智能体配置专属的电子邮件收件箱。智能体可使用自有的邮箱地址（例如 hermes-agent@agentmail.to）自主发送、接收和管理邮件。 |
-
-## finance
-
-| 技能 | 描述 |
-|-------|-------------|
-| [**3-statement-model**](/docs/user-guide/skills/optional/finance/finance-3-statement-model) | 在 Excel 中构建完全整合的三张报表模型（损益表、资产负债表、现金流量表），包含营运资金计划、折旧摊销递推计算、债务偿还计划，以及实现现金与留存收益关联的公式。可与 excel-author 工具搭配使用。 |
-| [**comps-analysis**](/docs/user-guide/skills/optional/finance/finance-comps-analysis) | 在 Excel 中进行可比公司分析——包括运营指标、估值倍数以及针对同行群体的统计基准对比。可与 excel-author 工具搭配使用，适用于上市公司估值、首次公开募股定价、行业基准对比或异常值检测等场景。 |
-| [**dcf-model**](/docs/user-guide/skills/optional/finance/finance-dcf-model) | 在 Excel 中构建符合专业标准的 DCF 估值模型——包括收入预测、自由现金流计算、加权平均资本成本、终值估算，以及熊市/基准/牛市情景分析、5x5 敏感性表格等。可与 excel-author 工具搭配使用，用于股票内在价值分析。 |
-| [**excel-author**](/docs/user-guide/skills/optional/finance/finance-excel-author) | 使用 openpyxl 在无界面模式下构建可审计的 Excel 工作簿——支持蓝色/黑色/绿色单元格规范、公式替代硬编码值、命名范围设置、余额校验以及敏感性表格等功能。适用于财务模型、审计输出文件及对账工作。 |
-| [**lbo-model**](/docs/user-guide/skills/optional/finance/finance-lbo-model) | 在 Excel 中构建杠杆收购模型——包括资金来源与用途分析、债务偿还计划、现金流转分析、退出倍数计算，以及 IRR/MOIC 敏感性分析。可与 excel-author 工具搭配使用，适用于私募股权项目筛选、投资方案例估值，或演示用杠杆收购分析模型。 |
-| [**merger-model**](/docs/user-guide/skills/optional/finance/finance-merger-model) | 在 Excel 中构建并购带来的价值增值/稀释模型——包括合并后的损益表预测、协同效应分析、融资结构分析以及每股收益影响测算。可与 excel-author 工具搭配使用，适用于并购项目演示、董事会材料准备或交易估值工作。 |
-| [**pptx-author**](/docs/user-guide/skills/optional/finance/finance-pptx-author) | 使用 python-pptx 在无界面模式下创建 PowerPoint 演示文稿。可与 excel-author 工具搭配使用，打造每个数据点均可追溯至对应 Excel 单元格的模型支撑型演示文稿，适用于项目推介、投资委员会备忘录及业绩公告等场景。 |
-| [**stocks**](/docs/user-guide/skills/optional/finance/finance-stocks) | 提供通过 Yahoo 获取的股票行情、历史数据、搜索功能、对比功能以及加密货币相关数据。 |
-
-## gaming
+## DevOps运维
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**minecraft-modpack-server**](/docs/user-guide/skills/optional/gaming/gaming-minecraft-modpack-server) | 托管经过修改的 Minecraft 服务器（支持 CurseForge、Modrinth 平台）。 |
+| [**inference-sh-cli**](/docs/user-guide/skills/optional/devops/devops-cli) | 通过inference.sh CLI（infsh）运行150多种AI应用——包括图像生成、视频制作、大语言模型功能、搜索工具、3D处理以及社交自动化任务。基于终端工具实现，相关触发词包括：inference.sh、infsh、AI应用、flux、veo、图像生成、视频生成、seedrea等。 |
+| [**docker-management**](/docs/user-guide/skills/optional/devops/devops-docker-management) | 管理Docker容器、镜像、卷、网络以及Compose堆栈——涵盖生命周期管理、故障排查、清理工作以及Dockerfile优化。 |
+| [**hermes-s6-container-supervision**](/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision) | 可修改、调试或扩展Hermes Agent Docker镜像内的s6-overlay监控结构——用于添加新服务、调试profile网关，以及理解Architecture B主程序架构模式。 |
+| [**pinggy-tunnel**](/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel) | 通过Pinggy工具实现无需安装即可基于SSH建立的本地主机隧道。 |
+| [**watchers**](/docs/user-guide/skills/optional/devops/devops-watchers) | 能轮询RSS、JSON API以及GitHub数据，并自动去除重复内容。 |
+
+## 内部测试用功能
+
+| 技能 | 描述 |
+|-------|-------------|
+| [**adversarial-ux-test**](/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test) | 扮演产品中最难应对、最抗拒技术的用户角色，以该角色身份浏览应用，找出所有用户体验痛点，再通过务实性分析筛选出真正的问题，剔除无关噪音。可生成可执行的改进清单... |
+
+## 邮件处理
+
+| 技能 | 描述 |
+|-------|-------------|
+| [**agentmail**](/docs/user-guide/skills/optional/email/email-agentmail) | 通过AgentMail为智能体配置专属邮箱收件箱。智能体可使用自有的邮箱地址（如hermes-agent@agentmail.to）自主发送、接收和管理邮件。 |
+
+## 金融分析
+
+| 技能 | 描述 |
+|-------|-------------|
+| [**3-statement-model**](/docs/user-guide/skills/optional/finance/finance-3-statement-model) | 在Excel中构建完全集成的三表模型（损益表、资产负债表、现金流量表），包含营运资金计划、折旧摊销递延处理、债务偿还计划，以及实现现金与留存收益关联的公式。可与excel-author工具搭配使用。 |
+| [**comps-analysis**](/docs/user-guide/skills/optional/finance/finance-comps-analysis) | 在Excel中构建可比公司分析模型——包括运营指标、估值倍数，以及针对同行群体的统计基准对比。可与excel-author工具搭配使用，适用于上市公司估值、首次公开募股定价、行业基准分析或异常值检测等场景。 |
+| [**dcf-model**](/docs/user-guide/skills/optional/finance/finance-dcf-model) | 在Excel中构建专业级的DCF估值模型——包含收入预测、自由现金流计算、加权平均资本成本、终值估算，以及熊市/基准/牛市三种情景分析及5×5敏感度矩阵。可与excel-author工具搭配使用，用于股票内在价值分析。 |
+| [**excel-author**](/docs/user-guide/skills/optional/finance/finance-excel-author) | 使用openpyxl在无界面模式下构建可审计的Excel工作簿——支持蓝/黑/绿三种单元格样式规范、公式替代硬编码值、命名范围使用、余额校验以及敏感度分析表等功能。适用于财务模型、审计输出文件及对账工作。 |
+| [**lbo-model**](/docs/user-guide/skills/optional/finance/finance-lbo-model) | 在Excel中构建杠杆收购模型——包括资金来源与用途分析、债务偿还计划、现金流转分析、退出倍数计算，以及IRR/MOIC指标的敏感度分析。可与excel-author工具搭配使用，用于私募股权项目筛选、投资方案例估值，或演示用杠杆收购方案设计。 |
+| [**merger-model**](/docs/user-guide/skills/optional/finance/finance-merger-model) | 在Excel中构建并购带来的价值增值/稀释分析模型——包括合并后的损益表预测、协同效应分析、融资结构设计以及每股收益影响测算。可与excel-author工具搭配使用，用于并购项目推介、董事会汇报材料或交易估值分析。 |
+| [**pptx-author**](/docs/user-guide/skills/optional/finance/finance-pptx-author) | 使用python-pptx在无界面模式下创建PowerPoint演示文稿。可与excel-author工具结合使用，打造每一项数据都能追溯至Excel工作表单元格的模型驱动型演示文稿，适用于项目推介、投资委员会备忘录及业绩通报等场景。 |
+| [**stocks**](/docs/user-guide/skills/optional/finance/finance-stocks) | 提供股票行情、历史数据查询、对比功能，还支持通过Yahoo获取加密货币相关数据。 |
+
+## 游戏
+
+| 技能 | 描述 |
+|-------|-------------|
+| [**minecraft-modpack-server**](/docs/user-guide/skills/optional/gaming/gaming-minecraft-modpack-server) | 托管经过修改的Minecraft服务器（支持CurseForge、Modrinth平台）。 |
 | [**pokemon-player**](/docs/user-guide/skills/optional/gaming/gaming-pokemon-player) | 通过无界面模拟器结合内存读取功能来玩《宝可梦》游戏。 |
 
-## health
+## 健康管理
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**fitness-nutrition**](/docs/user-guide/skills/optional/health/health-fitness-nutrition) | 提供健身计划制定与营养追踪功能。可通过 wger 工具按肌肉群、训练设备或类别搜索 690 多种锻炼动作；还能通过 USDA FoodData Central 数据库查询 38 万多种食物的营养成分与热量信息。可计算 BMI、TDEE、一次最大力量值、宏量营养素分配比例以及身体... |
-| [**neuroskill-bci**](/docs/user-guide/skills/optional/health/health-neuroskill-bci) | 能连接正在运行的 NeuroSkill 实例，将用户的实时认知与情绪状态（专注度、放松程度、情绪状态、认知负荷、困倦程度、心率、心率变异性、睡眠阶段以及 40 多种基于肌电信号的衍生评分）融入智能体的响应中... |
+| [**fitness-nutrition**](/docs/user-guide/skills/optional/health/health-fitness-nutrition) | 提供健身计划制定与营养追踪功能。可通过wger工具按肌肉群、训练设备或类别搜索690多种锻炼动作；还能通过USDA FoodData Central查询380,000多种食物的营养成分与热量信息。可计算BMI、每日总能量消耗、一次最大力量值、宏量营养素分配比例以及身体各项指标... |
+| [**neuroskill-bci**](/docs/user-guide/skills/optional/health/health-neuroskill-bci) | 能连接正在运行的NeuroSkill实例，将用户的实时认知与情绪状态（专注度、放松程度、情绪状态、认知负荷、困倦程度、心率、心率变异性、睡眠阶段以及40多种基于肌电信号的衍生评分）融入智能体的响应机制中... |
 
-## mcp
-
-| 技能 | 描述 |
-|-------|-------------|
-| [**fastmcp**](/docs/user-guide/skills/optional/mcp/mcp-fastmcp) | 使用 Python 的 FastMCP 工具构建、测试、检查、安装及部署 MCP 服务器。适用于创建新的 MCP 服务器、将 API 或数据库封装为 MCP 工具、暴露资源或提示词，以及为 Claude Code、Cur 等平台准备 FastMCP 服务器等场景。 |
-| [**mcporter**](/docs/user-guide/skills/optional/mcp/mcp-mcporter) | 使用 mcporter CLI 直接列出、配置、认证并调用 MCP 服务器/工具（支持 HTTP 或标准输入输出方式），包括临时搭建的服务器、配置修改以及 CLI 语法/类型生成等功能。 |
-
-## migration
+## MCP接口
 
 | 技能 | 描述 |
 |-------|-------------|
-| [**openclaw-migration**](/docs/user-guide/skills/optional/migration/migration-openclaw-migration) | 将用户的 OpenClaw 定制配置迁移至 Hermes Agent 中。可从 ~/.openclaw 文件导入与 Hermes 兼容的记忆数据、SOUL.md 配置文件、命令允许列表、用户技能以及选定的工作区资产，随后详细列出所有无法迁移的内容... |
+| [**fastmcp**](/docs/user-guide/skills/optional/mcp/mcp-fastmcp) | 使用Python的FastMCP库构建、测试、检查、安装及部署MCP服务器。适用于创建新的MCP服务器、将API或数据库封装为MCP工具、暴露资源或提示词，或是为Claude Code、Cur等平台准备FastMCP服务器。 |
+| [**mcp-oauth-remote-gateway**](/docs/user-guide/skills/optional/mcp/mcp-mcp-oauth-remote-gateway) | 为运行在无界面网关上的远程MCP服务器提供手动OAuth认证功能。 |
+| [**mcporter**](/docs/user-guide/skills/optional/mcp/mcp-mcporter) | 使用mcporter CLI可直接列出、配置、进行身份验证并调用MCP服务器/工具（支持HTTP或标准输入输出方式），包括临时搭建的服务器、配置修改以及CLI命令/类型生成功能。 |
 
-## mlops| 技能 | 描述 |
+## 数据迁移
+
+| 技能 | 描述 |
+|-------|-------------|
+| [**openclaw-migration**](/docs/user-guide/skills/optional/migration/migration-openclaw-migration) | 将用户的OpenClaw自定义设置迁移到Hermes Agent中。可从用户的主目录~/.openclaw导入与Hermes兼容的记忆数据、SOUL.md配置文件、命令允许列表、用户技能以及选定的工作区资产，同时会详细列出所有无法迁移的内容... |
+
+## MLOps机器学习运维
+
+| 技能 | 描述 |
+|-------|-------------|
+| （此处内容未在提供的背景信息中显示） || 技能 | 描述 |
 |-------|-------------|
 | [**huggingface-accelerate**](/docs/user-guide/skills/optional/mlops/mlops-accelerate) | 最简单的分布式训练API。仅需4行代码即可为任何PyTorch脚本添加分布式支持，同时兼容DeepSpeed/FSDP/Megatron/DDP等多种框架。具备自动设备分配、混合精度计算（FP16/BF16/FP8）功能，支持交互式配置，可通过单次启动完成训练…… |
 | [**axolotl**](/docs/user-guide/skills/optional/mlops/mlops-training-axolotl) | Axolotl：基于YAML的LLM微调工具，支持LoRA、DPO、GRPO等微调方法。 |
