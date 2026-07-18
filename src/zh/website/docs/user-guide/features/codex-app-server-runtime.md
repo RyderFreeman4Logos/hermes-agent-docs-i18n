@@ -141,9 +141,9 @@ Hermes 会将自己注册为 MCP 服务器，以便 Codex 能够调用它来获�
    ```bash
    codex login                  # writes tokens to ~/.codex/auth.json
    ```
-Hermes 自带的 `hermes auth login codex` 命令会将配置信息写入 `~/.hermes/auth.json` —— 这属于独立的会话。如果您尚未执行该操作，请**单独运行 `codex login` 命令**。
+Hermes 自带的 `hermes auth add openai-codex` 命令会将配置信息写入 `~/.hermes/auth.json`，这属于独立的会话。如果您尚未执行该操作，请**单独运行 `codex login`**。
 
-3. **（可选）安装您需要的 Codex 插件。** 当启用运行时环境后，Hermes 会自动迁移您之前通过 Codex CLI 安装的精选插件：
+3. **（可选）安装您需要的 Codex 插件。** 当启用运行时环境后，Hermes 会自动迁移您之前通过 Codex CLI 安装的精选插件。
    ```bash
    codex plugin marketplace add openai-curated
    # then via codex's TUI, install Linear / GitHub / Gmail / etc.
@@ -375,25 +375,25 @@ tool_timeout_sec = 600.0
 
 ## 局限性
 
-当前运行时处于**可选测试版**状态。在 Hermes Agent 2026.5 及 Codex CLI 0.130.0 版本上已实现以下功能：
+此运行时处于**可选测试版**状态。目前已在 Hermes Agent 2026.5 + Codex CLI 0.130.0 上验证可用，支持以下功能：
 
 - 多轮对话
 - 通过 Hermes UI 对 `commandExecution` 和 `fileChange`（apply_patch）操作进行审批
-- MCP 工具调用（已针对 `@modelcontextprotocol/server-filesystem` 及新的 `hermes-tools` 回调机制进行验证）
-- 原生 Codex 插件迁移（已针对 Linear、GitHub 和日历相关功能进行验证）
+- MCP 工具调用（已针对 `@modelcontextprotocol/server-filesystem` 及新的 `hermes-tools` 回调函数进行验证）
+- 原生 Codex 插件迁移（已针对 Linear、GitHub 和 Calendar 目录进行验证）
 - 拒绝/取消操作路径
 - 开启/关闭切换功能
 - 内存使用量和技能调用次数计数器（通过集成测试实时验证）
-- 通过 Codex 实现 Hermes 的网页搜索功能（已实际验证：“OpenAI Codex CLI – Getting Started” 的查询流程可完整运行）
+- 通过 Codex 实现 Hermes 的网页搜索功能（已实际验证：“OpenAI Codex CLI – Getting Started” 查询可完整执行）
 
 已知局限性包括：
 
-- **Hermes 认证与 Codex 认证属于独立的会话。** 为获得最流畅的用户体验，您需要同时执行 `codex login` 和 `hermes auth login codex` 操作（运行时会在调用大型语言模型时使用 Codex 的会话）。这是 Hermes 在 `_import_codex_cli_tokens` 函数中的刻意设计——Hermes 不会与 Codex CLI 共享 OAuth 状态，以避免在令牌刷新时导致双方数据冲突）。
-- **在此运行时中无法使用 `delegate_task`、`memory`、`session_search` 和 `todo` 功能。** 这些功能需要正在运行的 AIAgent 上下文，而无状态的 MCP 回调机制无法提供此类上下文。如需使用这些功能，请使用 `/codex-runtime auto` 命令。
-- **当 Codex 未跟踪变更集时，审批提示中不会显示内联补丁预览。** Codex 的 `fileChange` 审批参数并不总是包含变更集信息。Hermes 会在可能的情况下缓存来自相应 `item/started` 通知的数据，但如果在相关内容尚未完全传输时就收到审批请求，提示内容将退化为 Codex 提供的任意原因说明。
-- **无法保证在亚秒级时间内完成取消操作。** 在内容传输过程中中断操作（如在 Codex 正在响应时按下 Ctrl+C）会通过 `turn/interrupt` 机制发送中断信号，但若 Codex 已经发送了最终消息，您仍将收到该响应。
+- **Hermes 认证与 Codex 认证属于独立的会话。** 为获得最佳用户体验，您需要同时执行 `codex login` 和 `hermes auth add openai-codex` 操作（该运行时在调用大型语言模型时会使用 Codex 的会话）。这是 Hermes 中 `_import_codex_cli_tokens` 函数的刻意设计——Hermes 不会与 Codex CLI 共享 OAuth 状态，以避免在令牌刷新时导致数据冲突）。
+- **在此运行时中无法使用 `delegate_task`、`memory`、`session_search` 和 `todo` 功能。** 这些功能需要正在运行的 AIAgent 上下文，而无状态的 MCP 回调函数无法提供此类上下文。如需使用这些功能，请使用 `/codex-runtime auto` 命令。
+- **当 Codex 未跟踪变更集时，审批提示中不会显示内联补丁预览。** Codex 的 `fileChange` 审批参数并不总是包含变更集信息。Hermes 会在可能的情况下缓存来自相应 `item/started` 通知的数据，但如果在相关数据尚未完全传输时就收到审批请求，提示内容将退化为 Codex 提供的任意 `reason` 信息。
+- **无法保证在亚秒级时间内完成取消操作。** 在处理过程中中断（例如在 Codex 正在响应时按下 Ctrl+C）会通过 `turn/interrupt` 机制传递，但如果 Codex 已经发送了最终消息，您仍会收到该响应。
 
-如果您发现漏洞，请附上 `hermes logs --since 5m` 的输出结果，[提交问题](https://github.com/NousResearch/hermes-agent/issues)。在标题中注明 `codex-runtime`，以便团队更快地处理问题。
+如果您发现漏洞，请附上 `hermes logs --since 5m` 的输出结果，[提交问题](https://github.com/NousResearch/hermes-agent/issues)。在标题中注明 `codex-runtime`，以便于问题分类处理。
 
 ## 架构
 
