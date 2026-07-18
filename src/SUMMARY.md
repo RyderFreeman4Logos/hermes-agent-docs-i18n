@@ -1736,6 +1736,7 @@
         - [高级工作流（已在 UE 5.8 上实测验证）](zh/optional-skills/creative/unreal-mcp/references/advanced-workflows.md)
         - [Unreal MCP — 常见问题与经验总结](zh/optional-skills/creative/unreal-mcp/references/pitfalls.md)
         - [Unreal MCP — 已验证的配方](zh/optional-skills/creative/unreal-mcp/references/recipes.md)
+        - [Unreal MCP — 工具接口参考文档](zh/optional-skills/creative/unreal-mcp/references/tool-surface.md)
   - [Devops]()
     - [Cli]()
       - [inference.sh CLI](zh/optional-skills/devops/cli/SKILL.md)
