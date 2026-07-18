@@ -158,7 +158,7 @@ metadata:
 hermes skills config gif-search
 
 # View all skill config
-hermes config show | grep '^skills\.config'
+hermes config get skills.config --json
 ```
 
 ## 创建自定义技能
