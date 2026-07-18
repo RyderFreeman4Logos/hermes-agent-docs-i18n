@@ -7,12 +7,12 @@ sidebar_position: 6
 
 # 网页搜索与内容提取
 
-Hermes Agent 提供了两款可通过模型调用的网页工具，这些工具由多种后端服务提供支持：
+Hermes Agent 提供了两款可通过模型调用的网页工具，这些工具由多种后端服务支持：
 
 - **`web_search`** — 在网络上进行搜索并返回排序后的结果  
 - **`web_extract`** — 从一个或多个网址中获取并提取可读内容  
 
-这两项功能均可通过选择同一个后端来配置。后端服务可通过 `hermes tools` 命令选择，也可直接在 `config.yaml` 文件中指定。
+这两项功能均可通过选择同一后端来配置。后端服务可通过 `hermes tools` 命令选择，也可直接在 `config.yaml` 文件中指定。
 
 ## 后端服务
 
@@ -25,36 +25,36 @@ Hermes Agent 提供了两款可通过模型调用的网页工具，这些工具�
 | **Tavily** | `TAVILY_API_KEY` | ✔ | ✔ | 每月 1,000 次搜索 |
 | **Exa** | `EXA_API_KEY` | ✔ | ✔ | 每月 1,000 次搜索 |
 | **Parallel** | `PARALLEL_API_KEY` | ✔ | ✔ | 需付费 |
-| **xAI（Grok）** | `XAI_API_KEY` 或 `hermes auth login xai-oauth` | ✔ | — | 需付费（SuperGrok 或按令牌计费） |
+| **xAI（Grok）** | `XAI_API_KEY` 或 `hermes auth add xai-oauth` | ✔ | — | 需付费（SuperGrok 或按令牌计费） |
 
 Brave Search、DDGS 和 xAI 仅支持搜索功能——若需要内容提取功能，需将它们与 Firecrawl/Tavily/Exa/Parallel 结合使用。DDGS 在底层使用了 [`ddgs` Python 包](https://pypi.org/project/ddgs/)；如果尚未安装，可运行 `pip install ddgs`（或让 Hermes 在首次使用时自动安装）。xAI 则通过 Responses API 运行 Grok 的服务器端 `web_search` 工具——其结果由大语言模型生成而非基于索引，因此标题、描述和网址选择均为模型输出（详见下文的 [关于模型可信度的说明](#xai-grok)）。
 
-**按功能独立配置**：您可以为搜索和提取分别使用不同的后端服务——例如，搜索使用免费的 SearXNG，而提取则使用 Firecrawl。详情请参阅下文 [按功能独立配置](#per-capability-configuration)。
+**按功能独立配置**：您可以为搜索和提取分别使用不同的后端服务——例如，搜索使用免费的 SearXNG，而提取使用 Firecrawl。详情请参见下文的 [按功能独立配置](#per-capability-configuration)。
 
 :::提示 Nous 订阅用户
-如果您拥有付费的 [Nous Portal](https://portal.nousresearch.com) 订阅账号，即可通过 **[Tool Gateway](tool-gateway.md)** 使用由 Firecrawl 提供的托管服务来执行网页搜索和内容提取——无需 API 密钥。新安装的用户可运行 `hermes setup --portal` 登录并一次性启用所有网关工具；现有用户则可通过 `hermes tools` 仅启用网页搜索功能。
+如果您拥有付费的 [Nous Portal](https://portal.nousresearch.com) 订阅，即可通过 **[工具网关](tool-gateway.md)** 使用由 Firecrawl 提供的托管服务来执行网页搜索和内容提取——无需 API 密钥。新安装的用户可运行 `hermes setup --portal` 登录并一次性启用所有网关工具；现有用户则可通过 `hermes tools` 仅启用搜索功能。
 :::
 
 ---
 
 ## `web_extract` 如何处理长页面
 
-后端服务会返回原始的页面 Markdown 格式内容，这类内容可能非常庞大（如论坛帖子、文档网站、包含嵌入评论的新闻文章等）。为保持上下文窗口的有效性并降低成本，`web_extract` 会在将内容传递给智能体之前，先通过 **`web_extract` 辅助模型** 对其进行处理。该功能的处理方式完全取决于页面大小：
+后端服务会返回原始的页面 Markdown 内容，这类内容可能体积巨大（如论坛帖子、文档网站、包含嵌入评论的新闻文章）。为确保上下文窗口的有效性并降低成本，`web_extract` 会在将内容传递给智能体之前，先通过 **`web_extract` 辅助模型** 对其进行处理。处理方式完全取决于内容大小：
 
 | 页面大小（字符数） | 处理方式 |
 |------------------|----------|
-| 5,000 字符以下 | 按原样返回——无需调用大语言模型，完整的 Markdown 内容会直接传递给智能体 |
-| 5,000 – 500,000 字符 | 通过 `web_extract` 辅助模型进行单次摘要处理，输出结果长度限制在约 5,000 字符 |
-| 500,000 – 2,000,000 字符 | 拆分处理：将页面内容分割为 100,000 字符大小的块，对每个块并行进行摘要处理，最后综合生成一份最终摘要（约 5,000 字符） |
-| 超过 2,000,000 字符 | 拒绝处理，并提示用户使用内容更精简的网址 |
+| 小于 5,000 | 原样返回——不调用大语言模型，完整的 Markdown 内容会直接传递给智能体 |
+| 5,000 – 500,000 | 通过 `web_extract` 辅助模型进行单次摘要处理，输出内容长度限制在约 5,000 字符 |
+| 500,000 – 2,000,000 | 拆分处理：将页面分割为 100,000 字符大小的块，并行对每个块进行摘要处理，最后合成一份总摘要（约 5,000 字符） |
+| 超过 2,000,000 | 拒绝处理，并提示使用更简短的源网址 |
 
-该摘要功能会保留引文、代码块及关键事实的原始格式——它属于内容压缩工具，而非改写工具。如果摘要生成失败或超时，Hermes 会回退到前约 5,000 字符的原始内容，而不会返回无用的错误信息。
+该摘要功能会保留引号、代码块及关键事实的原始格式——它属于内容压缩工具，而非改写工具。如果摘要生成失败或超时，Hermes 会回退到前约 5,000 字符的原始内容，而不会返回无用的错误信息。
 
 ### 哪个模型负责生成摘要？
 
 是 `web_extract` 辅助任务。默认情况下（`auxiliary.web_extract.provider: "auto"`），使用的是您的 **主聊天模型**——即与 `hermes model` 相同的提供者和模型。对于大多数场景而言这已足够，但在那些计算成本较高的推理模型（如 Opus、MiniMax M2.7 等）上，每次处理长页面都会产生额外费用。
 
-无论您使用的主模型是什么，都可以将提取后的内容摘要路由到某个廉价且快速的模型上进行进一步处理：
+无论您使用的主模型是什么，都可以将提取后的摘要任务路由到更廉价、更快速的模型上进行处理：
 
 ```yaml
 # ~/.hermes/config.yaml
@@ -300,7 +300,7 @@ XAI_API_KEY=sk-xai-your-key-here
 或针对 SuperGrok 订阅用户：
 
 ```bash
-hermes auth login xai-oauth
+hermes auth add xai-oauth
 ```
 
 接着选择 xAI 作为搜索后端：
