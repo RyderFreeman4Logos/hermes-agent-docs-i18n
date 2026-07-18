@@ -128,12 +128,12 @@ END;
 
 ## 架构版本与迁移说明
 
-当前架构版本为：**11**
+当前架构版本为：**21**
 
-`schema_version` 表中仅存储一个整数。对于简单的列添加操作，系统会通过 `_reconcile_columns()` 函数以声明式方式处理（该函数会对比实际列与 `SCHEMA_SQL` 中的定义，补充缺失的列）。而那些无法通过声明式方式实现的数据迁移以及索引/FTS 相关更改，则需通过版本控制机制来处理：
+`schema_version` 表中仅存储一个整数。对于简单的列添加操作，系统会通过 `_reconcile_columns()` 函数以声明式方式处理（该函数会对比实际存在的列与 `SCHEMA_SQL` 中的定义，从而补充缺失的列）。而版本控制机制则专门用于那些无法通过声明式方式实现的数据迁移以及索引/FTS 相关的变更：
 
-| 版本 | 变更内容 |
-|------|----------|
+| 版本号 | 变更内容 |
+|--------|----------|
 | 1 | 初始架构（包含 sessions、messages、FTS5 功能） |
 | 2 | 为 messages 表添加 `finish_reason` 列 |
 | 3 | 为 sessions 表添加 `title` 列 |
@@ -142,22 +142,27 @@ END;
 | 6 | 为 messages 表添加推理相关列：`reasoning`、`reasoning_details`、`codex_reasoning_items` |
 | 7 | 为 messages 表添加 `reasoning_content` 列 |
 | 8 | 为 sessions 表添加 `api_call_count` 列 |
-| 9 | 为 messages 表添加 `codex_message_items` 列，用于复现 Codex Responses 的消息 ID/阶段信息 |
-| 10 | 添加 `messages_fts_trigram` 虚拟表（用于处理中文等字符的三元字分词及子串搜索），并回填现有数据 |
-| 11 | 为 `messages_fts` 和 `messages_fts_trigram` 表重新创建索引，以便检索 `tool_name` + `tool_calls` 的组合信息；同时从外部内容读取模式切换为内联模式；删除旧的触发器，并为每条消息记录回填数据 |
+| 9 | 为 messages 表添加 `codex_message_items` 列，用于复现 Codex Responses 类型的消息 ID/阶段信息 |
+| 10 | 添加 `messages_fts_trigram` 虚拟表（用于处理中文字体的三字组分词及子串搜索功能），并回填现有数据行 |
+| 11 | 重新为 `messages_fts` 和 `messages_fts_trigram` 创建索引，以覆盖 `tool_name` + `tool_calls` 组合信息；同时将索引模式从外部内容读取方式改为内联模式；删除旧的触发器，并为每条消息行回填数据 |
+| 16 | 在 `model_config` 中为代理子智能体对应的行添加标记（字段为 `$._delegate_from`），这样当父智能体将其删除后，会话选择器仍能保持正常工作状态 |
+| 18 | 整合网关元数据——从 `sessions.json` 文件中回填 `display_name`、`origin_json`、`expiry_finalized` 等字段 |
+| 20 | 实现按模型划分的使用量统计功能——根据历史上的每会话使用总量，初始化 `session_model_usage` 表中的数据行 |
 
-对于需要声明式添加列的场景，系统会使用 `ALTER TABLE ADD COLUMN` 语句，并通过 try/except 机制处理列已存在的情况（从而确保操作的可重试性）。每次成功的迁移完成后，版本号都会相应提升。
+未列在上述版本中的变更，均是通过 `_reconcile_columns()` 函数以声明式方式实现的列添加操作（仅涉及版本号升级，不涉及数据迁移）。
+
+此类声明式列添加操作会使用 `ALTER TABLE ADD COLUMN` 语句，并通过 try/except 机制来处理列已存在的情况（具备幂等性）。每次成功的迁移完成后，版本号都会随之上升。
 
 ## 写入冲突处理机制
 
-多个 Hermes 进程（包括网关、CLI 会话以及工作树代理）会共享同一个 `state.db` 文件。`SessionDB` 类通过以下方式来处理写入冲突：
+多个 Hermes 进程（包括网关、CLI 会话以及工作树中的智能体）会共享同一个 `state.db` 文件。`SessionDB` 类通过以下方式来解决写入冲突问题：
 
 - 使用较短的 SQLite 超时时间（1秒），而非默认的30秒；
-- 在应用层实现带随机抖动时间的重试机制（抖动范围为20-150毫秒，最多可重试15次）；
-- 使用 `BEGIN IMMEDIATE` 事务，以便在事务开始时就发现锁定冲突；
+- 在应用层实现带有随机抖动时间的重试机制（抖动范围为20-150毫秒，最多可重试15次）；
+- 使用 `BEGIN IMMEDIATE` 事务，在事务开始阶段即可检测到锁定冲突；
 - 每完成50次成功写入后进行一次 WAL 检查点操作（处于被动模式）。
 
-这些措施可以有效避免“车队效应”——即由于 SQLite 内部固定的延迟机制，导致所有同时尝试写入的进程都在相同的间隔时间进行重试。
+这些措施旨在避免“车队效应”——即由于 SQLite 内部固定的退避机制，导致所有同时尝试写入的进程都在相同的间隔时间进行重试。
 
 ```
 _WRITE_MAX_RETRIES = 15
