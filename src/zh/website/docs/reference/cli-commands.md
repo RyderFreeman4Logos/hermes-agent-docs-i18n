@@ -221,29 +221,32 @@ hermes gateway <subcommand>
 
 | 子命令 | 描述 |
 |----------|------|
-| `run` | 在前台运行网关。推荐用于 WSL、Docker 和 Termux 环境。 |
+| `run` | 在前台运行网关。适用于 WSL、Docker 和 Termux 环境。 |
 | `start` | 启动已安装的 systemd/launchd 后台服务。 |
 | `stop` | 停止该服务（或前台进程）。 |
 | `restart` | 重启该服务。 |
 | `status` | 显示服务状态。 |
-| `list` | 列出**所有配置文件**，以及每个配置文件的网关当前是否正在运行（如有 PID 也会一并显示）。当您同时运行多个配置文件并希望获得整体概览时非常实用。 |
+| `list` | 列出**所有配置文件**，以及每个配置文件的网关当前是否正在运行（如有 PID 也会一并显示）。当同时运行多个配置文件并希望获取整体概览时非常实用。 |
 | `install` | 作为 systemd（Linux）或 launchd（macOS）后台服务进行安装。 |
 | `uninstall` | 卸载已安装的服务。 |
 | `setup` | 交互式消息平台设置。 |
-| `migrate-legacy` | 删除因早期版本安装而遗留的旧版 `hermes.service` 单元文件。配置文件单元文件（`hermes-gateway-<profile>.service`）及无关服务不会受到影响。可选参数：`--dry-run`、`-y`/`--yes`。 |
-| `enroll` | 实验性功能：将此网关注册到中继连接器，并为基于连接器的平台保存中继凭据。 |
+| `migrate-legacy` | 删除因早期版本安装而遗留的旧版 `hermes.service` 单元文件。配置文件对应的单元文件（`hermes-gateway-<profile>.service`）以及无关服务均不会受到影响。可选参数：`--dry-run`、`-y`/`--yes`。 |
+| `enroll` | 实验性功能：将该网关注册到中继连接器，并为基于连接器的平台保存中继凭证。 |
 
 选项：
 
 | 选项 | 描述 |
 |------|------|
-| `--all` | 在 `start` / `restart` / `stop` 操作时，会对**所有配置文件**的网关生效，而不仅限于当前激活的 `HERMES_HOME`。如果您同时运行多个配置文件，并希望在执行 `hermes update` 后同时重启它们，此选项非常有用。 |
-| `--no-supervise` | 在 `run` 操作时，对于使用 s6-overlay Docker 镜像的场景，可取消自动监控功能，采用 s6 之前的前台进程运行模式——网关将以容器的主进程形式运行且不会自动重启。在非 s6 镜像环境下此选项无效。其效果等同于设置 `HERMES_GATEWAY_NO_SUPERVISE=1`。 |
+| `--all` | 在 `start` / `restart` / `stop` 操作中：会对**所有配置文件**中的网关进行处理，而不仅限于当前激活的 `HERMES_HOME` 配置。当你同时运行多个配置文件，并希望在执行 `hermes update` 后全部重启它们时，此选项非常有用。 |
+| `--no-supervise` | 在 `run` 操作中：在 s6-overlay Docker 镜像内部，关闭自动监控功能，采用 s6 之前的前台进程运行模式——网关作为容器的主进程运行，且不会自动重启。在 s6 镜像外部此选项无效。相当于设置了 `HERMES_GATEWAY_NO_SUPERVISE=1`。 |
+| `--external-supervisor` | 在 `run` 操作中：指定由外部包装程序提供的进程管理器来负责管理前台网关。当使用 `sudo`、`env -i` 或其他包装工具移除了 launchd/systemd 的原生环境标记时，可使用此选项。此时在聊天界面发起的重启或更新操作会返回到该进程管理器，而不会生成新的独立进程来替代原有网关。 |
 
-`hermes gateway enroll` 命令支持 `--token`、`--connector-url`、`--gateway-id` 和 `--wake-url` 参数。它会将注册令牌与连接器进行交换，然后将生成的 `GATEWAY_RELAY_ID`、`GATEWAY_RELAY_SECRET`、`GATEWAY_RELAY_DELIVERY_KEY`、可选的 `GATEWAY_RELAY_URL`，以及当提供了 `--wake-url` 时的 `GATEWAY_RELAY_WAKE_URL` 值写入当前激活配置文件的 `.env` 文件中。
+`--external-supervisor` 是一种重启策略约定：通过聊天界面发起的重启或 `service-restart` 更新操作会以状态码 `75` 结束，因此包装程序的进程管理器必须在该非零状态码之后重新启动网关。对于 systemd，应使用 `Restart=on-failure` 或 `Restart=always`，并且不要在 `RestartPreventExitStatus` 中包含 `75`；对于 launchd，则需配置 `KeepAlive` 选项，以便在重启失败后自动重新启动网关。若未设置此类策略，即使请求重启，网关仍会保持停止状态。
+
+`hermes gateway enroll` 命令支持 `--token`、`--connector-url`、`--gateway-id` 和 `--wake-url` 参数。它会将注册令牌与连接器进行交换，然后将生成的 `GATEWAY_RELAY_ID`、`GATEWAY_RELAY_SECRET`、`GATEWAY_RELAY_DELIVERY_KEY`、可选的 `GATEWAY_RELAY_URL`，以及当指定了 `--wake-url` 时的 `GATEWAY_RELAY_WAKE_URL` 值写入当前激活配置文件的 `.env` 文件中。
 
 :::提示 WSL 用户
-建议使用 `hermes gateway run` 而非 `hermes gateway start`——WSL 环境的 systemd 支持并不可靠。为确保设置持久化，可将其封装在 tmux 中运行：`tmux new -s hermes 'hermes gateway run'`。更多详情请参阅 [WSL 常见问题](/reference/faq#wsl-gateway-keeps-disconnecting-or-hermes-gateway-start-fails)。
+建议使用 `hermes gateway run` 而非 `hermes gateway start`——WSL 环境对 systemd 的支持并不可靠。为确保设置持久化，可将其封装在 tmux 中运行：`tmux new -s hermes 'hermes gateway run'`。详情请参阅 [WSL 常见问题](/reference/faq#wsl-gateway-keeps-disconnecting-or-hermes-gateway-start-fails)。
 :::
 
 ## `hermes lsp`
@@ -1504,26 +1507,26 @@ hermes completion fish > ~/.config/fish/completions/hermes.fish
 hermes update [--gateway] [--check] [--no-backup] [--backup] [--yes]
 ```
 
-该命令会获取最新的 `hermes-agent` 代码，并在管理的虚拟环境中重新安装依赖项，随后再次运行安装后的钩子程序（如 MCP 服务器、技能同步及补全功能安装）。即便在已实际安装的环境中运行也安全。若想在不进行实际安装的情况下查看当前版本是否落后于 `origin/main`，可使用 `--check` 参数。
+该命令会拉取最新的 `hermes-agent` 代码，并在管理的虚拟环境中重新安装依赖项，随后再次运行安装后的钩子程序（如 MCP 服务器、技能同步及补全功能安装）。即便在已部署的环境中运行也安全。可使用 `--check` 参数在不进行实际安装的情况下，检查当前版本是否落后于 `origin/main` 分支。
 
-`hermes update` 会获取配置好的更新分支（默认为 `main`）。如果当前检出代码位于其他分支，Hermes 可能会在拉取之前先切换到该更新分支。若希望将某些分支上的修改排除在自动更新流程之外，建议在更新前先提交这些修改。
+`hermes update` 会拉取预先配置的更新分支（默认为 `main`）。如果当前检出的是其他分支，Hermes 可能会在拉取代码之前先切换到该更新分支。若希望将某些分支上的修改排除在自动备份流程之外，建议在更新前先提交这些修改。
 
 | 参数 | 描述 |
 |------|------|
 | `--gateway` | 用于消息传递 `/update` 命令的内部模式。该模式通过基于文件的进程间通信方式来传输提示信息及进度状态，而非从终端标准输入读取数据。此参数并非用于重启网关的标志。 |
-| `--check` | 在不进行拉取、安装依赖或重启任何服务的情况下，检查是否有可用更新。 |
-| `--no-backup` | 即使在 `config.yaml` 中启用了 `updates.pre_update_backup` 功能，也跳过本次运行前的预更新备份操作。 |
-| `--backup` | 在拉取代码之前，创建一个带有标签的 `HERMES_HOME` 预更新快照（包含配置、认证信息、会话数据、技能及配对数据等）。默认值为关闭——之前的“始终备份”模式会导致大型项目每次更新时都需要花费数分钟时间。如需永久启用该功能，可在 `config.yaml` 中将 `updates.pre_update_backup` 设置为 `true`。 |
-| `--yes`, `-y` | 对于配置迁移、缓存恢复等交互式提示，直接默认选择“是”。此时不会询问 API 密钥信息；如需单独处理 API 密钥相关操作，请运行 `hermes config migrate` 命令。 |
+| `--check` | 在不进行代码拉取、依赖安装或任何服务重启的情况下，检查是否有可用更新。 |
+| `--no-backup` | 跳过本次运行前的所有预更新备份操作（包括快速状态快照和完整压缩包），无论 `updates.pre_update_backup` 的设置如何。 |
+| `--backup` | 强制为本次运行创建**完整**的预更新备份：既包含快速状态快照，也包含 `HERMES_HOME` 目录下的所有内容（配置文件、认证信息、会话数据、技能信息及配对数据）的完整压缩包。默认模式为 `quick`，仅生成轻量级的状态快照。可通过在 `config.yaml` 中设置 `updates.pre_update_backup: quick | full | off` 来指定永久模式。 |
+| `--yes`, `-y` | 对于配置迁移、备份恢复等交互式提示，直接默认选择“是”。API 密钥的输入将被跳过，如需单独处理这些操作，请运行 `hermes config migrate`。 |
 
 其他相关行为：
 
-- **网关重启**：成功完成更新后，Hermes 会自动尝试重启所有正在运行的网关实例，以便它们能使用到最新代码。若仅需重启网关而不进行更新，可使用 `hermes gateway restart` 命令。
-- **本地源代码变更**：对于通过 git 安装的项目，在切换分支或拉取代码之前，系统会自动将已修改但未暂存的文件以及未被跟踪的文件暂存起来（使用 `git stash push --include-untracked` 命令）。交互式终端更新会在恢复暂存内容前询问用户确认；非交互式更新则默认直接恢复暂存内容。仅在管理型安装环境中，且希望在拉取成功后丢弃所有本地修改时，才可将 `updates.non_interactive_local_changes` 设置为 `discard`。如果恢复暂存时出现冲突或拉取失败，暂存内容将保持原样，以便用户手动处理。
-- **npm lockfile 变更清理**：在暂存代码或切换分支之前，Hermes 会尽力清理由 npm install/build 过程产生的已跟踪 `package-lock.json` 文件的差异内容。在运行 `hermes update` 命令之前，请先将有意修改的 lockfile 内容提交或手动暂存。
-- **配对数据快照**：即使关闭了 `--backup` 参数，`hermes update` 也会在执行 `git pull` 之前，对 `~/.hermes/pairing/` 目录以及飞书评论规则生成轻量级的快照。如果拉取操作覆盖了您正在编辑的文件，可使用 `hermes backup restore --state pre-update` 命令将其恢复。
-- **旧版 `hermes.service` 警告**：如果 Hermes 检测到系统上存在更名前的 `hermes.service` systemd 单元（而非当前的 `hermes-gateway.service`），它会一次性提示用户进行迁移操作，以避免出现循环问题。
-- **退出码说明**：成功时返回 `0`；拉取、安装或安装后步骤出错时返回 `1`；工作目录发生意外变化导致无法执行 `git pull` 时返回 `2`。
+- **网关重启**：更新成功后，Hermes 会自动尝试重启所有正在运行的网关实例，以便它们能使用新版本的代码。若仅需重启网关而不进行更新，可使用 `hermes gateway restart` 命令。
+- **本地源代码变更**：对于通过 git 安装的版本，无论是否跟踪，脏文件和未跟踪文件都将在切换分支或拉取代码之前被自动暂存（`git stash push --include-untracked`）。交互式终端更新会在恢复暂存内容前询问用户确认；非交互式更新则默认直接恢复暂存内容。仅在需要确保成功拉取后丢弃所有本地修改的托管环境中，才可将 `updates.non_interactive_local_changes` 设置为 `discard`。如果暂存恢复过程中出现冲突或拉取失败，暂存内容将保留以便手动处理。
+- **npm lockfile 变更清理**：在暂存文件或切换分支之前，Hermes 会尽力清理由 npm install/build 过程产生的 `package-lock.json` 的变更差异。在运行 `hermes update` 之前，请先提交或手动暂存那些有意进行的锁文件修改。
+- **配对数据快照**：即使关闭了 `--backup` 参数，`hermes update` 也会在执行 `git pull` 之前，对 `~/.hermes/pairing/` 目录以及飞书评论规则生成轻量级的快照。如果拉取操作覆盖了您正在编辑的文件，可使用 `hermes backup restore --state pre-update` 将其恢复。
+- **旧版 `hermes.service` 警告**：如果 Hermes 检测到系统上存在更名前的 `hermes.service` systemd 单元（而非当前的 `hermes-gateway.service`），它会给出一次性迁移提示，帮助您避免出现循环问题。
+- **退出码**：成功时返回 `0`；拉取、安装或安装后步骤出错时返回 `1`；工作区发生意外变化导致无法执行 `git pull` 时返回 `2`。
 
 ## 维护命令
 
@@ -1531,13 +1534,13 @@ hermes update [--gateway] [--check] [--no-backup] [--backup] [--yes]
 |------|------|
 | `hermes version` | 显示版本信息。 |
 | `hermes update` | 拉取最新更改并重新安装依赖项。 |
-| `hermes postinstall` | 内部引导程序。在安装脚本完成 Hermes 的初始化之后（或执行 `hermes update` 之后），该命令会运行一次，用于安装 pip 无法提供的非 Python 类型依赖项，如 Node.js 运行时、无头浏览器、ripgrep、ffmpeg 等；如果相关配置文件尚未设置，还会触发 `hermes setup` 命令。该命令可重复安全运行，具有幂等性。 |
-| `hermes uninstall [--full] [--gui] [--yes]` | 卸载 Hermes，可选择是否同时删除所有配置文件和数据。`--gui` 仅删除桌面端的聊天 GUI，保留代理程序本身；`--full` 会同时删除配置文件和数据；`--yes` 会跳过所有确认提示。 |
+| `hermes postinstall` | 内部引导程序。在安装脚本完成 Hermes 的初始化之后（或执行 `hermes update` 之后），该命令会运行一次，用于安装 pip 无法提供的非 Python 依赖项，如 Node.js 运行时、无头浏览器、ripgrep、ffmpeg 等；如果相关配置尚未设置，还会触发 `hermes setup` 命令。该命令可重复安全运行，具备幂等性。 |
+| `hermes uninstall [--full] [--gui] [--yes]` | 卸载 Hermes，可选择是否同时删除所有配置文件和数据。`--gui` 仅会删除桌面端的聊天 GUI，而保留代理程序本身；`--full` 会同时删除配置文件和数据；`--yes` 会跳过所有确认提示。 |
 
 ## 参见
 
-- [Slash 命令参考](./slash-commands.md)
-- [CLI 接口](../user-guide/cli.md)
+- [Slash Commands 参考文档](./slash-commands.md)
+- [CLI 接口文档](../user-guide/cli.md)
 - [会话管理](../user-guide/sessions.md)
 - [技能系统](../user-guide/features/skills.md)
 - [皮肤与主题](../user-guide/features/skins.md)
