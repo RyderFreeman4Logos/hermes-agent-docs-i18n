@@ -17,23 +17,23 @@ hermes update
 该命令会从 `main` 分支拉取最新代码，更新依赖项，并提示您配置自上次更新后新增的选项。
 
 :::tip
-`hermes update` 会自动检测新的配置选项并提示您添加它们。如果您忽略了相关提示，可以手动运行 `hermes config check` 查看缺失的选项，然后再使用 `hermes config migrate` 以交互方式将其添加。
+`hermes update` 会自动检测新的配置选项并提示您添加它们。如果您忽略了该提示，可以手动运行 `hermes config check` 查看缺失的选项，然后使用 `hermes config migrate` 以交互方式将其添加。
 :::
 
 ### 更新过程中会发生什么
 
 当您运行 `hermes update` 时，将依次执行以下步骤：
 
-1. **配对数据快照**——会保存一个轻量级的更新前状态快照（涵盖 `~/.hermes/pairing/`、飞书评论规则以及运行时会被修改的其他状态文件）。您可以通过 [快照与回滚](../user-guide/checkpoints-and-rollback.md) 中介绍的快照恢复流程来恢复该状态，或者直接提取 Hermes 存放在 `~/.hermes/` 目录旁的最新快速快照压缩包。
-2. **Git 拉取**——从 `main` 分支拉取最新代码并更新子模块。
-3. **拉取后的语法验证 + 自动回滚**——拉取完成后，Hermes 会编译每次启动时 `hermes` 命令所调用的八个关键文件。如果其中有任何文件无法解析（例如存在孤立的合并冲突标记、文件被意外截断等），Hermes 会执行 `git reset --hard <pre-pull-sha>` 将安装状态回滚，以确保您的 shell 能够正常启动。待上游代码修复完成后，再重新运行 `hermes update` 即可。
-4. **依赖项安装**——运行 `uv pip install -e ".[all]"` 以安装新添加或已变更的依赖项。
-5. **配置迁移**——检测自您当前版本之后新增的配置选项，并提示您进行设置。
-6. **网关自动重启**——更新完成后，正在运行的网关会得到刷新，从而使新代码立即生效。由系统管理的网关（Linux 系统中的 systemd，macOS 系统中的 launchd）会通过相应的服务管理器重启；而手动创建的网关则会在 Hermes 能够将当前运行进程 ID 对应到相应配置文件后自动重新启动。
+1. **更新前快照** — 默认情况下会保存一个轻量级的状态快照（涵盖配对数据、定时任务、`config.yaml`、`.env`、`auth.json` 以及运行时可能被修改的其他状态文件；大小超过 1 GiB 的单个文件会被跳过，从而避免庞大的会话数据库拖慢更新速度）。此功能由 `updates.pre_update_backup` 控制（默认值为 `quick`，即仅保存部分数据；`full` 表示将整个 `HERMES_HOME` 目录打包为压缩包；`off` 表示禁用该功能）。可通过 [快照与回滚](../user-guide/checkpoints-and-rollback.md) 中介绍的快照恢复流程来恢复数据。
+2. **Git 拉取** — 从 `main` 分支拉取最新代码并更新子模块。
+3. **拉取后的语法验证 + 自动回滚** — 拉取完成后，Hermes 会编译每次启动时 `hermes` 命令所调用的八个关键文件。如果其中某个文件无法解析（例如存在孤立的合并冲突标记、文件被意外截断等），Hermes 会执行 `git reset --hard <pre-pull-sha>` 将安装状态回滚到拉取之前的版本，确保您的 Shell 仍能正常启动。待上游代码修复完成后，再重新运行 `hermes update` 即可。
+4. **依赖项安装** — 运行 `uv pip install -e ".[all]"` 以安装新添加或已变更的依赖项。
+5. **配置迁移** — 检测自您当前版本之后新增的配置选项，并提示您进行设置。
+6. **网关自动重启** — 更新完成后，正在运行的网关会立即刷新，从而使新代码立即生效。由系统管理的网关（Linux 系统中的 systemd，macOS 系统中的 launchd）会通过相应的服务管理器重新启动；而手动创建的网关则会在 Hermes 能够将当前运行进程 ID 对应到相应配置文件后自动重启。
 
-### 基于非默认分支进行更新：`--branch`
+### 基于非默认分支进行更新：`--branch` 参数
 
-默认情况下，`hermes update` 会跟踪 `origin/main` 分支。如果您需要基于其他分支进行更新，可以传递 `--branch <name>` 参数——这对于测试渠道、功能分支或候选版本测试非常有用：
+默认情况下，`hermes update` 会跟踪 `origin/main` 分支。若需基于其他分支进行更新，可传递 `--branch <名称>` 参数——这对于测试渠道、功能分支或候选版本测试非常有用：
 
 ```bash
 hermes update --branch release-candidate
@@ -77,14 +77,14 @@ hermes update --backup
 ```yaml
 # ~/.hermes/config.yaml
 updates:
-  pre_update_backup: true
+  pre_update_backup: full
 ```
 
-在早期版本中，`--backup` 功能处于始终开启状态，但由于它会增加大型家庭环境每次更新的耗时，因此现在改为可选启用。而上述轻量级的配对数据快照仍会无条件执行。
+`updates.pre_update_backup` 是一个具有三种模式的单一控制选项：`quick`（默认值——即上文所述的轻量级状态快照）、`full`（在快速快照的基础上再加上完整的 `HERMES_HOME` zip 文件；对于较大的项目，这可能会增加一些时间）以及 `off`（完全不进行更新前的备份——单次运行时使用 `--no-backup` 可达到相同效果）。传统的布尔值用法仍然有效：`true` 表示 `full`，`false` 表示 `off`。
 
-### Windows：正在运行另一个 `hermes.exe` 进程
+### Windows系统：存在另一个正在运行的 `hermes.exe` 进程
 
-在 Windows 系统上，如果检测到有其他 `hermes.exe` 进程正在占用虚拟环境的入口点可执行文件，`hermes update` 命令将拒绝执行——这类进程通常包括 Hermes Desktop 应用生成的底层服务、其他终端中正在运行的 `hermes` REPL，或是正在运行的网关程序：
+在Windows系统中，如果检测到有其他 `hermes.exe` 进程正在占用虚拟环境中的入口点可执行文件，`hermes update` 命令将拒绝运行。这类进程通常包括Hermes Desktop应用程序启动的后端服务、其他终端中正在运行的 `hermes` REPL，或是正在运行的网关进程：
 
 ```
 $ hermes update
