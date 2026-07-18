@@ -372,7 +372,7 @@ hermes cron status        # Check if scheduler is running
 
 ```bash
 # In ~/.hermes/.env
-TERMINAL_BACKEND=docker
+TERMINAL_ENV=docker
 TERMINAL_DOCKER_IMAGE=nikolaik/python-nodejs:python3.11-nodejs20
 ```
 
