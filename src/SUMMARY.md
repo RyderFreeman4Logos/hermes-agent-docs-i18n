@@ -1731,6 +1731,7 @@
       - [References]()
         - [命名调色板](zh/optional-skills/creative/pixel-art/references/palettes.md)
     - [Unreal Mcp]()
+      - [Unreal Engine MCP 技能](zh/optional-skills/creative/unreal-mcp/SKILL.md)
       - [References]()
         - [高级工作流（已在 UE 5.8 上实测验证）](zh/optional-skills/creative/unreal-mcp/references/advanced-workflows.md)
         - [Unreal MCP — 已验证的配方](zh/optional-skills/creative/unreal-mcp/references/recipes.md)
