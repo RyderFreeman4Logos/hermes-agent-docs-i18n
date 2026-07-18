@@ -1028,36 +1028,37 @@ npm run dev
 
 位于 `http://localhost:5173` 的 Vite 开发服务器会将 `/api` 路由的请求转发至位于 `http://127.0.0.1:9119` 的 FastAPI 后端。
 
-前端应用采用 React 19、TypeScript、Tailwind CSS v4 以及 shadcn/ui 风格的组件构建。生产环境构建后的代码会输出到 `hermes_cli/web_dist/` 目录，由 FastAPI 服务器作为静态单页应用进行服务。
+前端应用基于 React 19、TypeScript、Tailwind CSS v4 以及 shadcn/ui 风格的组件构建。生产环境构建后的文件会输出到 `hermes_cli/web_dist/` 目录，由 FastAPI 服务器作为静态单页应用来提供服务。
 
-## 自动更新构建
+## 更新时自动重建
 
-当运行 `hermes update` 命令时，若系统中安装了 `npm`，前端应用会自动重新构建，从而确保控制面板与代码变更保持同步。如果未安装 `npm`，则更新过程会跳过前端构建，`hermes dashboard` 会在首次启动时进行构建。
+当运行 `hermes update` 命令时，如果系统中安装了 `npm`，前端应用将会自动重新构建，从而确保控制面板与代码更新保持同步。若未安装 `npm`，则更新过程会跳过前端构建，`hermes dashboard` 会在首次启动时进行构建。
 
 ## 主题与插件
 
-该控制面板预置了六种内置主题，同时支持通过用户自定义主题、插件标签页以及后端 API 路由进行扩展——所有功能均可直接使用，无需克隆仓库。
+该控制面板预置了八种内置主题，同时还支持通过用户自定义主题、插件标签页以及后端 API 路由进行扩展——所有这些功能均可直接使用，无需克隆仓库。
 
 您可以通过顶栏**实时切换主题**：点击语言切换器旁边的调色板图标即可。所选主题会保存在 `config.yaml` 文件的 `dashboard.theme` 字段中，并在页面加载时自动恢复。
 
-您还可以通过同一选择器**单独更改字体**：主题列表下方的“字体”选项可覆盖当前主题的界面字体。此设置会在不同主题之间保持不变（存储于 `config.yaml` 的 `dashboard.font` 字段中）；若选择“主题默认值”，则可清除该设置并恢复为当前主题自带的字体。
+同一选择器还支持**独立更改字体**：主题列表下方的“字体”选项可以覆盖当前主题的界面字体设置。此设置会在不同主题之间保持不变（存储于 `config.yaml` 的 `dashboard.font` 字段中）；若选择“主题默认值”，则可清除该设置并恢复为当前主题本身的字体。
 
 内置主题如下：
 
-| 主题 | 风格描述 |
-|------|----------|
+| 主题 | 特点 |
+|------|------|
 | **Hermes Teal**（`default`） | 深青色搭配奶油色，使用系统字体，布局间距舒适 |
-| **Hermes Teal (Large)**（`default-large`） | 与默认主题相同，但文字大小为 18px，布局间距更宽松 |
-| **Midnight**（`midnight`） | 深蓝紫色，使用 Inter 和 JetBrains Mono 字体 |
-| **Ember**（`ember`） | 温暖的深红色搭配青铜色，使用 Spectral 行楷字体与 IBM Plex Mono 字体 |
+| **Hermes Teal (Large)**（`default-large`） | 与默认主题相同，但文字大小为 18px，布局间距更宽 |
+| **Nous Blue**（`nous-blue`） | 采用 Nous 品牌的蓝色点缀，布局简洁宽敞 |
+| **Midnight**（`midnight`） | 深蓝紫色色调，使用 Inter 与 JetBrains Mono 字体 |
+| **Ember**（`ember`） | 温暖的深红色搭配青铜色，使用 Spectral 行书字体与 IBM Plex Mono 字体 |
 | **Mono**（`mono`） | 灰度风格，使用 IBM Plex 字体，布局紧凑 |
-| **Cyberpunk**（`cyberpunk`） | 黑底霓虹绿，使用 Share Tech Mono 字体 |
-| **Rosé**（`rose`） | 粉色搭配象牙白，使用 Fraunces 行楷字体，布局宽敞 |
+| **Cyberpunk**（`cyberpunk`） | 黑底霓虹绿色，使用 Share Tech Mono 字体 |
+| **Rosé**（`rose`） | 粉色搭配象牙白，使用 Fraunces 行书字体，布局宽敞 |
 
-如需创建自定义主题、添加插件标签页、注入到壳层插槽中，或暴露特定于插件的 REST 接口，请参阅 **[扩展控制面板](./extending-the-dashboard)** 完整指南，其中涵盖以下内容：
+如需创建自定义主题、添加插件标签页、向壳层插槽注入功能，或暴露特定于插件的 REST 接口，请参阅 **[扩展控制面板](./extending-the-dashboard)** 完整指南。该指南涵盖了以下内容：
 
 - 主题 YAML 结构——调色板、字体设置、布局、资源文件、componentStyles、颜色覆盖规则以及自定义 CSS
-- 布局变体——`standard`、`cockpit`、`tiled`
+- 布局样式变体——`standard`、`cockpit`、`tiled`
 - 插件清单、SDK、壳层插槽、页面级插槽（可在不覆盖原有组件的情况下将插件组件注入到内置页面中）、后端 FastAPI 路由
-- 主题与插件结合使用的完整示例（Strike Freedom 飞行控制台演示）
-- 插件发现、重新加载及故障排查方法 |
+- 主题与插件结合使用的完整示例（Strike Freedom 控制台演示）
+- 插件的发现、重新加载及故障排查方法 |
