@@ -8,53 +8,57 @@ description: "Build themes and plugins for the Hermes web dashboard — palettes
 
 Hermes 网页控制面板（`hermes dashboard`）设计为无需克隆代码库即可进行外观定制与功能扩展。它提供了三层扩展接口：
 
-1. **主题**——用于重新定义控制面板的配色方案、字体、布局以及各组件的边框风格的 YAML 文件。只需将文件放入 `~/.hermes/dashboard-themes/` 目录中，它就会出现在主题切换器中。
-2. **UI 插件**——包含 `manifest.json` 文件及 JavaScript 包的目录，这类插件可用于注册新标签页、替换内置页面、通过页面级插槽增强现有页面功能，或向指定插槽注入组件。
-3. **后端插件**——位于该插件目录中的 Python 文件，用于提供 FastAPI 接口。相关路由会挂载在 `/api/plugins/<name>/` 路径下，并可由插件自身的 UI 调用。
+1. **主题**——用于重新设定控制面板的配色方案、字体、布局以及各组件的边框样式的 YAML 文件。只需将文件放入 `~/.hermes/dashboard-themes/` 目录中，它就会出现在主题切换器中。
+2. **UI 插件**——包含 `manifest.json` 文件及 JavaScript 打包文件的目录，这类插件可用于新增标签页、替换内置页面、通过页面级插槽增强现有页面功能，或向指定插槽注入组件。
+3. **后端插件**——位于该插件目录中的 Python 文件，它会暴露一个 FastAPI 路由器；相关路由会挂载在 `/api/plugins/<name>/` 下，并可由插件自身的 UI 调用。
 
-这三种扩展方式均支持**运行时直接插入**：无需克隆仓库、无需执行 `npm run build` 操作，也无需修改控制面板的源代码。本页面是关于这三种扩展方式的权威参考文档。
+这三种扩展方式均支持**运行时直接插入**：无需克隆仓库、无需执行 `npm run build`，也无需修改控制面板的源代码。本页面是关于这三种扩展方式的权威参考文档。
 
-如果您仅想使用控制面板功能，请参阅 [网页控制面板](./web-dashboard)。若需自定义终端 CLI 的外观（而非网页控制面板），请查看 [皮肤与主题](./skins)——CLI 皮肤系统与控制面板主题是相互独立的。
+如果您仅想使用控制面板功能，请参阅 [网页控制面板](./web-dashboard)。若需定制终端 CLI 的外观（而非网页控制面板），请查看 [皮肤与主题](./skins)——CLI 的皮肤系统与控制面板主题无关。
 
-:::note 组件组合方式
-主题与插件虽各自独立，但可协同工作。单个主题仅由一个 YAML 文件构成即可独立使用；单个插件仅以标签页形式存在时也可独立运行。通过将它们结合使用，便可打造出带有自定义抬头显示的完整外观方案——示例中的 `strike-freedom-cockpit` 演示项目（位于 `hermes-example-plugins` 附属仓库中，安装步骤详见 [主题与插件组合演示](#combined-theme--plugin-demo)）正是如此实现的。
+:::note 本页面不涉及桌面应用
+本页面介绍的是**网页控制面板**（`hermes dashboard`）的插件系统，包括 `window.__HERMES_PLUGIN_SDK__`、`manifest.json` 以及预编译好的 JS 打包文件。而**原生桌面应用**（`hermes desktop`）则拥有独立的 SDK——`@hermes/plugin-sdk`，它仅为一个 ESM 文件，无需任何构建步骤，相关文档请参见 [桌面插件 SDK](/developer-guide/desktop-plugin-sdk)。两者之间仅共享后端的 `plugin_api.py` 命名空间（`/api/plugins/<name>`）。
+:::
+
+:::note 各组件的组合方式
+主题与插件虽各自独立，但能够协同工作。单个主题可以仅以 YAML 文件的形式存在；单个插件也可以仅以标签页的形式存在。将二者结合使用，便可打造出带有自定义 HUD 的完整视觉风格——示例中的 `strike-freedom-cockpit` 演示项目（位于 `hermes-example-plugins` 附录仓库中，安装步骤请参见 [主题与插件组合演示](#combined-theme--plugin-demo)）正是如此实现的。
 :::
 
 ---
 
-## 目录结构
+## 目录
 
 - [主题](#themes)
   - [快速入门——创建你的第一个主题](#quick-start--your-first-theme)
   - [配色方案、字体与布局](#palette-typography-layout)
   - [布局变体](#layout-variants)
-  - [主题资源（将图片作为 CSS 变量使用）](#theme-assets-images-as-css-vars)
-  - [组件边框风格覆盖](#component-chrome-overrides)
-  - [颜色覆盖设置](#color-overrides)
-  - [原始 `customCSS` 代码](#raw-customcss)
+  - [主题资源（将图片作为 CSS 变量）](#theme-assets-images-as-css-vars)
+  - [组件边框样式覆盖](#component-chrome-overrides)
+  - [颜色覆盖](#color-overrides)
+  - [原始 `customCSS` 文件](#raw-customcss)
   - [内置主题](#built-in-themes)
-  - [完整主题 YAML 参考文档](#full-theme-yaml-reference)
+  - [完整主题 YAML 参考](#full-theme-yaml-reference)
 - [插件](#plugins)
   - [快速入门——创建你的第一个插件](#quick-start--your-first-plugin)
   - [目录结构](#directory-layout)
   - [manifest 文件参考](#manifest-reference)
   - [插件 SDK](#the-plugin-sdk)
-  - [插槽系统](#shell-slots)
+  - [插槽](#shell-slots)
   - [替换内置页面（`tab.override`）](#replacing-built-in-pages-taboverride)
-  - [增强内置页面功能（页面级插槽）](#augmenting-built-in-pages-page-scoped-slots)
-  - [仅提供插槽功能的插件（`tab.hidden`）](#slot-only-plugins-tabhidden)
+  - [增强内置页面（页面级插槽）](#augmenting-built-in-pages-page-scoped-slots)
+  - [仅包含插槽的插件（`tab.hidden`）](#slot-only-plugins-tabhidden)
   - [后端 API 路由](#backend-api-routes)
-  - [每个插件对应的自定义 CSS](#custom-css-per-plugin)
-  - [插件发现与重新加载机制](#plugin-discovery--reload)
+  - [每个插件的自定义 CSS](#custom-css-per-plugin)
+  - [插件发现与重新加载](#plugin-discovery--reload)
 - [主题与插件组合演示](#combined-theme--plugin-demo)
-- [API 参考文档](#api-reference)
+- [API 参考](#api-reference)
 - [故障排除](#troubleshooting)
 
 ---
 
 ## 主题
 
-主题为存储在 `~/.hermes/dashboard-themes/` 目录中的 YAML 文件。文件名并无特殊要求（系统会使用主题中的 `name:` 字段来识别主题），但通常采用 `<名称>.yaml` 的格式。所有字段均为可选——若缺少某些字段，系统会自动回退到内置的 `default` 主题，因此一个主题甚至只需定义一种颜色即可。
+主题为存储在 `~/.hermes/dashboard-themes/` 目录中的 YAML 文件。文件名并无特殊要求（系统会使用主题中的 `name:` 字段来识别），但通常采用 `<name>.yaml` 的格式。所有字段均为可选——若缺少某些键值，系统会自动回退到内置的 `default` 主题，因此一个主题甚至只需定义一种颜色即可。
 
 ### 快速入门——创建你的第一个主题
 
