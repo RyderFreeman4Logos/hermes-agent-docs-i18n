@@ -183,44 +183,50 @@ chmod 600 ~/.hermes/.env
 hermes serve --host 0.0.0.0 --port 9119
 ```
 
-只要需要桌面应用能够保持连接，就请让 `hermes serve` 进程持续运行——一旦该进程停止，桌面应用就无法再与后端通信。建议通过 `systemd`、`tmux` 或您选择的进程管理工具来运行它，这样即便用户退出登录或重启系统，进程依然会继续运行。
+只要需要桌面应用能够保持连接，就请让 `hermes serve` 进程持续运行——一旦该进程停止，桌面应用便无法再与后端通信。建议通过 `systemd`、`tmux` 或您选择的进程管理工具来运行它，这样即便用户登出或重启系统，进程也能继续存活。
 
-另外，如果您依赖消息通道，还需确保远程主机上的**网关正在运行**——桌面应用实际上是与 `hermes serve` 后端进行通信，而 Telegram/Discord/Slack 等渠道的网关连接则是另一个独立的进程，需要您自行启动并持续维持其运行状态。关于网关的设置方法，请参阅 [消息功能](./messaging/index.md)。
+另外，如果您依赖消息通道，还需确保远程主机上的**网关正在运行**——桌面应用实际上是与 `hermes serve` 后端进行通信，而 Telegram/Discord/Slack 等平台的网关会话则是另一独立的进程，需要您自行启动并持续维持其运行状态。关于网关的设置方法，请参阅 [消息功能](./messaging/index.md)。
 
-不想将明文密码直接存储在系统中？可以将 `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` 设置为 scrypt 哈希值——可通过以下命令生成该哈希值：`python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`。完整的配置项（config.yaml 中的键、所有环境变量以及速率限制设置）可见于 [Web Dashboard → 用户名/密码提供方](./features/web-dashboard.md#usernamepassword-provider-no-oauth-idp)。
+不愿将明文密码直接存储？可将 `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` 设置为 scrypt 哈希值——可通过以下命令生成该哈希值：`python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`。完整的配置项（config.yaml 中的键、各类环境变量以及速率限制设置）可见于 [Web 控制面板 → 用户名/密码提供器](./features/web-dashboard.md#usernamepassword-provider-no-oauth-idp)。
 
-如果选择以 systemd 服务的方式运行后端，请为该服务添加 `EnvironmentFile=%h/.hermes/.env` 参数，这样在系统启动时凭证就会自动加载到环境变量中。
+若选择以 systemd 服务形式运行后端，请为该服务单元添加 `EnvironmentFile=%h/.hermes/.env` 设置，这样在系统启动时相关凭证就会自动加载到环境变量中。
 
 :::warning
-后端会读取和写入您的 `.env` 文件（其中包含 API 密钥和敏感信息），同时还能执行代理命令。上述的**用户名/密码**设置仅适用于可信网络环境——切勿将受密码保护的后端直接暴露在公网上，应将其置于 VPN 后面保护。[Tailscale](https://tailscale.com/) 是一种理想的解决方案：让后端绑定到设备的 Tailscale IP 地址（使用参数 `--host <tailscale-ip>`），并将 `http://<tailscale-ip>:9119` 设置为远程地址，这样只有处于同一 Tailscale 网络中的设备才能访问它。若需通过公网访问后端，则应改用 **OAuth (Nous Portal)** 提供方。
+后端会读取和写入您的 `.env` 文件（其中包含 API 密钥及敏感信息），同时还能执行代理命令。上文所述的用户名/密码认证方式仅适用于可信网络环境——切勿将受密码保护的后端直接暴露在公网上，应将其置于 VPN 后面保护。[Tailscale](https://tailscale.com/) 是一种理想的解决方案：让后端绑定到设备的 Tailscale IP 地址（使用参数 `--host <tailscale-ip>`），并将 `http://<tailscale-ip>:9119` 设置为远程地址，这样只有处于同一 Tailscale 网络中的设备才能访问它。若需通过公网访问后端，则应改用 **OAuth (Nous Portal)** 提供器。
 :::
 
 ### 在桌面应用中操作
 
 **设置 → 网关 → 远程网关：**
 
-1. **远程地址** — `http://<backend-host>:9119`（如果在前端使用了反向代理，可搭配 `/hermes` 等路径前缀）。
-2. **登录** — 桌面应用会自动识别后端支持的登录方式，并相应显示按钮。对于用户名/密码类型的后端，会显示“登录”按钮，引导用户填写第 1 步中获取的凭证；而对于 OAuth 类型的后端，则会显示“使用 <提供方> 登录”（例如“使用 Nous Research 登录”），从而触发对应提供方的浏览器登录流程。无论哪种方式，最终都会在应用端与后端建立已认证的会话。
-3. **保存并重新连接** — 该操作会将桌面应用切换到远程后端。会话会自动刷新；如果设置了 `HERMES_DASHBOARD_BASIC_AUTH_SECRET`，即便系统重启，用户也会保持登录状态。
+1. **远程地址** — `http://<backend-host>:9119`（如果在前端设置了反向代理，可使用如 `/hermes` 这样的路径前缀）。
+2. **登录** — 桌面应用会自动识别后端支持的认证方式，并相应显示按钮。对于用户名/密码认证的后端，会显示一个**登录**按钮，引导用户填写第1步中获取的凭证；而对于 OAuth 认证的后端，则会显示**使用 <提供器> 登录**的选项（例如“使用 Nous Research 登录”），进而通过浏览器完成提供商要求的登录流程。无论哪种方式，最终都会在应用端与后端建立已认证的会话。
+3. **保存并重新连接** — 该操作会将桌面界面切换到远程后端。会话会自动刷新；如果设置了 `HERMES_DASHBOARD_BASIC_AUTH_SECRET`，即使系统重启，用户也能保持登录状态。
 
-您也可以在启动桌面应用之前，通过 `HERMES_DESKTOP_REMOTE_URL` 环境变量直接设置后端地址（该参数会覆盖应用内的设置）；不过仍需通过网关设置面板进行登录操作。
+您也可以在启动桌面应用之前，通过 `HERMES_DESKTOP_REMOTE_URL` 环境变量直接设置后端地址（该参数会覆盖应用内的设置）；不过仍需通过“网关”设置面板进行登录操作。
 
 :::note 每个配置文件的独立远程主机
-远程网关主机是按 [配置文件](./profiles.md) 单独配置的，因此每个配置文件都可以指向各自的远程后端（或继续使用本地后端）。切换配置文件时，应用连接的远程主机也会随之改变。
+远程网关主机是按[配置文件](./profiles.md)分别配置的，因此每个配置文件都可以指向独立的远程后端，或继续使用本地的后端。切换配置文件时，应用连接的远程主机也会随之改变。
 :::
 
 ### 故障排除
 
-- **登录失败，出现 401 错误或“凭证无效”提示** — 说明用户名或密码与后端的 `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` / `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` 不匹配。对于未知用户或输入错误密码的情况，后端会返回相同的通用错误信息（不会透露具体原因），因此请务必仔细核对这两项内容。可通过命令 `curl -s http://<host>:9119/api/status | jq '.auth_required, .auth_providers'` 检查网关是否处于运行状态——该命令应返回 `true`，且 `auth_providers` 列表中应包含 `"basic"`。
-- **没有“登录”按钮，而是要求输入会话令牌** — 说明后端的用户名/密码登录功能未启用。执行 `/api/status` 命令后，`auth_providers` 列表中不会出现 `"basic"`。请确认 `~/.hermes/.env` 文件中已同时设置了用户名和密码（或密码哈希值），并且仪表板进程确实已加载了这些配置。
-- **每次重启后都会自动登出** — 请为 `HERMES_DASHBOARD_BASIC_AUTH_SECRET` 设置一个稳定的值。如果没有该密钥，每次系统启动时都会重新生成令牌签名密钥，从而导致所有会话失效。
-- **连接被拒绝或超时** — 可能是因为后端绑定到了 `127.0.0.1`（默认地址），或是防火墙/VPN 阻断了对应端口。建议将后端绑定到 `0.0.0.0` 或 Tailscale IP 地址，并在可信网络中开放该端口。
+- **登录失败，出现 401 错误或“凭证无效”提示** — 说明用户名或密码与后端的 `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` / `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` 不匹配。后端对于未知用户和错误密码会返回相同的通用错误信息（不提供枚举功能），因此请务必仔细核对这两项内容。可通过命令 `curl -s http://<host>:9119/api/status | jq '.auth_required, .auth_providers'` 检查网关是否处于运行状态——该命令应返回 `true`，且 `auth_providers` 列表中应包含 `"basic"`。
+- **没有“登录”按钮，而是要求输入会话令牌** — 说明后端的用户名/密码认证功能未启用。执行 `/api/status` 命令后，`auth_providers` 列表中不会出现 `"basic"` 项。请确认 `~/.hermes/.env` 文件中已同时设置了用户名和密码（或密码哈希值），并且控制面板进程确实已加载了这些配置。
+- **每次重启后都会自动登出** — 请为 `HERMES_DASHBOARD_BASIC_AUTH_SECRET` 设置一个稳定的值。若未设置该参数，令牌签名密钥会在每次系统启动时重新生成，从而导致所有会话失效。
+- **出现“连接被拒绝”或“超时”错误** — 可能是因为后端绑定在了默认的 `127.0.0.1` 地址上，或是防火墙/VPN 阻断了对应端口。建议将后端绑定到 `0.0.0.0` 或 Tailscale IP 地址，并在可信网络中开放该端口。
 
-从 Web Dashboard 的角度进行相同配置的方法，请参阅 [Web Dashboard → 将 Hermes Desktop 连接到远程后端](./features/web-dashboard.md#connecting-hermes-desktop-to-a-remote-backend)；相关环境变量则列于 [环境变量 → Web Dashboard 与 Hermes Desktop](../reference/environment-variables.md#web-dashboard--hermes-desktop) 中。
+从 Web 控制面板的角度进行相同配置的方法，请参阅 [Web 控制面板 → 将 Hermes 桌面应用连接到远程后端](./features/web-dashboard.md#connecting-hermes-desktop-to-a-remote-backend)；各类环境变量则可在 [环境变量 → Web 控制面板与 Hermes 桌面应用](../reference/environment-variables.md#web-dashboard--hermes-desktop) 中查看。
+
+## 扩展桌面应用功能
+
+该桌面应用采用开源协作模式——各种界面组件，如窗口、页面、侧边栏导航、状态栏元素、调色板命令、快捷键以及主题等，均可通过统一的 SDK 进行注册，您也可以自行开发新的功能。插件实际上就是一个单独的 ESM 文件，只需将其放入 `$HERMES_HOME/desktop-plugins/<id>/plugin.js` 目录中即可；应用会在几秒钟内加载该插件，每次保存文件后还会自动热重载。您可以在 **设置 → 插件** 中实时管理已安装的插件。
+
+完整的参考文档请参阅 [桌面插件 SDK](../developer-guide/desktop-plugin-sdk.md)。（此内容与[Web 控制面板插件系统](./features/extending-the-dashboard.md)是相互独立的。）
 
 ## 故障排除
 
-启动日志会保存在 `HERMES_HOME/logs/desktop.log` 文件中（其中包含后端输出及最近的 Python 错误信息），如果应用出现启动失败，首先请检查该文件。您也可以通过命令行工具实时查看日志内容：
+应用启动时的日志会保存在 `HERMES_HOME/logs/desktop.log` 文件中——该文件包含后端输出信息以及最近的 Python 错误堆栈——如果应用出现启动失败，首先请检查该文件。您也可以通过命令行工具对日志进行实时查看：
 
 ```bash
 hermes logs gui -f
