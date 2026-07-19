@@ -4,17 +4,18 @@ title: "Subagent Delegation"
 description: "Spawn isolated child agents for parallel workstreams with delegate_task"
 ---
 
-# 子代理委派
+# 子代理委托
 
-`delegate_task` 工具会创建具有独立上下文、受限工具集以及专属终端会话的子 AIAgent 实例。每个子代理都会拥有全新的对话环境并独立工作——仅有其最终总结会被纳入父代理的上下文中。
+`delegate_task` 工具会创建具有独立上下文、继承工具访问权限以及专属终端会话的子 AIAgent 实例。每个子代理都会拥有全新的对话界面并独立工作——只有其最终总结会被纳入父代理的上下文中。
+
+顶层模型调用会自动在后台运行。Hermes 会立即返回一个处理标识，以便对话能够继续，随后会将结果以新消息的形式发回。调度子代理则会等待自身的工作节点完成处理，汇总所有结果后再返回。 
 
 ## 单任务模式
 
 ```python
 delegate_task(
     goal="Debug why tests fail",
-    context="Error: assertion in test_foo.py line 42",
-    toolsets=["terminal", "file"]
+    context="Error: assertion in test_foo.py line 42"
 )
 ```
 
@@ -24,9 +25,9 @@ delegate_task(
 
 ```python
 delegate_task(tasks=[
-    {"goal": "Research topic A", "toolsets": ["web"]},
-    {"goal": "Research topic B", "toolsets": ["web"]},
-    {"goal": "Fix the build", "toolsets": ["terminal", "file"]}
+    {"goal": "Research topic A", "context": "Focus on recent primary sources"},
+    {"goal": "Research topic B", "context": "Compare the leading explanations"},
+    {"goal": "Fix the build", "context": "Project root: /home/user/project"}
 ])
 ```
 
@@ -65,18 +66,15 @@ delegate_task(
 delegate_task(tasks=[
     {
         "goal": "Research the current state of WebAssembly in 2025",
-        "context": "Focus on: browser support, non-browser runtimes, language support",
-        "toolsets": ["web"]
+        "context": "Focus on: browser support, non-browser runtimes, language support"
     },
     {
         "goal": "Research the current state of RISC-V adoption in 2025",
-        "context": "Focus on: server chips, embedded systems, software ecosystem",
-        "toolsets": ["web"]
+        "context": "Focus on: server chips, embedded systems, software ecosystem"
     },
     {
         "goal": "Research quantum computing progress in 2025",
-        "context": "Focus on: error correction breakthroughs, practical applications, key players",
-        "toolsets": ["web"]
+        "context": "Focus on: error correction breakthroughs, practical applications, key players"
     }
 ])
 ```
@@ -92,8 +90,7 @@ delegate_task(
     Auth module files: src/auth/login.py, src/auth/jwt.py, src/auth/middleware.py.
     The project uses Flask, PyJWT, and bcrypt.
     Focus on: SQL injection, JWT validation, password handling, session management.
-    Fix any issues found and run the test suite (pytest tests/auth/).""",
-    toolsets=["terminal", "file"]
+    Fix any issues found and run the test suite (pytest tests/auth/)."""
 )
 ```
 
@@ -112,32 +109,31 @@ delegate_task(
     - print(f"Debug: ...") -> logger.debug(...)
     - Other prints -> logger.info(...)
     Don't change print() in test files or CLI output.
-    Run pytest after to verify nothing broke.""",
-    toolsets=["terminal", "file"]
+    Run pytest after to verify nothing broke."""
 )
 ```
 
 ## 批量模式详解
 
-当您提供 `tasks` 数组时，子代理会通过线程池以**并行方式**运行：
+当顶层智能体提供 `tasks` 数组时，Hermes 会返回一个后台处理句柄，并行运行各个子智能体，并在每个子任务完成后输出汇总结果。协调器子智能体会等待当前轮次中的批量任务处理完毕，以便整合这些结果。
 
-- **最大并发数**：默认为 3 个任务（可通过 `delegation.max_concurrent_children` 或环境变量 `DELEGATION_MAX_CONCURRENT_CHILDREN` 进行配置；下限为 1，无上限限制）。超过此限制的批次会返回工具错误，而不会被静默截断。
-- **线程池**：使用 `ThreadPoolExecutor`，其最大工作线程数即为配置的并发限制值。
-- **进度显示**：在 CLI 模式下，以树状视图实时展示每个子代理的工具调用情况，并显示每项任务的完成状态。在网关模式下，进度会以批次形式传递给父进程的进度回调函数。
-- **结果排序**：无论任务完成顺序如何，结果都会按任务索引排序，从而与输入顺序保持一致。
-- **中断传播**：中断父进程（例如发送新消息）会同时中断所有正在运行的子进程。
+- **最大并发数**：默认为 3 个任务（可通过 `delegation.max_concurrent_children` 或环境变量 `DELEGATION_MAX_CONCURRENT_CHILDREN` 进行配置；最低值为 1，无上限限制）。超过此限制的批量任务会返回工具错误，而不会被静默截断。
+- **线程池**：使用 `ThreadPoolExecutor`，最大工作线程数即为配置的并发限制值。
+- **进度显示**：在 CLI 模式下，以树状视图实时展示每个子智能体的工具调用情况，并显示每项任务的完成状态。在网关模式下，进度信息会按批次处理并传递给父智能体的进度回调函数。
+- **结果排序**：无论任务完成顺序如何，结果都会按照任务索引排序，从而与输入顺序保持一致。
+- **取消操作**：后续消息无法取消顶层后台批量任务。只有使用 `/stop` 命令或关闭/重置对应会话，才能取消其正在运行的子任务。同步类型的协调器子任务仍会遵循父任务的中断状态。
 
-单任务委托则无需线程池开销，直接执行。
+协调器发起的同步单任务委托无需线程池开销，可直接执行。
 
-### 持久化后台任务完成处理
+### 持久化后台任务完成状态
 
-当后台委托任务完成后，Hermes 会先将其完成事件存储在当前活跃配置文件的 `state.db` 中，之后才会将其加入常规的新一轮处理队列。如果在任务完成但尚未传递之前 Hermes 重启，该待处理事件会被恢复，并经过相同的所有权检查流程。由于存在多个竞争消费者，只有成功接收该合成任务的消费者才会确认任务已送达；失败尝试则会释放该任务以供重试。
+当后台委托任务处理完成后，Hermes 会先将其完成事件存储在当前活跃配置文件的 `state.db` 中，之后再将其放入常规的新一轮队列中处理。如果在任务完成但尚未传递之前 Hermes 重启，该待处理事件会被恢复，并通过相同的归属检查机制进行处理。由于存在多个可能的消费者，因此只有成功接收并处理该任务的消费者才会确认任务已送达；失败尝试则释放该请求权以便重新尝试。
 
-需要注意的是，此机制无法在进程崩溃后恢复子任务的执行。如果某个委托任务的所属进程在任务运行期间消失，该任务将被标记为“未知”状态，因为 Hermes 无法确认其外部操作是否已经执行。待处理和已送达的任务记录都是有限制的，并且仅存在于当前配置文件中。
+不过，这种方式无法在系统崩溃后恢复子任务的执行。如果某个委托任务的所属进程在任务运行期间消失，该任务将被标记为“未知”状态，因为 Hermes 无法确定其外部操作是否已实际执行。待处理和已送达的任务记录都是有限制的，并且仅存在于对应配置文件中。
 
 ## 模型覆盖
 
-您可以通过 `config.yaml` 为子代理配置不同的模型——这对于将简单任务委托给成本更低或速度更快的模型非常有用：
+您可以通过 `config.yaml` 为子智能体配置不同的模型——这对于将简单任务委托给成本更低或速度更快的模型非常有用：
 
 ```yaml
 # In ~/.hermes/config.yaml
@@ -148,27 +144,19 @@ delegation:
 
 如果未指定，子智能体将使用与父智能体相同的模型。
 
-## 工具集选择建议
+## 继承的工具访问权限
 
-`toolsets` 参数用于控制子智能体可使用的工具。请根据任务需求进行选择：
+`delegate_task` 不接受用于指定模型的 `toolsets` 参数。每个子智能体都会继承父智能体已启用的工具集，因此模型无法为子智能体授予父智能体所不具备的功能。如果需要额外功能来完成委派任务，需在开始对话前配置父智能体的工具。
 
-| 工具集模式 | 适用场景 |
-|------------|----------|
-| `["terminal", "file"]` | 代码编写、调试、文件编辑、构建操作 |
-| `["web"]` | 研究、事实核查、文档查询 |
-| `["terminal", "file", "web"]` | 全栈任务（默认值） |
-| `["file"]` | 只读分析、无需执行的代码审查 |
-| `["terminal"]` | 系统管理、进程控制 |
-
-无论您指定何种设置，以下工具集对子智能体始终不可用：
-- `delegation` — 对叶级子智能体（默认情况）禁用。对于 `role="orchestrator"` 的子智能体则保留可用，但其使用次数受 `max_spawn_depth` 限制——详情请参见下文的[深度限制与嵌套编排](#depth-limit-and-nested-orchestration)。
-- `clarify` — 子智能体无法与用户交互
-- `memory` — 禁止向共享的持久内存写入数据
-- `code_execution` — 子智能体需逐步推理执行任务
+即便父智能体拥有某些工具，子智能体也可能无法使用：
+- `delegation` — 对于叶级子智能体（默认情况）会被禁止使用；对于 `role="orchestrator"` 的子智能体则允许使用，但其使用次数受 `max_spawn_depth` 限制——详情请参见下文的[深度限制与嵌套编排](#depth-limit-and-nested-orchestration)。
+- `clarify` — 子智能体无法与用户交互。
+- `memory` — 不允许向共享的持久内存写入数据。
+- `code_execution` — 子智能体需逐步进行推理。
 
 ## 最大迭代次数
 
-每个子智能体都有一个迭代次数限制（默认值为 50），该限制决定了其可以进行多少次工具调用操作。
+每个子智能体都设有迭代次数限制（默认为50次），该限制决定了其可以进行多少次工具调用操作。
 
 ```python
 delegate_task(
@@ -223,51 +211,51 @@ delegate_task(
 )
 ```
 
-- `role="leaf"`（默认值）：子代理无法进一步委托任务——其行为与扁平式委托完全相同。  
-- `role="orchestrator"`：子代理保留`delegation`工具集。其功能受`delegation.max_spawn_depth`限制（默认值为**1**，即扁平结构，因此在默认设置下`role="orchestrator"`无实际作用）。将`max_spawn_depth`设置为2可允许协调器型子代理生成叶子型孙代理；设置为3及以上则适用于更复杂的树形结构。该参数没有上限，实际限制取决于资源消耗。  
-- `delegation.orchestrator_enabled: false`：这是一个全局开关，无论`role`参数为何值，都会强制所有子代理变为`leaf`类型。
+- `role="leaf"`（默认值）：子代理无法进一步委托任务——其行为与扁平委托模式相同。  
+- `role="orchestrator"`：子代理保留`delegation`工具集。其功能受`delegation.max_spawn_depth`限制（默认值为**1**，即扁平结构，因此在默认设置下此角色无实际作用）。将`max_spawn_depth`设置为2可允许协调器类型的子代理生成叶级孙代理；设置为3及以上则可支持更深的嵌套结构。该参数没有上限，实际限制取决于系统资源消耗。  
+- `delegation.orchestrator_enabled: false`：这是一个全局开关，无论子代理的`role`参数为何值，都会强制将其转换为`leaf`类型。
 
-**成本警告**：当`max_spawn_depth: 3`且`max_concurrent_children: 3`时，树形结构最多可同时存在3×3×3=27个叶子型代理。每增加一层，资源消耗都会呈倍数增长——请谨慎调整`max_spawn_depth`值。
+**成本警告**：当`max_spawn_depth: 3`且`max_concurrent_children: 3`时，该嵌套结构最多可同时运行3×3×3=27个叶级代理。每增加一个层级，资源消耗都会呈倍数增长——如需更高并发度，请有意提高`max_spawn_depth`值。
 
 ## 生命周期与持久性
 
 :::warning 背景任务并非持久执行  
-默认情况下，`delegate_task`会在**父代理当前轮次内**运行，并一直阻塞直到所有子代理完成任务。若设置`background=true`，在当前轮次结束后，只要所属会话及Hermes进程仍在运行，子代理即可继续工作：
+顶层面向模型的`delegate_task`调用会在后台自动运行，前提是会话支持后续结果传递。Hermes会立即返回一个处理标识，实际结果将在子代理或批次任务完成后重新纳入对话流程。协调器类型的子代理需在当前轮次中等待其下属任务完成，因为它们必须在返回结果前先整合这些输出。无状态请求/响应接口在无法在后续阶段传递分离结果时，会退化为同步执行模式。
 
-- 若父代理被中断（用户发送新消息、执行 `/stop` 或 `/new` 命令），所有正在运行的子代理都会被取消，返回`status="interrupted"`状态，其未完成的工作也会被丢弃。  
-- 显式关闭或重置会话会中断该会话中的所有后台子代理。关闭网关所属会话的TUI界面并不会终止网关的任务执行。  
-- Hermes进程重启不会恢复正在运行的子代理。由于Hermes无法确定哪些副作用已经发生，该子代理的状态将被标记为`unknown`。  
-- 在进程重启前已完成任务但结果尚未传递的子代理会被重新启动，并通过所属会话的正常检查流程进行处理。  
-- 被取消的子代理会返回结构化结果（`status="interrupted"`，`exit_reason="interrupted"`），但由于父代理也被中断，这些结果往往无法出现在用户可见的回复中。
+- 普通的后续消息不会取消正在运行的后台子任务。使用`/stop`可终止正在进行的后台委托任务；关闭或重置对应会话则会导致其所有活跃子任务被清除。  
+- 显式关闭/重置会话会中断该会话的所有后台子任务。关闭网关所管理的会话的TUI视图并不会终止网关的任务运行。  
+- Hermes进程重启**不会**恢复正在运行的子任务。由于Hermes无法确定重启前发生了哪些副作用，这类尝试会被标记为“未知”状态。  
+- 在进程重启前已完成但结果尚未传递的子任务会被重新激活，并通过所属会话的常规检查流程进行处理。  
+- 被取消的子任务会返回结构化结果（`status="interrupted"`，`exit_reason="interrupted"`），但由于父任务也被中断，这类结果往往无法出现在用户可见的回复中。
 
-如需实现**能够承受会话关闭或进程重启的持久执行**，可使用以下方式：
-
-- `cronjob`（action=`create`）——安排独立的代理任务运行，不受父代理轮次中断的影响。  
-- `terminal(background=True, notify_on_complete=True)`——用于长时间运行的shell命令，可在代理执行其他操作时持续运行。  
+如需实现**能够承受会话关闭或进程重启的持久执行**，请使用以下方式：  
+- `cronjob`（action=`create`）——安排独立的代理任务运行，不受父任务轮次中断的影响。  
+- `terminal(background=True, notify_on_complete=True)`——适用于长时间运行的Shell命令，可在代理执行其他任务时持续运行。  
 :::
 
 ## 核心特性
 
 - 每个子代理拥有**独立的终端会话**（与父代理分离）。  
-- **嵌套委托为可选功能**——仅`role="orchestrator"`类型的子代理可以进一步委托任务，且前提是`max_spawn_depth`需高于默认值1（即扁平结构）。可通过设置`orchestrator_enabled: false`全局禁用此功能。  
-- 叶子型子代理**无法**调用`delegate_task`、`clarify`、`memory`、`execute_code`这些函数。协调器型子代理虽保留`delegate_task`功能，但仍无法使用其他三个函数。  
-- **中断传播机制**：中断父代理会同时中断所有正在运行的子代理（包括协调器下的孙代理）。  
+- 子代理继承父代理已启用的工具集；模型无法在每次调用时选择或扩展这些工具集。  
+- **嵌套委托为可选功能**——仅`role="orchestrator"`类型的子代理才能进一步委托任务，且前提是必须将`max_spawn_depth`从默认值1（扁平结构）提高。可通过设置`orchestrator_enabled: false`全局禁用此功能。  
+- 叶级子代理**无法**调用`delegate_task`、`clarify`、`memory`、`execute_code`这些函数。协调器类型的子代理虽保留`delegate_task`功能，但仍无法使用其余三个函数。  
+- **取消操作遵循所属关系**——执行`/stop`或关闭/重置所属会话，都会终止其后台子任务；协调器下的同步层级子任务也会跟随父任务的中断状态而停止运行。  
 - 仅最终汇总结果会被纳入父代理的上下文，从而有效控制令牌使用效率。  
-- 子代理会继承父代理的**API密钥、提供程序配置及凭证池**（这有助于在遇到速率限制时实现密钥轮换）。
+- 子代理继承父代理的**API密钥、提供方配置及凭证池**（这有助于在遇到速率限制时实现密钥轮换）。
 
 ## 委托任务与代码执行功能对比
 
-| 对比项 | `delegate_task` | `execute_code` |
-|--------|--------------|-------------|
-| **处理方式** | 完整的LLM推理循环 | 仅执行Python代码 |
-| **上下文环境** | 新的、隔离的对话上下文 | 无对话上下文，仅为脚本执行环境 |
+| 对比维度 | `delegate_task` | `execute_code` |
+|----------|--------------|-------------|
+| **推理方式** | 完整的LLM推理循环 | 仅执行Python代码 |
+| **上下文环境** | 独立的新鲜对话上下文 | 无对话上下文，仅为脚本执行环境 |
 | **工具访问权限** | 可使用所有非阻塞型工具，并支持推理功能 | 通过RPC调用7种工具，但不支持推理 |
 | **并行能力** | 默认支持3个并发子代理（可配置） | 仅单个脚本执行 |
-| **适用场景** | 需要推理、判断或多步骤解决的复杂任务 | 需要机械式数据处理或脚本化工作流的场景 |
+| **适用场景** | 需要推理、判断或多步骤解决的复杂任务 | 需要机械式处理的多步骤流程 |
 | **令牌消耗** | 较高（需完整LLM推理循环） | 较低（仅返回标准输出） |
-| **用户交互** | 不支持（子代理无法请求澄清） | 不支持 |
+| **用户交互** | 不支持（子代理无法进行澄清操作） | 不支持 |
 
-**经验法则**：当子任务需要推理、判断或多步骤问题解决时，使用`delegate_task`；若仅需进行机械式的数据处理或脚本化工作流，可使用`execute_code`。
+**经验法则**：当子任务需要推理、判断或多步骤问题解决时，使用`delegate_task`；当需要执行机械式的数据处理或基于脚本的工作流时，使用`execute_code`。
 
 ## 配置选项
 
