@@ -2629,7 +2629,7 @@
       - [仅脚本型的定时任务](zh/website/docs/guides/cron-script-only.md)
       - [Cron任务故障排查](zh/website/docs/guides/cron-troubleshooting.md)
       - [教程：构建每日简报机器人](zh/website/docs/guides/daily-briefing-bot.md)
-      - [任务委派与并行处理](zh/website/docs/guides/delegation-patterns.md)
+      - [任务委托与并行处理](zh/website/docs/guides/delegation-patterns.md)
       - [教程：构建 GitHub PR 审核智能代理](zh/website/docs/guides/github-pr-review-agent.md)
       - [Google Gemini](zh/website/docs/guides/google-gemini.md)
       - [Google Vertex AI](zh/website/docs/guides/google-vertex.md)
