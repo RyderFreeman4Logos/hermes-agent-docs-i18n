@@ -154,44 +154,73 @@ hermes gateway status       # Check default service status
 hermes gateway status --system         # Linux only: inspect the system service explicitly
 ```
 
-## 聊天指令（消息内部使用）
+### 可选的 Linux 事件循环监视功能
 
-| 指令 | 描述 |
+由 systemd 管理的网关可启用进程恢复机制，用于应对 Python 的 asyncio 事件循环停止接收调度时间的情况。该功能能够解决导致整个进程卡住、进而使平台特定的存活检测任务无法运行的问题。
+
+```yaml title="~/.hermes/config.yaml"
+gateway:
+  systemd_watchdog_seconds: 120
+```
+
+更改此设置后，请重新生成服务单元：
+
+```bash
+hermes gateway install --force
+```
+
+当该值为正数时，生成的单元将使用 `Type=notify`、`NotifyAccess=main` 以及相应的 `WatchdogSec` 设置。Hermes 仅在其事件循环正常运行时才会发送心跳信号；一旦事件循环停止，systemd 便会重启该进程。默认值 `0` 会保持原有的 `Type=simple` 行为。此设置仅适用于 Linux/systemd 环境，且不会将普通平台的网络断开视为事件循环故障。
+
+## 聊天命令（在消息界面内使用）
+
+| 命令 | 描述 |
 |---------|-------------|
-| `/new` 或 `/reset` | 开始全新对话 |
-| `/model [provider:model]` | 显示或更换模型（支持 `provider:model` 语法） |
+| `/new` 或 `/reset` | 开始新的对话 |
+| `/model [provider:model]` | 显示或更改模型（支持 `provider:model` 语法） |
 | `/personality [name]` | 设置角色性格 |
 | `/retry` | 重新发送上一条消息 |
-| `/undo` | 删除上一次的对话内容 |
+| `/undo` | 删除上一次的交流内容 |
 | `/status` | 显示会话信息 |
-| `/whoami` | 显示您在此作用域下的指令访问权限（管理员 / 用户 / 无限制） |
+| `/whoami` | 显示你在当前范围内的命令使用权限（管理员 / 用户 / 无限制） |
 | `/stop` | 停止正在运行的智能体 |
-| `/approve` | 批准待处理的危险指令 |
-| `/deny` | 拒绝待处理的危险指令 |
-| `/sethome` | 将当前聊天设为主频道 |
+| `/approve` | 批准待处理的危险命令 |
+| `/deny` | 拒绝待处理的危险命令 |
+| `/sethome` | 将当前聊天设置为主频道 |
 | `/compress` | 手动压缩对话上下文 |
 | `/title [name]` | 设置或显示会话标题 |
 | `/resume [name]` | 恢复之前命名的会话 |
 | `/usage` | 显示当前会话的令牌使用情况（`/usage reset [--force]` 可重置已预留的 Codex 限额） |
 | `/insights [days]` | 显示使用情况分析数据 |
 | `/reasoning [level\|show\|hide]` | 调整推理强度或切换推理显示状态 |
-| `/voice [on\|off\|tts\|join\|leave\|status]` | 控制消息语音回复及 Discord 语音频道功能 |
+| `/voice [on\|off\|tts\|join\|leave\|status]` | 控制消息语音回复及 Discord 语音频道的功能 |
 | `/rollback [number]` | 列出或恢复文件系统检查点 |
 | `/background <prompt>` | 在独立的后台会话中运行提示词 |
 | `/reload-mcp` | 根据配置重新加载 MCP 服务器 |
-| `/update` | 将 Hermes Agent 更新至最新版本 |
-| `/help` | 显示可用指令列表 |
+| `/update` | 将 Hermes Agent 更新到最新版本 |
+| `/help` | 显示可用命令列表 |
 | `/<skill-name>` | 调用已安装的任意技能 |
 
 ## 会话管理
 
 ### 会话持久性
 
-会话会在消息之间持续存在，直到被手动重置。智能体会记住您的对话上下文。
+会话会在消息之间持续存在，直到被手动重置。智能体会记住对话的上下文信息。
 
-### 重置规则
+### 传输可靠性
 
-**默认情况下，会话不会自动重置**——上下文会一直保留，直到您手动执行 `/reset` 指令或触发上下文压缩功能。如需自动重置，可在 `~/.hermes/config.yaml` 文件的 `session_reset` 部分进行配置：
+每次向平台发送消息后，最终的智能体响应都会被记录在稳定的 **传输日志**（`state.db`）中。如果在生成响应与平台确认收到响应之间，网关发生崩溃或重启，系统会在下次启动时重新发送已存储的响应，而不会丢失数据——也不需要重新处理整个对话流程。
+
+语义层面遵循“至少一次可靠传输”原则：
+
+- 若响应的发送**从未开始**，则直接按原样重新发送。
+- 若在网关崩溃时响应正处于**发送过程中**（平台可能已收到或未收到），则重新发送时会加上“♻️ 已恢复的回复 —— …可能是重复内容”的提示前缀。此类情况会明确标注，而不会默默重发。
+- 重新发送有次数限制：最多尝试3次，且响应在24小时内有效，之后该记录将被丢弃。已发送的记录会在7天后被清理。
+
+如需禁用此功能，可在 `config.yaml` 中设置 `gateway.delivery_ledger: false`（这将恢复旧的行为：发生崩溃时正在传输中的响应会丢失）。
+
+### 重置策略
+
+**默认情况下，会话绝不会自动重置**——上下文会一直保留，直到你手动执行 `/reset` 命令或触发上下文压缩功能。如果你希望实现自动重置，可以在 `~/.hermes/config.yaml` 文件的 `session_reset` 部分进行相应配置：
 
 ```yaml
 session_reset:
