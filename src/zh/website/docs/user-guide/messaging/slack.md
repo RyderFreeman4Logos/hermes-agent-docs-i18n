@@ -33,10 +33,10 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
    ```bash
    hermes slack manifest --agent-view --write
    ```
-该操作会生成 `~/.hermes/slack-manifest.json` 文件，并输出可直接粘贴的配置说明。那些仍使用 Slack 旧版助手界面的现有应用，在准备好迁移之前可省略 `--agent-view` 参数。
+该操作会生成 `~/.hermes/slack-manifest.json` 文件，并输出可直接粘贴的配置指令。对于仍在使用 Slack 旧版助手视图的现有应用，可在准备迁移之前省略 `--agent-view` 参数。
 
 2. 访问 [https://api.slack.com/apps](https://api.slack.com/apps)，选择**创建新应用** → **从应用清单创建**。
-3. 选择对应的工作空间，粘贴 JSON 内容，进行审核后点击**下一步** → **创建**。
+3. 选择对应的工作空间，粘贴 JSON 内容，仔细检查后点击**下一步** → **创建**。
 4. 直接跳至**步骤 6：将应用安装到工作空间**。该清单已自动处理了权限范围、事件及斜杠命令的相关配置。
 
 ### 方案 B：从零开始（手动创建）
@@ -44,24 +44,24 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 1. 访问 [https://api.slack.com/apps](https://api.slack.com/apps)
 2. 点击**创建新应用**
 3. 选择**从零开始**
-4. 输入应用名称（例如“Hermes Agent”），并选定对应的工作空间
+4. 输入应用名称（例如“Hermes Agent”），并选择对应的工作空间
 5. 点击**创建应用**
 
-随后会进入应用的**基本信息**页面，接着按照下方的步骤 2–6 操作即可。
+随后会进入应用的**基本信息**页面，接下来请按照以下步骤 2–6 操作。
 
 ---
 
 ## 步骤 2：配置机器人令牌的权限范围
 
-在侧边栏中导航至**功能 → OAuth 与权限**。向下滚动到**权限范围 → 机器人令牌权限范围**，并添加以下项：
+在侧边栏中选择**功能 → OAuth 与权限**。向下滚动至**权限范围 → 机器人令牌权限范围**，并添加以下项：
 
 | 权限范围 | 用途 |
 |---------|------|
 | `chat:write` | 以机器人身份发送消息 |
 | `app_mentions:read` | 检测在频道中被@提及的情况 |
-| `channels:history` | 读取机器人所在公共频道的消息 |
+| `channels:history` | 读取机器人所在公共频道的消息记录 |
 | `channels:read` | 列出并获取公共频道的信息 |
-| `groups:history` | 读取机器人被邀请加入的私密频道的消息 |
+| `groups:history` | 读取机器人被邀请加入的私密频道的消息记录 |
 | `im:history` | 读取直接消息的历史记录 |
 | `im:read` | 查看基本的直接消息信息 |
 | `im:write` | 打开并管理直接消息 |
@@ -71,8 +71,8 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 | `files:read` | 读取并下载附件，包括语音笔记/音频文件 |
 | `files:write` | 上传文件（图片、音频、文档） |
 
-:::caution 缺少权限范围 = 缺少相应功能
-如果未添加 `channels:history` 和 `groups:history`，机器人**将无法接收频道中的消息**——它仅能在直接消息中运行。若缺少 `files:read`，Hermes 虽可进行聊天，但**无法可靠地读取用户上传的附件**。这些是最常被忽略的权限范围。
+:::注意 缺少权限范围 = 缺少相应功能
+若未添加 `channels:history` 和 `groups:history`，机器人**将无法接收频道中的消息**——它仅能在直接消息中运行。若未添加 `files:read`，Hermes 虽可进行聊天，但**无法可靠地读取用户上传的附件**。这些是最常被遗漏的权限范围。
 :::
 
 **可选权限范围：**
@@ -80,22 +80,23 @@ description: "Set up Hermes Agent as a Slack bot using Socket Mode"
 | 权限范围 | 用途 |
 |---------|------|
 | `groups:read` | 列出并获取私密频道的信息 |
+| `assistant:write` | 在机器人处理消息时，在其名称旁显示工作状态行（如“正在思考中…”）。若缺少此权限范围，`assistant.threads.setStatus` 调用将无声失败，Slack 会显示自己生成的轮换通用提示语（如“正在查找答案…”、“正在审核结果…”等）——Hermes 无法控制这些文本。该权限也是让 `typing_status_text` 显示效果的前提。 |
 
 ---
 
 ## 步骤 3：启用 Socket 模式
 
-Socket 模式允许机器人通过 WebSocket 连接，而无需公开 URL。
+Socket 模式允许机器人通过 WebSocket 连接，而无需使用公开 URL。
 
-1. 在侧边栏中，进入**设置 → Socket 模式**
+1. 在侧边栏中选择**设置 → Socket 模式**
 2. 将**启用 Socket 模式**切换为开启状态
 3. 系统会提示您创建一个**应用级令牌**：
-   - 为其命名，例如 `hermes-socket`（名称并无特殊要求）
+   - 可将其命名为类似 `hermes-socket` 的名称（名称并无特殊要求）
    - 添加 **`connections:write`** 权限范围
    - 点击**生成**
 4. **复制该令牌**——其开头为 `xapp-`。这就是您的 `SLACK_APP_TOKEN`。
 
-:::tip
+:::提示
 您随时可以在**设置 → 基本信息 → 应用级令牌**处查找或重新生成应用级令牌。
 :::
 
@@ -105,63 +106,62 @@ Socket 模式允许机器人通过 WebSocket 连接，而无需公开 URL。
 
 此步骤至关重要——它决定了机器人能够接收哪些类型的消息。
 
-1. 在侧边栏中，进入**功能 → 事件订阅**
+1. 在侧边栏中选择**功能 → 事件订阅**
 2. 将**启用事件**切换为开启状态
-3. 展开**订阅机器人事件**选项，然后添加以下项：
+3. 展开**订阅机器人事件**，并添加以下项：
 
 | 事件类型 | 是否必需 | 用途 |
 |---------|----------|------|
-| `message.im` | **是** | 机器人可接收直接消息 |
-| `message.mpim` | **是** | 机器人可接收其被加入的**群组直接消息**中的内容 |
-| `message.channels` | **是** | 机器人可接收其被加入的**公共频道**中的消息 |
-| `message.groups` | **建议添加** | 机器人可接收其被邀请加入的**私密频道**中的消息 |
+| `message.im` | **是** | 机器人接收直接消息 |
+| `message.mpim` | **是** | 机器人接收其被加入的**群组直接消息**中的消息 |
+| `message.channels` | **是** | 机器人接收其被加入的**公共频道**中的消息 |
+| `message.groups` | **推荐** | 机器人接收其被邀请加入的**私密频道**中的消息 |
 | `app_mention` | **是** | 防止在机器人被@提及时出现 Bolt SDK 错误 |
 
 4. 点击页面底部的**保存更改**
 
-:::danger 缺少事件订阅是最常见的配置问题
-如果机器人能在直接消息中正常工作，但**在频道中无法接收消息**，那几乎可以肯定是因为您忘记了添加 `message.channels`（针对公共频道）和/或 `message.groups`（针对私密频道）。如果没有这些事件，Slack 就不会将频道中的消息传递给机器人。
+:::危险 缺少事件订阅是配置中最常见的问题
+如果机器人能在直接消息中正常工作，但**在频道中无法发送消息**，几乎可以肯定是因为您忘记了添加 `message.channels`（针对公共频道）和/或 `message.groups`（针对私密频道）。没有这些事件，Slack 就不会将频道中的消息传递给机器人。
 :::
-
 
 ---
 
 ## 步骤 5：启用“消息”标签页
 
-此步骤可让用户向机器人发送直接消息。若未启用，用户在尝试给机器人发直接消息时将会看到**“已关闭向该应用发送消息的功能”**的提示。
+此步骤可让用户向机器人发送直接消息。若未启用，用户在尝试向机器人发送直接消息时将会看到**“已关闭向此应用发送消息的功能”**的提示。
 
-1. 在侧边栏中，进入**功能 → 应用主页**
-2. 滚动到**显示标签页**部分
+1. 在侧边栏中选择**功能 → 应用主页**
+2. 滚动至**显示标签页**部分
 3. 将**消息标签页**切换为开启状态
 4. 勾选**“允许用户通过消息标签页发送斜杠命令和消息”**
 
-:::danger 若未完成此步骤，直接消息将完全无法发送
-即便已配置所有正确的权限范围和事件订阅，只要未启用“消息”标签页，Slack 也不会允许用户向机器人发送直接消息。这是 Slack 平台的要求，而非 Hermes 的配置问题。
+:::危险 若未完成此步骤，直接消息将完全无法发送
+即使已配置所有正确的权限范围和事件订阅，若未启用“消息”标签页，Slack 也不会允许用户向机器人发送直接消息。这是 Slack 平台的要求，而非 Hermes 的配置问题。
 :::
 
 ---
 
 ## 步骤 6：将应用安装到工作空间
 
-1. 在侧边栏中，进入**设置 → 安装应用**
+1. 在侧边栏中选择**设置 → 安装应用**
 2. 点击**安装到工作空间**
-3. 查看相关权限设置后点击**允许**
-4. 授权完成后，您会看到一个以 `xoxb-` 开头的**机器人用户 OAuth 令牌**
+3. 仔细检查权限设置后点击**允许**
+4. 经过授权后，您会看到一个以 `xoxb-` 开头的**机器人用户 OAuth 令牌**
 5. **复制该令牌**——这就是您的 `SLACK_BOT_TOKEN`。
 
-:::tip
-如果日后需要更改权限范围或事件订阅，必须**重新安装应用**才能使更改生效。安装应用页面会显示相关提示。
+:::提示
+如果您日后更改了权限范围或事件订阅设置，必须**重新安装应用**才能使更改生效。应用安装页面会显示相关提示。
 :::
 
 ---
 
-## 步骤 7：查找白名单所需的用户 ID
+## 步骤 7：查找允许列表中的用户 ID
 
-Hermes 在构建白名单时使用的是 Slack 的**成员 ID**（而非用户名或显示名称）。
+Hermes 在构建允许列表时使用的是 Slack 的**成员 ID**（而非用户名或显示名称）。
 
 要查找成员 ID：
 
-1. 在 Slack 中点击该用户的姓名或头像
+1. 在 Slack 中点击用户的姓名或头像
 2. 点击**查看完整资料**
 3. 点击**⋮**（更多）按钮
 4. 选择**复制成员 ID**
@@ -337,12 +337,54 @@ platforms:
 |-----|---------|-------------|
 | `platforms.slack.reply_to_mode` | `"first"` | 多部分消息的线程模式：`"off"`、`"first"` 或 `"all"` |
 | `platforms.slack.extra.reply_in_thread` | `true` | 当设置为 `false` 时，频道消息将直接回复而非以线程形式发送。已存在线程中的消息仍会以线程形式回复。 |
-| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会发布到主频道。仅会广播第一部分内容。 |
-| `platforms.slack.extra.rich_blocks` | `false` | 当设置为 `true` 时，智能体消息将以 [Block Kit](https://docs.slack.dev/block-kit/) 块格式呈现（包括标题、分隔符、真正的嵌套列表以及原生表格）。同时始终会发送纯文本作为备用格式。超过 Slack 限制的表格将回退为对齐的等宽字体格式。无需重新安装应用，仅需在发送端进行更改即可。 |
+| `platforms.slack.extra.reply_broadcast` | `false` | 当设置为 `true` 时，线程回复也会同步发布到主频道。仅会广播第一部分内容。 |
+| `platforms.slack.extra.rich_blocks` | `false` | 当设置为 `true` 时，智能体发送的消息将以 [Block Kit](https://docs.slack.dev/block-kit/) 块格式呈现（包括标题、分隔符、真正的嵌套列表以及原生表格）。同时仍会发送纯文本作为备用。超出 Slack 限制的表格将自动转换为对齐的等宽字体。无需重新安装应用，仅需在发送端进行设置即可。 |
 | `platforms.slack.extra.feedback_buttons` | `false` | 当与 `rich_blocks` 一起设置为 `true` 时，会在最终回复中添加 Slack 原生的反馈控件。 |
-| `platforms.slack.extra.suggested_prompts` | `[]` | 最多可提供四个 `{title, message}` 格式的提示，用于智能体/助手的私信入口；可接受列表形式或 `{title, prompts}` 格式。 |
+| `platforms.slack.extra.suggested_prompts` | `[]` | 最多可提供四个 `{title, message}` 格式的提示，用于智能体/助手的私信入口；可接受列表形式或 `{title, prompts}` 形式。 |
 | `platforms.slack.extra.assistant_thread_titles` | `true` | 当设置为 `true` 时，会根据第一个用户消息为智能体/助手的私信线程命名。 |
-| `platforms.slack.extra.cron_continuable_surface` | `"thread"` | [可延续的定时任务](../features/cron.md#flat-in-channel-continuation-slack) 的发送方式。`"thread"` 选项会为每次任务发送创建一个专用线程（默认值）；`"in_channel"` 选项则直接将任务内容发布到频道时间线中。若要使普通的频道回复能够延续任务，需将 `in_channel` 与 `reply_in_thread: false`（以及 `require_mention: false`）一起使用。 |
+| `platforms.slack.extra.cron_continuable_surface` | `"thread"` | [可延续的定时任务](../features/cron.md#flat-in-channel-continuation-slack) 的发送方式。`"thread"` 会为每次任务发送创建一个专用线程（默认值）；`"in_channel"` 则直接将内容发布到频道时间线中。若需通过普通频道回复来延续任务，需将 `in_channel` 与 `reply_in_thread: false`（以及 `require_mention: false`）一起使用。 |
+
+### 工作状态行
+
+在智能体处理消息时，Slack 会在线程中机器人名称旁边显示一条状态行。默认情况下，Hermes 会将其设置为 `is thinking...`；您可以通过 `typing_status_text` 自定义该显示内容——例如，对于名为 Ada 的小猫型助手：
+
+```yaml
+platforms:
+  slack:
+    # Custom working-state status line (default: "is thinking...").
+    typing_status_text: "is pouncing… 🐾"
+```
+
+| 键值 | 默认值 | 描述 |
+|-----|---------|-------------|
+| `platforms.slack.typing_status_text` | `"is thinking..."` | 智能体处理消息时显示的工作状态行文本。需要 `assistant:write` 权限——若缺少该权限，状态更新会静默失败，Slack 会显示其默认的占位文本。如需完全禁用状态行，可设置 `typing_indicator: false`。 |
+
+:::注意 状态显示位置
+自定义状态会显示在**回复编辑器下方的页脚**中（如“*BotName* 正在思考…”），而不会显示在消息列表中。Slack 在 AI 应用运行时在消息区域显示的“正在生成响应…”/“正在查找答案…”等行是**Slack 自带的动态指示器**——`assistant.threads.setStatus` 无法控制这些指示器，且两者可同时出现。
+:::
+
+同一个键值也可用于自定义 Google Chat 中可见的工作状态提示信息（`platforms.google_chat.typing_status_text`，默认值为“Hermes 正在思考…”）——需要注意的是，在 Google Chat 中这会是一条实际发送到对话中的消息，而非临时状态。
+
+### 实时状态（按工具）
+
+默认情况下，状态行会**随着智能体的工作实时更新**：不会一直显示静态的“正在思考…”，而是会展示智能体当前正在执行的操作，例如“正在运行 pytest 测试/…”、“正在阅读 docs/api.md…”、“正在搜索 Slack API 的限制信息…”。在工具调用之间，状态行会恢复为静态文本。该功能利用了 Slack 已有的状态刷新机制，因此不会额外发起 Slack API 调用，即使处于 Slack 的默认设置 `tool_progress: off` 状态下也能正常工作——与进度提示气泡不同，状态行是临时的，不会在频道中留下任何痕迹。
+
+可通过 `display.live_status`（全局或按平台）来控制该功能：
+
+```yaml
+display:
+  platforms:
+    slack:
+      # full = verb + argument ("is running pytest…")   [default]
+      # verb = verb only ("is running…") — hides commands/paths,
+      #        useful in shared or customer-facing channels
+      # off  = static text (typing_status_text or "is thinking...")
+      live_status: full
+```
+
+| 键值 | 默认值 | 描述 |
+|-----|---------|-------------|
+| `display.live_status` | `"full"` | 每个工具的实时状态行显示方式。`full` 模式会显示动词及参数预览；`verb` 模式仅显示动词（不会在共享频道中显示文件路径和命令）；`off` 模式则恢复为静态文本显示。与静态状态行一样，此功能需要 `assistant:write` 权限。 |
 
 ### 会话隔离
 
