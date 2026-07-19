@@ -13,7 +13,7 @@ hermes --tui
 `GatewayClient` 会创建：
 
 ```text
-python -m tui_gateway.entry
+python -P -m tui_gateway.entry
 ```
 
 解释器的解析顺序为：`HERMES_PYTHON` → `PYTHON` → `$VIRTUAL_ENV/bin/python` → `./.venv/bin/python` → `./venv/bin/python` → `python3`（在 Windows 系统上则为 `python`）。
