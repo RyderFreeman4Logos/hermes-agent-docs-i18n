@@ -60,29 +60,43 @@ group_sessions_per_user: true
 group_sessions_per_user: false
 ```
 
-共享会话对于协作交流非常有用，但同时也存在以下问题：
+共享会话对于协作交流十分有用，但同时也存在以下问题：
 
-- 用户需要共享上下文存储空间及令牌成本
-- 某人执行的长时间、耗资源任务可能会占用其他所有人的上下文空间
-- 某人正在运行的任务可能会干扰同一房间内其他人的后续操作
+- 用户需要共享上下文存储空间及令牌成本  
+- 某人执行的耗时且依赖大量工具的任务可能会占用其他所有人的上下文资源  
+- 同一房间内，某人正在运行的任务可能会干扰另一人的后续操作  
 
 ### 干扰与并发处理
 
-Hermes 通过会话键来追踪正在运行的智能体。
+Hermes通过会话键来追踪正在运行的智能体。在默认设置`group_sessions_per_user: true`的情况下：  
+- Alice中断自己正在处理的请求时，仅会影响该频道内的她的会话  
+- Bob仍可在同一频道中继续发言，不会继承Alice的对话历史，也不会干扰她的任务执行  
 
-在默认设置 `group_sessions_per_user: true` 的情况下：
+而当设置为`group_sessions_per_user: false`时：  
+- 整个房间会共享该频道/线程的一个智能体运行槽位  
+- 不同用户发送的后续消息可能会互相干扰，或依次排队等待处理  
 
-- Alice 中断自己的正在执行请求时，仅会影响该频道中她的会话
-- Bob 可以继续在同一频道中发言，而不会继承 Alice 的历史记录或被中断
+本指南将为您详细介绍完整的设置流程——从在Discord开发者门户创建机器人到发送第一条消息。  
 
-当设置为 `group_sessions_per_user: false` 时：
+### Gateway WebSocket运行状态监控
 
-- 整个房间共享该频道/线程的单一运行智能体名额
-- 不同用户发送的后续消息可能会互相干扰，或排队等待处理
+Discord REST接口与Gateway WebSocket属于不同的通信方式。即使REST请求返回成功响应（包括`fetch_user()`返回HTTP 200状态码），也无法保证机器人仍能接收Gateway事件。因此，Hermes会综合考量智能体的就绪状态、客户端/套接字关闭状态、套接字是否处于开放状态、心跳确认消息的延迟以及心跳延迟的上限值等指标。  
 
-本指南将为您详细介绍完整的设置流程——从在 Discord 开发者门户创建机器人到发送第一条消息。
+一旦出现连续指定次数的异常状态，适配器就会触发一个可重试的致命错误事件。此时，现有的网关重连监控机制会创建一个新的适配器；而Discord适配器则不会启动第二个无限制的重连循环。  
 
-## 第1步：创建 Discord 应用程序
+您可以在`config.yaml`文件中配置这些非敏感阈值：
+
+```yaml
+discord:
+  websocket_liveness_interval_seconds: 15
+  websocket_liveness_failure_threshold: 2
+  websocket_heartbeat_ack_max_age_seconds: 60
+  websocket_max_latency_seconds: 30
+```
+
+旧的 `liveness_interval_seconds` 和 `liveness_failure_threshold` 名称仅作为兼容性别名存在，它们已不再与 REST 探测功能相关。
+
+## 第一步：创建 Discord 应用程序
 
 1. 访问 [Discord 开发者门户](https://discord.com/developers/applications)，使用您的 Discord 账户登录。
 2. 点击右上角的 **New Application**。
@@ -91,23 +105,23 @@ Hermes 通过会话键来追踪正在运行的智能体。
 
 您将进入 **General Information** 页面。请记下 **Application ID**——稍后生成邀请链接时需要用到它。
 
-## 第2步：创建机器人
+## 第二步：创建机器人
 
 1. 在左侧边栏中点击 **Bot**。
 2. Discord 会自动为您的应用程序创建一个机器人用户。您可以看到机器人的用户名，该名称可自行修改。
-3. 在 **Authorization Flow** 部分：
-   - 将 **Public Bot** 设置为 **ON**——这是使用 Discord 提供的邀请链接的必要条件（推荐）。这样“安装”选项卡就能生成默认的授权 URL。
-   - 保持 **Require OAuth2 Code Grant** 设为 **OFF**。
+3. 在 **Authorization Flow** 下方：
+   - 将 **Public Bot** 设置为 **ON**——这是使用 Discord 提供的邀请链接的必要条件（推荐做法），这样“安装”选项卡就能生成默认的授权 URL。
+   - 保持 **Require OAuth2 Code Grant** 的设置为 **OFF**。
 
 :::提示
 您可以在该页面为机器人设置自定义头像和横幅。这些内容就是用户在 Discord 中看到的样子。
 :::
 
 :::信息[私有机器人的替代方案]
-如果您希望让机器人保持私有状态（即 Public Bot 设为 OFF），则必须在第5步中使用 **Manual URL** 方法，而非“安装”选项卡。因为 Discord 提供的链接要求必须开启 Public Bot 功能。
+如果您希望保持机器人私密（即将 Public Bot 设置为 OFF），则必须在第五步中使用 **Manual URL** 方法，而非“安装”选项卡。因为 Discord 提供的链接要求必须开启 Public Bot 功能。
 :::
 
-## 第3步：启用特权网关意图
+## 第三步：启用特权网关意图
 
 这是整个设置过程中最关键的一步。如果未正确启用相应意图，您的机器人虽然能连接到 Discord，但**将无法读取消息内容**。
 
@@ -121,51 +135,51 @@ Hermes 通过会话键来追踪正在运行的智能体。
 
 请将 **Server Members Intent** 和 **Message Content Intent** 两个开关都切换为 **ON**。
 
-- 如果未启用 **Message Content Intent**，机器人虽然能收到消息事件，但消息文本为空——机器人实际上无法看到您输入的内容。
-- 如果未启用 **Server Members Intent**，机器人将无法解析允许的消息发送者的用户名，可能无法识别是谁在与其通信。
+- 如果未启用 **Message Content Intent**，机器人虽然会收到消息事件，但消息文本为空——机器人实际上无法看到您输入的内容。
+- 如果未启用 **Server Members Intent**，机器人将无法解析允许通信用户的用户名，可能无法识别是谁在与其发送消息。
 
 :::警告[这是 Discord 机器人无法正常工作的首要原因]
-如果您的机器人已上线却从不回复消息，那几乎可以肯定是因为 **Message Content Intent** 未被启用。请返回 [开发者门户](https://discord.com/developers/applications)，选择您的应用程序 → Bot → Privileged Gateway Intents，确保 **Message Content Intent** 已切换为 ON。然后点击 **Save Changes**。
+如果您的机器人已上线却从不回复消息，几乎可以肯定是因为 **Message Content Intent** 被禁用了。请返回 [开发者门户](https://discord.com/developers/applications)，选择您的应用程序 → Bot → Privileged Gateway Intents，确保 **Message Content Intent** 已切换为 ON 状态，然后点击 **Save Changes**。
 :::
 
 **关于服务器数量的限制：**
-- 如果您的机器人仅在**100个以下服务器**中运行，可以自由地开启或关闭这些意图。
-- 如果您的机器人已在**100个或更多服务器**中运行，Discord 要求您提交验证申请才能使用特权意图。对于个人使用而言，这通常不是问题。
+- 如果您的机器人仅在**100 个服务器**以内活动，可以自由地开启或关闭这些意图。
+- 如果机器人已在**100 个或更多服务器**中运行，Discord 要求您提交验证申请才能使用特权意图。对于个人使用而言，这无需担心。
 
 点击页面底部的 **Save Changes**。
 
-## 第4步：获取机器人令牌
+## 第四步：获取机器人令牌
 
 机器人令牌是 Hermes Agent 用于以您的机器人身份登录的凭证。仍在 **Bot** 页面上：
 
 1. 在 **Token** 区域下方，点击 **Reset Token**。
-2. 如果您的 Discord 账户已开启双重认证，请输入相应的 2FA 码。
-3. Discord 会显示您的新令牌。**请立即复制它。**
+2. 如果您的 Discord 账户已启用双重认证，请输入相应的 2FA 码。
+3. Discord 会显示新的令牌，请**立即复制它**。
 
 :::警告[令牌仅显示一次]
-该令牌只会显示一次。一旦丢失，就需要重新生成新的令牌。切勿公开分享您的令牌，也不要将其提交到 Git 中——拥有该令牌的人即可完全控制您的机器人。
+该令牌只会显示一次。一旦丢失，您需要重新生成新的令牌。切勿公开分享您的令牌，也不要将其提交到 Git——拥有该令牌的人即可完全控制您的机器人。
 :::
 
-请将令牌保存在安全的地方（例如密码管理器）。第8步时需要用到它。
+请将令牌存储在安全的地方（例如密码管理器），因为第八步时会用到它。
 
-## 第5步：生成邀请链接
+## 第五步：生成邀请链接
 
 您需要一个 OAuth2 链接，以便将机器人邀请到您的服务器。有两种实现方式：
 
-### 方案A：使用“安装”选项卡（推荐）
+### 方案 A：使用“安装”选项卡（推荐）
 
-:::注意[需要开启公共机器人]
-此方法要求在第2步中将 **Public Bot** 设置为 **ON**。如果您将其设置为 OFF，请改用下方的手动 URL 方法。
+:::注意[需要开启 Public Bot]
+此方法要求在第一步中将 **Public Bot** 设置为 **ON**。如果您将其设置为 OFF，请改用下方的手动 URL 方法。
 :::
 
 1. 在左侧边栏中点击 **Installation**。
-2. 在 **Installation Contexts** 下，启用 **Guild Install**。
+2. 在 **Installation Contexts** 下方，启用 **Guild Install**。
 3. 对于 **Install Link**，选择 **Discord Provided Link**。
 4. 在 **Guild Install** 的 **Default Install Settings** 中：
    - **Scopes**：选择 `bot` 和 `applications.commands`
    - **Permissions**：选择下方列出的权限。
 
-### 方案B：手动生成 URL
+### 方案 B：手动生成 URL
 
 您也可以直接使用以下格式来构建邀请链接：
 
@@ -323,6 +337,12 @@ discord:
   no_thread_channels: []          # Channel IDs where bot responds without threading
   history_backfill: true          # Prepend recent channel scrollback on mention (default: true)
   history_backfill_limit: 50      # Max messages to scan backwards (default: 50)
+  missed_message_backfill:        # Replay messages missed while disconnected (opt-in)
+    enabled: false
+    channels: []                  # Empty uses free_response_channels
+    window_seconds: 21600         # Look back at most 6 hours
+    limit: 100                    # Global scan cap per reconnect
+    max_dispatches: 10            # Recovery dispatch cap per reconnect
   channel_prompts: {}             # Per-channel ephemeral system prompts
   allow_mentions:                 # What the bot is allowed to ping (safe defaults)
     everyone: false               # @everyone / @here pings (default: false)
@@ -491,13 +511,31 @@ discord:
   history_backfill_limit: 50
 ```
 
+#### `discord.missed_message_backfill`
+
+**类型：** 对象 — **默认值：** 禁用
+
+在 Discord 重启或网络中断期间，其 WebSocket 连接的恢复窗口可能会失效。在此期间发送的消息不会作为实时消息事件被送达。启用此选项后，Hermes 会在 Discord 重新连接后，扫描一组已配置的频道和主题历史记录，然后通过与实时消息相同的授权、提及、频道处理、去重及分发路径，将那些尚未被处理的消息发送出去。
+
+```yaml
+discord:
+  missed_message_backfill:
+    enabled: true
+    channels: ["123456789012345678"]
+    window_seconds: 3600
+    limit: 100
+    max_dispatches: 10
+```
+
+如果 `channels` 为空，Hermes 将使用 `discord.free_response_channels`。仅当机器人需要检查所有可访问的服务器文本频道时，才将其设置为 `"*"`。恢复日志会按用户配置存储在 `gateway/discord_message_recovery.db` 中，从而避免已成功处理的消息在后续重启后被再次处理。
+
 #### `group_sessions_per_user`
 
 **类型：** 布尔值 — **默认值：** `true`
 
-这是一项全局网关设置（并非 Discord 特有），用于控制同一频道内的用户是否拥有独立的会话历史记录。
+这是一个全局网关设置（与 Discord 无关），用于控制同一频道内的用户是否拥有独立的会话历史记录。
 
-当设置为 `true` 时：在 `#research` 频道中交流的 Alice 和 Bob 每人都会与 Hermes 维持独立的对话。而当设置为 `false` 时：整个频道将共享同一个对话记录以及一个正在运行的 Agent 任务槽位。
+当值为 `true` 时：在 `#research` 频道中交流的 Alice 和 Bob 每人都会与 Hermes 维持独立的对话记录。当值为 `false` 时：整个频道共享同一份对话记录以及一个正在运行的机器人实例。
 
 ```yaml
 group_sessions_per_user: true
