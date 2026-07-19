@@ -202,23 +202,29 @@ hermes kanban unblock  t_abc t_def
 hermes kanban block    t_abc "need input" --ids t_def t_hij
 ```
 
-## 工作节点与看板之间的交互方式
+:::note 未被阻塞的任务会出现在何处  
+`unblock` 操作本身仅会将任务状态设置为 **`ready`**（所有父任务均已完成）或 **`todo`**（某个父任务仍处于进行中——该任务受依赖关系限制，待父任务完成后由调度器自动提升其状态）。它绝不会将任务路由到 `triage` 状态。  
 
-**工作节点无需直接调用 `hermes kanban` 命令行工具。** 当调度器启动一个工作节点时，它会将 `HERMES_KANBAN_TASK=t_abcd` 设置在子进程的环境变量中，该环境变量会激活模型架构中的专用**看板工具集**。对于那些在工具集配置中启用了 `kanban` 功能的协调者角色，同样可以使用这套工具集。这些工具与命令行工具一样，通过 Python 的 `kanban_db` 层直接读取和修改看板数据。正在运行的工作节点会像使用其他工具一样调用这些函数，它无需了解也不需要访问 `hermes kanban` 命令行工具。
+如果某个任务在被解除阻塞后出现在 **`triage`** 状态，那并非因为 `unblock` 操作所致，而是后续因相同原因再次被阻塞所致：当一个任务经历“被阻塞 → 解除阻塞 → 因同一原因再次被阻塞”这一过程达到 `BLOCK_RECURRENCE_LIMIT` 次（默认为 2 次）后，防止循环机制会停止将其送回 `blocked` 状态——因为若使用定时任务，它仍会不断尝试解除阻塞——而是将其路由到 `triage` 状态，由人工进行决策。这是一种基于数据库的确定性保护机制，而非大型语言模型的主观判断，且任务内容本身无法绕过此机制：重复计数器会在每次解除阻塞后依然保留（仅在工作成功完成时才会重置）。若希望让已解除阻塞的任务保留在工作池中，请在解除阻塞前查明“为何它会反复被阻塞”（如父任务未完成、缺少输入、能力不足等），或者如果预计会出现此类循环，则提高 `BLOCK_RECURRENCE_LIMIT` 的值。  
+:::
 
-| 工具 | 功能 | 必需参数 |
+## 工作节点如何与看板交互  
+
+**工作节点无需直接调用 `hermes kanban` 命令行工具。** 当调度器启动一个工作节点时，它会将 `HERMES_KANBAN_TASK=t_abcd` 设置在子进程的环境变量中，该环境变量会激活模型架构中的专用 **看板工具集**。对于那些在工具集配置中启用了 `kanban` 功能的协调节点，也能使用同一套工具集。这些工具通过 Python 的 `kanban_db` 层直接读取和修改看板数据，方式与 CLI 完全相同。运行中的工作节点会像使用其他工具一样调用这些函数，它无需也不会接触到 `hermes kanban` CLI。  
+
+| 工具 | 用途 | 必需参数 |
 |---|---|---|
-| `kanban_show` | 读取当前任务的信息（标题、内容、之前的尝试记录、上级任务链接、评论以及完整格式化的 `worker_context`）。默认使用环境变量中的任务 ID。 | — |
-| `kanban_list` | 根据 `assignee`、`status`、`tenant`、归档可见性以及数量限制等条件列出任务摘要。适用于协调者查看看板上的任务情况。 | — |
-| `kanban_complete` | 以结构化的 `summary` 和 `metadata` 形式完成任务并移交处理权。 | 必须提供 `summary` 或 `result` 中的至少一个参数 |
-| `kanban_block` | 暂停任务处理，并指定暂停原因：`kind=dependency`（任务进入待办状态，可自动恢复）、`needs_input`/`capability`/`transient`（需人工介入）。同一类型的重复暂停会自动升级为 `triage` 状态。 | `reason` 参数 |
+| `kanban_show` | 读取当前任务的各项信息（标题、内容、之前的尝试记录、父任务交接情况、评论以及完整格式化的 `worker_context`）。默认使用环境变量中的任务 ID。 | — |
+| `kanban_list` | 列出任务摘要，可按“负责人”、“状态”、“租户”、“归档可见性”以及数量限制进行筛选。适用于协调节点查看看板上的任务。 | — |
+| `kanban_complete` | 以结构化的 `summary` 和 `metadata` 信息完成任务交接。 | 必须提供 `summary` 或 `result` 中的至少一个参数 |
+| `kanban_block` | 暂停任务处理，并指定阻塞原因：`kind=dependency`（任务进入 `todo` 状态，待父任务完成后自动恢复）、`needs_input`/`capability`/`transient`（需人工介入）。同一类型的重复阻塞会自动升级到 `triage` 状态。 | `reason` 参数 |
 | `kanban_heartbeat` | 在执行耗时操作时发送存活信号。仅具有副作用。 | — |
-| `kanban_comment` | 在任务讨论线程中添加持久性备注。 | `task_id`、`body` 参数 |
-| `kanban_create` | （协调者专用）创建子任务，可指定负责人、父任务链接、所需技能等信息。 | `title`、`assignee` 参数 |
-| `kanban_link` | （协调者专用）事后添加 `parent_id → child_id` 的依赖关系链路。 | `parent_id`、`child_id` 参数 |
-| `kanban_unblock` | （协调者专用）将被暂停的任务恢复为可处理状态。 | `task_id` 参数 |
+| `kanban_comment` | 在任务讨论区添加持久性备注。 | `task_id`、`body` 参数 |
+| `kanban_create` | （协调节点专用）创建子任务，可指定负责人、父任务、所需技能等信息。 | `title`、`assignee` 参数 |
+| `kanban_link` | （协调节点专用）事后添加 `parent_id → child_id` 的依赖关系。 | `parent_id`、`child_id` 参数 |
+| `kanban_unblock` | （协调节点专用）当所有父任务均完成时，将被阻塞的任务移至 `ready` 状态；若仍有父任务未完成，则移至 `todo` 状态。 | `task_id` 参数 |
 
-一个典型工作节点的处理流程如下：
+一个典型的工作节点操作流程如下：
 
 ```
 # Model's tool calls, in order:
