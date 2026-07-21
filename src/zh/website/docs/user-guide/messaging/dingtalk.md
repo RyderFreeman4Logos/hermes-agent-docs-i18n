@@ -151,9 +151,9 @@ gateway:
           - user-id-2
 ```
 
-- `group_sessions_per_user: true` 可确保在共享群聊中，每位参与者的上下文彼此隔离。  
-- `require_mention: true` 能防止机器人对所有群消息都作出回应——只有当有人@提及它时，机器人才会回复。  
-- `dingtalk.extra` 下的 `allowed_users` 可作为 `DINGTALK_ALLOWED_USERS` 的替代选项；如果同时设置了这两个参数，它们将会被合并使用。  
+- `group_sessions_per_user: true` 可确保在共享群聊中，每位参与者的对话上下文相互隔离。  
+- `require_mention: true` 能防止机器人对所有群消息都作出响应——只有当有人@提及它时，机器人才会回复。  
+- `dingtalk.extra` 下的 `allowed_users` 是 `DINGTALK_ALLOWED_USERS` 的替代选项；只需设置其中一个即可（如果同时设置了两个，仅那些同时出现在两个列表中的用户才具有权限）。  
 
 ### 启动网关  
 
