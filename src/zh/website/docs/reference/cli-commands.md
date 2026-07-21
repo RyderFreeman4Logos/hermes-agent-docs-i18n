@@ -199,17 +199,17 @@ hermes model
 /model openrouter:anthropic/claude-sonnet-4  # Switch back to cloud
 ```
 
-默认情况下，对 `/model` 的更改**仅适用于当前会话**。若要将该更改永久保存到 `config.yaml` 中，请添加 `--global` 参数：
+默认情况下，对 `/model` 的更改**仅适用于当前会话**。若需将此更改永久保存到 `config.yaml` 中，可添加 `--global` 参数（或者将 `model.persist_switch_by_default: true` 设为真值，即可让所有设置自动持久化）：
 
 ```
 /model claude-sonnet-4 --global     # Switch and save as new default
 ```
 
-:::info 如果我只看到 OpenRouter 模型怎么办？
-如果您仅配置了 OpenRouter，那么 `/model` 命令将只会显示 OpenRouter 的模型。若要添加其他提供商（如 Anthropic、DeepSeek、Copilot 等），请退出当前会话，然后通过终端运行 `hermes model` 命令。
+:::info 为何我只看到 OpenRouter 模型？
+如果您仅配置了 OpenRouter，那么 `/model` 组件将只会显示 OpenRouter 相关的模型。若要添加其他提供商（如 Anthropic、DeepSeek、Copilot 等），请先退出当前会话，然后通过终端运行 `hermes model` 命令。
 :::
 
-提供商及基础 URL 的更改会自动保存到 `config.yaml` 文件中。当切换离开自定义端点时，旧的基准 URL 会被清除，以避免其影响其他提供商的连接。
+当使用 `--global` 参数时，提供商及基础 URL 的更改会与模型信息一同被保存到 `config.yaml` 文件中。在切换回自定义端点时，系统会清除过时的基础 URL，以避免其影响其他提供商的连接。
 
 ## `hermes gateway`
 
