@@ -89,9 +89,23 @@ model_catalog:
       url: https://example.com/my-openrouter-curation.json
 ```
 
-覆盖版清单只需填写其关心的提供程序模块即可，其他提供程序则仍会依据主地址进行解析。
+覆盖性的清单文件仅需填写其所需关注的提供者模块即可。其他提供者则将继续依据主地址进行解析。
 
-## 更新清单
+### 隐藏选择器中的提供者
+
+通过 `excluded_providers` 可以在存在有效凭证的情况下，将特定的提供者从 `/model` 选择器中隐藏起来。这对于那些因历史原因或测试用途而存在的、不应在正常使用中出现の提供者尤为有用（例如仍缓存在 `auth.json` 中，或通过 `gh` CLI 找到的旧版 Copilot 或 OpenRouter 凭证）。
+
+```yaml
+model_catalog:
+  excluded_providers:
+    - copilot
+    - openrouter
+    - openai
+```
+
+该排除规则会以不区分大小写的方式，与提供方所能展示的各个键进行匹配——包括内置映射提供方的 Hermes ID 和 models.dev ID、叠加提供方的 overlay PID 与解析后的 Hermes slug，以及规范提供方的规范 slug——因此，像 `copilot` 这样的单一条目即可隐藏对应提供方，而无需考虑其出自哪个分类。所有 `/model` 选择器都会遵循此规则，包括网关的交互式/文本选择器、TUI 选择器，以及交互式的 `hermes model` CLI 选择器。空列表（或省略该键）则不会产生任何影响。
+
+## 更新清单文件
 
 维护者：
 
