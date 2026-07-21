@@ -1516,7 +1516,7 @@
   - [Desktop](zh/apps/desktop/README.md)
     - [桌面设计系统](zh/apps/desktop/DESIGN.md)
     - [Scripts]()
-      - [分析渲染器输入延迟问题](zh/apps/desktop/scripts/profile-typing-lag.md)
+      - [分析渲染器的输入延迟问题](zh/apps/desktop/scripts/profile-typing-lag.md)
       - [Perf](zh/apps/desktop/scripts/perf/README.md)
     - [Src]()
       - [Plugins](zh/apps/desktop/src/plugins/README.md)
