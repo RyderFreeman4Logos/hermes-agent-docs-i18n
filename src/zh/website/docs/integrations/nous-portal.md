@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
 title: "Nous Portal"
-description: "One subscription, 300+ frontier models, the Tool Gateway, and Nous Chat — the recommended way to run Hermes Agent"
+description: "One subscription, 300+ frontier models, and the Tool Gateway — the recommended way to run Hermes Agent"
 ---
 
 # Nous Portal
@@ -14,18 +14,18 @@ description: "One subscription, 300+ frontier models, the Tool Gateway, and Nous
 hermes setup --portal
 ```
 
-这条命令可同时启动Portal的OAuth认证流程、让你选择合适的Nous模型、在`config.yaml`中设置Nous作为推理提供方，并开启工具网关。执行完成后，你即可立即使用`hermes chat`。
+该命令可同时启动Portal的OAuth认证流程、允许你选择相应的Nous模型、在`config.yaml`中将该模型设置为推理提供方，并开启工具网关。执行完毕后，你即可立即使用`hermes chat`功能。
 
-尚未订阅？请访问[portal.nousresearch.com/manage-subscription](https://portal.nousresearch.com/manage-subscription)完成注册，随后再回来运行上述命令。
+尚未拥有订阅账户？请访问[portal.nousresearch.com/manage-subscription](https://portal.nousresearch.com/manage-subscription)完成注册，之后再回来运行上述命令即可。
 
 ## 订阅包含哪些服务
 
 ### 300多种前沿模型，统一计费
 
-Portal会代理来自整个生态系统的精选智能体模型目录——所有费用均从你的Nous订阅账户中扣除，无需为每个实验室单独管理额度。
+Portal会代理来自整个生态系统的精选智能体模型目录——所有费用均从你的Nous订阅账户中扣除，无需为每个实验室单独管理积分余额。
 
-| 品牌 | 模型 |
-|------|------|
+| 品系 | 模型名称 |
+|------|----------|
 | **Anthropic Claude** | Opus 4.7、Opus 4.6、Sonnet 4.6、Haiku 4.5 |
 | **OpenAI** | GPT-5.5、GPT-5.5 Pro、GPT-5.4 Mini、GPT-5.4 Nano、GPT-5.3 Codex |
 | **Google Gemini** | Gemini 3 Pro Preview、Gemini 3 Flash Preview、Gemini 3.1 Pro Preview、Gemini 3.1 Flash Lite Preview |
@@ -36,47 +36,43 @@ Portal会代理来自整个生态系统的精选智能体模型目录——所�
 | **MiniMax** | MiniMax M2.7 |
 | **xAI** | Grok 4.3 |
 | **NVIDIA** | Nemotron-3 Super 120B-A12B |
-| **腾讯** | Hunyuan 3 Preview |
-| **小米** | MiMo V2.5 Pro |
+| **Tencent** | Hunyuan 3 Preview |
+| **Xiaomi** | MiMo V2.5 Pro |
 | **StepFun** | Step 3.5 Flash |
-| **Hermes** | Hermes-4-70B、Hermes-4-405B（适用于聊天，详见下方[关于Hermes 4的说明](#a-note-on-hermes-4)） |
-| **+ 其他模型** | 还有280多种模型，涵盖全部前沿智能体模型 |
+| **Hermes** | Hermes-4-70B、Hermes-4-405B（支持聊天功能，详见下方[关于Hermes-4的说明](#a-note-on-hermes-4)） |
+| **+ 其他所有模型** | 还有280多种其他模型——涵盖全部前沿智能体模型 |
 
-底层通过OpenRouter进行路由，因此模型可用性和故障切换机制与使用OpenRouter密钥时一致——只是费用从你的Nous订阅中扣除。你可以在会话进行中通过`/model`指令在代码处理用Claude Sonnet 4.6和需要长上下文处理的Gemini 3 Pro之间切换，无需重新输入凭证、充值，也不会出现余额不足的意外情况。
+底层通过OpenRouter实现路由，因此模型可用性和故障切换机制与使用OpenRouter密钥时一致——只是费用从你的Nous订阅中扣除。你可以在会话进行中通过`/model`指令在代码处理用Claude Sonnet 4.6和需要长上下文处理的Gemini 3 Pro之间切换，无需重新输入凭证、充值，也不会出现余额不足的意外情况。
 
 ### Nous工具网关
 
-同一订阅还可解锁[工具网关](/user-guide/features/tool-gateway)，它可将Hermes Agent的工具调用通过Nous管理的基础设施进行路由。五种后端，一个登录账号即可：
+同一订阅账户还可解锁[工具网关](/user-guide/features/tool-gateway)，它可将Hermes Agent的工具调用通过Nous管理的基础设施进行路由。五种后端服务，仅需一次登录：
 
 | 工具 | 合作方 | 功能说明 |
 |------|--------|----------|
-| **网页搜索与内容提取** | Firecrawl | 提供代理级搜索和整页内容提取功能，无需Firecrawl API密钥，也无需担心速率限制问题。 |
-| **图像生成** | FAL | 通过一个接口即可使用九种模型：FLUX 2 Klein 9B、FLUX 2 Pro、Z-Image Turbo、Nano Banana Pro（Gemini 3 Pro图像模型）、GPT Image 1.5、GPT Image 2、Ideogram V3、Recraft V4 Pro、Qwen Image。 |
-| **文本转语音** | OpenAI TTS | 支持高质量文本转语音功能，无需单独的OpenAI密钥，还可在各类消息平台中使用[语音模式](/user-guide/features/voice-mode)。 |
-| **云浏览器自动化** | Browser Use | 为`browser_navigate`、`browser_click`、`browser_type`、`browser_vision`等操作提供无头Chromium会话，无需注册Browserbase账户。 |
-| **云终端沙箱** | Modal | 提供无服务器终端沙箱环境，可用于代码执行（可选附加功能）。 |
+| **网页搜索与内容提取** | Firecrawl | 提供代理级搜索和整页内容提取功能。无需Firecrawl API密钥，也无需担心速率限制问题。 |
+| **图像生成** | FAL | 通过一个接口即可使用九种模型：FLUX 2 Klein 9B、FLUX 2 Pro、Z-Image Turbo、Nano Banana Pro（Gemini 3 Pro图像版）、GPT Image 1.5、GPT Image 2、Ideogram V3、Recraft V4 Pro、Qwen Image。 |
+| **文本转语音** | OpenAI TTS | 提供高质量文本转语音功能，无需单独的OpenAI密钥。支持在各类消息平台中使用[语音模式](/user-guide/features/voice-mode)。 |
+| **云浏览器自动化** | Browser Use | 为`browser_navigate`、`browser_click`、`browser_type`、`browser_vision`等操作提供无头Chromium会话支持。无需注册Browserbase账户。 |
+| **云终端沙箱** | Modal | 提供无服务器终端沙箱环境，可用于代码执行（为可选附加功能）。 |
 
-如果没有工具网关，要使用这些功能就需要分别注册Firecrawl、FAL、Browser Use账号，获取OpenAI密钥和Modal账号——需要五次独立注册、五个独立控制面板以及五次单独充值流程。而通过工具网关，所有功能均可通过同一订阅统一处理。
+如果没有工具网关，要使用这些功能就需要分别创建Firecrawl、FAL、Browser Use、OpenAI和Modal账户——需要五次独立注册、五个独立控制面板以及五次独立充值流程。而通过工具网关，所有功能均可通过同一订阅账户统一处理。
 
-你也可以仅启用特定的工具网关功能（例如仅使用网页搜索，而不使用图像生成）——详情请参见下方的[将工具网关与自定义后端结合使用](#mixing-the-gateway-with-your-own-backends)。
-
-### Nous Chat
-
-你的Portal账户还包含[Nous Research的网站聊天界面](https://chat.nousresearch.com)，该界面拥有与Portal相同的模型目录。当你不在终端前，或需要进行非智能体对话时，这个功能非常实用。
+你也可以仅启用特定的工具网关功能（例如仅使用网页搜索而不使用图像生成功能）——详情请参见下方的[将工具网关与自建后端结合使用](#mixing-the-gateway-with-your-own-backends)。
 
 ### 无需在配置文件中存储凭证
 
-由于所有操作都通过一次OAuth认证的Portal会话完成，因此你无需创建包含大量长期有效API密钥的`.env`文件。磁盘上仅存在`~/.hermes/auth.json`中的刷新令牌作为唯一凭证，Hermes会根据每次请求从中生成短期的JWT令牌——详情请参见下方的[令牌处理机制](#token-handling)。
+由于所有操作都通过一次经过OAuth认证的Portal会话完成，因此你无需创建包含大量长期有效API密钥的`.env`文件。磁盘上仅存在`~/.hermes/auth.json`中的刷新令牌作为唯一凭证，Hermes会根据每次请求从中生成短时效的JWT令牌——详情请参见下方的[令牌处理机制](#token-handling)。
 
 ### 跨平台一致性
 
-在[原生Windows系统](/user-guide/windows-native)上，为每个工具单独配置API密钥是最大的麻烦——要在Windows上安装Firecrawl、FAL、Browser Use账号以及OpenAI密钥，是搭建实用智能体的最繁琐步骤。而Portal订阅则解决了这一问题：一个OAuth认证即可同时管理模型和所有工具网关功能，因此Windows用户无需手动配置四种后端，就能获得与macOS/Linux相同的体验。
+[原生Windows版本](/user-guide/windows-native)由于需要为每个工具单独配置API密钥，存在一定的使用门槛——在Windows系统上需要安装Firecrawl、FAL、Browser Use和OpenAI账户，这是搭建实用智能体时最具摩擦力的环节。而Portal订阅则解决了这一问题：一个OAuth认证即可同时覆盖模型调用和所有工具网关功能，因此Windows用户无需手动配置四种后端服务，就能获得与macOS/Linux用户相同的体验。
 
 ## 关于Hermes 4的说明
 
-Nous Research自研的**Hermes 4系列模型**（Hermes-4-70B、Hermes-4-405B）可通过Portal以大幅折扣的价格获取。这些是**具备混合推理能力的前沿聊天模型**，在数学、科学、指令遵循、模式匹配、角色扮演以及长文写作方面表现优异。
+Nous Research自研的**Hermes 4**系列模型（Hermes-4-70B、Hermes-4-405B）可通过Portal以大幅折扣的价格获取。这些是**具备混合推理能力的前沿聊天模型**，在数学、科学、指令遵循、模式匹配、角色扮演以及长文写作方面表现优异。
 
-不过，**不建议在Hermes Agent中使用它们**。Hermes 4是为聊天和推理任务优化的，而智能体需要的是快速连续的工具调用机制。你可以将它们用于[Nous Chat](https://chat.nousresearch.com)、研究工作，或通过[订阅代理功能](/user-guide/features/subscription-proxy)与其他工具结合使用——但若需用于智能体功能，建议从模型目录中选择其他前沿智能体模型。
+不过，**不建议在Hermes Agent内部使用这些模型**。Hermes 4是为聊天和推理任务优化的，无法支持智能体所需的快速连续工具调用流程。你可以将它们用于研究工作，或通过[订阅代理功能](/user-guide/features/subscription-proxy)与其他工具结合使用——但若用于智能体任务，建议从模型目录中选择其他前沿智能体模型。
 
 ```bash
 /model anthropic/claude-sonnet-4.6     # best general-purpose agentic model
