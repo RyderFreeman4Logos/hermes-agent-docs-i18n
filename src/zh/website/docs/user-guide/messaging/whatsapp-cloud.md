@@ -115,7 +115,7 @@ cloudflared tunnel --url http://localhost:8090
 请记下显示的URL——这就是您需要提供给Meta的地址。
 
 :::warning 快速隧道会定期更换
-每次重新启动`cloudflared`后，免费的快速隧道URL都会发生变化。如需使用稳定的URL，请通过`cloudflared tunnel login`登录并创建一个命名隧道。免费Cloudflare账户可创建无限数量的命名隧道——有关命名隧道的操作流程，请参阅[Cloudflare官方文档](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)。
+每次重启`cloudflared`后，免费的快速隧道URL都会发生变化。若需使用稳定的URL，请通过`cloudflared tunnel login`登录并创建一个命名隧道。免费Cloudflare账户可创建无限数量的命名隧道——有关命名隧道的详细操作流程，请参阅[Cloudflare官方文档](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/)。
 :::
 
 ### ngrok
