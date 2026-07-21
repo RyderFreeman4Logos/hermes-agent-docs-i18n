@@ -83,59 +83,59 @@ Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py`
 | `/timestamps [on\|off\|status]` | 仅限 CLI 使用：切换是否在消息及 `/history` 显示区中显示 `[HH:MM]` 格式的时间戳。 |
 
 ### 工具与技能| 命令 | 描述 |
-|---------|-------------|
+|------|------|
 | `/tools [list\|disable\|enable] [name...]` | 管理工具：列出可用工具，或为当前会话禁用/启用特定工具。禁用工具会将其从智能体的工具集中移除，并触发会话重置。 |
 | `/toolsets` | 列出所有可用的工具集 |
-| `/browser [connect\|disconnect\|status]` | 管理本地的 Chromium 系列 CDP 连接。`connect` 会将浏览器工具连接到正在运行的 Chrome、Brave、Chromium 或 Edge 实例（默认地址：`http://127.0.0.1:9222`）。`disconnect` 用于断开连接。`status` 可查看当前连接状态。若未检测到调试器，会自动启动支持的 Chromium 系列浏览器。 |
-| `/skills` | 从在线注册表中搜索、安装、查看或管理技能。同时也可用于查看技能写入审批流程的相关信息：`/skills pending`、`/skills diff <id>`、`/skills approve <id>`、`/skills reject <id>`、`/skills approval on\|off`。详情请参阅[智能体技能写入的审批机制](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval)。 |
-| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录，并切换该审批机制的状态。详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
-| `/bundles` | 列出已配置的技能包——即通过 `/<name>` 这种斜杠别名形式一次性预加载多个技能的配置。可在 `~/.hermes/config.yaml` 文件的 `bundles:` 部分进行配置。详情请参阅[技能包](/user-guide/features/skills#skill-bundles)。 |
-| `/learn <what to learn from>` | 根据您提供的任何内容——如目录、网址、刚刚向智能体演示的工作流程或粘贴的笔记——生成可重复使用的技能。该功能支持开放式输入：智能体会使用自身工具收集相关资料，然后按照统一的编写标准生成 `SKILL.md` 文件。该功能可在 CLI、消息传递网关、文本用户界面以及控制台的技能页面中使用。 |
+| `/browser [connect\|disconnect\|status]` | 管理本地的 Chromium 系列 CDP 连接。`connect` 会将浏览器工具连接到正在运行的 Chrome、Brave、Chromium 或 Edge 实例（默认地址：`http://127.0.0.1:9222`）。`disconnect` 用于断开连接。`status` 可查看当前连接状态。若未检测到调试器，系统会自动启动支持的 Chromium 系列浏览器。 |
+| `/skills` | 从在线注册表中搜索、安装、查看或管理技能。同时也可用于处理技能写入审批流程：`/skills pending`、`/skills diff <id>`、`/skills approve <id>`、`/skills reject <id>`、`/skills approval on\|off`。详情请参阅[智能体技能写入审批机制](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval)。 |
+| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录，并切换该审批状态。详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
+| `/bundles` | 列出已配置的技能包——即通过 `/<name>` 这种斜杠别名形式一次性预加载多个技能的配置。相关设置可在 `~/.hermes/config.yaml` 的 `bundles:` 部分进行配置。详情请参阅[技能包](/user-guide/features/skills#skill-bundles)。 |
+| `/learn <what to learn from>` | 根据用户提供的任何内容——如目录、网址、刚刚向智能体演示的工作流程或粘贴的笔记——生成可复用的技能。该功能支持开放式输入：智能体会使用自身工具收集相关资料，然后按照既定的编写标准生成一个 `SKILL.md` 文件。该功能可在 CLI、消息传递网关、文本用户界面以及控制台的技能页面中使用。 |
 | `/cron` | 管理定时任务（列出、添加/创建、编辑、暂停、恢复、运行、删除） |
-| `/suggestions [accept\|dismiss N\|catalog\|clear]`（别名：`/suggest`） | 查看系统推荐的自动化方案。使用 `/suggestions` 可列出待处理的建议，`/suggestions accept <id>` 可创建所推荐的自动化方案，`/suggestions dismiss <id>` 可拒绝某个建议，`/suggestions catalog` 可添加精选的入门级自动化方案，`/suggestions clear` 可清除已处理的建议记录。被采纳的自动化方案会以当前界面作为执行基础。 |
-| `/blueprint [name] [slot=value ...]`（别名：`/bp`） | 根据蓝图模板创建自动化方案。仅输入 `/blueprint` 可查看所有可用蓝图；`/blueprint <name>` 会在下一次智能体响应时启动引导式的字段填充流程；`/blueprint <name> slot=value ...` 可直接创建自动化任务。 |
+| `/suggestions [accept\|dismiss N\|catalog\|clear]`（别名：`/suggest`） | 查看系统推荐的自动化方案。使用 `/suggestions` 可列出待处理的建议，`/suggestions accept <id>` 可创建所推荐的自动化方案，`/suggestions dismiss <id>` 可拒绝某项建议，`/suggestions catalog` 可添加精选的入门级自动化方案，`/suggestions clear` 可清除已处理的建议记录。被采纳的自动化方案会以当前界面作为执行基础。 |
+| `/blueprint [name] [slot=value ...]`（别名：`/bp`） | 根据蓝图模板创建自动化方案。仅输入 `/blueprint` 可查看所有可用蓝图；`/blueprint <name>` 会在下次智能体响应时启动引导式的参数填充流程；`/blueprint <name> slot=value ...` 可直接创建自动化任务。 |
 | `/curator` | 背景下的技能维护操作——包括 `status`、`run`、`pin`、`archive` 等功能。详情请参阅[Curator 功能](/user-guide/features/curator)。 |
 | `/kanban <action>` | 无需离开聊天界面即可操作多项目、多角色的协作看板。完整的 `hermes kanban` 功能包括：`/kanban list`、`/kanban show t_abc`、`/kanban create "title" --assignee X`、`/kanban comment t_abc "text"`、`/kanban unblock t_abc`、`/kanban dispatch` 等。还支持多看板管理：`/kanban boards list`、`/kanban boards create <slug>`、`/kanban boards switch <slug>`、`/kanban --board <slug> <action>`。详情请参阅[Kanban 斜杠命令](/user-guide/features/kanban#kanban-slash-command)。 |
 | `/reload-mcp`（别名：`/reload_mcp`） | 从 `config.yaml` 文件中重新加载 MCP 服务器 |
-| `/reload-skills`（别名：`/reload_skills`） | 重新扫描 `~/.hermes/skills/` 目录，查找新安装或已移除的技能 |
+| `/reload-skills`（别名：`/reload_skills`） | 重新扫描 `~/.hermes/skills/` 目录，检测是否有新安装或已移除的技能 |
 | `/reload` | 将 `.env` 变量重新加载到当前运行的会话中（无需重启即可获取新的 API 密钥） |
 | `/plugins` | 列出已安装的插件及其状态 |
-| `/pet [list\|<slug>]` | 切换或采用 [petdex](/user-guide/features/pets) 模型宠物。`/pet` 用于切换宠物显示面板，`/pet list` 可查看已安装的宠物，`/pet <slug>` 可采用特定的宠物模型。 |
-| `/hatch <description>`（别名：`/generate-pet`） | 根据文本描述，使用配置好的图像后端（OpenRouter / Nous Portal）生成全新的 petdex 模型宠物。详情请参阅[宠物功能](/user-guide/features/pets)。 |
+| `/pet [list\|<slug>]` | 切换或选用 [petdex](/user-guide/features/pets) 模型宠物。`/pet` 用于切换宠物显示面板，`/pet list` 可查看已安装的宠物，`/pet <slug>` 可选用特定的宠物。 |
+| `/hatch <description>`（别名：`/generate-pet`） | 根据文本描述，使用配置好的图像后端（OpenRouter / Nous Portal）生成全新的 petdex 宠物。详情请参阅[宠物功能](/user-guide/features/pets)。 |
 
 ### 信息查询命令
 
 | 命令 | 描述 |
-|---------|-------------|
+|------|------|
 | `/help` | 显示此帮助信息 |
-| `/version` | 显示 Hermes Agent 的版本、构建编号以及运行环境信息。 |
-| `/usage` | 显示令牌使用情况、费用明细、会话时长；若当前使用的服务提供商支持，还会显示**账户限制**部分，其中会实时显示从提供商 API 获取的剩余配额/积分/套餐使用情况。 |
-| `/credits` | 显示您的 Nous 信用余额以及充值链接。 |
-| `/billing` | 用于 Nous 的 CLI 终端账单管理功能——可查看余额、购买积分，以及管理自动充值和月度使用限额。 |
-| `/insights` | 显示过去 30 天内的使用情况分析数据与统计信息。 |
-| `/platforms`（别名：`/gateway`） | 显示网关/消息传递平台的状态（仅提供 CLI 摘要视图）。 |
-| `/paste` | 附加剪贴板中的图片内容 |
-| `/copy [number]` | 将助手的最近一次回复复制到剪贴板（可指定编号复制倒数第 N 次的回复）。该功能仅适用于 CLI 环境。 |
-| `/image <path>` | 附加本地图像文件，以便在后续提示中使用。 |
-| `/debug` | 上传调试报告（包含系统信息及日志），并生成可分享的链接。该功能在消息传递界面中也可用。 |
+| `/version` | 显示 Hermes Agent 的版本、构建编号以及运行环境信息 |
+| `/usage` | 显示令牌使用情况、费用明细、会话时长；若当前使用的服务提供商支持，还会显示**账户限额**部分，其中包含从该提供商的 API 实时获取的剩余配额/积分/套餐使用情况 |
+| `/credits` | 显示用户的 Nous 信用余额以及充值链接 |
+| `/billing` | 用于 Nous 的 CLI 远程充值功能——可查看余额、购买积分，以及管理自动充值和月度限额设置 |
+| `/insights` | 显示过去 30 天内的使用情况分析数据 |
+| `/platforms`（别名：`/gateway`） | 显示网关/消息传递平台的状态（仅为 CLI 提供的概要视图） |
+| `/paste` | 附加剪贴板中的图像内容 |
+| `/copy [number]` | 将助手的最后一条回复复制到剪贴板（可指定编号，复制倒数第 N 条回复）。该功能仅适用于 CLI 环境 |
+| `/image <path>` | 附加本地图像文件，以便在后续提示中使用 |
+| `/debug` | 上传调试报告（包含系统信息及日志），并生成可分享的链接。该功能在消息传递界面中也可用 |
 | `/profile` | 显示当前激活的配置文件名称及主目录路径 |
 
 ### 退出命令
 
 | 命令 | 描述 |
-|---------|-------------|
-| `/quit` | 退出 CLI 界面（也可使用 `/exit`）。 |
+|------|------|
+| `/quit` | 退出 CLI 界面（也可使用 `/exit`） |
 
 ### 动态 CLI 斜杠命令
 
 | 命令 | 描述 |
-|---------|-------------|
-| `/<skill-name>` | 将任何已安装的技能作为按需调用的命令使用。例如：`/gif-search`、`/github-pr-workflow`、`/excalidraw`。 |
-| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置各种技能。 |
+|------|------|
+| `/<skill-name>` | 将任何已安装的技能作为按需调用的命令使用。例如：`/gif-search`、`/github-pr-workflow`、`/excalidraw` |
+| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置各种技能 |
 
-### 快速命令
+### 快捷命令
 
-用户自定义的快速命令可将简短的斜杠命令映射到Shell命令或其它斜杠命令。可在 `~/.hermes/config.yaml` 文件中进行配置：
+用户自定义的快捷命令可将简短的斜杠命令映射为 shell 命令或另一个斜杠命令。相关设置可在 `~/.hermes/config.yaml` 文件中进行配置：
 
 ```yaml
 quick_commands:
