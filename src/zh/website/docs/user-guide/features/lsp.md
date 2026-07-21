@@ -110,6 +110,12 @@ lsp:
 
   # How long to wait for diagnostics after each write.
   wait_mode: document      # "document" or "full"
+  # Max seconds to wait for the server to re-check the file after an
+  # edit. Only *fresh* diagnostics (produced for the post-edit
+  # content) are ever reported; if the server doesn't finish within
+  # this budget, the edit reports "no LSP data" rather than stale
+  # errors from before the edit. Raise this for slow servers on big
+  # projects (tsserver, rust-analyzer mid-indexing).
   wait_timeout: 5.0
 
   # How to handle missing server binaries.
@@ -133,30 +139,32 @@ lsp:
 
 ### 每个服务器的配置选项
 
-* `disabled: true` — 即使该服务器的扩展与配置文件匹配，也完全跳过该服务器。
+* `disabled: true` — 即使该服务器的扩展与文件匹配，也完全跳过该服务器。
 * `command: [bin, ...args]` — 指定自定义二进制文件的路径，从而绕过自动安装流程。
 * `env: {KEY: value}` — 向启动的进程传递额外的环境变量。
-* `initialization_options: {...}` — 该选项会与 LSP 的 `initializationOptions` 参数合并，通过 `initialize` 握手过程发送。这些选项为服务器专用，具体内容请参考对应语言服务器的文档。
+* `initialization_options: {...}` — 该选项会与 LSP 的 `initializationOptions` 参数合并，通过 `initialize` 握手协议发送。这些选项为服务器专用，具体内容请参考对应语言服务器的文档。
 
 ## 安装位置
 
-当设置为 `install_strategy: auto` 时，Hermes 会将二进制文件安装到 `<HERMES_HOME>/lsp/bin/` 目录中。NPM 包则会被安装到 `<HERMES_HOME>/lsp/node_modules/` 目录下，并在上一层目录生成对应的二进制符号链接。Go 语言的二进制文件则是通过 `go install` 命令生成的，此时 `GOBIN` 参数会指向临时目录。
+当设置为 `install_strategy: auto` 时，Hermes 会将二进制文件安装到 `<HERMES_HOME>/lsp/bin/` 目录中。NPM 包则会被存放在 `<HERMES_HOME>/lsp/node_modules/` 中，并在其上一级目录生成二进制链接。Go 语言的二进制文件则是通过 `go install` 命令生成，此时 `GOBIN` 指向临时目录。
 
-Hermes 绝不会将任何文件安装到 `/usr/local/`、`~/.local/` 或其他共享目录中——所有临时文件都由 Hermes 独自管理，当用户重置配置文件时这些文件也会被清除。
+所有文件均不会被安装到 `/usr/local/`、`~/.local/` 或其他共享目录中——临时目录完全由 Hermes 管理，当用户重置配置文件时该目录也会被清除。
 
 ## 性能特点
 
-LSP 服务器会在首次使用时**延迟启动**。如果正在编辑的项目之前从未产生过与 `.py` 文件相关的操作，Hermes 会随即启动 pyright；对于大多数服务器而言，这一启动过程需要 1-3 秒的时间（而对于全新的 Rust 项目，rust-analyzer 的启动时间可能超过 10 秒）。在同一个工作区中进行后续编辑时，系统会复用已运行的服务器。
+LSP 服务器会在首次使用时**延迟启动**。对于那些此前从未处理过 `.py` 文件的项目，编辑 Python 文件时会自动启动 pyright；对于大多数服务器而言，启动耗时为 1-3 秒（而对于冷启动的项目，rust-analyzer 的启动时间可能超过 10 秒）。在同一个工作区中进行后续编辑时，系统会复用已运行的服务器。
 
-在没有生成任何诊断信息的情况下，LSP 层会在正常写入操作时增加几毫秒的延迟。一旦有诊断信息需要处理，系统的等待时间为 `wait_timeout` 秒——通常 pyright 和 tssserver 的响应时间在几十毫秒以内，而正在索引中的 rust-analyzer 则可能需要几秒钟。
+在没有生成任何诊断信息的情况下，LSP 层会在干净写入操作时增加几毫秒的延迟。一旦有诊断信息生成，等待时间上限为 `wait_timeout` 秒——通常 pyright 和 tssserver 的响应时间在几十毫秒左右，而正在索引中的 rust-analyzer 响应时间则可能在几秒之间。
 
-服务器会一直保持运行状态，直到 Hermes 进程终止。系统不存在闲置超时机制——因为每次写入数据时都重新启动服务器的索引，其成本远高于让服务器持续运行。
+诊断信息的有效性受**新鲜度限制**：只有当服务器针对当前编辑的内容生成了诊断结果时，该结果才有效（即在编辑发生时或之后调用 `publishDiagnostics` 方法，或在编辑后处理拉取请求时）。那些响应缓慢且尚未重新检查的服务器会导致该编辑操作显示“无数据”——绝不会将昨天的错误再次视为当前问题。
+
+服务器会在 Hermes 进程运行的整个期间保持活跃状态。系统没有设置空闲超时机制——因为每次写入时都重新构建服务器索引的成本，远高于让守护进程持续运行的成本。
 
 ## 禁用功能
 
-若要完全禁用该子系统，可在 `config.yaml` 文件中设置 `lsp.enabled: false`。此时，写入后的检查会回退到进程内的语法检查方式（如 Python 使用 `ast.parse`，JSON 使用 `json.loads` 等），这些检查方式与早期版本完全一致。
+若要完全禁用该子系统，可在 `config.yaml` 中将 `lsp.enabled` 设置为 `false`。此时，写入后的检查会回退到进程内的语法检查方式（如 Python 使用 `ast.parse`，JSON 使用 `json.loads` 等），这些检查方式与早期版本完全一致。
 
-如果只想禁用某种特定语言，而不想关闭整个 LSP 层，可采取相应措施：
+若只想禁用某种特定语言而不关闭整个 LSP 层，可采取相应措施：
 
 ```yaml
 lsp:
