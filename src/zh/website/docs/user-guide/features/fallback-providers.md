@@ -303,26 +303,51 @@ auxiliary:
     model: "qwen2.5-vl"
 ```
 
-`base_url` 的优先级高于 `provider`。Hermes 会使用配置好的 `api_key` 进行身份验证，若未设置该键则会回退到 `OPENAI_API_KEY`。对于自定义接口，它**不会**重复使用 `OPENROUTER_API_KEY`。
+`base_url` 的优先级高于 `provider`。Hermes 会使用已配置的 `api_key` 进行身份验证，若未设置该值，则会回退使用 `OPENAI_API_KEY`。对于自定义接口，它**不会**重复使用 `OPENROUTER_API_KEY`。
 
 ---
 
 ## 辅助能力错误时的回退机制
 
-当您明确指定辅助提供者（例如 `auxiliary.vision.provider: glm`）时，Hermes 会将其视为您的优先选择——但如果该提供者因**能力限制错误**（如 HTTP 402 需要支付、HTTP 429 每日额度耗尽、连接失败）而确实无法处理请求，Hermes 会通过分层回退机制来处理，而不会静默失败：
+### 启用仅基于配额限制的明确回退功能
 
-1. **主要辅助提供者**——即您所配置的提供者（始终优先尝试）
-2. **`auxiliary.<task>.fallback_chain`**——如果您自定义了该列表，则按此顺序尝试
-3. **主代理提供者及模型**——最后的安全保障措施（即使您未设置回退链，也会始终尝试）
-4. **发出警告并重新抛出错误**——如果所有层级都失败，Hermes 会以 WARNING 级别记录日志 `Auxiliary <task>: ... 所有回退方式均已用尽`，然后重新抛出原始错误
+当确认出现配额错误且辅助任务应仅使用其已配置的推理链时，请设置 `fallback_on: [quota_exhausted]`：
 
-短暂的 HTTP 429 速率限制（带有 `Retry-After: ...` 头信息）被视为请求约束而非能力问题——它们会尊重您指定的提供者，**不会**触发回退机制。只有每日/每月额度耗尽、支付错误以及连接失败等情况才会绕过指定提供者的限制。
+```yaml
+auxiliary:
+  compression:
+    provider: openrouter
+    model: google/gemini-3-flash-preview
+    fallback_on: [quota_exhausted]
+    fallback_chain:
+      - provider: nous
+        model: anthropic/claude-sonnet-4
+      - provider: openai
+        model: gpt-4o-mini
+```
 
-对于使用 `provider: auto`（未指定辅助提供者）的用户，系统会自动运行现有的自动检测流程来替代第 2–3 步。该流程的第一步即为主代理模型，因此这类用户无需任何配置即可获得相同的结果。
+此可选功能仅接受在主异常体的 `code`、`type` 或 `reason` 字段中直接出现，或嵌套在某个 `error` 对象内的精确结构化值 `insufficient_quota`、`quota_exhausted` 或 `usage_limit_reached`。如果异常包含状态码，则必须是整数 `402` 或 `429`；仅有状态码或类似配额不足的文字描述是不足的。
 
-### 可选：按任务定制的回退链
+当主提供者的重试机制执行完毕后，Hermes会按顺序依次尝试每个已配置的提供者。对于不可用或失败的提供者将直接跳过。第一个返回有效响应的提供者即为获胜者；如果所有尝试均失败，Hermes会将原始主错误重新抛出。此模式不会添加主智能体、顶层 `fallback_providers`、自动发现机制或其他隐式路由。
 
-如果您希望采用不同于“先尝试主代理模型”的回退顺序，可以明确配置 `fallback_chain`。每个条目至少需要指定 `provider`；`model`、`base_url` 和 `api_key` 则为可选字段。
+该可选功能会在发起主请求之前进行验证。它要求存在一个非空的提供者链，且链中的每个条目都必须包含明确且非空的 `provider` 和 `model` 字符串；`auto` 和 `main` 类型的提供者不符合要求。此模式不支持同步流式调用。
+
+如果未指定 `fallback_on`，则仍会沿用下文所述的传统容量错误处理机制。
+
+当您设置显式的辅助提供者时（例如 `auxiliary.vision.provider: glm`），Hermes会将其视为您的优先选择——但如果由于**容量错误**（如 HTTP 402 请求需付费、HTTP 429 日度配额耗尽、连接失败）导致该提供者确实无法处理请求，Hermes不会静默失败，而是会按层级顺序尝试其他提供者：
+
+1. **主辅助提供者**——即您所配置的提供者（始终优先尝试）
+2. **`auxiliary.<task>.fallback_chain`**——如果您已定义的针对特定任务的备用提供者列表
+3. **主智能体提供者及模型**——最后的保障措施（即使您未定义备用链，也会始终尝试）
+4. **警告并重新抛出错误**——如果所有层级均失败，Hermes会以 WARNING 级别记录日志 `Auxiliary <task>: ... 所有备用提供者均已用尽`，然后重新抛出原始错误
+
+短暂的 HTTP 429 限流响应（包含 `Retry-After: ...` 头信息）被视为请求限制而非容量问题——这类情况会尊重您指定的提供者，不会触发备用提供者机制。只有日度/月度配额耗尽、支付错误以及连接失败等情况才能绕过显式提供者规则。
+
+对于使用 `provider: auto`（未设置显式辅助提供者）的用户，系统将使用现有的自动检测机制来替代步骤 2–3 的操作。该自动检测机制的第一步即为主智能体模型，因此这类用户无需任何配置即可获得相同的结果。
+
+### 可选功能：针对特定任务的备用提供者链
+
+如果您希望采用不同于“先尝试主智能体模型”的备用提供者顺序，可以显式配置 `fallback_chain`。每个条目至少需要包含 `provider` 字段；`model`、`base_url` 和 `api_key` 字段则为可选。
 
 ```yaml
 auxiliary:
