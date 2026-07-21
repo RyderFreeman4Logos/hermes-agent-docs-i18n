@@ -1,13 +1,14 @@
 # Supermemory 内存提供器
 
-该功能具备语义长期记忆能力，支持个人资料检索、语义搜索、显性记忆工具，以及整个会话对话的导入（每个会话仅可导入一次），从而帮助构建更丰富的个人资料。
+这款语义长期记忆功能具备档案检索、语义搜索、显性记忆工具，以及全会话对话采集功能（每个会话仅采集一次），可帮助构建更丰富的用户档案。
 
-## 前提条件
+## 需求条件
 
-- 需先执行命令 `pip install supermemory` 安装该库。
-- 需从 [app.supermemory.ai/integrations?connect=hermes](http://app.supermemory.ai/integrations?connect=hermes) 获取 Supermemory API 密钥。
+- 使用命令 `pip install supermemory` 进行安装；
+- 托管模式：需获取来自 [app.supermemory.ai/integrations?connect=hermes](http://app.supermemory.ai/integrations?connect=hermes) 的 API 密钥；
+- 自托管模式：需运行正在运行的 [Supermemory 本地服务器](https://supermemory.ai/docs/self-hosting/overview)，并获取该服务器在首次启动时输出的 API 密钥。
 
-## 设置方法
+## 设置步骤
 
 ```bash
 hermes memory setup    # select "supermemory"
@@ -19,6 +20,22 @@ hermes memory setup    # select "supermemory"
 hermes config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.hermes/.env
 ```
+
+对于完全自托管的部署方式，请在本地启动 Supermemory，并记下其首次启动时输出的 API 密钥：
+
+```bash
+npx supermemory local
+```
+
+在运行 `hermes memory setup` 命令之前，请先将本地端点地址添加到 `$HERMES_HOME/supermemory.json` 文件中：
+
+```json
+{
+  "base_url": "http://localhost:6767"
+}
+```
+
+接着运行 `hermes memory setup` 并输入本地服务器的 API 密钥。首先配置端点可确保设置连接探测也保持在本地进行。
 
 ## 配置
 
