@@ -120,13 +120,13 @@ hermes config set model.default anthropic/claude-sonnet-4.6
 
 ### 不建议在智能体任务中使用 Hermes-4
 
-Portal 上以大幅折扣提供了 Hermes-4-70B 和 Hermes-4-405B 模型，但它们属于**聊天/推理模型**，并未针对工具调用功能进行优化，因此在处理多步骤智能体循环任务时会遇到困难。建议通过 [Nous Chat](https://chat.nousresearch.com) 将其用于对话或研究任务，或通过[订阅代理](/user-guide/features/subscription-proxy)从非智能体工具中调用它们。对于 Hermes Agent 本身，则应继续使用上述先进的智能体模型。
+Portal 上提供价格大幅折扣的 Hermes-4-70B 和 Hermes-4-405B 模型，但它们属于**聊天/推理模型**，并未针对工具调用功能进行优化。因此它们在处理多步骤智能体循环任务时会表现不佳。若需用于对话或研究工作，可通过 [订阅代理](/user-guide/features/subscription-proxy) 将非智能体工具的请求转接至这些模型。而对于 Hermes Agent 本身，则建议继续使用上述先进的智能体模型。
 
-Portal 自带的[信息页面](https://portal.nousresearch.com/info)也给出了同样的警告——这是 Nous 的官方指导，而不仅仅是 Hermes 方面的意见。
+Portal 自带的 [信息页面](https://portal.nousresearch.com/info) 也发布了同样的警告——这是 Nous 的官方指引，而非 Hermes 方面的个人观点。
 
 ## 6.（可选）自定义工具网关路由
 
-网关功能是针对单个工具可选启用的，并非全有或全无。如果您已拥有 Browserbase 账户，同时希望在使用该账户的同时通过 Nous 来处理网页搜索和图像生成任务，这是完全支持的：
+网关功能是针对单个工具单独启用的，并非全有或全无的模式。如果您已拥有 Browserbase 账户，同时希望在使用 Nous 进行网络搜索和图像生成时继续保留该账户，这是完全支持的：
 
 ```bash
 hermes tools
