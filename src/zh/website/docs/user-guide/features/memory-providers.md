@@ -66,7 +66,7 @@ memory:
 hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-旧的 `hermes honcho setup` 命令仍然可用（现在会重定向到 `hermes memory setup`），但仅在选择 Honcho 作为当前内存提供方之后才会被注册。
+旧的 `hermes honcho setup` 命令仍然可用（目前它会重定向到 `hermes memory setup`），但仅在将 Honcho 设定为激活的内存提供者之后才会被注册。
 
 **配置文件位置：** `$HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。配置加载顺序为：`$
 
@@ -492,22 +492,22 @@ hermes config set memory.provider byterover
 
 ### Supermemory  
 
-这是一种具备语义长期记忆功能的工具，支持通过用户配置文件进行语义检索、显式记忆管理，还可通过 Supermemory 图谱 API 实现会话结束后的对话信息整合。  
+这是一种具备语义长期记忆功能的工具，支持通过用户配置文件进行语义检索、提供显性记忆管理工具，并能通过 Supermemory 图形 API 实现会话结束后的对话信息整合。  
 
 | | |  
 |---|---|  
-| **最佳适用场景** | 基于用户配置文件的语义检索及会话级图谱构建 |  
-| **所需条件** | 安装 `pip install supermemory` + 获取 [API 密钥](http://app.supermemory.ai/integrations?connect=hermes) |  
-| **数据存储方式** | Supermemory 云平台 |  
-| **费用** | 按 Supermemory 的定价标准收取 |  
+| **最佳适用场景** | 基于用户配置文件的语义检索及会话级图形结构构建 |  
+| **所需条件** | 需安装 `pip install supermemory`，并获取 [云 API 密钥](http://app.supermemory.ai/integrations?connect=hermes)，或部署 [自托管服务器](https://supermemory.ai/docs/self-hosting/overview) |  
+| **数据存储方式** | Supermemory 云服务或自托管方案 |  
+| **成本** | 遵循 Supermemory 的云服务定价标准 / 自托管版本免费 |  
 
 **可用工具：**  
-- `supermemory_store`（用于保存显式记忆）  
-- `supermemory_search`（支持语义相似度搜索）  
+- `supermemory_store`（用于保存显性记忆）  
+- `supermemory_search`（基于语义相似度的检索功能）  
 - `supermemory_forget`（可通过 ID 或最匹配查询来删除记忆）  
-- `supermemory_profile`（用于管理持久化配置文件及近期上下文信息）  
+- `supermemory_profile`（生成持久化用户配置文件及近期上下文信息）  
 
-**设置方法：**
+**设置方式：**
 ```bash
 hermes memory setup    # select "supermemory"
 # Or manually:
@@ -515,28 +515,48 @@ hermes config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.hermes/.env
 ```
 
-**配置文件路径：** `$HERMES_HOME/supermemory.json`
+自托管部署：
 
-| 键值 | 默认值 | 说明 |
+```bash
+npx supermemory local
+```
+
+在运行 `hermes memory setup` 命令之前，请先在 `$HERMES_HOME/supermemory.json` 文件中设置 `base_url` 参数：
+
+```json
+{
+  "base_url": "http://localhost:6767"
+}
+```
+
+接着运行 `hermes memory setup`，并输入本地服务器输出的 API 密钥。首先配置端点可确保连接探测也仅在本地进行。
+
+**配置文件：** `$HERMES_HOME/supermemory.json`
+
+| 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
+| `base_url` | `https://api.supermemory.ai` | 托管版或自托管版 Supermemory 的 API 端点。其优先级高于 `SUPERMEMORY_BASE_URL`。 |
 | `container_tag` | `hermes` | 用于搜索和写入的容器标签。支持使用 `{identity}` 模板来设置基于用户身份的标签。 |
-| `auto_recall` | `true` | 在每次对话轮次之前自动注入相关的记忆上下文。 |
+| `auto_recall` | `true` | 在每轮对话开始前自动注入相关的记忆上下文。 |
 | `auto_capture` | `true` | 在每次响应后保存经过处理的用户与助手的对话内容。 |
-| `max_recall_results` | `10` | 最多可召回并整合到上下文中的条目数量。 |
-| `profile_frequency` | `50` | 在首次对话轮次以及之后每隔 N 轮次插入用户档案信息。 |
+| `max_recall_results` | `10` | 最多可回溯并整合到上下文中的项目数量。 |
+| `profile_frequency` | `50` | 在第一轮对话以及之后每隔 N 轮对话时，插入用户档案相关信息。 |
 | `capture_mode` | `all` | 默认情况下会跳过那些内容简短或无关紧要的对话轮次。 |
 | `search_mode` | `hybrid` | 搜索模式：`hybrid`、`memories` 或 `documents`。 |
-| `api_timeout` | `5.0` | SDK 请求及数据同步请求的超时时间。 |
+| `api_timeout` | `5.0` | SDK 操作及数据导入请求的超时时间。 |
 
-**环境变量：** `SUPERMEMORY_API_KEY`（必需），`SUPERMEMORY_CONTAINER_TAG`（可覆盖配置文件中的值）。
+**环境变量：** `SUPERMEMORY_API_KEY`（必需）、`SUPERMEMORY_BASE_URL`（当未配置 `base_url` 时的兼容性备选值）、`SUPERMEMORY_CONTAINER_TAG`（可覆盖配置文件中的设置）。
+
+端点的优先级顺序为：`supermemory.json` → `SUPERMEMORY_BASE_URL` → `https://api.supermemory.ai`。SDK 操作、连接状态探测以及对话数据导入都会使用最终确定的端点。
 
 **主要功能：**
-- 自动上下文隔离——从捕获的对话内容中剔除已召回的记忆，从而避免记忆内容的递归污染。
-- 全会话数据同步——在会话结束时一次性上传整个对话记录。
-- 会话结束后的对话上传功能（上传至 `/v4/conversations`），以便在 Supermemory 中构建更完善的用户档案和知识图谱。
-- 在首次对话轮次以及按设定间隔自动插入用户档案信息。
-- **基于用户身份的容器隔离**——可在 `container_tag` 中使用 `{identity}` 格式（例如 `hermes-{identity}` → `hermes-coder`），从而为不同的 Hermes 用户档案独立管理记忆内容。
-- **多容器模式**——通过启用 `enable_custom_container_tags` 并指定 `custom_containers` 列表，可使智能体在多个命名容器之间进行读写操作；不过自动执行的任务仍会在主容器上完成。
+- 自动上下文隔离——从捕获的对话内容中剔除已回溯的记忆，防止记忆信息出现递归污染。
+- 全会话数据导入——在会话结束时会一次性上传整个对话记录。
+- 会话结束后的对话数据导入（发送至 `/v4/conversations`），以便在 Supermemory 中构建更完善的用户档案和知识图谱。
+- 端到端自托管路由——SDK 操作、探测请求以及对话数据导入请求均使用同一配置的端点。
+- 在第一轮对话及按设定间隔自动插入用户档案相关信息。
+- **基于用户身份的容器**——在 `container_tag` 中使用 `{identity}` 格式（例如 `hermes-{identity}` → `hermes-coder`），从而为每个 Hermes 用户档案隔离独立的记忆数据。
+- **多容器模式**——启用 `enable_custom_container_tags` 并指定 `custom_containers` 列表，即可让智能体在多个命名容器之间进行读写操作；自动运行的操作仍会在主容器上执行。
 
 <details>
 <summary>多容器模式示例</summary>
@@ -578,19 +598,26 @@ hermes memory setup
 ## 提供商对比
 
 | 提供商 | 存储方式 | 费用 | 工具数量 | 依赖项 | 独特功能 |
-|----------|---------|------|-------|-------------|----------------|
+|----------|---------|------|-------|-----------|----------------|
 | **Honcho** | 云端 | 付费 | 5 | `honcho-ai` | 辩证式用户建模 + 会话级上下文管理 |
 | **OpenViking** | 自托管 | 免费 | 5 | `openviking` + 服务器 | 文件系统层级结构 + 分层加载机制 |
-| **Mem0** | 云端/自托管 | 免费/付费 | 4 | `mem0ai` | 服务器端大语言模型提取功能 + 自托管/OSS运行模式 |
-| **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反射式综合能力 |
+| **Mem0** | 云端/自托管 | 免费/付费 | 4 | `mem0ai` | 服务器端大语言模型提取功能 + 自托管/OSS模式 |
+| **Hindsight** | 云端/本地 | 免费/付费 | 3 | `hindsight-client` | 知识图谱 + 反射式综合分析 |
 | **Holographic** | 本地 | 免费 | 2 | 无 | HRR代数模型 + 可信度评分系统 |
 | **RetainDB** | 云端 | 每月20美元 | 5 | `requests` | 差分压缩技术 |
 | **ByteRover** | 本地/云端 | 免费/付费 | 3 | `brv` CLI | 预压缩提取功能 |
-| **Supermemory** | 云端 | 付费 | 4 | `supermemory` | 上下文隔离机制 + 会话图谱整合 + 多容器支持 |
-| **Memori** | 云端 | 免费/付费 | 5 | `hermes-memori` | 具有工具识别功能的记忆系统 + 结构化信息检索 |
+| **Supermemory** | 云端/自托管 | 免费/付费 | 4 | `supermemory` | 上下文隔离机制 + 会话图谱整合 + 多容器支持 |
+| **Memori** | 云端 | 免费/付费 | 5 | `hermes-memori` | 工具感知型内存管理 + 结构化信息检索 |
 
 ## 配置文件隔离
 
-各提供商的数据会根据[配置文件](/user-guide/profiles)实现隔离：
+各提供商的数据均会根据[配置文件](/user-guide/profiles)实现隔离：
 
-- **本地存储型提供商**（Holographic、ByteRover）会使用`$
+- **本地存储型提供商**（Holographic、ByteRover）会使用 `$HERMES_HOME/` 目录，且不同配置文件对应不同的目录路径
+- **配置文件型提供商**（Honcho、Mem0、Hindsight、Supermemory）会将配置信息存储在 `$HERMES_HOME/` 下，因此每个配置文件拥有独立的凭证信息
+- **云端提供商**（RetainDB）会自动为不同配置文件生成对应的项目名称
+- **环境变量型提供商**（OpenViking）则通过各配置文件对应的 `.env` 文件进行配置
+
+## 自定义内存提供商的构建方法
+
+如需了解如何创建自定义内存提供商，请参阅[开发者指南：内存提供商插件](/developer-guide/memory-provider-plugin)。
