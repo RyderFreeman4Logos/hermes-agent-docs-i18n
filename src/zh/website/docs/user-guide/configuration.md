@@ -1286,16 +1286,19 @@ agent:
 您也可以通过 `/reasoning` 命令在运行时更改推理强度：
 
 ```
-/reasoning           # Show current effort level and display state
-/reasoning high      # Set reasoning effort to high
-/reasoning none      # Disable reasoning
-/reasoning show      # Show model thinking above each response
-/reasoning hide      # Hide model thinking
+/reasoning                # Show current effort level and display state
+/reasoning high           # Set reasoning effort to high (this session only)
+/reasoning high --global  # Set effort and persist to config.yaml
+/reasoning none           # Disable reasoning (this session only)
+/reasoning show           # Show model thinking above each response
+/reasoning hide           # Hide model thinking
 ```
 
-#### 每个模型的推理策略自定义
+默认情况下，推理难度设置是针对单个会话的；若要将新的难度级别设置为 `agent.reasoning_effort` 的默认值，请添加 `--global` 参数。
 
-您可以为不同的模型设置不同的推理强度级别。当您希望复杂模型进行高强度推理，而快速处理的模型则采用中等强度推理时，此功能非常实用：
+#### 每个模型的推理难度覆盖
+
+您可以为不同的模型设置不同的推理难度级别。当您希望对复杂的模型使用高难度推理，而对响应速度更快的模型使用中等难度时，此功能非常实用：
 
 ```yaml
 agent:
