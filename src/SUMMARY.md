@@ -2525,6 +2525,8 @@
     - [Description](zh/skills/productivity/DESCRIPTION.md)
     - [Airtable]()
       - [Airtable — 基础库、表格与记录](zh/skills/productivity/airtable/SKILL.md)
+    - [Docx]()
+      - [DOCX技能](zh/skills/productivity/docx/SKILL.md)
     - [Google Workspace]()
       - [Google Workspace](zh/skills/productivity/google-workspace/SKILL.md)
       - [References]()
