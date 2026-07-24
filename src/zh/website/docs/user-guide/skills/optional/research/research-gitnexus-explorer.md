@@ -1,14 +1,14 @@
 ---
-title: "Gitnexus Explorer"
+title: "Gitnexus Explorer — Serve an interactive codebase knowledge graph web UI"
 sidebar_label: "Gitnexus Explorer"
-description: "Index a codebase with GitNexus and serve an interactive knowledge graph via web UI + Cloudflare tunnel"
+description: "Serve an interactive codebase knowledge graph web UI"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# GitNexus Explorer
+# Gitnexus Explorer
 
-利用 GitNexus 对代码库进行索引，并通过 Web UI 加上 Cloudflare 隧道技术提供交互式知识图谱服务。
+提供一个交互式的代码库知识图谱 Web UI。
 
 ## 技能元数据
 
@@ -18,7 +18,7 @@ description: "Index a codebase with GitNexus and serve an interactive knowledge 
 | 路径 | `optional-skills/research/gitnexus-explorer` |
 | 版本 | `1.0.0` |
 | 开发者 | Hermes Agent + Teknium |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `gitnexus`、`代码智能`、`知识图谱`、`可视化` |
 | 相关技能 | `native-mcp`、[`codebase-inspection`](/docs/user-guide/skills/bundled/github/github-codebase-inspection) |
@@ -31,23 +31,23 @@ description: "Index a codebase with GitNexus and serve an interactive knowledge 
 
 # GitNexus Explorer
 
-将任意代码库映射到知识图谱中，并提供一个交互式 Web UI，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 隧道技术实现远程访问。
+将任意代码库索引到知识图谱中，并提供一个交互式 Web UI，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 建立隧道以实现远程访问。
 
 ## 适用场景
 
 - 用户希望直观地了解代码库的架构
-- 用户需要某个代码仓库的知识图谱或依赖关系图
-- 用户想要与他人共享交互式代码库浏览器
+- 用户需要某个仓库的知识图谱或依赖关系图
+- 用户想要与他人共享交互式的代码库探索工具
 
 ## 先决条件
 
-- **Node.js**（v18+）——GitNexus 及代理服务所需
-- **git**——代码仓库必须包含 `.git` 目录
-- **cloudflared**——用于构建隧道连接（如未安装则会自动安装到 ~/.local/bin）
+- **Node.js**（v18+）——GitNexus 及代理功能所需
+- **git**——仓库必须包含 `.git` 目录
+- **cloudflared**——用于隧道连接（如未安装则自动安装至 ~/.local/bin）
 
-## 容量提示
+## 大小限制提示
 
-Web UI 会在浏览器中渲染所有节点。文件数量在 5,000 个以内的代码仓库使用效果最佳。对于大型代码仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI 和 MCP 工具则不受此限制，仅 Web 可视化功能存在此类局限。
+Web UI 会在浏览器中渲染所有节点。文件数量在 5,000 个以内的仓库使用效果最佳。对于大型仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI/MCP 工具则不受此限制，仅 Web 可视化功能存在此类限制。
 
 ## 操作步骤
 
@@ -97,13 +97,13 @@ npx gitnexus analyze --skip-agents-md
 rm -rf .claude/    # remove Claude Code-specific artifacts
 ```
 
-如需使用语义搜索功能，请添加 `--embeddings` 参数（但速度会变慢，查询时间从秒级变为分钟级）。
+如需使用语义搜索功能，请添加 `--embeddings` 参数（但速度会变慢，从秒级降至分钟级）。
 
-索引文件存储在仓库内的 `.gitnexus/` 目录中，并会被自动标记为忽略对象。
+索引文件存储在仓库内的 `.gitnexus/` 目录中，并会被自动标记为 Git 忽略文件。
 
 ### 4. 创建代理脚本
 
-将相关代码写入一个文件中（例如 `$GITNEXUS_DIR/proxy.mjs`）。该脚本负责提供正式版网页界面，同时将 `/api/*` 路由转发至 GitNexus 后端——由于同源策略的保障，无需处理 CORS 问题，也不需要使用 sudo 权限或 nginx 服务器。
+将相关代码写入一个文件中（例如 `$GITNEXUS_DIR/proxy.mjs`）。该脚本用于提供正式版网页界面，同时将 `/api/*` 路由转发至 GitNexus 后端——由于同源策略的保障，无需处理 CORS 问题，也不需要使用 sudo 权限或 nginx 服务器。
 
 ```javascript
 import http from 'node:http';
@@ -198,14 +198,14 @@ rm -rf .claude/
 
 ## 常见问题与注意事项
 
-- **对于 cloudflared，必须使用 `--config /dev/null` 参数。** 如果用户在 `~/.cloudflared/config.yml` 中已存在指定的隧道配置文件，不使用该参数会导致配置文件中的通用接入规则对所有快速隧道请求返回 404 错误。
+- **针对 cloudflared，必须使用 `--config /dev/null`**。如果用户在 `~/.cloudflared/config.yml` 中已存在命名的隧道配置文件，就会出现此问题。否则，配置文件中的通用入口规则会导致所有快速隧道请求均返回 404 错误。
 
-- **进行隧道连接时必须使用生产环境构建版本。** Vite 开发服务器默认会通过 `allowedHosts` 设置阻止非本地主机访问。而使用生产环境构建版本结合 Node 代理则可完全避免这一问题。
+- **进行隧道连接时必须使用生产环境构建版本**。Vite 开发服务器默认会通过 `allowedHosts` 设置阻止非本地主机访问。而使用生产环境构建版本结合 Node 代理则完全可以避免这一问题。
 
-- **Web 界面不会自动创建 `.claude/` 或 `CLAUDE.md` 文件。** 这些文件是由 `npx gitnexus analyze` 命令生成的。如需禁用 Markdown 文件，可使用 `--skip-agents-md` 参数，随后再通过 `rm -rf .claude/` 删除相关文件。这些文件属于 Claude Code 的集成功能，Hermes Agent 用户无需使用。
+- **Web 界面不会自动创建 `.claude/` 或 `CLAUDE.md` 文件**。这些文件是由 `npx gitnexus analyze` 命令生成的。如需禁用 Markdown 文件，可使用 `--skip-agents-md` 参数，随后再通过 `rm -rf .claude/` 删除相关文件。这些文件属于 Claude Code 的集成功能，Hermes Agent 用户无需使用。
 
-- **浏览器内存限制。** Web 界面会将整个项目结构加载到浏览器内存中。文件数量超过 5,000 个的仓库可能会导致界面响应迟缓，而文件数超过 30,000 个则很可能会使浏览器标签页崩溃。
+- **浏览器内存限制**。Web 界面会将整个项目结构加载到浏览器内存中。文件数量超过 5,000 个的仓库可能会导致操作变慢，而超过 30,000 个文件的仓库很可能会使浏览器标签页崩溃。
 
-- **嵌入向量功能为可选项。** 使用 `--embeddings` 参数可启用语义搜索，但在大型仓库中处理该功能可能需要数分钟时间。如需快速浏览项目，可跳过此选项；若希望通过 AI 聊天面板进行自然语言查询，则可添加该参数。
+- **嵌入向量功能为可选项**。使用 `--embeddings` 参数可启用语义搜索，但对于大型仓库而言，该操作可能需要数分钟时间。如需快速浏览项目，可跳过此选项；若希望通过 AI 聊天面板进行自然语言查询，则可添加该参数。
 
-- **多仓库管理。** `gitnexus serve` 命令会同时加载所有已索引的仓库。只需先为多个仓库建立索引，再运行一次启动命令，Web 界面即可支持在它们之间切换。
+- **多仓库管理**。`gitnexus serve` 会加载所有已索引的仓库。只需先为多个仓库建立索引，然后启动一次服务，Web 界面即可让你在它们之间切换。
