@@ -2207,6 +2207,7 @@
       - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
+        - [Petdex — 动态宠物吉祥物](zh/skills/autonomous-ai-agents/hermes-agent/references/petdex.md)
         - [提供商与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
         - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
