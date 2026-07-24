@@ -1970,7 +1970,7 @@
         - [SAELens API 参考手册](zh/optional-skills/mlops/saelens/references/api.md)
         - [SAELens 教程](zh/optional-skills/mlops/saelens/references/tutorials.md)
     - [Simpo]()
-      - [SimPO——简易偏好优化算法](zh/optional-skills/mlops/simpo/SKILL.md)
+      - [SimPO——简易偏好优化方法](zh/optional-skills/mlops/simpo/SKILL.md)
       - [References]()
         - [数据集](zh/optional-skills/mlops/simpo/references/datasets.md)
         - [超参数](zh/optional-skills/mlops/simpo/references/hyperparameters.md)
