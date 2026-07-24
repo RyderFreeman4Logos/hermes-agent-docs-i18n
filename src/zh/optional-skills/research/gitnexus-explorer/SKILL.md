@@ -1,6 +1,6 @@
 ---
 name: gitnexus-explorer
-description: Index a codebase with GitNexus and serve an interactive knowledge graph via web UI + Cloudflare tunnel.
+description: Serve an interactive codebase knowledge graph web UI.
 version: 1.0.0
 author: Hermes Agent + Teknium
 license: MIT
@@ -13,23 +13,23 @@ metadata:
 
 # GitNexus Explorer
 
-可将任意代码库索引至知识图谱中，并提供交互式网页界面，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 建立隧道以实现远程访问。
+可将任意代码库索引到知识图中，并提供一个交互式网页界面，用于查看符号、调用链、聚类以及执行流程。通过 Cloudflare 建立隧道以实现远程访问。
 
 ## 适用场景
 
 - 用户希望直观地了解代码库的架构
-- 用户需要某个代码仓库的知识图谱/依赖关系图
+- 用户需要获取某个代码仓库的知识图谱/依赖关系图
 - 用户想要与他人共享交互式代码库浏览器
 
 ## 先决条件
 
-- **Node.js**（v18+）——GitNexus 及代理服务器所需
+- **Node.js**（v18+）——GitNexus 及代理功能所需
 - **git**——代码仓库必须包含 `.git` 目录
-- **cloudflared**——用于建立隧道（如未安装则会自动安装到 ~/.local/bin）
+- **cloudflared**——用于隧道连接（如未安装则会自动安装到 ~/.local/bin）
 
-## 容量限制提示
+## 容量警告
 
-网页界面会在浏览器中渲染所有节点。文件数量在 5,000 个以内的代码仓库使用效果最佳。对于大型代码仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI/MCP 工具则不受此限制，具备处理任意规模代码库的能力。
+网页界面会在浏览器中渲染所有节点。文件数量在 5,000 个以内的代码仓库使用效果最佳。对于大型代码仓库（节点数超过 30,000 个），页面加载速度会变慢，甚至可能导致浏览器标签页崩溃。CLI/MCP 工具则不受此限制，可处理任意规模的代码库——仅有网页可视化存在该限制。
 
 ## 操作步骤
 
@@ -79,13 +79,13 @@ npx gitnexus analyze --skip-agents-md
 rm -rf .claude/    # remove Claude Code-specific artifacts
 ```
 
-如需使用语义搜索功能，请添加 `--embeddings` 参数（但速度会变慢，查询时间从秒级变为分钟级）。
+如需进行语义搜索，请添加 `--embeddings` 参数（但速度会变慢，从秒级变为分钟级）。
 
-索引文件存储在仓库内的 `.gitnexus/` 目录中，并会被自动标记为忽略对象。
+索引文件存储在仓库内的 `.gitnexus/` 目录中，并会被自动标记为忽略文件。
 
 ### 4. 创建代理脚本
 
-将相关代码写入一个文件中（例如 `$GITNEXUS_DIR/proxy.mjs`）。该脚本负责提供正式版网页界面，同时将 `/api/*` 路由转发至 GitNexus 后端——由于同源策略的保障，无需处理 CORS 问题，也不需要使用 sudo 权限或 nginx 服务器。
+将该脚本内容写入一个文件中（例如 `$GITNEXUS_DIR/proxy.mjs`）。该脚本用于提供正式版网页界面，同时将 `/api/*` 路由转发至 GitNexus 后端——由于同源策略的保障，无需处理 CORS 问题，也不需要使用 sudo 权限或 nginx 服务器。
 
 ```javascript
 import http from 'node:http';
@@ -144,7 +144,7 @@ npx gitnexus serve &
 node "$GITNEXUS_DIR/proxy.mjs" "$GITNEXUS_DIR/gitnexus-web/dist" 8888 &
 ```
 
-验证方法：执行 `curl -s http://localhost:8888/api/repos` 命令，应能返回已索引的仓库列表。 
+验证方法：执行命令 `curl -s http://localhost:8888/api/repos`，应能返回已索引的仓库列表。 
 
 ### 6. 使用 Cloudflare 建立隧道（可选——用于远程访问）
 
@@ -162,7 +162,7 @@ fi
 cloudflared tunnel --config /dev/null --url http://localhost:8888 --no-autoupdate --protocol http2
 ```
 
-隧道地址（例如 `https://random-words.trycloudflare.com`）会输出到标准错误流中。请将该地址分享出去——拥有该链接的任何人都可以查看对应的图结构。
+隧道地址（例如 `https://random-words.trycloudflare.com`）会输出到标准错误流中。请将此地址分享出去——拥有该链接的任何人都可以查看对应的图结构。
 
 ### 7. 清理工作
 
@@ -180,14 +180,14 @@ rm -rf .claude/
 
 ## 常见问题与注意事项
 
-- **对于 cloudflared，必须使用 `--config /dev/null` 参数。** 如果用户在 `~/.cloudflared/config.yml` 中已存在指定的隧道配置文件，不使用该参数会导致配置文件中的通用接入规则对所有快速隧道请求返回 404 错误。
+- **对于 cloudflared，必须使用 `--config /dev/null` 参数。** 如果用户在 `~/.cloudflared/config.yml` 中已存在命名的隧道配置文件，就会导致此问题。否则，配置文件中的通用接入规则会对所有快速隧道请求返回 404 错误。
 
-- **进行隧道连接时必须使用生产环境构建版本。** Vite 开发服务器默认会通过 `allowedHosts` 设置阻止非本地主机访问。而使用生产环境构建版本结合 Node 代理则可完全避免这一问题。
+- **进行隧道连接时必须使用生产环境构建版本。** Vite 开发服务器默认会通过 `allowedHosts` 设置阻止非本机主机访问。而使用生产环境构建版本结合 Node 代理则完全可以避免这一问题。
 
-- **Web 界面不会自动创建 `.claude/` 或 `CLAUDE.md` 文件。** 这些文件是由 `npx gitnexus analyze` 命令生成的。如需禁用 Markdown 文件，可使用 `--skip-agents-md` 参数，随后再通过 `rm -rf .claude/` 删除相关文件。这些文件属于 Claude Code 的集成功能，Hermes Agent 用户无需使用。
+- **Web 界面不会自动创建 `.claude/` 目录或 `CLAUDE.md` 文件。** 这些文件是由 `npx gitnexus analyze` 命令生成的。如需跳过生成 Markdown 文件，可使用 `--skip-agents-md` 参数，随后再通过 `rm -rf .claude/` 删除该目录中的内容。这些文件属于 Claude Code 的集成功能，Hermes Agent 用户无需使用。
 
-- **浏览器内存限制。** Web 界面会将整个项目结构加载到浏览器内存中。文件数量超过 5,000 个的仓库可能会导致界面响应迟缓，而文件数超过 30,000 个则很可能会使浏览器标签页崩溃。
+- **浏览器内存限制。** Web 界面会将整个项目结构加载到浏览器内存中。文件数量超过 5,000 个的仓库可能会导致运行缓慢，而超过 30,000 个文件的仓库很可能会使浏览器标签页崩溃。
 
-- **嵌入向量功能为可选项。** 使用 `--embeddings` 参数可启用语义搜索，但在大型仓库中处理该功能可能需要数分钟时间。如需快速浏览项目，可跳过此选项；若希望通过 AI 聊天面板进行自然语言查询，则可添加该参数。
+- **嵌入向量是可选功能。** 使用 `--embeddings` 参数可启用语义搜索，但在大型仓库中处理该功能可能需要数分钟时间。如需快速浏览项目，可跳过此选项；若希望通过 AI 聊天面板进行自然语言查询，则可添加该参数。
 
-- **多仓库管理。** `gitnexus serve` 命令会同时加载所有已索引的仓库。只需先为多个仓库建立索引，再运行一次启动命令，Web 界面即可支持在它们之间切换。
+- **管理多个仓库。** `gitnexus serve` 命令会加载所有已索引的仓库。只需先为多个仓库建立索引，然后一次性启动服务，Web 界面即可方便地切换不同仓库。
