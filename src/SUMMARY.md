@@ -2157,6 +2157,8 @@
       - [Cloudflare临时部署技能](zh/optional-skills/web-development/cloudflare-temporary-deploy/SKILL.md)
     - [Page Agent]()
       - [page-agent](zh/optional-skills/web-development/page-agent/SKILL.md)
+  - [Yuanbao]()
+    - [元宝群组交互指南](zh/optional-skills/yuanbao/SKILL.md)
 - [Plugins]()
   - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
   - [Google Meet](zh/plugins/google_meet/README.md)
