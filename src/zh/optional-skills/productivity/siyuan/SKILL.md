@@ -1,6 +1,6 @@
 ---
 name: siyuan
-description: SiYuan Note API for searching, reading, creating, and managing blocks and documents in a self-hosted knowledge base via curl.
+description: Query and edit a SiYuan knowledge base via its API.
 version: 1.0.0
 author: FEUAZUR
 license: MIT
@@ -39,7 +39,7 @@ required_environment_variables:
 
 ## API 基础知识
 
-所有 SiYuan API 调用均采用 **带有 JSON 数据体的 POST 请求**。每个请求都遵循以下格式：
+所有 SiYuan API 调用均采用 **带 JSON 数据体的 POST 请求**。每个请求都遵循以下格式：
 
 ```bash
 curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/..." \
@@ -48,33 +48,33 @@ curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/..." \
   -d '{"param": "value"}'
 ```
 
-响应为结构如下的 JSON 格式数据：
+响应内容为结构如下的 JSON 格式：
 ```json
 {"code": 0, "msg": "", "data": { ... }}
 ```
-`code: 0` 表示操作成功。其他任何值均表示出现错误——请查看 `msg` 字段以获取详细信息。
+`code: 0` 表示操作成功。其他任何值均代表错误——请查看 `msg` 字段以获取详细信息。
 
 **ID 格式：** SiYuan ID 的格式为 `20210808180117-6v0mkxr`（14位时间戳 + 7位字母数字组合）。
 
 ## 快速参考
 
 | 操作 | 接口地址 |
-|-----------|----------|
+|------|----------|
 | 全文搜索 | `/api/search/fullTextSearchBlock` |
 | SQL 查询 | `/api/query/sql` |
-| 读取代码块 | `/api/block/getBlockKramdown` |
-| 读取子节点 | `/api/block/getChildBlocks` |
+| 读取块内容 | `/api/block/getBlockKramdown` |
+| 读取子块 | `/api/block/getChildBlocks` |
 | 获取路径 | `/api/filetree/getHPathByID` |
 | 获取属性 | `/api/attr/getBlockAttrs` |
 | 列出笔记本 | `/api/notebook/lsNotebooks` |
 | 列出文档 | `/api/filetree/listDocsByPath` |
 | 创建笔记本 | `/api/notebook/createNotebook` |
 | 创建文档 | `/api/filetree/createDocWithMd` |
-| 追加代码块 | `/api/block/appendBlock` |
-| 更新代码块 | `/api/block/updateBlock` |
+| 追加块内容 | `/api/block/appendBlock` |
+| 更新块内容 | `/api/block/updateBlock` |
 | 重命名文档 | `/api/filetree/renameDocByID` |
 | 设置属性 | `/api/attr/setBlockAttrs` |
-| 删除代码块 | `/api/block/deleteBlock` |
+| 删除块内容 | `/api/block/deleteBlock` |
 | 删除文档 | `/api/filetree/removeDocByID` |
 | 导出为 Markdown 格式 | `/api/export/exportMdContent` |
 
@@ -180,7 +180,7 @@ curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/notebook/createNoteboo
   -d '{"name": "My New Notebook"}' | jq '.data.notebook.id'
 ```
 
-### 向文档添加块内容
+### 向文档追加内容块
 
 ```bash
 curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/block/appendBlock" \
@@ -193,7 +193,7 @@ curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/block/appendBlock" \
   }' | jq '.data'
 ```
 
-此外还提供以下接口：`/api/block/prependBlock`（参数相同，用于在块开头插入内容）以及 `/api/block/insertBlock`（使用 `previousID` 而非 `parentID`，用于在指定块之后插入内容）。
+此外，还提供以下接口：`/api/block/prependBlock`（参数相同，用于在块的开头插入内容）以及 `/api/block/insertBlock`（使用 `previousID` 而非 `parentID`，用于在指定块之后插入内容）。
 
 ### 更新块内容
 
@@ -257,7 +257,7 @@ curl -s -X POST "${SIYUAN_URL:-http://127.0.0.1:6806}/api/export/exportMdContent
 
 ## 块类型
 
-SQL 查询中常见的 `type` 值如下：
+SQL 查询中常见的 `type` 值：
 
 | 类型 | 描述 |
 |------|-------------|
@@ -273,13 +273,13 @@ SQL 查询中常见的 `type` 值如下：
 | `s` | 超级块 |
 | `html` | HTML 块 |
 
-## 常见问题
+## 常见陷阱
 
-- **所有接口均为 POST 请求**——即便是只读操作也是如此。请勿使用 GET 请求。
+- **所有接口均为 POST 请求**——即使是只读操作也是如此。请勿使用 GET 请求。
 - **SQL 安全性**：仅可使用 SELECT 查询。INSERT/UPDATE/DELETE/DROP 等操作存在风险，绝不可发送。
-- **ID 格式验证**：ID 需符合 `YYYYMMDDHHmmss-xxxxxxx` 的格式，其他格式的 ID 均会被拒绝。
-- **错误响应处理**：在处理 `data` 之前，务必先检查响应中的 `code` 是否不等于 0。
-- **大型文档**：块内容及导出结果可能体积庞大。建议在 SQL 查询中使用 `LIMIT` 限制数据量，并通过 `jq` 工具提取所需内容。
+- **ID 格式验证**：ID 需符合 `YYYYMMDDHHmmss-xxxxxxx` 的格式，其他格式的 ID 均需被拒绝。
+- **错误响应处理**：在处理 `data` 之前，务必先检查响应中的 `code != 0`。
+- **大型文档**：块内容及导出结果可能体积巨大。建议在 SQL 查询中使用 `LIMIT` 限制数据量，并通过 `jq` 工具提取所需内容。
 - **笔记本 ID**：在操作特定笔记本时，需先通过 `lsNotebooks` 获取其 ID。
 
 ## 替代方案：MCP 服务器
