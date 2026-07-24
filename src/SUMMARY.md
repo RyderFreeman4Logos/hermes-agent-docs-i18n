@@ -1779,6 +1779,8 @@
         - [Unreal MCP — 工具接口参考文档](zh/optional-skills/creative/unreal-mcp/references/tool-surface.md)
   - [Data Science]()
     - [Description](zh/optional-skills/data-science/DESCRIPTION.md)
+    - [Jupyter Notebook]()
+      - [Jupyter Notebook（hamelnb 实时内核）](zh/optional-skills/data-science/jupyter-notebook/SKILL.md)
   - [Devops]()
     - [Cli]()
       - [inference.sh CLI](zh/optional-skills/devops/cli/SKILL.md)
