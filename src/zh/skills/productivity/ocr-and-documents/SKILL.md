@@ -8,18 +8,19 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [PDF, Documents, Research, Arxiv, Text-Extraction, OCR]
-    related_skills: [powerpoint]
+    related_skills: [pdf, docx, powerpoint]
 ---
 
-# PDF与文档提取功能
+# PDF与文档提取
 
-对于DOCX格式：建议使用`python-docx`库（能够解析文档的实际结构，效果远优于OCR技术）。
-对于PPTX格式：可参考`powerpoint`技能（该技能基于`python-pptx`库实现，支持完整提取幻灯片及备注内容）。
-本技能适用于**PDF文件以及扫描后的文档**。
+对于DOCX格式：可参考`docx`技能（用于创建/编辑），或使用`python-docx`库进行结构化读取。
+对于PPTX格式：可参考`powerpoint`技能（支持完整的创建/读取/编辑功能）。
+对于PDF文档的操作（合并、拆分、处理表单、添加水印及创建新PDF）：请使用`pdf`技能。
+该技能可实现**从PDF文档及扫描件中提取文本**的功能。
 
-## 第一步：是否有远程URL地址？
+## 第一步：是否有远程URL？
 
-如果文档存在URL地址，**请优先尝试使用`web_extract`功能**：
+如果文档存在URL，**请优先尝试使用`web_extract`功能**：
 
 ```
 web_extract(urls=["https://arxiv.org/pdf/2402.03300"])
@@ -28,35 +29,35 @@ web_extract(urls=["https://example.com/report.pdf"])
 
 该功能通过 Firecrawl 实现 PDF 到 Markdown 的转换，且无需任何本地依赖。
 
-仅在以下情况才使用本地提取方式：文件位于本地、web_extract 失败，或需要批量处理时。
+仅在以下情况下才使用本地提取功能：文件位于本地、web_extract 失败，或需要批量处理时。
 
 ## 第 2 步：选择本地提取器
 
-| 功能特性 | pymupdf（约 25MB） | marker-pdf（约 3-5GB） |
+| 功能 | pymupdf（约 25MB） | marker-pdf（约 3-5GB） |
 |---------|-----------------|---------------------|
 | **文本型 PDF** | ✅ | ✅ |
 | **扫描版 PDF（OCR）** | ❌ | ✅（支持 90 多种语言） |
-| **表格** | ✅（基础功能） | ✅（高精度识别） |
-| **公式/LaTeX** | ❌ | ✅ |
+| **表格** | ✅（基础功能） | ✅（高精度） |
+| **公式 / LaTeX** | ❌ | ✅ |
 | **代码块** | ❌ | ✅ |
 | **表单** | ❌ | ✅ |
-| **去除页眉/页脚** | ❌ | ✅ |
-| **阅读顺序检测** | ❌ | ✅ |
-| **图片提取** | ✅（嵌入式图片） | ✅（结合上下文提取） |
+| **删除页眉/页脚** | ❌ | ✅ |
+| **识别阅读顺序** | ❌ | ✅ |
+| **提取图片** | ✅（嵌入图片） | ✅（结合上下文提取） |
 | **图片转文本（OCR）** | ❌ | ✅ |
 | **EPUB 格式** | ✅ | ✅ |
 | **Markdown 输出格式** | ✅（通过 pymupdf4llm 实现） | ✅（原生输出，质量更高） |
 | **安装大小** | 约 25MB | 约 3-5GB（包含 PyTorch 及模型文件） |
 | **处理速度** | 即时完成 | 每页约 1-14 秒（CPU），每页约 0.2 秒（GPU） |
 
-**决策建议**：除非需要 OCR、公式识别、表单处理或复杂的布局分析功能，否则优先使用 pymupdf。
+**决策建议**：除非需要 OCR、公式解析、表单处理或复杂的布局分析功能，否则建议使用 pymupdf。
 
 如果用户需要 marker 的高级功能，但系统可用磁盘空间不足 5GB：
-> “该文档需要通过 OCR/高级提取功能（marker-pdf）处理，这需要约 5GB 的空间用于存储 PyTorch 及相关模型。您的系统目前仅有 [X]GB 的空闲空间。解决方案包括：释放更多空间、提供文件 URL 以便我使用 web_extract 方式处理，或者尝试使用仅适用于文本型 PDF、无法处理扫描文档或公式的 pymupdf。”
+> “该文档需要通过 OCR 或高级提取功能（marker-pdf）来处理，这需要约 5GB 的空间用于存储 PyTorch 及相关模型。您的系统目前还有 [X]GB 的空闲空间。您可以选择：释放更多空间、提供一个网址以便我使用 web_extract 进行提取，或者尝试使用 pymupdf——它虽能处理文本型 PDF，但无法处理扫描版文档或包含公式的文件。”
 
 ---
 
-## pymupdf（轻量版）
+## pymupdf（轻量级版本）
 
 ```bash
 pip install pymupdf pymupdf4llm
@@ -106,7 +107,7 @@ marker_single document.pdf --output_dir ./output
 marker /path/to/folder --workers 4    # Batch
 ```
 
-## Arxiv论文库
+## Arxiv论文集
 
 ```
 # Abstract only (fast)
@@ -121,7 +122,7 @@ web_search(query="arxiv GRPO reinforcement learning 2026")
 
 ## 分割、合并与搜索
 
-pymupdf可直接实现这些功能——可使用`execute_code`或内联Python代码来完成：
+pymupdf可直接实现这些功能——您可以使用`execute_code`或内联Python代码来完成操作：
 
 ```python
 # Split: extract pages 1-5 to a new PDF
@@ -153,16 +154,16 @@ for i, page in enumerate(doc):
         print(page.get_text("text"))
 ```
 
-无需额外依赖——pymupdf 一个包即可实现文档的分割、合并、搜索及文本提取功能。
+无需额外依赖——pymupdf 一个包即可实现文档的分割、合并、搜索以及文本提取功能。
 
 ---
 
 ## 备注
 
-- 对于网址，`web_extract` 始终是首选方案
-- pymupdf 是安全可靠的默认选择——响应迅速、无需模型、可在任何环境中使用
-- marker-pdf 适用于 OCR 处理、扫描文档、公式以及结构复杂的文档——仅在必要时安装
-- 两个辅助脚本均支持 `--help` 参数以查看完整用法说明
-- 首次使用时，marker-pdf 会向 `~/.cache/huggingface/` 下载约 2.5GB 的模型文件
-- 处理 Word 文档时：请使用 `pip install python-docx`（相比 OCR 更高效，可直接解析文档结构）
-- 处理 PowerPoint 文件时：请参考 `powerpoint` 技能（该技能基于 python-pptx 库）
+- 对于网址，`web_extract` 始终是首选方案。
+- pymupdf 是最稳妥的默认选择：响应迅速、无需模型、兼容所有环境。
+- marker-pdf 适用于 OCR 处理、扫描文档、公式以及复杂布局——仅在必要时安装。
+- 这两个辅助脚本均支持 `--help` 参数以查看完整使用说明。
+- 首次使用时，marker-pdf 会将约 2.5GB 的模型下载到 `~/.cache/huggingface/` 目录中。
+- 处理 Word 文档时：请安装 `python-docx`（相比 OCR 更高效，可直接解析文档结构）。
+- 处理 PowerPoint 文件时：请参考 `powerpoint` 技能（该技能基于 python-pptx 开发）。
