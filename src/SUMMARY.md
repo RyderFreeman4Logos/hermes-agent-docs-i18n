@@ -2549,6 +2549,8 @@
       - [PowerPoint技能](zh/skills/productivity/powerpoint/SKILL.md)
     - [Teams Meeting Pipeline]()
       - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
+    - [Xlsx]()
+      - [XLSX 技能](zh/skills/productivity/xlsx/SKILL.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Arxiv]()
