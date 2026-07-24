@@ -1,6 +1,6 @@
 ---
 name: llava
-description: Large Language and Vision Assistant. Enables visual instruction tuning and image-based conversations. Combines CLIP vision encoder with Vicuna/LLaMA language models. Supports multi-turn image chat, visual question answering, and instruction following. Use for vision-language chatbots or image understanding tasks. Best for conversational image analysis.
+description: "Vision-language chat: VQA, captioning, image dialogue."
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -24,18 +24,18 @@ metadata:
 - 图像描述与字幕生成
 - 多轮图像对话
 - 视觉指令遵循
-- 基于图像的文档理解
+- 结合图像的文档理解
 
 **核心指标：**
 - **超过 23,000 个 GitHub 星标**
-- 达到 GPT-4V 级别的性能（目标定位）
-- 采用 Apache 2.0 许可证
-- 提供多种模型规模选择（7B-34B 参数量）
+- 达到 GPT-4V 级别的能力（特定任务优化）
+- 采用 Apache 2.0 许可协议
+- 提供多种模型规模选项（7B-34B 参数量）
 
 **可选替代方案：**
 - **GPT-4V**：质量最高，基于 API 接口
-- **CLIP**：简单的零样本分类功能
-- **BLIP-2**：更适用于字幕生成任务
+- **CLIP**：适用于简单的零样本分类任务
+- **BLIP-2**：更擅长单纯的字幕生成
 - **Flamingo**：仅用于研究，非开源模型
 
 ## 快速入门
@@ -98,9 +98,9 @@ print(response)
 
 ## 可用模型
 
-| 模型 | 参数量 | VRAM需求 | 质量表现 |
-|-------|----------|----------|---------|
-| LLaVA-v1.5-7B | 70亿参数 | 约14 GB | 较好 |
+| 模型 | 参数量 | VRAM需求 | 质量水平 |
+|-------|--------|----------|---------|
+| LLaVA-v1.5-7B | 70亿参数 | 约14 GB | 良好 |
 | LLaVA-v1.5-13B | 130亿参数 | 约28 GB | 更优 |
 | LLaVA-v1.6-34B | 340亿参数 | 约70 GB | 最佳 |
 
@@ -130,7 +130,7 @@ python -m llava.serve.cli \
 # Then type questions interactively
 ```
 
-## Web界面（Gradio）
+## Web 用户界面（Gradio）
 
 ```bash
 # Launch Gradio interface
@@ -141,7 +141,9 @@ python -m llava.serve.gradio_web_server \
 # Access at http://localhost:7860
 ```
 
-## 多轮对话功能
+## 多轮对话
+
+请完整翻译输入的全部内容，切勿提前终止。
 
 ```python
 # Initialize conversation
@@ -181,7 +183,7 @@ question = "How many people are in the image?"
 response = ask(model, image, question)
 ```
 
-### 对象检测（文本模式）
+### 对象检测（文本版）
 
 ```python
 question = "List all the objects you can see in this image."
@@ -195,7 +197,9 @@ question = "What is happening in this scene?"
 response = ask(model, image, question)
 ```
 
-### 文档理解
+### 文档理解功能
+
+需完整翻译输入的全部内容，不得提前终止。
 
 ```python
 question = "What is the main topic of this document?"
@@ -227,28 +231,28 @@ tokenizer, model, image_processor, context_len = load_pretrained_model(
 load_8bit=True  # Reduces VRAM ~2×
 ```
 
-## 最佳实践
+## 最佳实践建议
 
-1. **从7B模型开始**——质量优异，显存占用可控  
-2. **采用4位量化**——可显著降低显存需求  
-3. **需使用GPU**——CPU推理速度极慢  
-4. **明确提示词**——具体问题能获得更优答案  
-5. **多轮对话**——保持对话上下文连贯性  
-6. **温度值设为0.2-0.7**——平衡创造力与一致性  
-7. **max_new_tokens设置为512-1024**——获取更详细的回复  
-8. **批量处理**——依次处理多张图片  
+1. **从7B模型开始**——质量优异且显存占用可控  
+2. **采用4位量化技术**——可显著降低显存需求  
+3. **必须使用GPU**——CPU推理速度极慢  
+4. **编写清晰提示词**——明确的提问能获得更精准的答案  
+5. **支持多轮对话**——有助于保留对话上下文  
+6. **温度参数设为0.2-0.7**——在创造力与一致性之间取得平衡  
+7. **max_new_tokens设置为512-1024**——以获得更详细的回复  
+8. **批量处理功能**——可依次处理多张图片  
 
 ## 性能表现
 
-| 模型 | FP16显存需求 | 4位量化显存需求 | 每秒生成token数 |
-|------|-------------|----------------|----------------|
-| 7B   | 约14 GB     | 约4 GB         | 约20           |
-| 13B  | 约28 GB     | 约8 GB         | 约12           |
-| 34B  | 约70 GB     | 约18 GB        | 约5            |
+| 模型规模 | FP16格式显存需求 | 4位量化显存需求 | 推理速度（tokens/秒） |
+|---------|------------------|------------------|----------------------|
+| 7B      | 约14 GB           | 约4 GB            | 约20                 |
+| 13B     | 约28 GB           | 约8 GB            | 约12                 |
+| 34B     | 约70 GB           | 约18 GB           | 约5                  |
 
 *测试环境：A100 GPU*
 
-## 测试结果
+## 测试基准结果
 
 LLaVA在以下评测中取得了优异成绩：
 - **VQAv2**：78.5%  
@@ -259,13 +263,13 @@ LLaVA在以下评测中取得了优异成绩：
 ## 局限性
 
 1. **幻觉现象**——可能描述图片中不存在的内容  
-2. **空间推理能力较弱**——难以精准定位物体位置  
-3. **小字体识别困难**——难以辨认细微文字  
-4. **物体计数不准确**——对多个物体的统计易出错  
-5. **高显存需求**——需配置高性能GPU  
+2. **空间推理能力有限**——难以准确判断物体位置  
+3. **小字体识别困难**——难以读取细微文字  
+4. **物体计数不精准**——对多个物体的统计易出错  
+5. **高显存需求**——需要性能强大的GPU  
 6. **推理速度较慢**——低于CLIP模型  
 
-## 与框架的集成
+## 与框架的集成方式
 
 ### LangChain
 
@@ -299,10 +303,10 @@ demo.launch()
 
 ## 资源链接
 
-- **GitHub仓库**：https://github.com/haotian-liu/LLaVA ⭐ 23,000+ 次点赞  
+- **GitHub 仓库**：https://github.com/haotian-liu/LLaVA ⭐ 23,000+ 次点赞  
 - **相关论文**：https://arxiv.org/abs/2304.08485  
 - **演示页面**：https://llava.hliu.cc  
-- **模型地址**：https://huggingface.co/liuhaotian  
+- **模型仓库**：https://huggingface.co/liuhaotian  
 - **许可证**：Apache 2.0
 
 
