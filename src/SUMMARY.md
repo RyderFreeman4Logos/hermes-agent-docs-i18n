@@ -2867,6 +2867,7 @@
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
             - [Notion](zh/website/docs/user-guide/skills/bundled/productivity/productivity-notion.md)
             - [OCR与文档处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-ocr-and-documents.md)
+            - [PDF 处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-pdf.md)
             - [PowerPoint](zh/website/docs/user-guide/skills/bundled/productivity/productivity-powerpoint.md)
             - [Teams 会议处理流程](zh/website/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline.md)
           - [Research]()
