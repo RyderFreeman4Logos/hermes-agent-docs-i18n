@@ -1,55 +1,55 @@
 ---
-title: "Tensorrt Llm — Optimizes LLM inference with NVIDIA TensorRT for maximum throughput and lowest latency"
+title: "Tensorrt Llm — High-throughput LLM inference on NVIDIA GPUs"
 sidebar_label: "Tensorrt Llm"
-description: "Optimizes LLM inference with NVIDIA TensorRT for maximum throughput and lowest latency"
+description: "High-throughput LLM inference on NVIDIA GPUs"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Tensorrt Llm
 
-该技能利用 NVIDIA TensorRT 对大语言模型推理过程进行优化，从而实现最高的吞吐量与最低的延迟。适用于在 NVIDIA GPU（A100/H100）上开展生产环境部署，尤其适合那些需要比 PyTorch 快 10 到 100 倍推理速度的场景；同时也支持对模型进行量化处理（FP8/INT4）、在线批处理以及多 GPU 扩展，以实现更高效的模型服务。
+在 NVIDIA GPU 上实现高吞吐量的大语言模型推理。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/mlops/tensorrt-llm` 命令安装 |
+| 来源 | 可选 — 通过 `hermes skills install official/mlops/tensorrt-llm` 安装 |
 | 路径 | `optional-skills/mlops/tensorrt-llm` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `tensorrt-llm`, `torch` |
 | 支持平台 | linux, macos |
-| 标签 | `推理服务`, `TensorRT-LLM`, `NVIDIA`, `推理优化`, `高吞吐量`, `低延迟`, `生产环境`, `FP8`, `INT4`, `在线批处理`, `多GPU` |
+| 标签 | `推理服务`, `TensorRT-LLM`, `NVIDIA`, `推理优化`, `高吞吐量`, `低延迟`, `生产环境`, `FP8`, `INT4`, `动态批处理`, `多GPU` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体所看到的指令即为内容。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
 :::
 
 # TensorRT-LLM
 
-NVIDIA 提供的开源库，可在 NVIDIA GPU 上以最先进的性能优化大语言模型的推理过程。
+NVIDIA 开发的开源库，可在 NVIDIA GPU 上以最先进的性能优化大语言模型推理。
 
 ## 何时使用 TensorRT-LLM
 
-**以下情况适合使用 TensorRT-LLM：**
+**以下情况建议使用 TensorRT-LLM：**
 - 在 NVIDIA GPU（A100、H100、GB200）上部署模型
-- 需要极高的吞吐量（在 Llama 3 上可达每秒 24,000 多个标记）
+- 需要极高的吞吐量（Llama 3 每秒可处理 24,000 个以上token）
 - 实时应用对低延迟有严格要求
-- 需要处理已量化的模型（FP8、INT4、FP4）
-- 需要在多 GPU 或多节点之间扩展部署
+- 处理量化后的模型（FP8、INT4、FP4）
+- 在多 GPU 或多节点环境中扩展部署
 
 **以下情况建议改用 vLLM：**
-- 需要更简单的设置以及以 Python 为主的 API
-- 希望使用 PagedAttention 功能且无需进行 TensorRT 编译
-- 在 AMD GPU 或非 NVIDIA 硬件上运行模型
+- 需要更简单的设置及以 Python 为主的 API
+- 希望使用 PagedAttention 且无需进行 TensorRT 编译
+- 在 AMD GPU 或非 NVIDIA 硬件上运行
 
 **以下情况建议改用 llama.cpp：**
 - 在 CPU 或 Apple Silicon 平台上部署模型
-- 需要在没有 NVIDIA GPU 的边缘设备上运行模型
+- 需要在没有 NVIDIA GPU 的边缘设备上运行
 - 希望使用更简单的 GGUF 量化格式
 
 ## 快速入门
@@ -113,23 +113,23 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 
 ### 性能优化
 - **传输中批量处理**：在生成过程中实现动态批量化
-- **分页KV缓存**：高效的内存管理机制
+- **分页键值缓存**：高效的内存管理机制
 - **Flash Attention**：优化的注意力计算内核
 - **量化技术**：支持FP8、INT4、FP4格式，提升推理速度2-4倍
 - **CUDA图优化**：降低内核启动开销
 
 ### 并行处理能力
-- **张量并行（TP）**：将模型分布在多块GPU上处理
-- **流水线并行（PP）**：按层进行任务分配
+- **张量并行（TP）**：将模型任务分配到多块GPU上处理
+- **流水线并行（PP）**：按层级分配计算任务
 - **专家并行**：专为混合专家模型设计
-- **多节点部署**：突破单机限制实现扩展
+- **多节点部署**：突破单机限制实现大规模扩展
 
 ### 高级功能
-- **推测解码**：借助草稿模型加快生成速度
+- **推测解码**：利用草稿模型加快生成速度
 - **LoRA服务**：高效的多适配器部署方案
-- **分离式服务**：将预填充与生成过程分开处理
+- **分离式服务架构**：将预填充与生成过程独立处理
 
-## 常见应用模式
+## 常见应用场景
 
 ### 量化模型（FP8格式）
 
@@ -180,8 +180,8 @@ outputs = llm.generate(
 - 相较于 PyTorch：**速度快 100 倍**
 
 **Llama 3-70B**（8× A100 80GB）：
-- 使用 FP8 量化后：速度比 FP16 快 2 倍
-- 使用 FP8 后内存占用减少 50%
+- FP8 量化格式下的处理速度是 FP16 的 2 倍
+- 使用 FP8 后内存占用可减少 50%
 
 ## 支持的模型
 
@@ -195,7 +195,7 @@ outputs = llm.generate(
 
 ## 参考资料
 
-- **[优化指南](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/tensorrt-llm/references/optimization.md)** – 量化、批处理、KV 缓存调优
+- **[优化指南](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/tensorrt-llm/references/optimization.md)** – 量化处理、批量处理、KV 缓存优化
 - **[多 GPU 部署指南](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/tensorrt-llm/references/multi-gpu.md)** – Tensor/流水线并行处理、多节点部署
 - **[服务部署指南](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/tensorrt-llm/references/serving.md)** – 生产环境部署、监控与自动扩缩容
 
