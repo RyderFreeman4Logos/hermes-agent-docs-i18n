@@ -2030,7 +2030,7 @@
       - [Stripe Projects 功能](zh/optional-skills/payments/stripe-projects/SKILL.md)
   - [Productivity]()
     - [Canvas]()
-      - [Canvas LMS — 课程与作业访问权限](zh/optional-skills/productivity/canvas/SKILL.md)
+      - [Canvas LMS — 课程与作业访问功能](zh/optional-skills/productivity/canvas/SKILL.md)
     - [Here Now]()
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
     - [Memento Flashcards]()
