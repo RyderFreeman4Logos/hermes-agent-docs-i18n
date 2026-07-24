@@ -2209,6 +2209,7 @@
       - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
         - [配置、工具集与语音功能](zh/skills/autonomous-ai-agents/hermes-agent/references/configuration.md)
+        - [delegate_task：诊断“我的任务批次被限制了”](zh/skills/autonomous-ai-agents/hermes-agent/references/delegate-task-concurrency-diagnosis.md)
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
         - [Petdex — 动态宠物吉祥物](zh/skills/autonomous-ai-agents/hermes-agent/references/petdex.md)
         - [项目上下文文件](zh/skills/autonomous-ai-agents/hermes-agent/references/project-context-files.md)
