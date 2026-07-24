@@ -2992,3 +2992,5 @@
             - [子代理驱动开发](zh/website/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development.md)
           - [Web Development]()
             - [Page Agent](zh/website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md)
+          - [Yuanbao]()
+            - [元宝](zh/website/docs/user-guide/skills/optional/yuanbao/yuanbao-yuanbao.md)
