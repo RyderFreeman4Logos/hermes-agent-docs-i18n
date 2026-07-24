@@ -2540,6 +2540,8 @@
     - [Ocr And Documents]()
       - [Description](zh/skills/productivity/ocr-and-documents/DESCRIPTION.md)
       - [PDF与文档提取](zh/skills/productivity/ocr-and-documents/SKILL.md)
+    - [Pdf]()
+      - [PDF技能](zh/skills/productivity/pdf/SKILL.md)
     - [Powerpoint]()
       - [PowerPoint技能](zh/skills/productivity/powerpoint/SKILL.md)
     - [Teams Meeting Pipeline]()
