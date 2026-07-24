@@ -1,6 +1,6 @@
 ---
 name: chroma
-description: Open-source embedding database for AI applications. Store embeddings and metadata, perform vector and full-text search, filter by metadata. Simple 4-function API. Scales from notebooks to production clusters. Use for semantic search, RAG applications, or document retrieval. Best for local development and open-source projects.
+description: Embedding database for RAG and semantic search.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -24,19 +24,19 @@ metadata:
 - 寻求开源解决方案（Apache 2.0许可证）
 - 在笔记本中进行原型开发
 - 对文档进行语义搜索
-- 需要存储带有元数据的嵌入向量
+- 需要将嵌入向量与元数据一同存储
 
-**相关数据：**
+**核心数据指标：**
 - **24,300+个GitHub星标**
-- **1,900+次代码复制**
+- **1,900+次代码克隆**
 - **v1.3.3版本**（稳定版，每周更新）
 - **Apache 2.0许可证**
 
 **可选择的其他替代方案：**
 - **Pinecone**：托管式云服务，具备自动扩展功能
-- **FAISS**：纯相似度搜索工具，不支持元数据存储
+- **FAISS**：纯相似度搜索工具，不支持元数据管理
 - **Weaviate**：专为生产环境设计的AI原生数据库
-- **Qdrant**：高性能数据库，基于Rust语言开发
+- **Qdrant**：基于Rust语言开发，性能优异
 
 ## 快速入门
 
@@ -307,7 +307,7 @@ results = collection.query(
 )
 ```
 
-## 与LangChain的集成
+## 与 LangChain 的集成
 
 ```python
 from langchain_chroma import Chroma
@@ -387,17 +387,17 @@ collection = client.get_or_create_collection("my_docs")
 5. **运用过滤器**——缩小搜索范围  
 6. **使用唯一标识符**——防止数据冲突  
 7. **定期备份**——复制chroma_db目录  
-8. **监控集合大小**——必要时进行扩展  
+8. **监控集合大小**——必要时进行扩容  
 9. **测试嵌入功能**——确保输出质量  
-10. **生产环境采用服务器模式**——更适用于多用户场景  
+10. **生产环境选用服务器模式**——更适用于多用户场景  
 
 ## 性能表现
 
 | 操作 | 延迟时间 | 备注 |
 |------|----------|------|
-| 添加100个文档 | 约1-3秒 | 已包含嵌入处理 |
+| 添加100个文档 | 约1-3秒 | 包含嵌入处理 |
 | 查询（前10条结果） | 约50-200毫秒 | 取决于集合规模 |
-| 元数据筛选 | 约10-50毫秒 | 通过合理索引可大幅提升速度 |
+| 元数据筛选 | 约10-50毫秒 | 通过合理索引可显著提升速度 |
 
 ## 资源链接
 
