@@ -2568,6 +2568,8 @@
       - [xurl — 通过官方 CLI 访问 X（Twitter）API](zh/skills/social-media/xurl/SKILL.md)
   - [Software Development]()
     - [Dogfood]()
+      - [References]()
+        - [问题分类体系](zh/skills/software-development/dogfood/references/issue-taxonomy.md)
       - [Templates]()
         - [内部测试质量报告](zh/skills/software-development/dogfood/templates/dogfood-report-template.md)
     - [Hermes Agent Skill Authoring]()
