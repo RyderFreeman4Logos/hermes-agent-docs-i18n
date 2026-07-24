@@ -1,6 +1,6 @@
 ---
 name: modal-serverless-gpu
-description: Serverless GPU cloud platform for running ML workloads. Use when you need on-demand GPU access without infrastructure management, deploying ML models as APIs, or running batch jobs with automatic scaling.
+description: Serverless GPU cloud for ML jobs and model APIs.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -22,22 +22,22 @@ metadata:
 - 运行对GPU性能要求极高的机器学习任务，且无需自行管理基础设施
 - 将机器学习模型部署为可自动扩展的API
 - 执行批处理任务（训练、推理、数据处理）
-- 需要按秒计费的GPU使用模式，避免资源闲置产生的额外成本
-- 快速开发机器学习应用原型
+- 需要按秒计费的GPU使用模式，避免资源闲置带来的浪费
+- 快速构建机器学习应用原型
 - 运行定时任务（类似cron的任务调度）
 
 **核心功能：**
 - **无服务器GPU**：支持按需使用T4、L4、A10G、L40S、A100、H100、H200、B200等型号的GPU
-- **原生Python支持**：可通过Python代码定义基础设施，无需使用YAML配置文件
+- **原生Python支持**：可通过Python代码定义基础设施，无需编写YAML文件
 - **自动扩展**：可瞬间将资源扩展至零，或扩展至100多台GPU
-- **亚秒级冷启动**：基于Rust技术的基础设施，可实现快速容器启动
+- **亚秒级冷启动**：基于Rust开发的基础设施，可实现快速容器启动
 - **容器缓存**：对镜像层进行缓存，加快迭代速度
-- **Web端点**：可将功能以REST API形式部署，并实现无停机更新
+- **Web端点**：可将函数部署为REST API，并实现无中断更新
 
-**如需其他选择，请考虑：**
+**如需其他替代方案，请考虑：**
 - **RunPod**：适用于需要持久化状态的长时间运行的容器任务
-- **Lambda Labs**：适合需要预留GPU实例的场景
-- **SkyPilot**：用于多云环境下的任务编排及成本优化
+- **Lambda Labs**：适合使用预留GPU实例的场景
+- **SkyPilot**：用于多云环境下的任务编排与成本优化
 - **Kubernetes**：适用于复杂的多服务架构
 
 ## 快速入门
@@ -99,7 +99,7 @@ def main():
 | 组件 | 功能 |
 |------|------|
 | `App` | 函数与资源的容器 |
-| `Function` | 具有计算规格的无服务器函数 |
+| `Function` | 具有计算配置的无服务器函数 |
 | `Cls` | 带有生命周期钩子的基于类的函数 |
 | `Image` | 容器镜像定义 |
 | `Volume` | 模型/数据的持久化存储 |
@@ -111,21 +111,21 @@ def main():
 |------|------|
 | `modal run script.py` | 执行后退出 |
 | `modal serve script.py` | 支持实时热重载的开发模式 |
-| `modal deploy script.py` | 持久化的云端部署 |
+| `modal deploy script.py` | 持久化云部署 |
 
 ## GPU 配置
 
 ### 可用 GPU
 
 | GPU | VRAM容量 | 最佳适用场景 |
-|-----|---------|------------|
+|-----|---------|--------------|
 | `T4` | 16GB | 预算型推理任务及小型模型 |
 | `L4` | 24GB | 推理任务，采用Ada Lovelace架构 |
 | `A10G` | 24GB | 训练/推理任务，性能是T4的3.3倍 |
 | `L40S` | 48GB | 推理任务的推荐选择（性价比最高） |
 | `A100-40GB` | 40GB | 大型模型训练 |
 | `A100-80GB` | 80GB | 超大型模型 |
-| `H100` | 80GB | 性能最快，支持FP8格式及Transformer引擎 |
+| `H100` | 80GB | 性能最佳，支持FP8格式及Transformer引擎 |
 | `H200` | 141GB | 可由H100自动升级，带宽达4.8TB/s |
 | `B200` | 最新款 | 采用Blackwell架构 |
 
@@ -182,9 +182,9 @@ def load_model():
     return load_from_path(model_path)
 ```
 
-## Web 接口端点
+## Web端点
 
-### FastAPI 接口端点装饰器
+### FastAPI端点装饰器
 
 ```python
 @app.function()
@@ -327,10 +327,10 @@ if __name__ == "__main__":
 
 | 问题 | 解决方案 |
 |-------|----------|
-| 冷启动延迟 | 增大 `container_idle_timeout` 的值，使用 `@modal.enter()` |
-| GPU 内存不足 | 使用容量更大的 GPU（如 `A100-80GB`），启用梯度检查点功能 |
-| 图像构建失败 | 固定依赖版本的编号，检查 CUDA 兼容性 |
-| 超时错误 | 增大 `timeout` 的值，添加检查点机制 |
+| 冷启动延迟 | 增大 `container_idle_timeout` 的值，使用 `@modal.enter()` 方法 |
+| GPU 内存不足 | 使用容量更大的 GPU（如 `A100-80GB`），并启用梯度检查点机制 |
+| 图像构建失败 | 固定依赖项的版本，检查 CUDA 兼容性 |
+| 超时错误 | 增大 `timeout` 参数值，加入检查点功能 |
 
 ## 参考资料
 
