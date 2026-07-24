@@ -1,14 +1,14 @@
 ---
-title: "1Password — Set up and use 1Password CLI (op)"
+title: "1Password — Set up op CLI, sign in, and read or inject secrets"
 sidebar_label: "1Password"
-description: "Set up and use 1Password CLI (op)"
+description: "Set up op CLI, sign in, and read or inject secrets"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据该技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # 1Password
 
-用于设置和使用 1Password CLI（op）。适用于安装 CLI、启用桌面应用集成、登录，以及为命令读取/注入机密信息。
+配置 op CLI、登录账号，以及读取或注入机密信息。
 
 ## 技能元数据
 
@@ -17,15 +17,15 @@ description: "Set up and use 1Password CLI (op)"
 | 来源 | 可选 —— 使用 `hermes skills install official/security/1password` 进行安装 |
 | 路径 | `optional-skills/security/1password` |
 | 版本 | `1.0.0` |
-| 创建者 | arceus77-7，由 Hermes Agent 改进 |
-| 许可证 | MIT |
+| 开发者 | arceus77-7，由 Hermes Agent 改进 |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `security`、`secrets`、`1password`、`op`、`cli` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能运行时，Agent 会将此内容视为操作指令。
 :::
 
 # 1Password CLI
@@ -34,25 +34,25 @@ description: "Set up and use 1Password CLI (op)"
 
 ## 前提条件
 
-- 1Password 账户
-- 已安装 1Password CLI（op）
-- 其中一种方式：桌面应用集成、服务账户令牌（`OP_SERVICE_ACCOUNT_TOKEN`）或 Connect 服务器
-- 为在 Hermes 终端调用期间保持稳定的认证会话，需安装 `tmux`（仅适用于桌面应用流程）
+- 1Password 账号
+- 已安装 1Password CLI（即 `op` 工具）
+- 需满足以下条件之一：桌面应用集成、服务账户令牌（`OP_SERVICE_ACCOUNT_TOKEN`）或 Connect 服务器
+- 为在 Hermes 终端调用期间保持会话稳定，需安装 `tmux`（仅适用于桌面应用流程）
 
 ## 使用场景
 
 - 安装或配置 1Password CLI
-- 使用 `op signin` 登录
-- 读取类似 `op://Vault/Item/field` 的机密信息引用
-- 使用 `op inject` 将机密信息注入配置文件/模板中
+- 使用 `op signin` 登录账号
+- 读取类似 `op://Vault/Item/field` 格式的机密信息引用
+- 使用 `op inject` 将机密信息注入配置文件或模板中
 - 通过 `op run` 使用含机密信息的环境变量运行命令
 
 ## 认证方式
 
-### 服务账户（Hermes 推荐）
+### 服务账户（Hermes 推荐方式）
 
-在 `${HERMES_HOME:-~/.hermes}/.env` 文件中设置 `OP_SERVICE_ACCOUNT_TOKEN`（首次加载时技能会提示输入该值）。
-无需桌面应用。支持 `op read`、`op inject`、`op run` 功能。
+在 `${HERMES_HOME:-~/.hermes}/.env` 文件中设置 `OP_SERVICE_ACCOUNT_TOKEN`（首次加载时技能会提示设置该值）。
+无需使用桌面应用。支持 `op read`、`op inject`、`op run` 操作。
 
 ```bash
 export OP_SERVICE_ACCOUNT_TOKEN="your-token-here"
@@ -98,9 +98,9 @@ op --version
 ## Hermes 执行模式（桌面应用流程）
 
 Hermes 的终端命令默认为非交互式，因此在多次调用之间可能会丢失认证上下文。
-若要在桌面应用集成中可靠地使用 `op` 命令，请在专用的 tmux 会话中执行登录和密钥相关操作。
+若要在桌面应用集成中可靠地使用 `op` 命令，建议在专用的 tmux 会话中执行登录及密钥相关操作。
 
-注意：当使用 `OP_SERVICE_ACCOUNT_TOKEN` 时则无需此操作——该令牌会自动在多次终端调用之间保持有效。
+注意：当使用 `OP_SERVICE_ACCOUNT_TOKEN` 时无需此操作——该令牌会自动在多次终端调用之间保持有效。
 
 ```bash
 SOCKET_DIR="${TMPDIR:-/tmp}/hermes-tmux-sockets"
@@ -128,7 +128,7 @@ tmux -S "$SOCKET" kill-session -t "$SESSION"
 
 ## 常见操作
 
-### 读取密钥
+### 读取机密信息
 
 ```bash
 op read "op://app-prod/db/password"
@@ -146,24 +146,24 @@ op read "op://app-prod/npm/one-time password?attribute=otp"
 echo "db_password: {{ op://app-prod/db/password }}" | op inject
 ```
 
-### 使用带密钥的环境变量运行命令
+### 使用密钥环境变量运行命令
 
 ```bash
 export DB_PASSWORD="op://app-prod/db/password"
 op run -- sh -c '[ -n "$DB_PASSWORD" ] && echo "DB_PASSWORD is set" || echo "DB_PASSWORD missing"'
 ```
 
-## 使用规范
+## 规则限制
 
-- 除非用户明确要求，否则绝不要将原始密钥信息回显给用户。
-- 建议使用 `op run` / `op inject` 命令，而非将密钥直接写入文件中。
-- 若命令因“账户未登录”而失败，请在同一个 tmux 会话中再次执行 `op signin`。
-- 若无法进行桌面应用集成（无界面环境/持续集成场景），则应采用服务账户令牌机制。
+- 除非用户明确要求，否则绝不可将原始敏感信息打印回给用户。
+- 建议使用 `op run` / `op inject` 命令，而非将敏感信息直接写入文件中。
+- 若命令因“账户未登录”而失败，请在同一 tmux 会话中再次运行 `op signin`。
+- 若无法进行桌面应用集成（无界面环境/持续集成场景），则应使用服务账户令牌机制。
 
 ## 关于持续集成/无界面环境的说明
 
 在非交互式使用场景下，应通过 `OP_SERVICE_ACCOUNT_TOKEN` 进行身份验证，避免使用需要交互操作的 `op signin` 命令。
-服务账户功能要求 CLI 版本至少为 2.18.0。
+服务账户需配合 CLI v2.18.0 及更高版本使用。
 
 ## 参考资料
 
