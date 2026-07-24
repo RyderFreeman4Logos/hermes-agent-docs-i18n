@@ -1,6 +1,6 @@
 ---
 name: pinecone
-description: Managed vector database for production AI applications. Fully managed, auto-scaling, with hybrid search (dense + sparse), metadata filtering, and namespaces. Low latency (<100ms p95). Use for production RAG, recommendation systems, or semantic search at scale. Best for serverless, managed infrastructure.
+description: Managed vector DB for production RAG and search.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,30 +12,30 @@ metadata:
 
 ---
 
-# Pinecone —— 托管向量数据库
+# Pinecone – 托管向量数据库
 
 专为生产级 AI 应用打造的向量数据库。
 
 ## 何时选择 Pinecone
 
 **适用场景：**
-- 需要托管式、无服务器架构的向量数据库
+- 需要托管型、无服务器架构的向量数据库
 - 生产环境中的 RAG 应用
 - 需要自动扩展能力
-- 对低延迟有严格要求（<100毫秒）
+- 对低延迟有严格要求（<100ms）
 - 不希望自行管理基础设施
 - 需要混合搜索功能（密集向量与稀疏向量）
 
 **核心优势：**
-- 全面托管的 SaaS 模式
-- 可支持数十亿级向量数据的自动扩展
-- **p95 延迟低于 100毫秒**
+- 全托管式 SaaS 服务
+- 可自动扩展至数十亿个向量
+- **p95 延迟低于 100ms**
 - 99.9% 的正常运行时间服务等级协议
 
 **可选替代方案：**
-- **Chroma**：开源自托管版本
-- **FAISS**：离线式、纯相似度搜索工具
-- **Weaviate**：功能更丰富的自托管版本
+- **Chroma**：开源、可自托管
+- **FAISS**：离线运行、纯相似度搜索工具
+- **Weaviate**：功能更丰富的自托管方案
 
 ## 快速入门
 
@@ -324,7 +324,7 @@ index.delete(delete_all=True)
 2. **批量插入/更新数据**——效率更高（每批处理100-200条记录）  
 3. **添加元数据**——便于后续数据筛选  
 4. **使用命名空间**——按用户或租户隔离数据  
-5. **监控使用情况**——查看Pinecone控制台面板  
+5. **监控使用情况**——查看Pinecone控制面板  
 6. **优化筛选条件**——对频繁被筛选的字段建立索引  
 7. **利用免费套餐进行测试**——可创建1个索引，存储10万条向量  
 8. **采用混合搜索方式**——提升搜索质量  
@@ -340,9 +340,9 @@ index.delete(delete_all=True)
 | 查询（p95分位数） | 约100毫秒 | 符合服务等级协议目标 |
 | 元数据筛选 | 约+10-20毫秒 | 额外的处理开销 |
 
-## 定价方案（2025年最新标准）
+## 定价信息（截至2025年）
 
-**无服务器架构**：
+**无服务器架构方案**：
 - 每百万次读取操作费用：0.096美元  
 - 每百万次写入操作费用：0.06美元  
 - 每GB存储空间每月费用：0.06美元  
@@ -354,9 +354,9 @@ index.delete(delete_all=True)
 
 ## 相关资源
 
-- **官方网站**：https://www.pinecone.io  
-- **文档中心**：https://docs.pinecone.io  
-- **控制台界面**：https://app.pinecone.io  
-- **定价详情**：https://www.pinecone.io/pricing
+- **官网**：https://www.pinecone.io  
+- **文档**：https://docs.pinecone.io  
+- **控制台**：https://app.pinecone.io  
+- **定价页面**：https://www.pinecone.io/pricing
 
 

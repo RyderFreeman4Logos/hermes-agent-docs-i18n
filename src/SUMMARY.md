@@ -1942,7 +1942,7 @@
         - [PEFT高级使用指南](zh/optional-skills/mlops/peft/references/advanced-usage.md)
         - [PEFT故障排查指南](zh/optional-skills/mlops/peft/references/troubleshooting.md)
     - [Pinecone]()
-      - [Pinecone —— 托管向量数据库](zh/optional-skills/mlops/pinecone/SKILL.md)
+      - [Pinecone – 托管向量数据库](zh/optional-skills/mlops/pinecone/SKILL.md)
       - [References]()
         - [Pinecone 部署指南](zh/optional-skills/mlops/pinecone/references/deployment.md)
     - [Pytorch Fsdp]()
