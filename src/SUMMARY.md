@@ -2219,6 +2219,7 @@
         - [delegate_task：诊断“我的任务批次被限制了”](zh/skills/autonomous-ai-agents/hermes-agent/references/delegate-task-concurrency-diagnosis.md)
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
         - [Petdex — 动态宠物吉祥物](zh/skills/autonomous-ai-agents/hermes-agent/references/petdex.md)
+        - [Nous Portal — 如何让第三方应用无需复制粘贴API密钥即可使用订阅服务](zh/skills/autonomous-ai-agents/hermes-agent/references/portal-auth-for-third-party-apps.md)
         - [项目上下文文件](zh/skills/autonomous-ai-agents/hermes-agent/references/project-context-files.md)
         - [提供商与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
         - [安全与隐私相关开关](zh/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md)
