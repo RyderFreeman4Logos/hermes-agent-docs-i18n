@@ -1,6 +1,6 @@
 ---
 name: faiss
-description: Facebook's library for efficient similarity search and clustering of dense vectors. Supports billions of vectors, GPU acceleration, and various index types (Flat, IVF, HNSW). Use for fast k-NN search, large-scale vector retrieval, or when you need pure similarity search without metadata. Best for high-performance applications.
+description: Fast vector similarity search at billion scale.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -14,31 +14,31 @@ metadata:
 
 # FAISS —— 高效的相似性搜索工具
 
-Facebook AI 开发的用于处理数十亿级向量相似性搜索的库。
+Facebook AI 提供的用于处理数十亿级向量相似性搜索的库。
 
 ## 何时使用 FAISS
 
-**以下情况适合使用 FAISS：**
+**以下情况建议使用 FAISS：**
 - 需要对大规模向量数据集（数百万/数十亿条）进行快速相似性搜索
 - 需要 GPU 加速
-- 仅需要纯向量相似性比较（无需元数据过滤）
+- 仅涉及纯向量相似性计算（无需元数据过滤）
 - 对高吞吐量和低延迟有严格要求
 - 需要对嵌入数据进行离线/批量处理
 
-**核心指标：**
-- **超过 31,700 个 GitHub 星标**
-- 由 Meta/Facebook AI Research 开发
+**核心优势：**
+- **拥有 31,700 多个 GitHub 星标**
+- 由 Meta/Facebook AI Research 团队开发
 - **可处理数十亿级向量数据**
-- 基于 **C++**，并提供 Python 接口
+- 基于 **C++** 开发，并提供 Python 接口
 
-**如需其他替代方案，请考虑：**
-- **Chroma/Pinecone**：需要元数据过滤功能
-- **Weaviate**：需要完整的数据库功能
-- **Annoy**：功能更简单，但功能较少
+**如需其他替代方案，可选择：**
+- **Chroma/Pinecone**：当需要元数据过滤功能时
+- **Weaviate**：当需要完整的数据库功能时
+- **Annoy**：功能更简单，但特性较少
 
 ## 快速入门
 
-### 安装
+### 安装指南
 
 ```bash
 # CPU only
@@ -74,7 +74,7 @@ print(f"Distances: {distances}")
 
 ## 索引类型
 
-### 1. 平面索引（精确匹配搜索）
+### 1. 平面索引（精确搜索）
 
 ```python
 # L2 (Euclidean) distance
@@ -161,7 +161,7 @@ index_gpu = faiss.index_cpu_to_all_gpus(index_cpu)
 # 10-100× faster than CPU
 ```
 
-## 与LangChain的集成
+## 与 LangChain 的集成
 
 ```python
 from langchain_community.vectorstores import FAISS
@@ -199,22 +199,22 @@ vector_store = FaissVectorStore(faiss_index=faiss_index)
 
 ## 最佳实践
 
-1. **选择合适的索引类型**——数据量小于1万时使用Flat索引，1万至100万条数据时选用IVF索引，若对查询精度有较高要求则推荐HNSW索引。
-2. **进行余弦值归一化处理**——使用IndexFlatIP时需对向量数据进行归一化。
-3. **大数据集优先使用GPU**——运算速度可提升10至100倍。
-4. **保存训练好的索引**——模型训练成本较高，建议保存成果以重复使用。
-5. **调整nprobe/ef_search参数**——在速度与查询精度之间找到最佳平衡点。
-6. **监控内存使用情况**——处理大规模数据集时需特别注意内存占用。
-7. **批量执行查询**——有助于更高效地利用GPU资源。
+1. **选择合适的索引类型**——数据量小于1万时选用Flat索引，1万至100万条数据时选用IVF索引，对查询精度要求较高时则选用HNSW索引。
+2. **进行余弦相似度标准化处理**——使用IndexFlatIP并配合标准化后的向量。
+3. **大数据集优先使用GPU**——处理速度可提升10至100倍。
+4. **保存训练好的索引**——模型训练成本较高。
+5. **调整nprobe/ef_search参数**——在速度与精度之间取得平衡。
+6. **监控内存使用情况**——处理大规模数据集时建议使用PQ索引。
+7. **批量处理查询请求**——有助于更高效地利用GPU资源。
 
 ## 性能表现
 
-| 索引类型 | 构建时间 | 查询时间 | 内存占用 | 查询精度 |
-|----------|----------|----------|----------|----------|
-| Flat     | 快       | 慢       | 高       | 100%     |
-| IVF      | 中等     | 快       | 中等     | 95-99%   |
-| HNSW     | 慢       | 最快     | 高       | 99%      |
-| PQ       | 中等     | 快       | 低       | 90-95%   |
+| 索引类型 | 构建时间 | 查询速度 | 内存占用 | 准确率 |
+|----------|----------|----------|----------|--------|
+| Flat | 快 | 慢 | 高 | 100% |
+| IVF | 中等 | 快 | 中等 | 95-99% |
+| HNSW | 慢 | 最快 | 高 | 99% |
+| PQ | 中等 | 快 | 低 | 90-95% |
 
 ## 相关资源
 
