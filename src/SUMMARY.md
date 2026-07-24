@@ -2205,6 +2205,7 @@
       - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
+        - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
         - [Windows 系统特有的问题](zh/skills/autonomous-ai-agents/hermes-agent/references/windows-quirks.md)
     - [Opencode]()
