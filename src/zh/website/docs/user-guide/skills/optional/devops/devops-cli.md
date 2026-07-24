@@ -1,57 +1,57 @@
 ---
-title: "Inference Sh Cli — Run 150+ AI apps via inference"
+title: "Inference Sh Cli — Run 150+ AI apps (image, video, LLM) via inference"
 sidebar_label: "Inference Sh Cli"
-description: "Run 150+ AI apps via inference"
+description: "Run 150+ AI apps (image, video, LLM) via inference"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # inference.sh CLI
 
-通过 inference.sh CLI（infsh）运行150多种AI应用——包括图像生成、视频制作、大语言模型、搜索功能、3D处理以及社交自动化任务。该工具基于终端界面设计，可通过以下指令调用：inference.sh、infsh、各类AI应用、Flux、Veo、图像生成、视频生成、Seedream、Seedance、Tavily 等。
+通过 inference.sh CLI 运行 150 多种 AI 应用（图像、视频、大语言模型）。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选——通过 `hermes skills install official/devops/cli` 安装 |
+| 来源 | 可选 —— 使用 `hermes skills install official/devops/cli` 安装 |
 | 路径 | `optional-skills/devops/cli` |
 | 版本 | `1.0.0` |
-| 开发者 | okaris |
-| 许可协议 | MIT |
-| 支持平台 | Linux、macOS、Windows |
-| 标签 | `AI`、`图像生成`、`视频`、`大语言模型`、`搜索`、`推理`、`FLUX`、`Veo`、`Claude` |
+| 创建者 | okaris |
+| 许可证 | MIT |
+| 支持平台 | linux、macos、windows |
+| 标签 | `AI`、`图像生成`、`视频`、`LLM`、`搜索`、`推理`、`FLUX`、`Veo`、`Claude` |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行相应操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将看到这些指令作为操作指南。
 :::
 
 # inference.sh CLI
 
-通过简洁的命令行界面即可在云端运行150多种AI应用，且无需GPU支持。
+通过简洁的 CLI 在云端运行 150 多种 AI 应用，无需 GPU。
 
-所有命令均通过**终端工具**来执行 infsh 相关指令。
+所有命令均通过 **终端工具** 来执行 `infsh` 命令。
 
 ## 适用场景
 
-- 用户希望生成图像（Flux、Reve、Seedream、Grok、Gemini图像生成）
-- 用户需要创建视频（Veo、Wan、Seedance、OmniHuman）
-- 用户咨询有关 inference.sh 或 infsh 的使用问题
-- 用户希望运行AI应用而无需单独管理各供应商的API接口
-- 用户需要借助AI技术进行搜索（Tavily、Exa）
+- 用户请求生成图像（FLUX、Reve、Seedream、Grok、Gemini 图像）
+- 用户请求生成视频（Veo、Wan、Seedance、OmniHuman）
+- 用户询问关于 inference.sh 或 infsh 的相关问题
+- 用户希望运行 AI 应用而无需管理各个服务提供商的 API
+- 用户需要基于 AI 的搜索功能（Tavily、Exa）
 - 用户需要生成头像或同步嘴唇动作
 
 ## 先决条件
 
-必须已安装并完成认证 `infsh` CLI 工具。可通过以下方式进行检查：
+必须已安装并完成身份验证 `infsh` CLI。可通过以下方式进行检查：
 
 ```bash
 infsh me
 ```
 
-若未安装：
+如果尚未安装：
 
 ```bash
 curl -fsSL https://cli.inference.sh | sh
@@ -74,7 +74,7 @@ infsh app list --search image
 
 ### 2. 运行应用
 
-请使用搜索结果中显示的准确应用 ID。为获得机器可读的输出格式，务必始终使用 `--json` 参数：
+请使用搜索结果中显示的准确应用编号。为获得机器可读取的输出格式，务必使用 `--json` 参数：
 
 ```bash
 infsh app run <app-id> --input '{"prompt": "your prompt here"}' --json
@@ -82,7 +82,7 @@ infsh app run <app-id> --input '{"prompt": "your prompt here"}' --json
 
 ### 3. 解析输出结果
 
-JSON格式的输出中包含生成的媒体文件的URL。可通过`MEDIA:<url>`的形式将它们呈现给用户，以便在界面中直接显示。
+JSON格式的输出中包含已生成媒体的网址。可通过`MEDIA:<url>`的格式将这些网址呈现给用户，以便在界面中直接显示。
 
 ## 常用命令
 
@@ -136,7 +136,7 @@ infsh app run falai/wan-2-5-i2v --input '{"image": "/path/to/image.png", "prompt
 infsh app run bytedance/omnihuman-1-5 --input '{"audio": "/path/to/audio.mp3", "image": "/path/to/face.jpg"}' --json
 ```
 
-### 搜索与检索
+### 搜索与调研
 
 ```bash
 infsh app list --search search
@@ -160,14 +160,14 @@ infsh app list --search twitter
 ## 常见问题
 
 1. **切勿猜测应用 ID**——务必先运行 `infsh app list --search <term>`。应用 ID 随时会发生变化，同时也会不断有新应用添加。
-2. **始终使用 `--json` 参数**——原始输出格式较难解析。使用 `--json` 参数可获取包含 URL 的结构化输出。
+2. **始终使用 `--json` 参数**——原始输出格式难以解析。使用 `--json` 参数即可获得包含 URL 的结构化输出。
 3. **检查认证状态**——如果命令因认证错误而失败，请运行 `infsh login`，或确认 `INFSH_API_KEY` 已正确设置。
-4. **长时间运行的应用**——视频生成过程可能需要 30 至 120 秒。终端工具的超时时间应足够长，但仍建议告知用户该过程可能需要一些时间。
+4. **长时间运行的应用**——视频生成过程可能需要 30 到 120 秒。终端工具的超时时间应足够长，但仍建议告知用户该过程可能需要一些时间。
 5. **输入格式**——`--input` 参数要求输入 JSON 字符串，请确保正确转义引号。
 
 ## 参考文档
 
-- `references/authentication.md` — 认证设置、登录及 API 密钥相关说明
-- `references/app-discovery.md` — 应用目录的搜索与浏览方法
-- `references/running-apps.md` — 应用的运行方式、输入格式及输出处理方法
-- `references/cli-reference.md` — 完整的 CLI 命令参考手册
+- `references/authentication.md` —— 认证设置、登录及 API 密钥相关说明
+- `references/app-discovery.md` —— 搜索与浏览应用目录的方法
+- `references/running-apps.md` —— 运行应用、输入格式及输出处理方式
+- `references/cli-reference.md` —— 完整的 CLI 命令参考手册
