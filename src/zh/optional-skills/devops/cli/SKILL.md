@@ -1,6 +1,6 @@
 ---
 name: inference-sh-cli
-description: "Run 150+ AI apps via inference.sh CLI (infsh) — image generation, video creation, LLMs, search, 3D, social automation. Uses the terminal tool. Triggers: inference.sh, infsh, ai apps, flux, veo, image generation, video generation, seedream, seedance, tavily"
+description: Run 150+ AI apps (image, video, LLM) via inference.sh CLI.
 version: 1.0.0
 author: okaris
 license: MIT
@@ -13,7 +13,7 @@ metadata:
 
 # inference.sh CLI
 
-通过简洁的命令行界面即可在云端运行150多种AI应用，且无需GPU支持。
+通过简单的命令行界面即可在云端运行150多种AI应用，且无需GPU支持。
 
 所有命令均通过**终端工具**来执行`infsh`指令。
 
@@ -21,27 +21,27 @@ metadata:
 
 - 用户请求生成图像（FLUX、Reve、Seedream、Grok、Gemini图像）
 - 用户请求生成视频（Veo、Wan、Seedance、OmniHuman）
-- 用户咨询有关inference.sh或infsh的问题
+- 用户咨询关于inference.sh或infsh的相关问题
 - 用户希望运行AI应用而无需管理各个提供商的API
 - 用户需要基于AI的搜索功能（Tavily、Exa）
-- 用户需要生成头像或口型同步内容
+- 用户需要生成头像或同步嘴唇动作
 
 ## 先决条件
 
-必须已安装并完成身份验证`infsh` CLI。可通过以下方式进行检查：
+必须已安装并完成身份验证`infsh` CLI。可通过以下命令进行检查：
 
 ```bash
 infsh me
 ```
 
-若未安装：
+如果尚未安装：
 
 ```bash
 curl -fsSL https://cli.inference.sh | sh
 infsh login
 ```
 
-有关完整的设置详细信息，请参阅 `references/authentication.md` 文件。
+有关完整的设置详情，请参阅 `references/authentication.md` 文件。
 
 ## 工作流程
 
@@ -57,7 +57,7 @@ infsh app list --search image
 
 ### 2. 运行应用
 
-请使用搜索结果中显示的准确应用 ID。为获得机器可读的输出格式，务必始终使用 `--json` 参数：
+请使用搜索结果中显示的准确应用编号。为获得机器可读的输出格式，务必使用 `--json` 参数：
 
 ```bash
 infsh app run <app-id> --input '{"prompt": "your prompt here"}' --json
@@ -65,7 +65,7 @@ infsh app run <app-id> --input '{"prompt": "your prompt here"}' --json
 
 ### 3. 解析输出结果
 
-JSON格式的输出中包含生成的媒体文件的URL。可通过`MEDIA:<url>`的形式将它们呈现给用户，以便在界面中直接显示。
+JSON格式的输出中包含已生成媒体的网址。可通过`MEDIA:<url>`的格式将这些网址呈现给用户，以实现内联显示。
 
 ## 常用命令
 
@@ -142,15 +142,15 @@ infsh app list --search twitter
 
 ## 常见问题
 
-1. **切勿猜测应用 ID**——务必先运行 `infsh app list --search <term>`。应用 ID 随时会发生变化，同时也会不断有新应用添加。
-2. **始终使用 `--json` 参数**——原始输出格式较难解析。使用 `--json` 参数可获取包含 URL 的结构化输出。
-3. **检查认证状态**——如果命令因认证错误而失败，请运行 `infsh login`，或确认 `INFSH_API_KEY` 已正确设置。
-4. **长时间运行的应用**——视频生成过程可能需要 30 至 120 秒。终端工具的超时时间应足够长，但仍建议告知用户该过程可能需要一些时间。
-5. **输入格式**——`--input` 参数要求输入 JSON 字符串，请确保正确转义引号。
+1. **切勿猜测应用 ID** —— 请务必先运行 `infsh app list --search <term>`。应用 ID 随时会发生变化，且会有新应用不断添加。
+2. **始终使用 `--json` 参数** —— 原始输出格式较难解析。使用 `--json` 参数即可获得包含 URL 的结构化输出。
+3. **检查认证状态** —— 如果命令因认证错误而失败，请运行 `infsh login`，或确认 `INFSH_API_KEY` 已正确设置。
+4. **长时间运行的应用** —— 视频生成可能需要 30 到 120 秒的时间。终端工具的超时时间应足够长，但仍建议告知用户该过程可能需要稍等片刻。
+5. **输入格式** —— `--input` 参数要求输入 JSON 字符串，请确保正确转义引号。
 
 ## 参考文档
 
-- `references/authentication.md` — 认证设置、登录及 API 密钥相关说明
-- `references/app-discovery.md` — 应用目录的搜索与浏览方法
-- `references/running-apps.md` — 应用的运行方式、输入格式及输出处理方法
-- `references/cli-reference.md` — 完整的 CLI 命令参考手册
+- `references/authentication.md` —— 认证设置、登录及 API 密钥相关内容
+- `references/app-discovery.md` —— 搜索与浏览应用目录的方法
+- `references/running-apps.md` —— 运行应用、输入格式及输出处理方式
+- `references/cli-reference.md` —— 完整的 CLI 命令参考手册
