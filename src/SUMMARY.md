@@ -1573,6 +1573,8 @@
 - [Gateway]()
   - [Platforms]()
     - [添加新的消息平台](zh/gateway/platforms/ADDING_A_PLATFORM.md)
+- [Native]()
+  - [Fts5 Cjk](zh/native/fts5_cjk/README.md)
 - [Optional Skills]()
   - [可选技能](zh/optional-skills/DESCRIPTION.md)
   - [Autonomous Ai Agents]()
