@@ -2224,6 +2224,7 @@
         - [提供商与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
         - [安全与隐私相关开关](zh/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md)
         - [斜杠命令（会话内使用）](zh/skills/autonomous-ai-agents/hermes-agent/references/slash-commands.md)
+        - [主题/皮肤——创建 Hermes 颜色主题](zh/skills/autonomous-ai-agents/hermes-agent/references/themes.md)
         - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
         - [TUI 小部件——Ink TUI Dock 的实时面板功能](zh/skills/autonomous-ai-agents/hermes-agent/references/tui-widgets.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
