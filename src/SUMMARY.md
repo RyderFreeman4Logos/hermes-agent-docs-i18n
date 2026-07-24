@@ -2216,6 +2216,7 @@
         - [项目上下文文件](zh/skills/autonomous-ai-agents/hermes-agent/references/project-context-files.md)
         - [提供商与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
         - [安全与隐私相关开关](zh/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md)
+        - [斜杠命令（会话内使用）](zh/skills/autonomous-ai-agents/hermes-agent/references/slash-commands.md)
         - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
         - [Windows 系统特有的问题](zh/skills/autonomous-ai-agents/hermes-agent/references/windows-quirks.md)
