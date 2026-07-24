@@ -1,6 +1,6 @@
 ---
 name: clip
-description: OpenAI's model connecting vision and language. Enables zero-shot image classification, image-text matching, and cross-modal retrieval. Trained on 400M image-text pairs. Use for image search, content moderation, or vision-language tasks without fine-tuning. Best for general-purpose image understanding.
+description: Zero-shot image classification and image-text search.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,7 +12,7 @@ metadata:
 
 ---
 
-# CLIP——对比学习语言-图像预训练模型
+# CLIP —— 对比学习语言-图像预训练模型
 
 OpenAI开发的能够通过自然语言理解图像的模型。
 
@@ -27,9 +27,9 @@ OpenAI开发的能够通过自然语言理解图像的模型。
 - 跨模态检索（图像→文本，文本→图像）
 
 **核心指标：**
-- **超过25,300个GitHub星标**
+- **GitHub星标数超过25,300个**
 - 基于4亿组图像-文本对进行训练
-- 在ImageNet零样本任务上性能可与ResNet-50相媲美
+- 在ImageNet零样本任务上的表现可与ResNet-50相媲美
 - 采用MIT许可证
 
 **可选替代方案：**
@@ -223,17 +223,17 @@ results = collection.query(
 
 ## 最佳实践
 
-1. **大多数场景推荐使用 ViT-B/32** – 性能与效率平衡良好  
-2. **对嵌入向量进行归一化处理** – 计算余弦相似度的前提条件  
-3. **采用批量处理方式** – 效率更高  
-4. **缓存嵌入向量** – 重新计算成本较高  
-5. **使用描述性标签** – 能提升零样本任务的性能  
-6. **建议使用 GPU** – 处理速度可达 CPU 的 10–50 倍  
-7. **对图像进行预处理** – 请使用提供的预处理函数  
+1. **大多数场景下使用 ViT-B/32**——性能与效率平衡良好  
+2. **对嵌入向量进行归一化处理**——这是计算余弦相似度的必要步骤  
+3. **采用批量处理方式**——效率更高  
+4. **缓存嵌入向量**——重新计算成本极高  
+5. **使用描述性标签**——能提升零样本任务的性能  
+6. **推荐使用 GPU**——处理速度可提升 10 到 50 倍  
+7. **对图像进行预处理**——请使用提供的预处理函数  
 
 ## 性能表现
 
-| 操作类型 | CPU | GPU (V100) |
+| 操作类型 | CPU | GPU（V100） |
 |----------|-----|------------|
 | 图像编码 | 约 200 毫秒 | 约 20 毫秒 |
 | 文本编码 | 约 50 毫秒 | 约 5 毫秒 |
@@ -241,15 +241,15 @@ results = collection.query(
 
 ## 局限性
 
-1. **不适用于精细任务** – 更适合处理大类别场景  
-2. **需要描述性文本** – 模糊的标签会导致性能下降  
-3. **基于网络数据存在偏差** – 数据集中可能存在偏见  
-4. **不支持边界框识别** – 仅能处理整张图像  
-5. **空间理解能力有限** – 定位与计数功能较弱  
+1. **不适用于精细任务**——更适合处理大类别场景  
+2. **需要描述性文本**——模糊的标签会导致性能不佳  
+3. **基于网络数据存在偏差**——可能存在数据集偏差  
+4. **不支持边界框识别**——仅能处理整幅图像  
+5. **空间理解能力有限**——对位置和数量的分析能力较弱  
 
 ## 相关资源
 
-- **GitHub 仓库**：https://github.com/openai/CLIP ⭐ 25,300+ 次星标  
+- **GitHub 仓库**：https://github.com/openai/CLIP ⭐ 25,300+ 次点赞  
 - **论文链接**：https://arxiv.org/abs/2103.00020  
 - **Colab 实验环境**：https://colab.research.google.com/github/openai/clip/  
 - **许可证**：MIT 许可证
