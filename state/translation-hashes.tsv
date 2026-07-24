@@ -1034,7 +1034,7 @@ website/docs/user-guide/skills/optional/migration/migration-openclaw-migration.m
 website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md	0124796ac3dd0182968657ab04e8195f8c4979759c1d2319876c3117cf1a7572
 website/docs/user-guide/skills/optional/mlops/mlops-chroma.md	56688d6b6d6e3e6adf4ddb46a4d1c4cffb91391fb26568ab23694defc07eaa78
 website/docs/user-guide/skills/optional/mlops/mlops-clip.md	273d1a8b4198722a2d6b2e54af77d5160867f5ccfb3591b17c9149da8964d3ee
-website/docs/user-guide/skills/optional/mlops/mlops-faiss.md	c8a726b900fb63556bc0d1caac75a776401a8e068efe5537fbbb1a32aecf3a1b
+website/docs/user-guide/skills/optional/mlops/mlops-faiss.md	d0bb351f8c60dd2c82ba42f9dc041446aa9074f5be64f59d38d5df39f31266a7
 website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md	ce3e93e82f082a799c9b5d5c9c43e098d9dd4d0ad4cdc4cd128eed500539a8bc
 website/docs/user-guide/skills/optional/mlops/mlops-guidance.md	cfc47f8e75e1348a4f1f973ea20ebc452a5d0bd57ce03cc3f733998f116f8e6f
 website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md	b1f1d0551d22e8c00cd4e1c3444b7c33880fa3fec89188c94d283dd03ed7b721
