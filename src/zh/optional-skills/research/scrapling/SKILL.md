@@ -1,6 +1,6 @@
 ---
 name: scrapling
-description: Web scraping with Scrapling - HTTP fetching, stealth browser automation, Cloudflare bypass, and spider crawling via CLI and Python.
+description: Scrape sites with stealth browsing and Cloudflare bypass.
 version: 1.0.0
 author: FEUAZUR
 license: MIT
@@ -16,19 +16,19 @@ prerequisites:
 
 # 爬虫功能
 
-[Scraping](https://github.com/D4Vinci/Scrapling) 是一个具备反机器人检测绕过、隐身式浏览器自动化以及爬虫框架功能的网页抓取工具。它提供了三种数据获取策略（HTTP、动态JS处理、隐身/Cloudflare模式），并配有完整的命令行界面。
+[Scrapling](https://github.com/D4Vinci/Scrapling) 是一个具备反机器人检测绕过、隐身式浏览器自动化以及爬虫框架功能的网页抓取工具。它提供了三种数据获取策略（HTTP、动态JS处理、隐身/Cloudflare模式），并配有完整的命令行界面。
 
-**本功能仅用于教育与研究目的。** 用户必须遵守当地及国际上的数据抓取法律法规，并尊重相关网站的服务条款。
+**本功能仅用于教育与研究目的。** 用户必须遵守当地及国际上的数据爬取法规，并尊重相关网站的服务条款。
 
 ## 适用场景
 
 - 抓取静态HTML页面（效率高于浏览器工具）
 - 抓取需要真实浏览器才能渲染的JS页面
-- 绕过Cloudflare Turnstile及机器人检测机制
-- 使用爬虫框架批量爬取多个页面
+- 绕过Cloudflare Turnstile防护或机器人检测机制
+- 使用爬虫框架批量抓取多个页面
 - 当内置的 `web_extract` 工具无法获取所需数据时
 
-## 安装方式
+## 安装指南
 
 ```bash
 pip install "scrapling[all]"
@@ -51,8 +51,8 @@ scrapling install
 | 方式 | 类别 | 适用场景 |
 |------|------|----------|
 | HTTP | `Fetcher` / `FetcherSession` | 静态页面、API以及大量数据的快速请求 |
-| 动态渲染 | `DynamicFetcher` / `DynamicSession` | 通过JS渲染的内容及单页应用 |
-| 隐蔽访问 | `StealthyFetcher` / `StealthySession` | 面临Cloudflare防护或反爬虫措施的网站 |
+| 动态渲染 | `DynamicFetcher` / `DynamicSession` | 通过JS动态生成的内容、单页应用 |
+| 隐蔽访问 | `StealthyFetcher` / `StealthySession` | 面临Cloudflare防护或反爬机制的网站 |
 | 爬虫模式 | `Spider` | 基于链接追踪进行多页面爬取 |
 
 ## CLI使用方法
@@ -104,7 +104,7 @@ scrapling extract post 'https://example.com/api' output.json \
 - `.txt` -- 纯文本格式
 - `.json` / `.jsonl` -- JSON 格式
 
-## Python：HTTP 爬虫
+## Python：HTTP 抓取
 
 ### 单次请求
 
@@ -138,7 +138,7 @@ page = Fetcher.put('https://api.example.com/item/1', data={"name": "updated"})
 page = Fetcher.delete('https://api.example.com/item/1')
 ```
 
-### 使用代理设置
+### 使用代理时
 
 ```python
 page = Fetcher.get('https://example.com', proxy='http://user:pass@proxy:8080')
@@ -165,9 +165,9 @@ page = DynamicFetcher.fetch(
 )
 ```
 
-### 禁用冗余资源以提升速度
+### 禁用资源以提升速度
 
-屏蔽字体、图片、媒体文件及样式表（可提升约25%的速度）：
+关闭字体、图片、媒体文件及样式表（可提升约25%的速度）：
 
 ```python
 from scrapling.fetchers import DynamicSession
@@ -210,7 +210,7 @@ page = StealthyFetcher.fetch(
 content = page.css('.protected-content::text').getall()
 ```
 
-### 隐秘会话
+### 隐秘会话模式
 
 ```python
 from scrapling.fetchers import StealthySession
@@ -232,7 +232,7 @@ page.css('a::attr(href)').getall()      # All link hrefs
 page.css('.quote .text::text').getall() # Nested selection
 ```
 
-### XPath路径查询
+### XPath路径表达式
 
 ```python
 page.xpath('//div[@class="content"]/text()').getall()
@@ -268,7 +268,7 @@ el.prev_sibling          # Previous sibling
 
 ## Python：Spider Framework
 
-用于通过链接追踪实现多页面爬取：
+用于通过链接追踪进行多页面爬取：
 
 ```python
 from scrapling.spiders import Spider, Request, Response
@@ -298,7 +298,7 @@ result.items.to_json("quotes.json")
 
 ### 多会话爬虫
 
-将请求路由至不同的数据获取器类型：
+将请求路由至不同的获取器类型：
 
 ```python
 from scrapling.fetchers import FetcherSession, AsyncStealthySession
@@ -328,9 +328,9 @@ spider.start()  # Ctrl+C to pause, re-run to resume from checkpoint
 
 ## 常见问题与注意事项
 
-- **需安装浏览器**：在运行 `pip install` 之后必须执行 `scraping install`——若未完成此步骤，`DynamicFetcher` 和 `StealthyFetcher` 将无法正常工作。
-- **超时设置**：`DynamicFetcher`/`StealthyFetcher` 的超时时间以**毫秒**为单位（默认值为 30000），而普通 `Fetcher` 的超时时间则以**秒**为单位。
-- **Cloudflare 反爬绕过**：使用 `solve_cloudflare=True` 会使得数据获取时间增加 5 至 15 秒——请仅在必要时启用该选项。
-- **资源占用**：`StealthyFetcher` 需要启动真实的浏览器，因此请控制其并发使用数量。
-- **法律合规**：在抓取数据之前，请务必查阅目标网站的 `robots.txt` 文件及服务条款。本库仅用于教育与研究目的。
+- **需安装浏览器**：在通过 `pip install` 安装后，必须运行 `scraping install`——若未执行此步骤，`DynamicFetcher` 和 `StealthyFetcher` 将无法正常工作。
+- **超时设置**：`DynamicFetcher`/`StealthyFetcher` 的超时时间以**毫秒**为单位（默认值为 30000），而 `Fetcher` 的超时时间则以**秒**为单位。
+- **Cloudflare 反爬绕过**：设置 `solve_cloudflare=True` 会使数据获取时间增加 5 至 15 秒——请仅在必要时启用该选项。
+- **资源占用**：`StealthyFetcher` 需要运行真实的浏览器，因此请控制其并发使用数量。
+- **法律合规**：在抓取数据前，请务必查看目标网站的 `robots.txt` 文件及服务条款。本库仅用于教育和研究目的。
 - **Python 版本要求**：需使用 Python 3.10 及更高版本。
