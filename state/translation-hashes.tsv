@@ -1061,7 +1061,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md	ef41b45
 website/docs/user-guide/skills/optional/mlops/mlops-qdrant.md	f275d30090ac18aabfdb377d9415348f4c136cf405d153ec6edc5b168621df40
 website/docs/user-guide/skills/optional/mlops/mlops-research-dspy.md	c46a9df1711e3e1515939998adf31c6f4713152ba2d1d89bb75300519b3bffe3
 website/docs/user-guide/skills/optional/mlops/mlops-saelens.md	8f0aec8f4f998b62c074dc900fdd3fbec45f72c0569a97bd4511c553b0b1e6ee
-website/docs/user-guide/skills/optional/mlops/mlops-simpo.md	163c96193a31a0a08a9ea00074f9b00ac8700c46a240b115e3f782e081da496c
+website/docs/user-guide/skills/optional/mlops/mlops-simpo.md	bc34732b87ee2cd4ec2666f6a1ca591653755c792cd57e08c8b706fd08ebd5dc
 website/docs/user-guide/skills/optional/mlops/mlops-slime.md	1fffaf95c283e351cce70ad4b13fc05c04baae23db93a5fe7db96bd665c3fd01
 website/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion.md	5d7d086d3cf75d16cb14fd2f33a81653ebe08f8e1c8411eedcabcabe7403b686
 website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md	6972306f5f0135e9a759b0f48eb2384a8fc95eb894851831c09367e9a2ea2451
