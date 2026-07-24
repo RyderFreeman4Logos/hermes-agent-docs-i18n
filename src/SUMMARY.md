@@ -2022,7 +2022,7 @@
         - [References](zh/optional-skills/mlops/training/unsloth/references/index.md)
           - [Unsloth文档](zh/optional-skills/mlops/training/unsloth/references/llms.md)
     - [Whisper]()
-      - [Whisper – 高性能语音识别技术](zh/optional-skills/mlops/whisper/SKILL.md)
+      - [Whisper——强大的语音识别引擎](zh/optional-skills/mlops/whisper/SKILL.md)
       - [References]()
         - [Whisper 语言支持指南](zh/optional-skills/mlops/whisper/references/languages.md)
   - [Payments]()

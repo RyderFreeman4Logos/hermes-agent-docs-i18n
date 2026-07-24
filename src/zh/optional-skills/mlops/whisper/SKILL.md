@@ -1,6 +1,6 @@
 ---
 name: whisper
-description: OpenAI's general-purpose speech recognition model. Supports 99 languages, transcription, translation to English, and language identification. Six model sizes from tiny (39M params) to large (1550M params). Use for speech-to-text, podcast transcription, or multilingual audio processing. Best for robust, multilingual ASR.
+description: Transcribe and translate speech in 99 languages.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,7 +12,7 @@ metadata:
 
 ---
 
-# Whisper – 高性能语音识别技术
+# Whisper——强大的语音识别引擎
 
 OpenAI推出的多语言语音识别模型。
 
@@ -22,12 +22,12 @@ OpenAI推出的多语言语音识别模型。
 - 文本转语音（支持99种语言）
 - 播客/视频字幕生成
 - 会议记录自动生成
-- 英语翻译
+- 英文翻译
 - 噪音环境下的音频转写
 - 多语言音频处理
 
 **核心数据：**
-- **GitHub星标数超过72,900个**
+- **GitHub星标数超72,900个**
 - 支持99种语言
 - 基于680,000小时的音频数据训练
 - 采用MIT许可证
@@ -80,8 +80,8 @@ models = ["tiny", "base", "small", "medium", "large", "turbo"]
 model = whisper.load_model("turbo")  # Fastest, good quality
 ```
 
-| 模型 | 参数量 | 仅支持英文 | 支持多语言 | 计算速度 | VRAM占用 |
-|-------|--------|------------|------------|---------|----------|
+| 模型 | 参数量 | 仅英文支持 | 多语言支持 | 计算速度 | VRAM占用 |
+|-------|----------|------------|------------|---------|----------|
 | tiny | 39M | ✓ | ✓ | 约32倍 | 约1 GB |
 | base | 74M | ✓ | ✓ | 约16倍 | 约1 GB |
 | small | 244M | ✓ | ✓ | 约6倍 | 约2 GB |
@@ -236,7 +236,7 @@ whisper video.mp4 --output_format srt --language English
 # Output: video.srt
 ```
 
-### 集成 LangChain 使用
+### 集成 LangChain 功能
 
 ```python
 from langchain.document_loaders import WhisperTranscriptionLoader
@@ -261,29 +261,29 @@ ffmpeg -i video.mp4 -vn -acodec pcm_s16le audio.wav
 whisper audio.wav
 ```
 
-## 最佳实践
+## 最佳实践建议
 
-1. **使用 Turbo 模型** – 英语内容的速度与质量最佳  
+1. **使用 Turbo 模型** – 能为英文内容带来最佳的速度与质量平衡  
 2. **明确指定语言** – 比自动检测更快  
-3. **添加初始提示词** – 更好地处理专业术语  
-4. **使用 GPU** – 速度提升 10–20 倍  
-5. **批量处理** – 提高效率  
-6. **转换为 WAV 格式** – 兼容性更好  
-7. **分割长音频文件** – 每段时长控制在 30 分钟以内  
-8. **确认语言支持情况** – 不同语言的生成质量有所差异  
-9. **使用 faster-whisper 模型** – 速度是 openai-whisper 的 4 倍  
-10. **监控显存使用情况** – 根据硬件条件调整模型大小  
+3. **添加初始提示词** – 有助于提升技术术语的处理效果  
+4. **启用 GPU 加速** – 处理速度可提升 10–20 倍  
+5. **批量处理文件** – 提高整体效率  
+6. **转换为 WAV 格式** – 增强兼容性  
+7. **拆分过长音频** – 每段时长建议控制在 30 分钟以内  
+8. **确认语言支持情况** – 不同语言的生成质量可能存在差异  
+9. **选用 faster-whisper 模型** – 其速度是 openai-whisper 的 4 倍  
+10. **监控显存使用情况** – 根据硬件条件调整模型规模  
 
 ## 性能表现
 
-| 模型 | CPU 实时处理系数 | GPU 实时处理系数 |
-|------|------------------|------------------|
-| tiny | 约 0.32 | 约 0.01 |
-| base | 约 0.16 | 约 0.01 |
-| turbo | 约 0.08 | 约 0.01 |
-| large | 约 1.0 | 约 0.05 |
+| 模型类型 | CPU 实时处理系数 | GPU 实时处理系数 |
+|---------|------------------|------------------|
+| tiny    | 约 0.32           | 约 0.01          |
+| base    | 约 0.16           | 约 0.01          |
+| turbo   | 约 0.08           | 约 0.01          |
+| large   | 约 1.0            | 约 0.05          |
 
-*实时处理系数说明：系数为 0.1 表示实时处理速度是基准值的 10 倍*
+*实时处理系数说明：数值为 0.1 表示处理速度是实时处理的 10 倍*
 
 ## 支持的语言
 
@@ -299,16 +299,16 @@ whisper audio.wav
 - 韩语（ko）
 - 中文（zh）
 
-完整列表：共支持 99 种语言  
+完整语言列表：共支持 99 种语言  
 
 ## 局限性
 
-1. **幻觉现象** – 可能会出现重复内容或编造文字  
+1. **幻觉现象** – 可能会出现重复内容或编造文本  
 2. **长音频处理精度** – 音频时长超过 30 分钟时精度会下降  
-3. **说话人识别功能** – 不支持语音分段  
-4. **口音处理** – 不同口音的生成质量存在差异  
-5. **背景噪音** – 可能影响生成准确性  
-6. **实时延迟** – 不适合用于实时字幕生成  
+3. **说话人识别功能缺失** – 不支持语音分段  
+4. **口音处理效果差异** – 不同口音的生成质量不尽相同  
+5. **背景噪音影响** – 可能降低识别准确性  
+6. **实时延迟问题** – 不适合用于实时字幕生成  
 
 ## 相关资源
 
