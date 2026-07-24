@@ -1743,6 +1743,8 @@
           - [故事骨架](zh/optional-skills/creative/creative-ideation/references/methods/story-skeletons.md)
           - [TRIZ — 发明问题解决理论](zh/optional-skills/creative/creative-ideation/references/methods/triz-principles.md)
           - [思想量产方法](zh/optional-skills/creative/creative-ideation/references/methods/volume-generation.md)
+    - [Heartmula]()
+      - [HeartMuLa——开源音乐生成工具](zh/optional-skills/creative/heartmula/SKILL.md)
     - [Hyperframes]()
       - [HyperFrames](zh/optional-skills/creative/hyperframes/SKILL.md)
       - [References]()
