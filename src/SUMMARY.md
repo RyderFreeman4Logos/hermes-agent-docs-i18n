@@ -2223,6 +2223,7 @@
         - [安全与隐私相关开关](zh/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md)
         - [斜杠命令（会话内使用）](zh/skills/autonomous-ai-agents/hermes-agent/references/slash-commands.md)
         - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
+        - [TUI 小部件——Ink TUI Dock 的实时面板功能](zh/skills/autonomous-ai-agents/hermes-agent/references/tui-widgets.md)
         - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
         - [Windows 系统特有的问题](zh/skills/autonomous-ai-agents/hermes-agent/references/windows-quirks.md)
     - [Opencode]()
