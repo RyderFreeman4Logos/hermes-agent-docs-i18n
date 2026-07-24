@@ -1,6 +1,6 @@
 ---
 name: nemo-curator
-description: GPU-accelerated data curation for LLM training. Supports text/image/video/audio. Features fuzzy deduplication (16× faster), quality filtering (30+ heuristics), semantic deduplication, PII redaction, NSFW detection. Scales across GPUs with RAPIDS. Use for preparing high-quality training datasets, cleaning web data, or deduplicating large corpora.
+description: "Curate LLM training data: dedupe, filter, PII redaction."
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,28 +12,28 @@ metadata:
 
 ---
 
-# NeMo Curator - 基于 GPU 的数据筛选工具
+# NeMo Curator——基于GPU的数据整理工具
 
-NVIDIA 专为大规模语言模型准备高质量训练数据而打造的工具套件。
+NVIDIA专为LLM准备高质量训练数据而打造的工具包。
 
-## 何时使用 NeMo Curator
+## 何时使用NeMo Curator
 
-**以下情况推荐使用 NeMo Curator：**
-- 从网络爬取数据（如 Common Crawl）中整理 LLM 训练数据
-- 需要快速进行数据去重处理（速度是 CPU 的 16 倍）
-- 对多模态数据集（文本、图像、视频、音频）进行筛选
+**以下情况建议使用NeMo Curator：**
+- 从网络爬取数据（如Common Crawl）来准备LLM训练数据
+- 需要快速进行数据去重处理（速度是CPU的16倍）
+- 对多模态数据集（文本、图像、视频、音频）进行整理
 - 过滤低质量或有害内容
-- 在 GPU 集群上扩展数据处理规模
+- 在GPU集群上扩展数据处理规模
 
 **性能优势：**
-- 模糊去重速度提升 **16 倍**（处理 8TB RedPajama v2 数据）
-- 相较于 CPU 方案，总体拥有成本降低 **40%**
-- 在多个 GPU 节点之间可实现近乎线性的性能扩展
+- 模糊去重速度提升16倍（处理8TB的RedPajama v2数据）
+- 相较于CPU方案，总体拥有成本降低40%
+- 在多个GPU节点之间可实现近乎线性的性能扩展
 
-**可选择的其他工具：**
-- **datatrove**：基于 CPU 的开源数据处理工具
-- **dolma**：Allen AI 提供的数据处理工具套件
-- **Ray Data**：通用的机器学习数据处理工具（不侧重数据筛选功能）
+**可选替代方案：**
+- **datatrove**：基于CPU的开源数据处理工具
+- **dolma**：Allen AI提供的数据处理工具包
+- **Ray Data**：通用的机器学习数据处理工具（不侧重数据整理功能）
 
 ## 快速入门
 
@@ -50,7 +50,7 @@ uv pip install "nemo-curator[all_cuda12]"
 uv pip install "nemo-curator[cpu]"
 ```
 
-### 基本文本筛选流程
+### 基础文本整理流程
 
 ```python
 from nemo_curator import ScoreFilter, Modify
@@ -110,7 +110,7 @@ from nemo_curator.modules import ExactDuplicates
 deduped = ExactDuplicates(id_field="id", text_field="text")(dataset)
 ```
 
-**模糊去重功能**（在 GPU 上的速度提升 16 倍）：
+**模糊去重功能**（在 GPU 上的处理速度提升 16 倍）：
 ```python
 from nemo_curator.modules import FuzzyDuplicates
 
@@ -172,7 +172,7 @@ quality_clf = QualityClassifier(
 high_quality = dataset.filter(lambda doc: quality_clf(doc["text"]) > 0.5)
 ```
 
-## GPU加速
+## GPU加速功能
 
 ### GPU与CPU的性能对比
 
@@ -197,7 +197,7 @@ deduped = FuzzyDuplicates(...)(dataset)
 
 ## 多模态内容精选
 
-### 图像内容精选
+### 图片内容精选
 
 ```python
 from nemo_curator.image import (
@@ -219,7 +219,7 @@ clip_embedder = CLIPEmbedder(model="openai/clip-vit-base-patch32")
 image_embeddings = clip_embedder(safe_images)
 ```
 
-### 视频精选功能
+### 视频精选
 
 ```python
 from nemo_curator.video import (
@@ -369,7 +369,7 @@ cluster.close()
 
 **生产环境部署**：
 - NVIDIA曾使用NeMo Curator来准备Nemotron-4的训练数据
-- 已处理的开源数据集包括：RedPajama v2、The Pile
+- 已整理的开源数据集包括：RedPajama v2、The Pile
 
 ## 参考资料
 
