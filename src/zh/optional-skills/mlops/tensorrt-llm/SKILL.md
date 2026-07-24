@@ -1,6 +1,6 @@
 ---
 name: tensorrt-llm
-description: Optimizes LLM inference with NVIDIA TensorRT for maximum throughput and lowest latency. Use for production deployment on NVIDIA GPUs (A100/H100), when you need 10-100x faster inference than PyTorch, or for serving models with quantization (FP8/INT4), in-flight batching, and multi-GPU scaling.
+description: High-throughput LLM inference on NVIDIA GPUs.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -14,25 +14,25 @@ metadata:
 
 # TensorRT-LLM
 
-NVIDIA推出的开源库，旨在利用NVIDIA GPU的先进性能优化大语言模型推理过程。
+NVIDIA推出的开源库，旨在利用NVIDIA GPU的顶尖性能优化大语言模型推理过程。
 
 ## 何时使用TensorRT-LLM
 
-**在以下情况下请使用TensorRT-LLM：**
+**以下情况建议使用TensorRT-LLM：**
 - 在NVIDIA GPU（A100、H100、GB200）上部署模型
 - 需要极高的处理速度（Llama 3模型的处理速度可达24,000个token/秒以上）
 - 实时应用对低延迟有严格要求
 - 处理量化后的模型（FP8、INT4、FP4格式）
 - 在多台GPU或节点之间扩展部署
 
-**在以下情况下请改用vLLM：**
+**以下情况建议改用vLLM：**
 - 需要更简单的设置流程以及以Python为优先的API接口
-- 希望使用PagedAttention机制且无需经过TensorRT编译
+- 希望使用PagedAttention功能且无需经过TensorRT编译
 - 在AMD GPU或非NVIDIA硬件上运行模型
 
-**在以下情况下请改用llama.cpp：**
+**以下情况建议改用llama.cpp：**
 - 在CPU或Apple Silicon平台上部署模型
-- 需要在没有NVIDIA GPU的边缘设备上运行模型
+- 需要在没有NVIDIA GPU的情况下进行边缘端部署
 - 希望使用更简单的GGUF量化格式
 
 ## 快速入门
@@ -98,21 +98,21 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 - **传输中批量处理**：在生成过程中实现动态批量化
 - **分页KV缓存**：高效的内存管理机制
 - **Flash Attention**：优化的注意力计算内核
-- **量化技术**：支持FP8、INT4、FP4格式，提升推理速度2-4倍
+- **量化技术**：支持FP8、INT4、FP4格式，提升推理速度2至4倍
 - **CUDA图优化**：降低内核启动开销
 
 ### 并行处理能力
-- **张量并行（TP）**：将模型分布在多块GPU上处理
-- **流水线并行（PP）**：按层进行任务分配
+- **张量并行（TP）**：将模型分布在多块GPU上运行
+- **流水线并行（PP）**：按层分配计算任务
 - **专家并行**：专为混合专家模型设计
 - **多节点部署**：突破单机限制实现扩展
 
 ### 高级功能
 - **推测解码**：借助草稿模型加快生成速度
 - **LoRA服务**：高效的多适配器部署方案
-- **分离式服务**：将预填充与生成过程分开处理
+- **分离式服务**：将预填充与生成过程独立处理
 
-## 常见应用模式
+## 常见应用场景
 
 ### 量化模型（FP8格式）
 
@@ -158,13 +158,13 @@ outputs = llm.generate(
 ## 性能基准测试
 
 **Meta Llama 3-8B**（H100 GPU）：
-- 处理速度：24,000 个令牌/秒
-- 延迟：每个令牌约 10 毫秒
+- 处理速度：24,000 个标记/秒
+- 延迟：每个标记约 10 毫秒
 - 相较于 PyTorch：**速度快 100 倍**
 
 **Llama 3-70B**（8× A100 80GB）：
-- 使用 FP8 量化格式时，速度比 FP16 快 2 倍
-- 使用 FP8 后内存占用可减少 50%
+- 使用 FP8 量化格式时，速度为 FP16 的 **2 倍**
+- 使用 FP8 后内存占用可减少 **50%**
 
 ## 支持的模型
 
@@ -178,9 +178,9 @@ outputs = llm.generate(
 
 ## 参考资料
 
-- **[优化指南](references/optimization.md)**——量化处理、批量处理、KV 缓存调优
+- **[优化指南](references/optimization.md)**——量化处理、批处理、KV 缓存调优
 - **[多 GPU 部署指南](references/multi-gpu.md)**——张量/流水线并行处理、多节点部署
-- **[服务部署指南](references/serving.md)**——生产环境部署、监控与自动扩缩容
+- **[服务部署指南](references/serving.md)**——生产环境部署、监控及自动扩缩容
 
 ## 相关资源
 
