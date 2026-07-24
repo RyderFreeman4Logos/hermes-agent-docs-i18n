@@ -2998,7 +2998,7 @@
             - [Darwinian Evolver](zh/website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md)
             - [域名情报](zh/website/docs/user-guide/skills/optional/research/research-domain-intel.md)
             - [药物发现](zh/website/docs/user-guide/skills/optional/research/research-drug-discovery.md)
-            - [DuckDuckGo 搜索](zh/website/docs/user-guide/skills/optional/research/research-duckduckgo-search.md)
+            - [Duckduckgo 搜索](zh/website/docs/user-guide/skills/optional/research/research-duckduckgo-search.md)
             - [Gitnexus Explorer](zh/website/docs/user-guide/skills/optional/research/research-gitnexus-explorer.md)
             - [开源情报调查](zh/website/docs/user-guide/skills/optional/research/research-osint-investigation.md)
             - [Parallel Cli](zh/website/docs/user-guide/skills/optional/research/research-parallel-cli.md)
