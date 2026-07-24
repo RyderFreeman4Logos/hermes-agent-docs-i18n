@@ -2576,6 +2576,7 @@
       - [xurl — 通过官方 CLI 访问 X（Twitter）API](zh/skills/social-media/xurl/SKILL.md)
   - [Software Development]()
     - [Dogfood]()
+      - [Dogfood：系统化的Web应用程序质量检测](zh/skills/software-development/dogfood/SKILL.md)
       - [References]()
         - [问题分类体系](zh/skills/software-development/dogfood/references/issue-taxonomy.md)
       - [Templates]()
