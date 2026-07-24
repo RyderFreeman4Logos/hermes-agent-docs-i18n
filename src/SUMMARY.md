@@ -2082,6 +2082,8 @@
         - [<数据源名称>](zh/optional-skills/research/osint-investigation/templates/source-template.md)
     - [Parallel Cli]()
       - [Parallel CLI](zh/optional-skills/research/parallel-cli/SKILL.md)
+    - [Pinecone Research]()
+      - [Pinecone Research — Agent RAG与长期记忆功能](zh/optional-skills/research/pinecone-research/SKILL.md)
     - [Qmd]()
       - [QMD — 查询标记文档工具](zh/optional-skills/research/qmd/SKILL.md)
     - [Scrapling]()
