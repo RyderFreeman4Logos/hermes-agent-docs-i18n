@@ -1,6 +1,6 @@
 ---
 name: mcporter
-description: Use the mcporter CLI to list, configure, auth, and call MCP servers/tools directly (HTTP or stdio), including ad-hoc servers, config edits, and CLI/type generation.
+description: List, auth, and call MCP servers/tools from the terminal.
 version: 1.0.0
 author: community
 license: MIT
@@ -15,7 +15,7 @@ prerequisites:
 
 # mcporter
 
-使用 `mcporter` 即可在终端中直接发现、调用并管理 [MCP（模型上下文协议）](https://modelcontextprotocol.io/) 服务器及工具。
+使用 `mcporter` 即可在终端中直接发现、调用和管理 [MCP（模型上下文协议）](https://modelcontextprotocol.io/) 服务器及工具。
 
 ## 先决条件
 
@@ -43,7 +43,7 @@ mcporter call <server.tool> key=value
 
 ## 发现 MCP 服务器
 
-mcporter 能自动检测本地系统中其他 MCP 客户端（如 Claude Desktop、Cursor 等）所配置的服务器。若要寻找新的可用服务器，可浏览 [mcpfinder.dev](https://mcpfinder.dev) 或 [mcp.so](https://mcp.so) 等注册表，随后即可进行临时连接：
+mcporter 能自动检测本地机器上其他 MCP 客户端（如 Claude Desktop、Cursor 等）所配置的服务器。若想找到新的可用服务器，可浏览 [mcpfinder.dev](https://mcpfinder.dev) 或 [mcp.so](https://mcp.so) 等注册表，随后进行临时连接：
 
 ```bash
 # Connect to any MCP server by URL (no config needed)
