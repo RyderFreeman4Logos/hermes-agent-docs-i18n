@@ -1,32 +1,32 @@
 ---
-title: "Clip — OpenAI's model connecting vision and language"
+title: "Clip — Zero-shot image classification and image-text search"
 sidebar_label: "Clip"
-description: "OpenAI's model connecting vision and language"
+description: "Zero-shot image classification and image-text search"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Clip
 
-OpenAI 开发的能够实现视觉与语言相互关联的模型。它支持零样本图像分类、图像文本匹配以及跨模态检索功能，基于 4 亿组图像文本对进行训练。无需微调即可用于图像搜索、内容审核或视觉语言相关任务，是通用图像理解场景的最佳选择。
+零样本图像分类与图像文本检索功能。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/mlops/clip` 命令安装 |
+| 来源 | 可选 — 通过 `hermes skills install official/mlops/clip` 安装 |
 | 路径 | `optional-skills/mlops/clip` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `transformers`, `torch`, `pillow` |
 | 支持平台 | linux、macos、windows |
-| 标签 | `Multimodal`、`CLIP`、`Vision-Language`、`Zero-Shot`、`Image Classification`、`OpenAI`、`Image Search`、`Cross-Modal Retrieval`、`Content Moderation` |
+| 标签 | `多模态`, `CLIP`, `视觉语言`, `零样本`, `图像分类`, `OpenAI`, `图像搜索`, `跨模态检索`, `内容审核` |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
 # CLIP - 对比学习语言-图像预训练模型
@@ -37,21 +37,21 @@ OpenAI 开发的能够通过自然语言理解图像的模型。
 
 **适用场景：**
 - 零样本图像分类（无需训练数据）
-- 图像文本相似度/匹配
+- 图像与文本的相似度/匹配检测
 - 语义化图像搜索
-- 内容审核（检测不当内容与暴力画面）
+- 内容审核（识别不当内容及暴力画面）
 - 视觉问答
 - 跨模态检索（图像→文本，文本→图像）
 
-**相关数据：**
+**核心指标：**
 - **拥有 25,300 多个 GitHub 星标**
-- 基于 4 亿组图像文本对训练
+- 基于 4 亿组图像文本对进行训练
 - 在 ImageNet 数据集上的零样本分类性能可与 ResNet-50 相媲美
-- 采用 MIT 许可协议
+- 采用 MIT 许可证
 
 **可选替代方案：**
 - **BLIP-2**：更出色的图像描述功能
-- **LLaVA**：视觉语言聊天功能
+- **LLaVA**：视觉语言对话功能
 - **Segment Anything**：图像分割功能
 
 ## 快速入门
@@ -240,10 +240,10 @@ results = collection.query(
 
 ## 最佳实践
 
-1. **大多数场景推荐使用 ViT-B/32** – 性能与效率平衡良好  
+1. **大多数场景推荐使用 ViT-B/32** – 性能与效率平衡最佳  
 2. **对嵌入向量进行归一化处理** – 计算余弦相似度的前提条件  
 3. **采用批量处理方式** – 效率更高  
-4. **缓存嵌入向量** – 重新计算成本较高  
+4. **缓存嵌入向量** – 重新计算成本高昂  
 5. **使用描述性标签** – 能提升零样本任务的性能  
 6. **建议使用 GPU** – 处理速度可达 CPU 的 10–50 倍  
 7. **对图像进行预处理** – 请使用提供的预处理函数  
@@ -258,15 +258,15 @@ results = collection.query(
 
 ## 局限性
 
-1. **不适用于精细任务** – 更适合处理大类别任务  
+1. **不适用于精细任务** – 更适合处理宽泛的类别  
 2. **需要描述性文本** – 模糊的标签会导致性能下降  
-3. **基于网络数据存在偏差** – 数据集中可能存在偏见  
+3. **基于网络数据，可能存在偏差** – 数据集中可能存在倾向性  
 4. **不支持边界框识别** – 仅能处理整幅图像  
-5. **空间理解能力有限** – 对位置和数量的分析能力较弱  
+5. **空间理解能力有限** – 对位置和数量的分析较弱  
 
 ## 相关资源
 
-- **GitHub 仓库**：https://github.com/openai/CLIP ⭐ 25,300+ 次点赞  
+- **GitHub 仓库**：https://github.com/openai/CLIP ⭐ 25,300+ 次星标  
 - **论文链接**：https://arxiv.org/abs/2103.00020  
 - **Colab 实验环境**：https://colab.research.google.com/github/openai/clip/  
 - **许可证**：MIT 许可证
