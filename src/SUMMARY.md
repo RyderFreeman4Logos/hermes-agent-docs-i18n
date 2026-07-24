@@ -2213,6 +2213,7 @@
       - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
         - [长期运行与后台系统](zh/skills/autonomous-ai-agents/hermes-agent/references/background-systems.md)
+        - [Hermes CLI 参考手册](zh/skills/autonomous-ai-agents/hermes-agent/references/cli-reference.md)
         - [配置、工具集与语音功能](zh/skills/autonomous-ai-agents/hermes-agent/references/configuration.md)
         - [贡献者快速参考指南](zh/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md)
         - [delegate_task：诊断“我的任务批次被限制了”](zh/skills/autonomous-ai-agents/hermes-agent/references/delegate-task-concurrency-diagnosis.md)
