@@ -1,6 +1,6 @@
 ---
 name: pytorch-lightning
-description: High-level PyTorch framework with Trainer class, automatic distributed training (DDP/FSDP/DeepSpeed), callbacks system, and minimal boilerplate. Scales from laptop to supercomputer with same code. Use when you want clean training loops with built-in best practices.
+description: Clean training loops with built-in distributed support.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -16,7 +16,7 @@ metadata:
 
 ## 快速入门
 
-PyTorch Lightning 对 PyTorch 代码进行了结构化整理，在消除冗余代码的同时保留了高度的灵活性。
+PyTorch Lightning 对 PyTorch 代码进行了结构化整理，在保留高度灵活性的同时减少了冗余代码。
 
 **安装方式**：
 ```bash
@@ -88,7 +88,7 @@ for epoch in range(max_epochs):
         optimizer.step()
 ```
 
-**轻量版**：
+**闪电版**：
 ```python
 class LitModel(L.LightningModule):
     def __init__(self):
@@ -150,9 +150,9 @@ trainer.test(model, test_loader)
 ```
 
 **自动功能**：
-- 默认情况下，每个训练轮次都会进行验证
+- 默认情况下，每个训练周期都会执行验证
 - 将指标记录到 TensorBoard 中
-- 根据 val_loss 自动保存最佳模型检查点
+- 根据验证损失自动保存最佳模型检查点
 
 ```python
 # Same code as single GPU!
@@ -174,7 +174,7 @@ trainer.fit(model, train_loader)
 python train.py
 ```
 
-**无需任何更改**：
+**无需任何修改**：
 - 自动数据分发
 - 梯度同步
 - 多节点支持（只需设置 `num_nodes=2` 即可）
@@ -210,9 +210,9 @@ trainer.fit(model, train_loader, val_loader)
 ```
 
 **结果**：
-- 自动保存最优的3个模型
-- 若连续5个训练周期未见改进则提前终止
-- 将学习率信息记录至TensorBoard中
+- 自动保存表现最佳的3个模型
+- 若5个训练周期内无改进则提前终止
+- 将学习率信息记录到TensorBoard中
 
 ### 工作流程5：学习率调度
 
@@ -247,23 +247,23 @@ trainer.fit(model, train_loader)
 ## 何时使用 PyTorch Lightning 及其替代方案
 
 **适合使用 PyTorch Lightning 的情况包括**：
-- 希望拥有结构清晰、条理分明的代码
-- 需要可用于生产环境的训练流程
-- 在单 GPU、多 GPU 或 TPU 环境之间切换
+- 希望代码结构清晰、井然有序
+- 需要可用于生产环境的训练循环
+- 在单 GPU、多 GPU 或 TPU 环境间切换
 - 需要内置的回调函数和日志记录功能
-- 团队协作（标准化代码结构）
+- 团队协作（标准化的代码结构）
 
 **主要优势**：
-- **结构清晰**：将研究代码与工程实现分开
+- **结构清晰**：将研究代码与工程实现分离
 - **操作便捷**：仅需一行代码即可启用 DDP、FSDP 和 DeepSpeed
 - **回调功能**：支持模块化的训练扩展
-- **可复现性强**：减少样板代码，从而降低错误率
-- **经过验证**：每月下载量超 100 万次，经实际项目检验
+- **可复现性强**：减少样板代码，从而降低错误概率
+- **经过验证**：每月下载量超 100 万次，实战检验可靠
 
 **适合选择替代方案的情况**：
 - **Accelerate**：对现有代码改动最小，灵活性更高
 - **Ray Train**：支持多节点调度及超参数调优
-- **原始 PyTorch**：提供最大程度的控制权，适用于学习研究
+- **原生 PyTorch**：提供最大程度的控制权，适用于学习研究
 - **Keras**：属于 TensorFlow 生态系统
 
 ## 常见问题
@@ -315,18 +315,18 @@ trainer = L.Trainer(accelerator='gpu', devices=1)
 
 ## 高级主题
 
-**回调功能**：有关 EarlyStopping、ModelCheckpoint、自定义回调以及回调钩子的详细信息，请参阅 [references/callbacks.md](references/callbacks.md)。
+**回调机制**：有关 EarlyStopping、ModelCheckpoint、自定义回调函数以及回调钩子的详细信息，请参阅 [references/callbacks.md](references/callbacks.md)。
 
-**分布式训练策略**：关于 DDP、FSDP、DeepSpeed ZeRO 集成及多节点部署的说明，请查看 [references/distributed.md](references/distributed.md)。
+**分布式训练策略**：关于 DDP、FSDP、DeepSpeed ZeRO 集成以及多节点部署的说明，请查看 [references/distributed.md](references/distributed.md)。
 
-**超参数调优**：若需了解如何与 Optuna、Ray Tune 以及 WandB 的实验功能进行集成，可参考 [references/hyperparameter-tuning.md](references/hyperparameter-tuning.md)。
+**超参数调优**：若需了解如何与 Optuna、Ray Tune 以及 WandB 的调参功能进行集成，可参考 [references/hyperparameter-tuning.md](references/hyperparameter-tuning.md)。
 
 ## 硬件要求
 
 - **CPU**：可用（适合调试）
 - **单块 GPU**：可用
 - **多块 GPU**：支持 DDP（默认）、FSDP 或 DeepSpeed
-- **多节点架构**：支持 DDP、FSDP、DeepSpeed
+- **多节点环境**：支持 DDP、FSDP、DeepSpeed
 - **TPU**：支持（需 8 核）
 - **Apple MPS**：支持
 
@@ -339,10 +339,10 @@ trainer = L.Trainer(accelerator='gpu', devices=1)
 ## 相关资源
 
 - 文档：https://lightning.ai/docs/pytorch/stable/
-- GitHub 仓库：https://github.com/Lightning-AI/pytorch-lightning ⭐ 29,000+ 次星标
+- GitHub 仓库：https://github.com/Lightning-AI/pytorch-lightning ⭐ 29,000+ 次点赞
 - 当前版本：2.5.5 及以上
 - 示例代码：https://github.com/Lightning-AI/pytorch-lightning/tree/master/examples
 - Discord 社群：https://discord.gg/lightning-ai
-- 应用案例：Kaggle 冠军团队、科研实验室及生产环境团队均在使用该框架
+- 应用案例：Kaggle 冠军团队、研究实验室及生产环境团队均在使用该框架
 
 
