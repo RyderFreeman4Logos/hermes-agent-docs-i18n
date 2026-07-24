@@ -2876,6 +2876,7 @@
           - [Social Media]()
             - [Xurl](zh/website/docs/user-guide/skills/bundled/social-media/social-media-xurl.md)
           - [Software Development]()
+            - [Dogfood](zh/website/docs/user-guide/skills/bundled/software-development/software-development-dogfood.md)
             - [Hermes Agent 技能编写指南](zh/website/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring.md)
             - [Node Inspect 调试器](zh/website/docs/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger.md)
             - [规划](zh/website/docs/user-guide/skills/bundled/software-development/software-development-plan.md)
