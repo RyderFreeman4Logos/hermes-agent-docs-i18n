@@ -2907,6 +2907,8 @@
             - [Kanban 视频编排工具](zh/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
             - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
             - [像素艺术](zh/website/docs/user-guide/skills/optional/creative/creative-pixel-art.md)
+          - [Data Science]()
+            - [Jupyter Notebook](zh/website/docs/user-guide/skills/optional/data-science/data-science-jupyter-notebook.md)
           - [Devops]()
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-cli.md)
             - [Docker 管理](zh/website/docs/user-guide/skills/optional/devops/devops-docker-management.md)
