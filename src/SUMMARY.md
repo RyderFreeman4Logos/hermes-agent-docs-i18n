@@ -2863,6 +2863,7 @@
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
             - [Airtable](zh/website/docs/user-guide/skills/bundled/productivity/productivity-airtable.md)
+            - [Docx](zh/website/docs/user-guide/skills/bundled/productivity/productivity-docx.md)
             - [Google Workspace](zh/website/docs/user-guide/skills/bundled/productivity/productivity-google-workspace.md)
             - [地图功能](zh/website/docs/user-guide/skills/bundled/productivity/productivity-maps.md)
             - [Nano Pdf](zh/website/docs/user-guide/skills/bundled/productivity/productivity-nano-pdf.md)
