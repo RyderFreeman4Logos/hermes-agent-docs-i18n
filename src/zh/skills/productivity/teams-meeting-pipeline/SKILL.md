@@ -1,6 +1,6 @@
 ---
 name: teams-meeting-pipeline
-description: "Operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs, manage Microsoft Graph subscriptions."
+description: Teams meeting summaries, job replay, Graph subscriptions.
 version: 1.1.0
 author: Hermes Agent + Teknium
 license: MIT
@@ -18,19 +18,19 @@ metadata:
 
 # Microsoft Teams 会议处理流程
 
-当用户询问有关 Microsoft Teams 会议摘要、文字记录、录像文件、待办事项、Graph 订阅，或与 Teams 会议处理流程相关的任何操作问题时，均可使用此技能。该技能支持多种语言——以下触发条件仅为示例，并非完整列表。
+每当用户询问有关 Microsoft Teams 会议摘要、文字记录、录像文件、待办事项、Graph 订阅，或与 Teams 会议处理流程相关的任何操作问题时，均可使用此技能。该技能支持多种语言——以下触发条件仅为示例，并非完整列表。
 
-所有面向操作人员的功能均通过终端工具执行 `hermes teams-pipeline` 子命令实现。此处理流程并未新增模型工具，CLI 即为其操作界面。
+所有面向操作人员的功能均通过终端工具执行 `hermes teams-pipeline` 子命令实现。该处理流程并未新增模型工具，CLI 才是其交互界面。
 
 ## 何时使用此技能
 
-当用户需要执行以下操作时：
+当用户需要执行以下操作时，可使用此技能：
 - 撰写 Teams 会议摘要/提取待办事项/获取会议笔记
-- 查看处理流程状态、检查已存储的会议任务或浏览近期会议记录
+- 查看处理流程状态、检查已存储的会议任务或查看近期会议记录
 - 重新播放/运行失败或需要重新生成摘要的已存储任务
 - 在更改环境或配置后验证 Microsoft Graph 的设置
-- 排查“会议摘要未送达”或“无新会议被导入”的问题
-- 管理 Graph webhook 订阅（创建、续订、删除、查看状态）
+- 排查“会议摘要始终未送达”或“没有新会议被导入”的问题
+- 管理 Graph Webhook 订阅（创建、续订、删除、查看状态）
 - 设置自动订阅续订功能（详见下文注意事项）
 
 多语言触发条件示例（非完整列表）：
@@ -39,7 +39,7 @@ metadata:
 
 ## 先决条件
 
-在使用该处理流程之前，请先确认以下配置已在 `${HERMES_HOME:-~/.hermes}/.env` 文件中设置完毕：
+在使用该处理流程之前，请先确认 `${HERMES_HOME:-~/.hermes}/.env` 文件中已配置以下内容：
 
 ```bash
 MSGRAPH_TENANT_ID=...
@@ -47,7 +47,7 @@ MSGRAPH_CLIENT_ID=...
 MSGRAPH_CLIENT_SECRET=...
 ```
 
-如果缺少任何必要项，请引导用户前往 `/docs/guides/microsoft-graph-app-registration` 中的 Azure 应用注册指南——在流水线能够正常运行之前，必须先完成 Azure AD 应用注册，并授予具有管理员同意权限的 Graph 应用权限。
+如果缺少任何必要项，请引导用户前往 `/docs/guides/microsoft-graph-app-registration` 中的 Azure 应用注册指南——在管道能够正常运行之前，必须先完成 Azure AD 应用注册，并授予具有管理员同意权限的 Graph 应用权限。
 
 ## 命令参考
 
@@ -85,32 +85,32 @@ hermes teams-pipeline maintain-subscriptions            # renew near-expiry ones
 hermes teams-pipeline maintain-subscriptions --dry-run  # show what would be renewed
 ```
 
-## 常见问题的决策树
+## 常见问题的决策流程
 
-- 用户询问“为何没有收到今日会议的摘要？”→ 首先执行 `list --status failed`，然后查看对应行并执行 `show <job-id>`。如果该任务根本不存在，请检查 `subscriptions` —— 可能是 webhook 已过期（详见下文注意事项）。
+- 用户询问“为何没有收到今日会议的摘要？”→ 首先执行 `list --status failed`，然后在对应行上运行 `show <job-id>`。如果该任务根本不存在，请检查 `subscriptions` —— 可能是 webhook 已过期（详见下文注意事项）。
 - 用户询问“设置是否正常工作？”→ 先执行 `validate`，接着是 `token-health`，最后是 `subscriptions`。若这三项均通过，则安排一次测试会议，并通过 `list` 查看是否有新生成的记录。
-- 用户询问“重新生成会议 X 的摘要”→ 先通过 `list` 找到任务 ID，再执行 `run <job-id>` 重新处理。如果仍失败，则执行 `show <job-id>` 查看错误信息，并使用 `fetch --meeting-id` 进行模拟处理以验证结果。
-- 用户询问“将会议 X 添加到流程中”→ 通常无需如此操作——该流程是基于订阅驱动的，而非针对单次会议。如果用户希望对某个历史会议生成摘要，可在创建任务后使用 `fetch` 获取会议记录，再执行 `run` 处理。
+- 用户询问“重新生成会议 X 的摘要”→ 使用 `list` 查找任务 ID，再运行 `run <job-id>` 重新处理。如果仍失败，执行 `show <job-id>` 查看错误信息，并使用 `fetch --meeting-id` 进行人工干预下的结果处理模拟。
+- 用户询问“将会议 X 添加到处理流程中”→ 通常无需这样做——该处理流程是基于订阅驱动的，而非针对单次会议。如果用户希望对某次过去的会议生成摘要，可先使用 `fetch` 获取会议记录，待任务创建后再运行相关命令。
 
 ## 重要注意事项：Microsoft Graph 订阅有效期为 72 小时
 
-Microsoft Graph 将 webhook 订阅的有效期限制在 72 小时内，并且**不会自动续期**。如果未安排 `maintain-subscriptions` 任务，任何手动创建的订阅在 3 天后就会停止发送通知。
+Microsoft Graph 对 webhook 订阅设置了 72 小时的时间限制，且**不会自动续期**。如果未安排 `maintain-subscriptions` 任务，任何手动创建的订阅在 3 天后就会停止发送通知。
 
-当用户反馈“昨天流程还能正常工作，今天却没有任何通知了”时：
-1. 运行 `hermes teams-pipeline subscriptions` —— 如果结果为空，或所有条目的 `expirationDateTime` 都已过去，那就是原因所在。
-2. 按上述方法使用 `subscribe` 重新创建订阅。
-3. 立即通过 `hermes cron add`、systemd 定时器或普通 crontab **设置自动续期功能**。文档 `/docs/guides/operate-teams-meeting-pipeline#automating-subscription-renewal-required-for-production` 中提供了这三种方案。12 小时的间隔较为安全（相比 72 小时的限制还有 6 倍的缓冲时间）。
+当用户反馈“昨天处理流程还能正常工作，今天却没有收到通知”时：
+1. 运行 `hermes teams-pipeline subscriptions` —— 若结果为空或所有条目的 `expirationDateTime` 都已过期，即为原因所在。
+2. 按上述步骤使用 `subscribe` 重新创建订阅。
+3. **立即通过 `hermes cron add`、systemd 定时器或普通 crontab 设置自动续期功能**。文档 `/docs/guides/operate-teams-meeting-pipeline#automating-subscription-renewal-required-for-production` 中介绍了这三种方案，建议设置 12 小时的间隔（这样还有 6 倍的余量，足以覆盖 72 小时的限制）。
 
 ## 其他常见问题
 
-- **会议记录尚未生成。** Teams 需要在会议结束后一段时间才能生成会议记录。对刚结束的会议执行 `fetch --meeting-id` 可能会返回空结果。建议等待 2-5 分钟后再试，或让 Graph webhook 自动完成数据同步。
-- **传输模式不匹配。** 即使摘要已生成（`list` 显示处理成功），但内容仍未出现在 Teams 中，需检查 `platforms.teams.extra.delivery_mode` 以及对应的目标配置（`incoming_webhook_url`、`chat_id` 或 `team_id`+`channel_id`）。相关配置可从 config.yaml 文件或 `TEAMS_*` 环境变量中获取。
-- **Graph 应用权限问题。** 虽然令牌获取正常（`token-health` 显示正常），但由于添加了权限但未重新获得管理员同意，Graph API 调用仍会返回 401/403 错误。此时需让用户再次进入 Azure 门户中的应用注册页面，重新点击“授予管理员同意”。
+- **会议记录尚未生成**。Teams 需要在会议结束后一段时间才会生成文字记录。对刚结束的会议执行 `fetch --meeting-id` 可能会返回空结果。建议等待 2–5 分钟后再尝试，或让 Graph webhook 自动完成数据同步。
+- **传输模式不匹配**。虽然摘要已生成（`list` 显示任务成功），但内容并未出现在 Teams 中，此时需检查 `platforms.teams.extra.delivery_mode` 以及对应的目标配置（`incoming_webhook_url`、`chat_id` 或 `team_id`+`channel_id`）。相关设置可从 config.yaml 文件或 `TEAMS_*` 环境变量中获取。
+- **Graph 应用权限问题**。虽然令牌获取成功（`token-health` 检测通过），但由于添加了权限但未重新获得管理员授权，Graph API 调用仍会返回 401/403 错误。此时需让用户再次登录 Azure 门户查看应用注册信息，并重新点击“授予管理员权限”。
 
 ## 相关文档
 
-当用户需要更深入的了解相关内容时，可引导他们查看以下文档：
+当用户需要更深入的了解相关内容时，可引导他们查阅以下文档：
 - Azure 应用注册指南：`/docs/guides/microsoft-graph-app-registration`
-- 完整的流程设置指南：`/docs/user-guide/messaging/teams-meetings`
-- 操作员操作手册（包含自动续期、故障排除及上线检查清单）：`/docs/guides/operate-teams-meeting-pipeline`
-- Webhook 监听器设置指南：`/docs/user-guide/messaging/msgraph-webhook`
+- 完整的处理流程设置指南：`/docs/user-guide/messaging/teams-meetings`
+- 操作员操作手册（包含自动续期、故障排查及上线检查清单）：`/docs/guides/operate-teams-meeting-pipeline`
+- Webhook 监听器配置指南：`/docs/user-guide/messaging/msgraph-webhook`
