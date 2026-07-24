@@ -2217,6 +2217,7 @@
         - [配置、工具集与语音功能](zh/skills/autonomous-ai-agents/hermes-agent/references/configuration.md)
         - [贡献者快速参考指南](zh/skills/autonomous-ai-agents/hermes-agent/references/contributor-guide.md)
         - [delegate_task：诊断“我的任务批次被限制了”](zh/skills/autonomous-ai-agents/hermes-agent/references/delegate-task-concurrency-diagnosis.md)
+        - [桌面应用插件 —— UI面板、命令与小部件](zh/skills/autonomous-ai-agents/hermes-agent/references/desktop-plugins.md)
         - [原生 MCP 客户端](zh/skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md)
         - [Petdex — 动态宠物吉祥物](zh/skills/autonomous-ai-agents/hermes-agent/references/petdex.md)
         - [Nous Portal — 如何让第三方应用无需复制粘贴API密钥即可使用订阅服务](zh/skills/autonomous-ai-agents/hermes-agent/references/portal-auth-for-third-party-apps.md)
