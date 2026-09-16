@@ -2677,6 +2677,8 @@
         - [Gmail 搜索语法](zh/skills/productivity/google-workspace/references/gmail-search-syntax.md)
     - [Maps]()
       - [地图技能](zh/skills/productivity/maps/SKILL.md)
+    - [Meeting Action Items]()
+      - [会议行动项处理](zh/skills/productivity/meeting-action-items/SKILL.md)
     - [Notion]()
       - [Notion](zh/skills/productivity/notion/SKILL.md)
       - [References]()
