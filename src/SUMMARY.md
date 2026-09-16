@@ -1988,6 +1988,7 @@
         - [验证检查清单](zh/optional-skills/creative/simple-english/references/checklist.md)
     - [Touchdesigner Mcp]()
       - [References]()
+        - [GLSL 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/glsl.md)
         - [操作员指南](zh/optional-skills/creative/touchdesigner-mcp/references/operator-tips.md)
     - [Unreal Mcp]()
       - [Unreal Engine MCP 技能](zh/optional-skills/creative/unreal-mcp/SKILL.md)
