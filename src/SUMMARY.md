@@ -2074,6 +2074,7 @@
         - [分词流程组件](zh/optional-skills/mlops/huggingface-tokenizers/references/pipeline.md)
         - [训练自定义分词器](zh/optional-skills/mlops/huggingface-tokenizers/references/training.md)
     - [Inference]()
+      - [Description](zh/optional-skills/mlops/inference/DESCRIPTION.md)
       - [Outlines]()
         - [概要：结构化文本生成](zh/optional-skills/mlops/inference/outlines/SKILL.md)
         - [References]()
