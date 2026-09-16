@@ -2300,6 +2300,7 @@
       - [QMD — 查询标记文档工具](zh/optional-skills/research/qmd/SKILL.md)
     - [Research Paper Writing]()
       - [Templates]()
+        - [Acl](zh/optional-skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/optional-skills/research/research-paper-writing/templates/colm2025/README.md)
     - [Scrapling]()
       - [爬虫功能](zh/optional-skills/research/scrapling/SKILL.md)
