@@ -2644,6 +2644,8 @@
       - [歌曲创作与AI音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
   - [Email]()
     - [Description](zh/skills/email/DESCRIPTION.md)
+    - [Email Inbox Triage]()
+      - [邮箱内容分类处理](zh/skills/email/email-inbox-triage/SKILL.md)
     - [Himalaya]()
       - [Himalaya 邮件 CLI](zh/skills/email/himalaya/SKILL.md)
       - [References]()
