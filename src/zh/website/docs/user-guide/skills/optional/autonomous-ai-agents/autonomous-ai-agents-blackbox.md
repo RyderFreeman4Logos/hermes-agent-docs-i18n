@@ -8,17 +8,17 @@ description: "Delegate coding tasks to the Blackbox AI multi-model CLI"
 
 # Blackbox
 
-通过 Blackbox AI 多模型 CLI 将编程任务委托给该工具处理。
+将编程任务委托给 Blackbox AI 多模型 CLI 处理。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/autonomous-ai-agents/blackbox` 安装 |
-| 路径 | `optional-skills/autonomous-ai-agents/blackbox` |
-| 版本 | `1.0.0` |
-| 开发者 | Hermes Agent (Nous Research) |
-| 许可协议 | MIT |
+| 路径 | `optional-skills/autonomous-ai-agents\blackbox` |
+| 版本 | `1.0.1` |
+| 开发者 | Hermes Agent（Nous Research） |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Coding-Agent`、`Blackbox`、`Multi-Agent`、`Judge`、`Multi-Model` |
 | 相关技能 | [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code)、[`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex)、[`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
@@ -26,29 +26,24 @@ description: "Delegate coding tasks to the Blackbox AI multi-model CLI"
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能启用时，智能体看到的指令即为内容。
+以下是当触发该技能时 Hermes 加载的完整技能定义。技能激活后，智能体将看到这些内容作为指令。
 :::
 
 # Blackbox CLI
 
-通过 Hermes 终端将编程任务委托给 [Blackbox AI](https://www.blackbox.ai/) 处理。Blackbox 是一款多模型编程智能体 CLI 工具，它能够将任务分配给多个大型语言模型（Claude、Codex、Gemini、Blackbox Pro），并通过评估机制选出最优的实现方案。
+通过 Hermes 终端将编程任务委托给 [Blackbox AI](https://www.blackbox.ai/) 处理。Blackbox 是一款多模型编程智能体 CLI，它能够将任务分配给多种大型语言模型（Claude、Codex、Gemini、Blackbox Pro），并通过评估机制选出最优的实现方案。
 
-该 CLI 为[开源项目](https://github.com/blackboxaicode/cli)（许可证类型：GPL-3.0，语言：TypeScript，基于 Gemini CLI 开发），支持交互式会话、非交互式单次任务处理、检查点保存、MCP 协议以及视觉模型切换功能。
+该CLI工具（npm包`@blackbox_ai/blackbox-cli`，二进制文件`blackbox`）是一款基于TypeScript开发的编程智能体（由Gemini CLI分支而来），支持交互式会话、非交互式单次任务处理、检查点保存、MCP协议以及视觉模型切换功能。
 
-## 先决条件
+## 前提条件
 
-- 已安装 Node.js 20 及以上版本
-- 已安装 Blackbox CLI：`npm install -g @blackboxai/cli`
-- 或直接从源代码安装：
-  ```
-  git clone https://github.com/blackboxaicode/cli.git
-  cd cli && npm install && npm install -g .
-  ```
-- 从 [app.blackbox.ai/dashboard](https://app.blackbox.ai/dashboard) 获取 API 密钥  
-- 配置步骤：运行 `blackbox configure` 并输入您的 API 密钥  
-- 在终端调用时使用 `pty=true` 参数——Blackbox CLI 是一款交互式终端应用  
+- 已安装Node.js 20及以上版本
+- 已安装Blackbox CLI：`npm install -g @blackbox_ai/blackbox-cli`（二进制文件名为`blackbox`）
+- 获取来自[app.blackbox.ai/dashboard](https://app.blackbox.ai/dashboard)的API密钥
+- 完成配置：运行`blackbox configure`并输入您的API密钥
+- 在终端调用时使用`pty=true`参数——因为Blackbox CLI是一款交互式终端应用
 
-## 单次任务
+## 单次任务处理
 
 ```
 terminal(command="blackbox --prompt 'Add JWT authentication with refresh tokens to the Express API'", workdir="/path/to/project", pty=true)
@@ -95,12 +90,12 @@ terminal(command="blackbox --resume-checkpoint 'task-abc123-2026-03-06' --prompt
 
 | 命令 | 功能 |
 |---------|------|
-| `/compress` | 缩减对话历史记录以节省令牌 |
+| `/compress` | 缩减对话历史记录以节省令牌数 |
 | `/clear` | 清除历史记录并重新开始 |
 | `/stats` | 查看当前令牌使用情况 |
 | `Ctrl+C` | 取消当前操作 |
 
-## PR审核
+## PR审查
 
 请将代码克隆到临时目录中，以避免修改工作树：
 
@@ -122,25 +117,29 @@ process(action="list")
 
 ## 多模型模式
 
-Blackbox的独特功能在于通过多个模型执行同一任务并对比其输出结果。您可以通过`blackbox configure`命令来指定要使用的模型——选择多个提供商即可启用“评审员”工作流，此时CLI会评估不同模型的输出并选出最优结果。
+Blackbox的独特功能在于通过多个模型执行同一任务并对比其输出结果。您可以通过`blackbox configure`命令来指定要使用的模型——选择多个提供方即可启用“评审员”工作流，此时CLI会评估不同模型的输出并选出最优结果。
 
 ## 主要参数
 
-| 参数 | 功能 |
+| 参数 | 效果 |
 |------|------|
-| `--prompt "task"` | 非交互式的一次性任务执行 |
-| `--resume-checkpoint "tag"` | 从已保存的检查点继续执行 |
-| `--yolo` | 自动批准所有操作及模型切换 |
-| `blackbox session` | 启动交互式聊天会话 |
-| `blackbox configure` | 修改设置、提供商及模型配置 |
-| `blackbox info` | 显示系统信息 |
+| `--prompt "任务内容"` (`-p`) | 非交互式单次执行模式 |
+| `--resume-checkpoint "标签名"` | 从已保存的检查点继续执行 |
+| `--yolo` (`-y`) | 自动批准所有操作及模型切换 |
+| `--vlm-switch-mode <模式>` | 图像处理模式：`once`、`session`或`persist` |
+| `-c, --checkpointing` | 启用文件编辑内容的检查点保存功能 |
+| `blackbox configure` | 修改设置、提供方及模型配置 |
+| `blackbox update` | 将CLI升级到最新版本 |
+| `blackbox mcp` | 管理MCP服务器 |
+| `blackbox extensions` | 管理CLI插件 |
+| `blackbox voice <操作>` / `blackbox shortcut` | 配置语音输入功能及`b`快捷键 |
 
 ## 视觉处理支持
 
-Blackbox能够自动识别输入中的图像，并切换至多模态分析模式。VLM模式包括：
+Blackbox能够自动识别输入内容中的图像，并切换至多模态分析模式。VLM模式包括：
 - `"once"` — 仅针对当前查询切换模型
 - `"session"` — 整个会话期间持续切换模型
-- `"persist"` — 保持使用当前模型（不进行切换）
+- `"persist"` — 保持使用当前模型，不进行切换
 
 ## 字符限制
 
@@ -154,9 +153,9 @@ Blackbox能够自动识别输入中的图像，并切换至多模态分析模式
 ## 规则
 
 1. **始终使用 `pty=true`** — Blackbox CLI 是一款交互式终端应用，若没有伪终端（PTY）将会卡住。
-2. **使用 `workdir` 参数** — 确保智能体始终在正确的目录中工作。
+2. **使用 `workdir` 参数** — 确保智能体始终在正确的目录中运行。
 3. **长时间任务请后台运行** — 使用 `background=true` 参数，并通过 `process` 工具对任务进行监控。
 4. **避免干扰** — 仅通过 `poll`/`log` 方式进行监控，切勿因任务执行缓慢而强制终止会话。
-5. **报告结果** — 任务完成后，检查有哪些变化，并为用户生成总结报告。
-6. **积分需付费** — Blackbox 采用积分制；多模型模式会更快消耗积分。
-7. **检查前置条件** — 在尝试委托任务之前，请先确认已安装 `blackbox` CLI。
+5. **汇报结果** — 任务完成后，检查有哪些变化，并为用户总结相关情况。
+6. **积分需付费** — Blackbox 采用积分系统；多模型模式会更快消耗积分。
+7. **检查前置条件** — 在尝试委托任务之前，请确认已安装 `blackbox` CLI。
