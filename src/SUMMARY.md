@@ -1765,6 +1765,7 @@
     - [异步报告渲染探针](zh/evals/desktop_bug_campaign/async-report-README.md)
     - [Markdown空白检测探针](zh/evals/desktop_bug_campaign/markdown-README.md)
     - [导航/Markdown 活动检测功能](zh/evals/desktop_bug_campaign/navigation-markdown-README.md)
+  - [Desktop Mcp Oauth](zh/evals/desktop_mcp_oauth/README.md)
   - [Gateway Completion](zh/evals/gateway_completion/README.md)
   - [Readtool]()
     - [Results]()
