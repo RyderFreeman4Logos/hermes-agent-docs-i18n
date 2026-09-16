@@ -3196,6 +3196,7 @@
             - [决策问卷生成器](zh/website/docs/user-guide/skills/optional/productivity/productivity-decision-questionnaire.md)
             - [Here.Now](zh/website/docs/user-guide/skills/optional/productivity/productivity-here-now.md)
             - [Memento 记忆卡片](zh/website/docs/user-guide/skills/optional/productivity/productivity-memento-flashcards.md)
+            - [房产列表展示](zh/website/docs/user-guide/skills/optional/productivity/productivity-property-listings.md)
             - [商店功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-shop.md)
             - [Shopify](zh/website/docs/user-guide/skills/optional/productivity/productivity-shopify.md)
             - [SiYuan](zh/website/docs/user-guide/skills/optional/productivity/productivity-siyuan.md)
