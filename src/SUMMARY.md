@@ -1960,6 +1960,7 @@
           - [TRIZ — 发明问题解决理论](zh/optional-skills/creative/creative-ideation/references/methods/triz-principles.md)
           - [思想量产方法](zh/optional-skills/creative/creative-ideation/references/methods/volume-generation.md)
     - [Draw Your Font]()
+      - [draw-your-font](zh/optional-skills/creative/draw-your-font/SKILL.md)
       - [References]()
         - [捕获与分割问题的排查](zh/optional-skills/creative/draw-your-font/references/troubleshooting.md)
     - [Excalidraw]()
