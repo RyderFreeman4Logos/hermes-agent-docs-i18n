@@ -2733,6 +2733,7 @@
       - [References]()
         - [构建可填写表单：规范格式与工作流程](zh/skills/productivity/pdf/references/forms.md)
         - [使用 nano-pdf 进行自然语言 PDF 文本编辑（整合自 nano-pdf 技能）](zh/skills/productivity/pdf/references/nano-pdf-editing.md)
+        - [OCR与文档文本提取（整合自ocr-and-documents技能）](zh/skills/productivity/pdf/references/ocr-extraction.md)
     - [Powerpoint]()
       - [PowerPoint技能](zh/skills/productivity/powerpoint/SKILL.md)
     - [Product Price Monitor]()

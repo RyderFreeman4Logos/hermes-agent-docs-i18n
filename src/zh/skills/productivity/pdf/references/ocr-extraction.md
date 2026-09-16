@@ -1,0 +1,161 @@
+# OCR与文档文本提取（整合自ocr-and-documents技能）
+
+下方提及的所有脚本均保存于该技能的scripts/目录中。
+# PDF与文档提取
+
+对于DOCX格式：请参考`docx`技能（用于创建/编辑），或使用`python-docx`实现结构化文本读取。
+对于PPTX格式：请参考`powerpoint`技能（支持完整的创建/读取/编辑功能）。
+对于PDF处理操作（合并、拆分、表单处理、水印添加及创建）：请参考`pdf`技能。
+该技能主要负责**从PDF文件和扫描文档中提取文本**。
+
+> **出现“来自`read_file`的提取覆盖率警告”？** `read_file`功能会自动转换本地PDF文件，但仅读取其文本层；警告信息中会列出未检测到文本的页面（即扫描图片页）。对于少量页面，使用渲染+视觉分析方法效率最高：先执行`pdftoppm -jpeg -r 150 -f N -l N file.pdf /tmp/page`将文件转换为JPEG图像，再对每张图像调用`vision_analyze`函数。若需批量处理大量页面的OCR任务，请使用下方的marker-pdf方法（步骤2）。
+
+## 步骤1：是否有可用远程URL？
+
+如果文档存在URL地址，**请务必优先尝试使用`web_extract`功能**：
+
+```
+web_extract(urls=["https://arxiv.org/pdf/2402.03300"])
+web_extract(urls=["https://example.com/report.pdf"])
+```
+
+该功能通过 Firecrawl 实现 PDF 到 Markdown 的转换，且无需任何本地依赖。
+
+仅在以下情况才使用本地提取功能：文件位于本地、web_extract 失败，或需要批量处理时。
+
+## 第 2 步：选择本地提取器
+
+| 功能 | pymupdf（约 25MB） | marker-pdf（约 3-5GB） |
+|---------|-----------------|---------------------|
+| **文本型 PDF** | ✅ | ✅ |
+| **扫描版 PDF（OCR）** | ❌ | ✅（支持 90 多种语言） |
+| **表格** | ✅（基础功能） | ✅（高精度识别） |
+| **公式 / LaTeX** | ❌ | ✅ |
+| **代码块** | ❌ | ✅ |
+| **表单** | ❌ | ✅ |
+| **删除页眉/页脚** | ❌ | ✅ |
+| **判断阅读顺序** | ❌ | ✅ |
+| **提取图片** | ✅（嵌入图片） | ✅（结合上下文提取） |
+| **图片转文本（OCR）** | ❌ | ✅ |
+| **EPUB 格式** | ✅ | ✅ |
+| **Markdown 输出格式** | ✅（通过 pymupdf4llm 实现） | ✅（原生输出，质量更高） |
+| **安装大小** | 约 25MB | 约 3-5GB（包含 PyTorch 及模型文件） |
+| **处理速度** | 即时完成 | 每页约 1-14 秒（CPU），每页约 0.2 秒（GPU） |
+
+**决策建议**：除非需要 OCR、公式识别、表单处理或复杂的布局分析功能，否则建议使用 pymupdf。
+
+如果用户需要 marker 的高级功能，但系统可用磁盘空间不足 5GB：
+> “该文档需要通过 OCR 或高级提取功能（marker-pdf）进行处理，这需要约 5GB 的空间用于存储 PyTorch 及相关模型。您的系统目前仅有 [X]GB 的空闲空间。可选方案：释放更多空间，提供文件 URL 以便我使用 web_extract 进行提取，或者尝试使用 pymupdf——它虽能处理文本型 PDF，但不支持扫描版文档和公式识别。”
+
+---
+
+## pymupdf（轻量版）
+
+```bash
+pip install pymupdf pymupdf4llm
+```
+
+**通过辅助脚本**：
+```bash
+python scripts/extract_pymupdf.py document.pdf              # Plain text
+python scripts/extract_pymupdf.py document.pdf --markdown    # Markdown
+python scripts/extract_pymupdf.py document.pdf --tables      # Tables
+python scripts/extract_pymupdf.py document.pdf --images out/ # Extract images
+python scripts/extract_pymupdf.py document.pdf --metadata    # Title, author, pages
+python scripts/extract_pymupdf.py document.pdf --pages 0-4   # Specific pages
+```
+
+**内联模式**：
+```bash
+python -c "
+import pymupdf
+doc = pymupdf.open('document.pdf')
+for page in doc:
+    print(page.get_text())
+"
+```
+
+## marker-pdf（高质量 OCR）
+
+```bash
+# Check disk space first
+python scripts/extract_marker.py --check
+
+pip install marker-pdf
+```
+
+**通过辅助脚本**：
+```bash
+python scripts/extract_marker.py document.pdf                # Markdown
+python scripts/extract_marker.py document.pdf --json         # JSON with metadata
+python scripts/extract_marker.py document.pdf --output_dir out/  # Save images
+python scripts/extract_marker.py scanned.pdf                 # Scanned PDF (OCR)
+python scripts/extract_marker.py document.pdf --use_llm      # LLM-boosted accuracy
+```
+
+**CLI**（随 marker-pdf 一同安装）：
+```bash
+marker_single document.pdf --output_dir ./output
+marker /path/to/folder --workers 4    # Batch
+```
+
+## Arxiv论文库
+
+```
+# Abstract only (fast)
+web_extract(urls=["https://arxiv.org/abs/2402.03300"])
+
+# Full paper
+web_extract(urls=["https://arxiv.org/pdf/2402.03300"])
+
+# Search
+web_search(query="arxiv GRPO reinforcement learning 2026")
+```
+
+## 分割、合并与搜索
+
+pymupdf可直接实现这些功能——您可以使用`execute_code`或内联Python代码来完成操作：
+
+```python
+# Split: extract pages 1-5 to a new PDF
+import pymupdf
+doc = pymupdf.open("report.pdf")
+new = pymupdf.open()
+for i in range(5):
+    new.insert_pdf(doc, from_page=i, to_page=i)
+new.save("pages_1-5.pdf")
+```
+
+```python
+# Merge multiple PDFs
+import pymupdf
+result = pymupdf.open()
+for path in ["a.pdf", "b.pdf", "c.pdf"]:
+    result.insert_pdf(pymupdf.open(path))
+result.save("merged.pdf")
+```
+
+```python
+# Search for text across all pages
+import pymupdf
+doc = pymupdf.open("report.pdf")
+for i, page in enumerate(doc):
+    results = page.search_for("revenue")
+    if results:
+        print(f"Page {i+1}: {len(results)} match(es)")
+        print(page.get_text("text"))
+```
+
+无需额外依赖——pymupdf 一个包即可实现文档的分割、合并、搜索以及文本提取功能。
+
+---
+
+## 备注
+
+- 对于网址处理，`web_extract` 始终是首选方案。
+- pymupdf 是最稳妥的默认选择：响应迅速、无需模型支持、可在任何环境中运行。
+- marker-pdf 适用于 OCR 处理、扫描文档、公式以及复杂布局的文档——仅在必要时安装即可。
+- 这两个辅助脚本均支持通过 `--help` 参数查看完整用法说明。
+- 首次使用时，marker-pdf 会自动将约 2.5GB 的模型下载到 `~/.cache/huggingface/` 目录中。
+- 处理 Word 文档时：请安装 `python-docx`（相比 OCR 更高效，可直接解析文档结构）。
+- 处理 PowerPoint 文件时：请参考 `powerpoint` 技能（该技能基于 python-pptx 库实现）。
