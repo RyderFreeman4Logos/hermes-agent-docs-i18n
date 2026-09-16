@@ -2003,6 +2003,7 @@
       - [References]()
         - [发现应用](zh/optional-skills/devops/inference-sh-cli/references/app-discovery.md)
         - [认证与设置](zh/optional-skills/devops/inference-sh-cli/references/authentication.md)
+        - [CLI 参考手册](zh/optional-skills/devops/inference-sh-cli/references/cli-reference.md)
     - [Pinggy Tunnel]()
       - [Pinggy 隧道技能](zh/optional-skills/devops/pinggy-tunnel/SKILL.md)
     - [Watchers]()
