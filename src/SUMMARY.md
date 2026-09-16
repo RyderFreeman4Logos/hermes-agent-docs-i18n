@@ -2049,6 +2049,8 @@
       - [CLIP —— 对比学习语言-图像预训练模型](zh/optional-skills/mlops/clip/SKILL.md)
       - [References]()
         - [CLIP应用指南](zh/optional-skills/mlops/clip/references/applications.md)
+    - [Evaluation]()
+      - [Description](zh/optional-skills/mlops/evaluation/DESCRIPTION.md)
     - [Faiss]()
       - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
       - [References]()
