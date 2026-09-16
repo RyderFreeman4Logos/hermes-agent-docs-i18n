@@ -1762,6 +1762,8 @@
     - [多网关部署](zh/docs/kanban/multi-gateway.md)
   - [Middleware](zh/docs/middleware/README.md)
   - [Observability](zh/docs/observability/README.md)
+  - [Rfcs]()
+    - [插件配置与状态桥接](zh/docs/rfcs/plugin-config-state-bridge.md)
   - [Security]()
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Evals]()
