@@ -1,7 +1,7 @@
 ---
 name: blackbox
 description: Delegate coding tasks to the Blackbox AI multi-model CLI.
-version: 1.0.0
+version: 1.0.1
 author: Hermes Agent (Nous Research)
 license: MIT
 platforms: [linux, macos, windows]
@@ -13,24 +13,19 @@ metadata:
 
 # Blackbox CLI
 
-通过 Hermes 终端将编程任务委托给 [Blackbox AI](https://www.blackbox.ai/)。Blackbox 是一款多模型编程智能体 CLI，它能够将任务分配给多种大语言模型（Claude、Codex、Gemini、Blackbox Pro），并通过“评判器”机制选出最优的实现方案。
+通过 Hermes 终端将编程任务委托给 [Blackbox AI](https://www.blackbox.ai/)。Blackbox 是一款多模型编程智能体 CLI 工具，它能将任务分配给多种大型语言模型（Claude、Codex、Gemini、Blackbox Pro），并通过评估机制选出最优的实现方案。
 
-该 CLI 为[开源项目](https://github.com/blackboxaicode/cli)（遵循 GPL-3.0 协议，采用 TypeScript 编写，由 Gemini CLI 分支而来），支持交互式会话、非交互式单次任务处理、检查点保存、MCP 协议以及视觉模型切换功能。
+该 CLI 工具（npm 包 `@blackbox_ai/blackbox-cli`，二进制文件 `blackbox`）基于 TypeScript 开发，属于编程智能体工具（由 Gemini CLI 分支而来），支持交互式会话、非交互式单次任务处理、检查点保存、MCP 协议以及视觉模型切换功能。
 
-## 前提条件
+## 先决条件
 
 - 已安装 Node.js 20 及以上版本
-- 已安装 Blackbox CLI：`npm install -g @blackboxai/cli`
-- 或直接从源代码进行安装：
-  ```
-  git clone https://github.com/blackboxaicode/cli.git
-  cd cli && npm install && npm install -g .
-  ```
-- 从 [app.blackbox.ai/dashboard](https://app.blackbox.ai/dashboard) 获取 API 密钥  
-- 配置设置：运行 `blackbox configure` 并输入您的 API 密钥  
-- 在终端调用时使用 `pty=true` —— Blackbox CLI 是一款交互式终端应用  
+- 已安装 Blackbox CLI：`npm install -g @blackbox_ai/blackbox-cli`（二进制文件：`blackbox`）
+- 获取来自 [app.blackbox.ai/dashboard](https://app.blackbox.ai/dashboard) 的 API 密钥
+- 完成配置：运行 `blackbox configure` 并输入 API 密钥
+- 在终端调用时使用 `pty=true` 参数——因为 Blackbox CLI 是一款交互式终端应用
 
-## 单次任务
+## 单次任务处理
 
 ```
 terminal(command="blackbox --prompt 'Add JWT authentication with refresh tokens to the Express API'", workdir="/path/to/project", pty=true)
@@ -110,23 +105,27 @@ Blackbox的独特功能在于通过多个模型执行同一任务并对比其输
 
 | 参数 | 效果 |
 |------|------|
-| `--prompt "任务描述"` | 非交互式单次执行模式 |
+| `--prompt "任务内容"` (`-p`) | 非交互式单次执行模式 |
 | `--resume-checkpoint "标签名"` | 从已保存的检查点继续执行 |
-| `--yolo` | 自动批准所有操作及模型切换 |
-| `blackbox session` | 启动交互式聊天会话 |
+| `--yolo` (`-y`) | 自动批准所有操作及模型切换 |
+| `--vlm-switch-mode <模式>` | 图像处理模式：`once`、`session`或`persist` |
+| `-c, --checkpointing` | 启用文件编辑内容的检查点保存功能 |
 | `blackbox configure` | 修改设置、提供方及模型配置 |
-| `blackbox info` | 显示系统信息 |
+| `blackbox update` | 将CLI升级到最新版本 |
+| `blackbox mcp` | 管理MCP服务器 |
+| `blackbox extensions` | 管理CLI插件 |
+| `blackbox voice <操作>` / `blackbox shortcut` | 配置语音输入功能及`b`快捷键 |
 
 ## 视觉处理支持
 
-Blackbox能够自动识别输入中的图像，并切换为多模态分析模式。VLM模式包括：
+Blackbox能够自动识别输入内容中的图像，并切换至多模态分析模式。VLM模式包括：
 - `"once"` — 仅针对当前查询切换模型
 - `"session"` — 整个会话期间持续切换模型
-- `"persist"` — 始终使用当前模型（不进行切换）
+- `"persist"` — 保持使用当前模型，不进行切换
 
-## 标记限制
+## 字符限制
 
-可通过`.blackboxcli/settings.json`文件控制标记的使用量：
+您可以通过`.blackboxcli/settings.json`文件来控制字符使用量：
 ```json
 {
   "sessionTokenLimit": 32000
@@ -136,9 +135,9 @@ Blackbox能够自动识别输入中的图像，并切换为多模态分析模式
 ## 规则
 
 1. **始终使用 `pty=true`** — Blackbox CLI 是一款交互式终端应用，若没有伪终端（PTY）将会卡住。
-2. **使用 `workdir` 参数** — 确保智能体始终在正确的目录中工作。
-3. **长时间任务请在后台运行** — 使用 `background=true` 参数，并通过 `process` 工具对任务进行监控。
-4. **避免干扰** — 仅通过 `poll`/`log` 方式进行监控，切勿因任务运行缓慢而强制终止会话。
-5. **汇报结果** — 任务完成后，检查有哪些变化，并为用户总结情况。
-6. **积分需要付费** — Blackbox 采用积分系统；多模型模式会更快消耗积分。
-7. **检查前置条件** — 在尝试委托任务之前，请先确认已安装 `blackbox` CLI。
+2. **使用 `workdir` 参数** — 确保智能体始终在正确的目录中运行。
+3. **长时间任务请后台运行** — 使用 `background=true` 参数，并通过 `process` 工具对任务进行监控。
+4. **避免干扰** — 仅通过 `poll`/`log` 方式进行监控，切勿因任务执行缓慢而强制终止会话。
+5. **汇报结果** — 任务完成后，检查有哪些变化，并为用户总结相关情况。
+6. **积分需付费** — Blackbox 采用积分系统；多模型模式会更快消耗积分。
+7. **检查前置条件** — 在尝试委托任务之前，请确认已安装 `blackbox` CLI。
