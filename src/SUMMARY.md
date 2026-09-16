@@ -1768,7 +1768,7 @@
     - [导航/Markdown 活动检测功能](zh/evals/desktop_bug_campaign/navigation-markdown-README.md)
   - [Desktop Mcp Oauth](zh/evals/desktop_mcp_oauth/README.md)
   - [Gateway Completion](zh/evals/gateway_completion/README.md)
-  - [Readtool]()
+  - [Readtool](zh/evals/readtool/README.md)
     - [Results]()
       - [Read-Tool Eval — 结果日志](zh/evals/readtool/results/SUMMARY.md)
 - [Gateway]()
