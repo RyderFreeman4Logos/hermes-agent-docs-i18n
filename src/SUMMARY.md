@@ -3078,6 +3078,7 @@
           - [Research]()
             - [Arxiv](zh/website/docs/user-guide/skills/bundled/research/research-arxiv.md)
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
+            - [竞争对手新闻监控器](zh/website/docs/user-guide/skills/bundled/research/research-competitor-news-monitor.md)
             - [Llm Wiki](zh/website/docs/user-guide/skills/bundled/research/research-llm-wiki.md)
             - [研究论文撰写](zh/website/docs/user-guide/skills/bundled/research/research-research-paper-writing.md)
           - [Smart Home]()
