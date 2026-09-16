@@ -2978,7 +2978,7 @@
         - [Bundled]()
           - [Apple]()
             - [Apple Notes](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-notes.md)
-            - [Apple 提醒事项](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
+            - [Apple Reminders](zh/website/docs/user-guide/skills/bundled/apple/apple-apple-reminders.md)
             - [Findmy](zh/website/docs/user-guide/skills/bundled/apple/apple-findmy.md)
             - [iMessage](zh/website/docs/user-guide/skills/bundled/apple/apple-imessage.md)
           - [Autonomous Ai Agents]()
