@@ -2163,6 +2163,8 @@
         - [模态界面故障排查指南](zh/optional-skills/mlops/modal/references/troubleshooting.md)
     - [Models]()
       - [Description](zh/optional-skills/mlops/models/DESCRIPTION.md)
+      - [Huggingface Hub]()
+        - [Hugging Face CLI (`hf`) 参考指南](zh/optional-skills/mlops/models/huggingface-hub/SKILL.md)
     - [Nemo Curator]()
       - [NeMo Curator——基于GPU的数据整理工具](zh/optional-skills/mlops/nemo-curator/SKILL.md)
       - [References]()
