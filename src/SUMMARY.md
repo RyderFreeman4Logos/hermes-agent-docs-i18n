@@ -3109,6 +3109,8 @@
             - [Spike](zh/website/docs/user-guide/skills/bundled/software-development/software-development-spike.md)
             - [系统化调试](zh/website/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging.md)
             - [测试驱动开发](zh/website/docs/user-guide/skills/bundled/software-development/software-development-test-driven-development.md)
+          - [Web]()
+            - [被屏蔽页面恢复](zh/website/docs/user-guide/skills/bundled/web/web-blocked-page-recovery.md)
         - [Optional]()
           - [Autonomous Ai Agents]()
             - [Antigravity CLI](zh/website/docs/user-guide/skills/optional/autonomous-ai-agents/autonomous-ai-agents-antigravity-cli.md)
