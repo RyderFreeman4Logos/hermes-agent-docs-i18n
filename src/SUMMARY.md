@@ -2620,6 +2620,8 @@
         - [Notion 块类型](zh/skills/productivity/notion/references/block-types.md)
     - [Pdf]()
       - [PDF技能](zh/skills/productivity/pdf/SKILL.md)
+      - [References]()
+        - [使用 nano-pdf 进行自然语言 PDF 文本编辑（整合自 nano-pdf 技能）](zh/skills/productivity/pdf/references/nano-pdf-editing.md)
     - [Powerpoint]()
       - [PowerPoint技能](zh/skills/productivity/powerpoint/SKILL.md)
     - [Teams Meeting Pipeline]()
