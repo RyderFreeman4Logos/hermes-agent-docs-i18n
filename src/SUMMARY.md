@@ -2760,6 +2760,7 @@
       - [TUI](zh/website/docs/user-guide/tui.md)
       - [Windows（原生版）使用指南](zh/website/docs/user-guide/windows-native.md)
       - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
+      - [Egress](zh/website/docs/user-guide/egress/index.md)
       - [Features]()
         - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
         - [API服务器](zh/website/docs/user-guide/features/api-server.md)
