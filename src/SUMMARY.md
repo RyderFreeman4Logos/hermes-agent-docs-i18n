@@ -2674,6 +2674,8 @@
       - [Templates]()
         - [内部测试质量报告](zh/skills/software-development/dogfood/templates/dogfood-report-template.md)
     - [Github]()
+      - [References]()
+        - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
         - [Example usage](zh/skills/software-development/github/templates/feature-request.md)
