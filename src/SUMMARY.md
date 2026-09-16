@@ -1761,6 +1761,7 @@
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Evals]()
   - [Codex Echo](zh/evals/codex_echo/README.md)
+  - [Delegation Group Schema](zh/evals/delegation_group_schema/README.md)
   - [Desktop Bug Campaign]()
     - [异步报告渲染探针](zh/evals/desktop_bug_campaign/async-report-README.md)
     - [Markdown空白检测探针](zh/evals/desktop_bug_campaign/markdown-README.md)
