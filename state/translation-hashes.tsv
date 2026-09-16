@@ -1034,6 +1034,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-instructor.md	0083295b4e5ef0
 website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md	f57ccc7951bcdc3025ee7ab4aff45c5a3da4a2f4e6a1fba570a5df27e62399ec
 website/docs/user-guide/skills/optional/mlops/mlops-llava.md	8547ccbe9647db4361b6c3825dfaaaf7ef6a740b73088ec47cd48cff013749cd
 website/docs/user-guide/skills/optional/mlops/mlops-modal.md	a7c939b83d137e5148528625a36e00f8a5cc2c8a59c8d5c0b81fdb99062fe8af
+website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md	1362aff2e6bfb7ec1af1240b00d2f922b03db0d844b07a50fb75ff096981dfea
 website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md	216e7309d9719df713c9ed0b5ca826e92838a0164c342dcf78967e08929f1148
 website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md	a95378b96bd21e1f6dedb819fe0a6be89a86fee8fe5c05408a4ff16ddf62b83e
 website/docs/user-guide/skills/optional/mlops/mlops-peft.md	da081fab3cf9ed645bc0234eb554a09618c28dd248b3c1bcd2833c321ff207ad
