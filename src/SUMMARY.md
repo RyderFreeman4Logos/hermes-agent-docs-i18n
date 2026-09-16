@@ -3220,6 +3220,7 @@
             - [Parallel Cli](zh/website/docs/user-guide/skills/optional/research/research-parallel-cli.md)
             - [Pinecone Research](zh/website/docs/user-guide/skills/optional/research/research-pinecone-research.md)
             - [Qmd](zh/website/docs/user-guide/skills/optional/research/research-qmd.md)
+            - [RSS 订阅源](zh/website/docs/user-guide/skills/optional/research/research-rss-feeds.md)
             - [网页抓取](zh/website/docs/user-guide/skills/optional/research/research-scrapling.md)
             - [SearXNG 搜索](zh/website/docs/user-guide/skills/optional/research/research-searxng-search.md)
           - [Security]()
