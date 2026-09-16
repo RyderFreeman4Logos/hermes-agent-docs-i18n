@@ -2928,6 +2928,7 @@
         - [扩展控制面板功能](zh/website/docs/user-guide/features/extending-the-dashboard.md)
         - [备用提供者机制](zh/website/docs/user-guide/features/fallback-providers.md)
         - [持久目标（`/goal`）](zh/website/docs/user-guide/features/goals.md)
+        - [会话心跳检测（`/heartbeat`）](zh/website/docs/user-guide/features/heartbeat.md)
         - [Honcho 内存系统](zh/website/docs/user-guide/features/honcho.md)
         - [事件钩子](zh/website/docs/user-guide/features/hooks.md)
         - [图像生成](zh/website/docs/user-guide/features/image-generation.md)
