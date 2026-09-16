@@ -2789,6 +2789,8 @@
       - [测试驱动开发（TDD）](zh/skills/software-development/test-driven-development/SKILL.md)
   - [Web]()
     - [Description](zh/skills/web/DESCRIPTION.md)
+    - [Blocked Page Recovery]()
+      - [被屏蔽页面的恢复方法](zh/skills/web/blocked-page-recovery/SKILL.md)
 - [Tests]()
   - [Conformance]()
     - [Persistence](zh/tests/conformance/persistence/README.md)
