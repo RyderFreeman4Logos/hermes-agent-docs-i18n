@@ -1766,6 +1766,8 @@
   - [Codex Echo](zh/evals/codex_echo/README.md)
   - [Compaction](zh/evals/compaction/README.md)
   - [Core Tool Deferral](zh/evals/core_tool_deferral/README.md)
+    - [Results]()
+      - [PR #97979 A/B测试结果——核心工具延迟处理方案（共288次实时运行）](zh/evals/core_tool_deferral/results/SUMMARY.md)
   - [Delegation Group Schema](zh/evals/delegation_group_schema/README.md)
   - [Desktop Pane Fixture](zh/evals/desktop-pane-fixture/README.md)
   - [Desktop Bug Campaign]()
