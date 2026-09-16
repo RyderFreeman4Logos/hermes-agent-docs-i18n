@@ -2669,6 +2669,8 @@
         - [REST API 作为备用方案](zh/skills/productivity/box/references/rest-api.md)
         - [故障排除](zh/skills/productivity/box/references/troubleshooting.md)
         - [Webhook与事件](zh/skills/productivity/box/references/webhooks-and-events.md)
+    - [Document To Action Items]()
+      - [文档转行动项指南](zh/skills/productivity/document-to-action-items/SKILL.md)
     - [Docx]()
       - [DOCX技能](zh/skills/productivity/docx/SKILL.md)
     - [Google Workspace]()
