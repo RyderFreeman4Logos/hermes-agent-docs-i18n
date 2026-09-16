@@ -2352,6 +2352,8 @@
       - [Templates]()
         - [Acl](zh/optional-skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/optional-skills/research/research-paper-writing/templates/colm2025/README.md)
+    - [Rss Feeds]()
+      - [RSS订阅源技能](zh/optional-skills/research/rss-feeds/SKILL.md)
     - [Scrapling]()
       - [爬虫功能](zh/optional-skills/research/scrapling/SKILL.md)
     - [Searxng Search]()
