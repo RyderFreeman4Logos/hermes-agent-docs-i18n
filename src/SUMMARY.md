@@ -1895,6 +1895,7 @@
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Comfyui]()
       - [Tests](zh/optional-skills/creative/comfyui/tests/README.md)
+      - [Workflows](zh/optional-skills/creative/comfyui/workflows/README.md)
     - [Concept Diagrams]()
       - [概念图绘制](zh/optional-skills/creative/concept-diagrams/SKILL.md)
       - [Examples]()
