@@ -2979,6 +2979,7 @@
         - [看板功能教程](zh/website/docs/user-guide/features/kanban-tutorial.md)
         - [看板工作流通道](zh/website/docs/user-guide/features/kanban-worker-lanes.md)
         - [看板模式 —— 多智能体任务协作](zh/website/docs/user-guide/features/kanban.md)
+        - [循环执行 (`/loop`)](zh/website/docs/user-guide/features/loops.md)
         - [语言服务器协议（LSP）](zh/website/docs/user-guide/features/lsp.md)
         - [MCP（模型上下文协议）](zh/website/docs/user-guide/features/mcp.md)
         - [内存提供器](zh/website/docs/user-guide/features/memory-providers.md)
