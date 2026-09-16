@@ -1989,6 +1989,8 @@
     - [Simple English]()
       - [References]()
         - [验证检查清单](zh/optional-skills/creative/simple-english/references/checklist.md)
+    - [Social Media Content Calendar]()
+      - [社交媒体内容日历规划](zh/optional-skills/creative/social-media-content-calendar/SKILL.md)
     - [Touchdesigner Mcp]()
       - [References]()
         - [Geometry COMP 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/geometry-comp.md)
