@@ -2038,6 +2038,8 @@
       - [Skill](zh/optional-skills/finance/lbo-model/SKILL.md)
     - [Merger Model]()
       - [合并模型](zh/optional-skills/finance/merger-model/SKILL.md)
+    - [Polymarket]()
+      - [Polymarket — 预测市场数据](zh/optional-skills/finance/polymarket/SKILL.md)
     - [Pptx Author]()
       - [pptx-author](zh/optional-skills/finance/pptx-author/SKILL.md)
     - [Stocks]()
