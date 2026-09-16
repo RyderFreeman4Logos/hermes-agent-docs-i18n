@@ -2943,6 +2943,7 @@
       - [安全性](zh/website/docs/user-guide/security.md)
       - [会话](zh/website/docs/user-guide/sessions.md)
       - [TUI](zh/website/docs/user-guide/tui.md)
+      - [各文件的功能是什么？](zh/website/docs/user-guide/which-file-does-what.md)
       - [Windows（原生版）使用指南](zh/website/docs/user-guide/windows-native.md)
       - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
       - [Egress](zh/website/docs/user-guide/egress/index.md)
