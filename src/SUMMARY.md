@@ -2840,7 +2840,7 @@
       - [添加工具](zh/website/docs/developer-guide/adding-tools.md)
       - [Agent循环内部机制](zh/website/docs/developer-guide/agent-loop.md)
       - [架构](zh/website/docs/developer-guide/architecture.md)
-      - [构建浏览器提供程序插件](zh/website/docs/developer-guide/browser-provider-plugin.md)
+      - [构建浏览器提供者插件](zh/website/docs/developer-guide/browser-provider-plugin.md)
       - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
       - [CLI 内部机制](zh/website/docs/developer-guide/cli-internals.md)
       - [代码库归属映射表](zh/website/docs/developer-guide/codebase-ownership.md)
