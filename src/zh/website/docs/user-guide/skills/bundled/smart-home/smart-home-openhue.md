@@ -16,7 +16,7 @@ description: "Control Philips Hue lights, scenes, rooms via OpenHue CLI"
 |---|---|
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/smart-home/openhue` |
-| 版本 | `1.0.0` |
+| 版本 | `1.0.1` |
 | 创建者 | 社区用户 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
@@ -35,19 +35,22 @@ description: "Control Philips Hue lights, scenes, rooms via OpenHue CLI"
 ## 先决条件
 
 ```bash
-# Linux (pre-built binary)
-curl -sL https://github.com/openhue/openhue-cli/releases/latest/download/openhue-linux-amd64 -o ~/.local/bin/openhue && chmod +x ~/.local/bin/openhue
+# Linux (pre-built binary — releases ship tarballs, not bare binaries)
+curl -sL "https://github.com/openhue/openhue-cli/releases/latest/download/openhue_Linux_x86_64.tar.gz" \
+  | tar -xz -C /tmp openhue \
+  && install -m 0755 /tmp/openhue ~/.local/bin/openhue
+# (use openhue_Linux_arm64.tar.gz on ARM64)
 
 # macOS
 brew install openhue/cli/openhue-cli
 ```
 
-首次使用时，需按下 Hue Bridge 上的按钮进行配对。该桥接设备必须处于同一局域网内。
+首次使用时，需按下 Hue Bridge 上的按钮进行配对。该桥接器必须处于相同的局域网中。
 
 ## 适用场景
 
 - “打开/关闭灯光”
-- “调节客厅灯光的亮度”
+- “调暗客厅的灯光”
 - “设置场景”或“电影模式”
 - 控制特定的 Hue 房间、区域或单个灯泡
 - 调整亮度、颜色或色温
@@ -120,5 +123,5 @@ openhue set room "Living Room" --off
 - Bridge设备必须与运行Hermes的机器处于同一局域网内。
 - 首次使用时，需手动按下Hue Bridge上的按钮进行授权。
 - 颜色功能仅适用于支持色彩显示的灯泡（不支持纯白光型号）。
-- 灯光名称及房间名称对大小写敏感——可使用`openhue get light`命令查看确切名称。
-- 该功能可与cron作业结合使用，实现定时控制灯光亮度（例如睡前调暗灯光，醒来时调亮）。
+- 灯光名称和房间名称对大小写敏感——请使用`openhue get light`命令查看准确名称。
+- 该功能可与cron作业完美结合，实现定时控制灯光亮度（例如睡前调暗灯光，醒来时调亮）。
