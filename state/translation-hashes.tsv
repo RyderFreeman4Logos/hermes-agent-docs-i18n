@@ -1084,7 +1084,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-slime.md	1fffaf95c283e351cce
 website/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion.md	5d7d086d3cf75d16cb14fd2f33a81653ebe08f8e1c8411eedcabcabe7403b686
 website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md	6972306f5f0135e9a759b0f48eb2384a8fc95eb894851831c09367e9a2ea2451
 website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md	d6ffb3a615cbc169dad82d55d8992408561d66a682aa3ebe60fc685e8112150c
-website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md	48e37acc77dbc1de93fec429079d6bc7c86e03fa8fa11218ddddd78b32e1f9bc
+website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md	47ad6470a6a6755d39d782ec400e439936beaf0382ee29b9344c7bc52db4b5c6
 website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md	0f665647cb432180d3b7365949466a178e7e27762a58f200961e6699168bb69c
 website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md	d278bf207a40f9e9dab8eabe1ed1257df030b4daba24cd63f61110af1478a6c2
 website/docs/user-guide/skills/optional/mlops/mlops-whisper.md	4e749841b8bbe36a3a3883a46c182912dd83c6f4e802f3c6af880408316a637d

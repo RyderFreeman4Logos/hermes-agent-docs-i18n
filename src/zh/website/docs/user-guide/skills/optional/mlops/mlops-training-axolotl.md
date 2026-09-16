@@ -8,40 +8,40 @@ description: "Axolotl: YAML LLM fine-tuning (LoRA, DPO, GRPO)"
 
 # Axolotl
 
-Axolotl：基于 YAML 的 LLM 微调工具（支持 LoRA、DPO、GRPO 等技术）。
+Axolotl：基于 YAML 的大语言模型微调工具（支持 LoRA、DPO、GRPO 等技术）。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/mlops/axolotl` 命令安装 |
-| 路径 | `optional-skills/mlops/training/axolotl` |
+| 来源 | 可选 — 通过 `hermes skills install official/mlops/axolotl` 安装 |
+| 路径 | `optional-skills/mlops\training\axolotl` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
 | 许可协议 | MIT |
 | 依赖项 | `axolotl`、`torch`、`transformers`、`datasets`、`peft`、`accelerate`、`deepspeed` |
 | 支持平台 | linux、macos |
-| 标签 | `微调`、`Axolotl`、`LLM`、`LoRA`、`QLoRA`、`DPO`、`KTO`、`ORPO`、`GRPO`、`YAML`、`HuggingFace`、`DeepSpeed`、`多模态` |
+| 标签 | `微调`、`Axolotl`、`大语言模型`、`LoRA`、`QLoRA`、`DPO`、`KTO`、`ORPO`、`GRPO`、`YAML`、`HuggingFace`、`DeepSpeed`、`多模态` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为此内容。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用后，智能体将依据此内容执行操作。
 :::
 
 # Axolotl 技能
 
 ## 功能概述
 
-提供使用 Axolotl 工具进行 LLM 微调的专家级指导 — 包含 YAML 配置文件、100 多种预训练模型，以及 LoRA/QLoRA、DPO/KTO/ORPO/GRPO 等微调方法，同时还支持多模态处理。
+提供使用 Axolotl 微调大语言模型的专业指导 — 包含 YAML 配置文件、100 多种模型选项、LoRA/QLoRA 微调方法、DPO/KTO/ORPO/GRPO 等训练策略，同时还支持多模态处理。
 
-基于官方文档整理，为 Axolotl 的开发工作提供全面的支持与帮助。
+基于官方文档整理的 Axolotl 开发相关帮助内容。
 
-## 何时使用此技能
+## 何时使用该技能
 
 在以下情况下可触发此技能：
-- 使用 Axolotl 工具进行开发
-- 咨询有关 Axolotl 的功能或 API 信息
+- 使用 Axolotl 工作
+- 咨询 Axolotl 的功能或 API 信息
 - 实现基于 Axolotl 的解决方案
 - 调试 Axolotl 相关代码
 - 学习 Axolotl 的最佳实践
@@ -50,7 +50,7 @@ Axolotl：基于 YAML 的 LLM 微调工具（支持 LoRA、DPO、GRPO 等技术�
 
 ### 常见用法模式
 
-**模式 1：** 为确认训练任务的数据传输速度是否达标，可通过运行 NCCL 测试来定位潜在瓶颈，例如：
+**模式 1：** 为确保您的训练任务具有可接受的数据传输速度，运行 NCCL 测试有助于识别潜在瓶颈，例如：
 
 ```
 ./build/all_reduce_perf -b 8 -e 128M -f 2 -g 3
@@ -68,31 +68,31 @@ fsdp_config:
   reshard_after_forward: true
 ```
 
-**模式 3：** context_parallel_size 的值必须能整除 GPU 的总数。例如：
+**模式 3：** context_parallel_size 的数值必须能整除 GPU 的总数。例如：
 
 ```
 context_parallel_size
 ```
 
-**模式 4：** 例如：- 当拥有 8 块 GPU 且不启用序列并行处理时，每步会处理 8 个不同的批次；- 当拥有 8 块 GPU 且设置 context_parallel_size=4 时，每步仅处理 2 个不同的批次（每个批次分配到 4 块 GPU 上）；- 如果每块 GPU 的微批次大小为 2，则全局批次大小会从 16 减少到 4。
+**模式 4：** 例如：- 当使用 8 块 GPU 且不启用序列并行处理时，每步将处理 8 个不同的批次；- 当使用 8 块 GPU 且设置 context_parallel_size=4 时，每步仅处理 2 个不同的批次（每个批次分配到 4 块 GPU 上）；- 如果每块 GPU 的 micro_batch_size 为 2，则全局批量大小将从 16 减少至 4。
 
 ```
 context_parallel_size=4
 ```
 
-**模式 5：** 在配置中将 `save_compressed` 设置为 `true`，即可以压缩格式保存模型。这样做的好处包括：- 减少约 40% 的磁盘空间占用；- 保持与 vLLM 的兼容性，从而实现更快速的推理速度；- 保留与 llmcompressor 的兼容性，便于进一步优化（例如量化处理）。
+**模式 5：** 在配置中将 `save_compressed` 设置为 `true` 可使模型以压缩格式保存，从而实现以下优势：- 减少约 40% 的磁盘占用空间；- 保持与 vLLM 的兼容性，从而提升推理速度；- 保留与 llmcompressor 的兼容性，便于进一步优化（例如量化处理）。
 
 ```
 save_compressed: true
 ```
 
-**模式 6：** 注意，无需将您的集成代码放入 integrations 文件夹中。只要它被封装在 Python 环境中的某个包里，位于任何位置均可。相关示例可参考此仓库：https://github.com/axolotl-ai-cloud/diff-transformer
+**模式 6：** 注意，无需将您的集成代码放入 integrations 文件夹中。只要它能被打包到 Python 环境中的某个包中，放置在任何位置均可。有关示例，请参阅此仓库：https://github.com/axolotl-ai-cloud/diff-transformer
 
 ```
 integrations
 ```
 
-**模式 7：** 支持处理单个样本数据与批量数据。- 单个样本：sample[‘input_ids’] 的类型为 list[int] - 批量数据：sample[‘input_ids’] 的类型为 list[list[int]]
+**模式 7：** 支持处理单个样本数据与批量数据。- 单个样本数据：sample['input_ids'] 的类型为 list[int]。- 批量数据：sample['input_ids'] 的类型为 list[list[int]]。
 
 ```
 utils.trainer.drop_long_seq(sample, sequence_len=2048, min_sequence_len=2)
@@ -133,21 +133,21 @@ prompt_strategies.input_output.RawInputOutputPrompter()
 
 ## 参考文档
 
-该技能在 `references/` 目录中提供了完整的文档资料：
+该技能在 `references/` 目录中提供了详尽的文档资料：
 
-- **api.md** - API文档
+- **api.md** - API 文档
 - **dataset-formats.md** - 数据集格式文档
 - **other.md** - 其他文档
 
-当需要详细信息时，可使用 `view` 命令来读取特定的参考文档。
+当需要详细信息时，可使用 `view` 命令来查看特定的参考文件。
 
-## 使用该技能的方法
+## 使用该技能
 
-### 对于初学者
-建议先阅读 `getting_started` 或教程类参考文档，以掌握基础概念。
+### 面向初学者
+建议先阅读 `getting_started` 或教程类参考文件，以了解基础概念。
 
 ### 针对特定功能
-可查阅对应类别的参考文档（如API文档、指南等）以获取详细信息。
+如需详细信息，请查阅对应类别的参考文件（如 API 文档、指南等）。
 
 ### 代码示例
 上方的快速参考部分汇总了从官方文档中提取的常见模式。
@@ -158,20 +158,20 @@ prompt_strategies.input_output.RawInputOutputPrompter()
 此处整理了从官方来源摘录的文档资料，包含以下内容：
 - 详细说明
 - 带有语言标注的代码示例
-- 对应原始文档的链接
+- 指向原始文档的链接
 - 便于快速导航的目录结构
 
 ### scripts/
 可在该目录中添加用于常见自动化任务的辅助脚本。
 
 ### assets/
-此处可用于存放模板、基础代码框架或示例项目。
+可在此处存放模板、样板文件或示例项目。
 
-## 备注事项
+## 备注
 
 - 该技能是根据官方文档自动生成的。
 - 参考文档保留了源文档的结构与示例内容。
-- 代码示例会进行语言检测，以实现更精准的语法高亮显示。
+- 代码示例包含语言检测功能，有助于实现更佳的语法高亮显示。
 - 快速参考模式是从文档中的常见使用案例中提取而来的。
 
 ## 更新说明
