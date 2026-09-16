@@ -2067,6 +2067,8 @@
       - [合并模型](zh/optional-skills/finance/merger-model/SKILL.md)
     - [Polymarket]()
       - [Polymarket — 预测市场数据](zh/optional-skills/finance/polymarket/SKILL.md)
+      - [References]()
+        - [Polymarket API 接口参考](zh/optional-skills/finance/polymarket/references/api-endpoints.md)
     - [Pptx Author]()
       - [pptx-author](zh/optional-skills/finance/pptx-author/SKILL.md)
     - [Stocks]()
