@@ -2418,6 +2418,8 @@
         - [架构](zh/optional-skills/software-development/code-wiki/templates/architecture.md)
         - [入门指南](zh/optional-skills/software-development/code-wiki/templates/getting-started.md)
         - [模块：`{{MODULE_NAME}}`](zh/optional-skills/software-development/code-wiki/templates/module.md)
+    - [Grill Me]()
+      - [Grill Me](zh/optional-skills/software-development/grill-me/SKILL.md)
     - [Rest Graphql Debug]()
       - [API测试与调试](zh/optional-skills/software-development/rest-graphql-debug/SKILL.md)
     - [Subagent Driven Development]()
