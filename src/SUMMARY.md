@@ -2697,6 +2697,8 @@
     - [Xurl]()
       - [xurl — 通过官方 CLI 访问 X（Twitter）API](zh/skills/social-media/xurl/SKILL.md)
   - [Software Development]()
+    - [Codebase Inspection]()
+      - [使用 pygount 进行代码库分析](zh/skills/software-development/codebase-inspection/SKILL.md)
     - [Dogfood]()
       - [Dogfood：系统化的Web应用程序质量检测](zh/skills/software-development/dogfood/SKILL.md)
       - [References]()
