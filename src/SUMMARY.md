@@ -2024,6 +2024,7 @@
       - [Jupyter Notebook（hamelnb 实时内核）](zh/optional-skills/data-science/jupyter-notebook/SKILL.md)
   - [Devops]()
     - [Actual Setup]()
+      - [实际计算机配置技能](zh/optional-skills/devops/actual-setup/SKILL.md)
       - [References]()
         - [将 actual.inc 作为 OpenCode 提供者使用](zh/optional-skills/devops/actual-setup/references/opencode.md)
     - [Docker Management]()
