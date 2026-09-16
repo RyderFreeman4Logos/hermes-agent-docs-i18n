@@ -4,7 +4,7 @@ sidebar_label: "Mcporter"
 description: "List, auth, and call MCP servers/tools from the terminal"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请修改源文件 SKILL.md，而非此页面。 */}
 
 # Mcporter
 
@@ -14,18 +14,18 @@ description: "List, auth, and call MCP servers/tools from the terminal"
 
 | | |
 |---|---|
-| 来源 | 可选 —— 使用 `hermes skills install official/mcp/mcporter` 安装 |
-| 路径 | `optional-skills/mcp/mcporter` |
+| 来源 | 可选 — 使用 `hermes skills install official/mcp/mcporter` 安装 |
+| 路径 | `optional-skills/mcp\mcporter` |
 | 版本 | `1.0.0` |
 | 创建者 | 社区 |
 | 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `MCP`、`Tools`、`API`、`Integrations`、`Interop` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整的 SKILL.md
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体看到的指令即为此内容。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体看到的指令即为此内容。
 :::
 
 # mcporter
@@ -58,7 +58,7 @@ mcporter call <server.tool> key=value
 
 ## 发现 MCP 服务器
 
-mcporter 能自动检测本地机器上其他 MCP 客户端（如 Claude Desktop、Cursor 等）所配置的服务器。若要寻找新的可用服务器，可浏览 [mcpfinder.dev](https://mcpfinder.dev) 或 [mcp.so](https://mcp.so) 等注册表，随后进行临时连接：
+mcporter 能自动检测本地系统中其他 MCP 客户端（如 Claude Desktop、Cursor 等）所配置的服务器。若要查找可用的新服务器，可浏览 [mcpfinder.dev](https://mcpfinder.dev) 或 [mcp.so](https://mcp.so) 等注册表，随后进行临时连接：
 
 ```bash
 # Connect to any MCP server by URL (no config needed)
@@ -108,7 +108,7 @@ mcporter config import <path>
 
 ## 守护进程
 
-用于保持服务器连接的持久化连接：
+用于保持服务器连接的持久连接：
 ```bash
 mcporter daemon start
 mcporter daemon status
@@ -135,4 +135,4 @@ mcporter emit-ts <server> --mode types
 
 - 若需结构化输出以便于解析，请使用 `--output json` 选项。
 - 临时服务器（HTTP 地址或 `--stdio` 命令）无需任何配置即可使用，非常适合一次性调用场景。
-- OAuth 认证可能需要通过浏览器进行交互式授权——如有需要，可使用 `terminal(command="mcporter auth <server>", pty=true)` 命令。
+- OAuth 认证可能需要通过浏览器进行交互式验证——如有需要，可使用 `terminal(command="mcporter auth <server>", pty=true)` 命令。
