@@ -1993,6 +1993,7 @@
         - [AgentMail MCP](zh/optional-skills/email/agentmail/references/mcp.md)
         - [AgentMail 自签注功能](zh/optional-skills/email/agentmail/references/signup.md)
         - [AgentMail Webhook 功能](zh/optional-skills/email/agentmail/references/webhooks.md)
+        - [AgentMail WebSocket接口](zh/optional-skills/email/agentmail/references/websockets.md)
   - [Finance]()
     - [3 Statement Model]()
       - [三表财务模型模板填充指南](zh/optional-skills/finance/3-statement-model/SKILL.md)
