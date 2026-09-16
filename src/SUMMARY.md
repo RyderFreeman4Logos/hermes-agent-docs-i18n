@@ -2727,6 +2727,8 @@
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Arxiv]()
       - [arXiv研究功能](zh/skills/research/arxiv/SKILL.md)
+    - [Competitor News Monitor]()
+      - [竞争对手动态监测工具](zh/skills/research/competitor-news-monitor/SKILL.md)
     - [Grounded Citations]()
       - [References]()
         - [不同输出目标对应的引用格式](zh/skills/research/grounded-citations/references/citation-formats.md)
