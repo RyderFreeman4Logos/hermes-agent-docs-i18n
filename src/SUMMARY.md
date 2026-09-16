@@ -3179,6 +3179,7 @@
             - [Stripe Projects](zh/website/docs/user-guide/skills/optional/payments/payments-stripe-projects.md)
           - [Productivity]()
             - [Canvas](zh/website/docs/user-guide/skills/optional/productivity/productivity-canvas.md)
+            - [决策问卷生成器](zh/website/docs/user-guide/skills/optional/productivity/productivity-decision-questionnaire.md)
             - [Here.Now](zh/website/docs/user-guide/skills/optional/productivity/productivity-here-now.md)
             - [Memento 记忆卡片](zh/website/docs/user-guide/skills/optional/productivity/productivity-memento-flashcards.md)
             - [商店功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-shop.md)
