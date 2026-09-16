@@ -23,9 +23,9 @@ echo "api_key: {{ op://app-prod/openai/api key }}" | op inject
 op inject -i config.tpl.yml -o config.yml
 ```
 
-## 带机密信息执行命令
+## 使用机密信息运行命令
 
 ```bash
-export DB_PASSWORD="op://app-prod/db/password"
+export DB_PASSWORD="op://app-prod/db/password"  # example op:// reference, resolved by `op run`
 op run -- sh -c '[ -n "$DB_PASSWORD" ] && echo "DB_PASSWORD is set"'
 ```
