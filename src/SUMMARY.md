@@ -2698,6 +2698,8 @@
       - [PowerPoint技能](zh/skills/productivity/powerpoint/SKILL.md)
     - [Teams Meeting Pipeline]()
       - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
+    - [Weekly Review Planning]()
+      - [每周回顾与规划](zh/skills/productivity/weekly-review-planning/SKILL.md)
     - [Xlsx]()
       - [XLSX 技能](zh/skills/productivity/xlsx/SKILL.md)
       - [References]()
