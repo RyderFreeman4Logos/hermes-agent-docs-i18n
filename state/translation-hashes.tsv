@@ -1006,7 +1006,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md	6972306f5f01
 website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md	d6ffb3a615cbc169dad82d55d8992408561d66a682aa3ebe60fc685e8112150c
 website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md	48e37acc77dbc1de93fec429079d6bc7c86e03fa8fa11218ddddd78b32e1f9bc
 website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md	0f665647cb432180d3b7365949466a178e7e27762a58f200961e6699168bb69c
-website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md	a60e50add09ebed9962fac0b6b8b105eed16aacc3ee7b5743e0e49f102d9fa38
+website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md	d278bf207a40f9e9dab8eabe1ed1257df030b4daba24cd63f61110af1478a6c2
 website/docs/user-guide/skills/optional/mlops/mlops-whisper.md	4e749841b8bbe36a3a3883a46c182912dd83c6f4e802f3c6af880408316a637d
 website/docs/user-guide/skills/optional/payments/payments-mpp-agent.md	41ae119645fe1a0f1926dd2b18c52856cdfa158ddd47d0315ae7f26adc891fb2
 website/docs/user-guide/skills/optional/payments/payments-stripe-link-cli.md	aa914c43d9eb3c9de541fb8514a7a9e51731ef6b5e6f9a7a023b95b8878723b7
