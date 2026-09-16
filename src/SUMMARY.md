@@ -2368,7 +2368,7 @@
     - [Qmd]()
       - [QMD — 查询标记文档工具](zh/optional-skills/research/qmd/SKILL.md)
     - [Research Paper Writing]()
-      - [Templates]()
+      - [Templates](zh/optional-skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/optional-skills/research/research-paper-writing/templates/acl/README.md)
         - [Colm2025](zh/optional-skills/research/research-paper-writing/templates/colm2025/README.md)
     - [Rss Feeds]()
