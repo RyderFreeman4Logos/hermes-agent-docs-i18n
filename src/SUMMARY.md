@@ -2035,7 +2035,7 @@
     - [Pptx Author]()
       - [pptx-author](zh/optional-skills/finance/pptx-author/SKILL.md)
     - [Stocks]()
-      - [股票功能](zh/optional-skills/finance/stocks/SKILL.md)
+      - [股票分析功能](zh/optional-skills/finance/stocks/SKILL.md)
   - [Gaming]()
     - [Description](zh/optional-skills/gaming/DESCRIPTION.md)
     - [Minecraft Modpack Server]()
