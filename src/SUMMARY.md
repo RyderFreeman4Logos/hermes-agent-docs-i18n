@@ -2753,7 +2753,7 @@
     - [Product Price Monitor]()
       - [产品价格监控器](zh/skills/productivity/product-price-monitor/SKILL.md)
     - [Teams Meeting Pipeline]()
-      - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
+      - [Channel-gated: this pipeline only makes sense on the Teams gateway](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
     - [Weekly Review Planning]()
       - [每周回顾与规划](zh/skills/productivity/weekly-review-planning/SKILL.md)
     - [Xlsx]()
