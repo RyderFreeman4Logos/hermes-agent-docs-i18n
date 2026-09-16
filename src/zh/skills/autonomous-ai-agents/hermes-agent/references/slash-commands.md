@@ -1,6 +1,6 @@
 # 斜杠命令（会话内使用）
 
-官方命令注册表位于 `hermes_cli/commands.py`（即 `COMMAND_REGISTRY`）——所有命令调用方式（自动补全、`/help` 命令、Telegram 菜单、Slack 映射等）均以此为依据。新命令会不断添加，而会话内的 `/help` 命令始终具有权威性。(CLI) = 仅限交互式 CLI/TUI 环境。(GW) = 仅限网关平台使用。
+命令注册表地址：`hermes_cli/commands.py`（即 `COMMAND_REGISTRY`）——所有命令调用接口（自动补全、`/help` 命令、Telegram 菜单、Slack 映射等）均以此为依据。新命令会不断添加，而会话内的 `/help` 命令始终提供最权威的信息。(CLI) = 仅限交互式 CLI/TUI 环境。(GW) = 仅限网关平台使用。
 
 ### 会话
 ```
@@ -13,8 +13,10 @@
 /compress (/compact)     Compress context ('here [N]' keeps N turns; --preview)
 /stop                    Kill background processes
 /rollback [N]            List/restore filesystem checkpoints
+/diff [mode] [--stat]    Git changes in cwd (staged|all|session modes)
 /snapshot [sub]          Create/restore Hermes config+state snapshots (CLI)
-/background (/bg) <p>    Run prompt in background
+/bg <prompt>              Run a prompt in a separate background session
+/btw <question>           Ask a side question about the current conversation without interrupting it
 /queue (/q) <prompt>     Queue prompt for next turn
 /steer <prompt>          Inject a message after the next tool call
 /agents (/tasks)         Show active agents and running tasks
@@ -38,7 +40,7 @@
 /verbose                 Cycle tool progress: off → new → all → verbose → log (CLI)
 /voice [on|off|tts]      Voice mode
 /yolo                    Toggle approval bypass
-/busy [queue|steer|interrupt] What Enter does while working (CLI)
+/busy [queue|steer|interrupt] How messages behave while working (CLI + gateway)
 /indicator [style]       TUI busy indicator: kaomoji|emoji|unicode|ascii (CLI)
 /footer [on|off]         Gateway runtime-metadata footer on replies
 /skin [name]             Change theme (CLI)
