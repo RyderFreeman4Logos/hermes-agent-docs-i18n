@@ -1984,6 +1984,7 @@
       - [AgentMail — 智能体专属邮箱收件箱](zh/optional-skills/email/agentmail/SKILL.md)
       - [References]()
         - [AgentMail MCP](zh/optional-skills/email/agentmail/references/mcp.md)
+        - [AgentMail Webhook 功能](zh/optional-skills/email/agentmail/references/webhooks.md)
   - [Finance]()
     - [3 Statement Model]()
       - [三表财务模型模板填充指南](zh/optional-skills/finance/3-statement-model/SKILL.md)
