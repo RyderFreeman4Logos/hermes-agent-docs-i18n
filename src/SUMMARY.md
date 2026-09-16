@@ -3044,6 +3044,7 @@
           - [Social Media]()
             - [Xurl](zh/website/docs/user-guide/skills/bundled/social-media/social-media-xurl.md)
           - [Software Development]()
+            - [代码库检测](zh/website/docs/user-guide/skills/bundled/software-development/software-development-codebase-inspection.md)
             - [Dogfood](zh/website/docs/user-guide/skills/bundled/software-development/software-development-dogfood.md)
             - [GitHub](zh/website/docs/user-guide/skills/bundled/software-development/software-development-github.md)
             - [Hermes Agent 技能编写指南](zh/website/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring.md)
