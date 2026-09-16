@@ -15,7 +15,7 @@ description: "Search/download GIFs from Tenor via curl + jq"
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/media/gif-search` |
+| 路径 | `skills/media\gif-search` |
 | 版本 | `1.1.0` |
 | 开发者 | Hermes Agent |
 | 许可协议 | MIT |
@@ -25,7 +25,7 @@ description: "Search/download GIFs from Tenor via curl + jq"
 ## 参考：完整 SKILL.md 文件
 
 :::info
-以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
 # GIF 搜索（Tenor API）
@@ -46,7 +46,7 @@ TENOR_API_KEY=your_key_here
 
 您可以在 https://developers.google.com/tenor/guides/quickstart 获取免费的 API 密钥——Google Cloud Console 提供的 Tenor API 密钥完全免费，且拥有较为宽松的调用频率限制。
 
-## 先决条件
+## 前提条件
 
 - `curl` 和 `jq`（在 macOS/Linux 系统中均为标准工具）
 - `TENOR_API_KEY` 环境变量
@@ -82,25 +82,25 @@ curl -s "https://tenor.googleapis.com/v2/search?q=cat&limit=3&key=${TENOR_API_KE
 | `q` | 搜索查询（空格需用 `+` 进行 URL 编码） |
 | `limit` | 最大返回结果数（1-50，默认为 20） |
 | `key` | API 密钥（来自 `$TENOR_API_KEY` 环境变量） |
-| `media_filter` | 格式筛选：`gif`、`tinygif`、`mp4`、`tinymp4`、`webm` |
+| `media_filter` | 格式过滤选项：`gif`、`tinygif`、`mp4`、`tinymp4`、`webm` |
 | `contentfilter` | 安全级别：`off`、`low`、`medium`、`high` |
-| `locale` | 语言：`en_US`、`es`、`fr` 等 |
+| `locale` | 语言代码：`en_US`、`es`、`fr` 等 |
 
 ## 支持的媒体格式
 
-每个搜索结果在 `.media_formats` 字段下会包含多种格式：
+每个搜索结果在 `.media_formats` 字段中会包含多种格式：
 
-| 格式 | 用途 |
-|------|------|
+| 格式 | 适用场景 |
+|------|----------|
 | `gif` | 全质量 GIF 图片 |
 | `tinygif` | 小尺寸预览 GIF 图片 |
 | `mp4` | 视频版本（文件体积更小） |
 | `tinymp4` | 小尺寸预览视频 |
-| `webm` | WebM 视频格式 |
+| `webm` | WebM 格式视频 |
 | `nanogif` | 极小尺寸缩略图 |
 
 ## 注意事项
 
-- 需对查询内容进行 URL 编码：空格替换为 `+`，特殊字符替换为 `%XX` 格式。
-- 若在聊天中发送，`tinygif` 格式的链接体积更小，更利于传输。
-- GIF 链接可直接在 Markdown 中使用，格式如下：`![标题](https://github.com/NousResearch/hermes-agent/blob/main/skills/media/gif-search/url)`
+- 需对搜索查询进行 URL 编码：空格替换为 `+`，特殊字符替换为 `%XX`。
+- 若在聊天界面中使用，`tinygif` 格式的链接文件体积更小。
+- GIF 链接可直接用于 Markdown 文档中：`![替代文本](https://github.com/NousResearch/hermes-agent/blob/main/skills/media\gif-search/url)`
