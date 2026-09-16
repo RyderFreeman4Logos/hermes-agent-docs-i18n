@@ -2790,6 +2790,8 @@
         - [Pr Body Feature](zh/skills/software-development/github/templates/pr-body-feature.md)
     - [Hermes Agent Skill Authoring]()
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
+    - [Inspecting Hermes Desktop Dom]()
+      - [查看实时的 Hermes 桌面端 DOM](zh/skills/software-development/inspecting-hermes-desktop-dom/SKILL.md)
     - [Node Inspect Debugger]()
       - [Node.js 检查调试器](zh/skills/software-development/node-inspect-debugger/SKILL.md)
     - [Python Debugpy]()
