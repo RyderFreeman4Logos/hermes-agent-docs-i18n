@@ -1,7 +1,7 @@
 ---
 name: tensorrt-llm
 description: High-throughput LLM inference on NVIDIA GPUs.
-version: 1.0.0
+version: 1.0.1
 author: Orchestra Research
 license: MIT
 dependencies: [tensorrt-llm, torch]
@@ -14,20 +14,20 @@ metadata:
 
 # TensorRT-LLM
 
-NVIDIA推出的开源库，旨在利用NVIDIA GPU的顶尖性能优化大语言模型推理过程。
+NVIDIA推出的开源库，旨在利用NVIDIA GPU的高性能优化大语言模型推理效率。
 
 ## 何时使用TensorRT-LLM
 
 **以下情况建议使用TensorRT-LLM：**
 - 在NVIDIA GPU（A100、H100、GB200）上部署模型
-- 需要极高的处理速度（Llama 3模型的处理速度可达24,000个token/秒以上）
+- 需要极高的处理速度（Llama 3模型可达24,000+ tokens/秒）
 - 实时应用对低延迟有严格要求
 - 处理量化后的模型（FP8、INT4、FP4格式）
-- 在多台GPU或节点之间扩展部署
+- 需要在多台GPU或节点之间扩展部署
 
 **以下情况建议改用vLLM：**
 - 需要更简单的设置流程以及以Python为优先的API接口
-- 希望使用PagedAttention功能且无需经过TensorRT编译
+- 希望使用PagedAttention机制且无需经过TensorRT编译
 - 在AMD GPU或非NVIDIA硬件上运行模型
 
 **以下情况建议改用llama.cpp：**
@@ -40,13 +40,15 @@ NVIDIA推出的开源库，旨在利用NVIDIA GPU的顶尖性能优化大语言�
 ### 安装
 
 ```bash
-# Docker (recommended)
-docker pull nvidia/tensorrt_llm:latest
+# Docker (recommended) — images are on NGC (nvcr.io), not Docker Hub.
+# Replace x.y.z with the desired version (e.g. 1.2.1). Browse tags on NGC:
+# https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tensorrt-llm/containers/release/tags
+docker pull nvcr.io/nvidia/tensorrt-llm/release:x.y.z
 
-# pip install
-pip install tensorrt_llm==1.2.0rc3
+# pip install (current stable GA)
+pip install tensorrt_llm
 
-# Requires CUDA 13.0.0, TensorRT 10.13.2, Python 3.10-3.12
+# Requires CUDA 13.2.1, TensorRT 10.x, Python 3.10-3.12
 ```
 
 ### 基本推理
@@ -98,7 +100,7 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 - **传输中批量处理**：在生成过程中实现动态批量化
 - **分页KV缓存**：高效的内存管理机制
 - **Flash Attention**：优化的注意力计算内核
-- **量化技术**：支持FP8、INT4、FP4格式，提升推理速度2至4倍
+- **量化技术**：支持FP8、INT4、FP4格式，提升推理速度2-4倍
 - **CUDA图优化**：降低内核启动开销
 
 ### 并行处理能力
@@ -110,9 +112,9 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 ### 高级功能
 - **推测解码**：借助草稿模型加快生成速度
 - **LoRA服务**：高效的多适配器部署方案
-- **分离式服务**：将预填充与生成过程独立处理
+- **分离式服务**：将预填充与生成过程分开处理
 
-## 常见应用场景
+## 常见应用模式
 
 ### 量化模型（FP8格式）
 
@@ -163,8 +165,8 @@ outputs = llm.generate(
 - 相较于 PyTorch：**速度快 100 倍**
 
 **Llama 3-70B**（8× A100 80GB）：
-- 使用 FP8 量化格式时，速度为 FP16 的 **2 倍**
-- 使用 FP8 后内存占用可减少 **50%**
+- FP8 量化模式：速度为 FP16 的 2 倍
+- 使用 FP8 后内存占用减少 50%
 
 ## 支持的模型
 
@@ -178,9 +180,9 @@ outputs = llm.generate(
 
 ## 参考资料
 
-- **[优化指南](references/optimization.md)**——量化处理、批处理、KV 缓存调优
-- **[多 GPU 部署指南](references/multi-gpu.md)**——张量/流水线并行处理、多节点部署
-- **[服务部署指南](references/serving.md)**——生产环境部署、监控及自动扩缩容
+- **[优化指南](references/optimization.md)** – 量化处理、批量处理、KV 缓存优化
+- **[多 GPU 部署指南](references/multi-gpu.md)** – 张量/流水线并行处理、多节点部署
+- **[服务部署指南](references/serving.md)** – 生产环境部署、监控及自动扩缩容
 
 ## 相关资源
 
