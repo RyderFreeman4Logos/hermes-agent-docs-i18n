@@ -1,35 +1,35 @@
 ---
-title: "Simpo Training — Reference-free preference alignment, simpler than DPO"
-sidebar_label: "Simpo Training"
+title: "Simpo — Reference-free preference alignment, simpler than DPO"
+sidebar_label: "Simpo"
 description: "Reference-free preference alignment, simpler than DPO"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# Simpo 训练方法
+# Simpo
 
-一种无需参考模型的偏好优化方法，相比 DPO 更为简单。
+一种无需参考模型的偏好对齐方法，相比 DPO 更为简单。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/mlops/simpo` 安装 |
-| 路径 | `optional-skills/mlops/simpo` |
+| 来源 | 可选 — 通过 `hermes skills install official/mlops/simpo` 安装 |
+| 路径 | `optional-skills/mlops\simpo` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
 | 许可证 | MIT |
 | 依赖项 | `torch`, `transformers`, `datasets`, `trl`, `accelerate` |
-| 支持平台 | linux、macos、windows |
-| 标签 | `训练后优化`、`SimPO`、`偏好优化`、`对齐`、`DPO 替代方案`、`无需参考模型`、`大语言模型对齐`、`高效训练` |
+| 支持平台 | linux, macos, windows |
+| 标签 | `训练后优化`, `SimPO`, `偏好优化`, `对齐`, `DPO 替代方案`, `无需参考模型`, `大语言模型对齐`, `高效训练` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用时，智能体看到的指令即为内容。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为内容。
 :::
 
-# SimPO —— 简化版偏好优化方法
+# SimPO - 简化版偏好优化方法
 
 ## 快速入门
 
@@ -93,7 +93,7 @@ gradient_accumulation_steps: 8
 output_dir: ./outputs/mistral-7b-simpo
 ```
 
-**启动训练**：
+**启动培训**：
 ```bash
 accelerate launch --config_file accelerate_configs/deepspeed_zero3.yaml \
   scripts/run_simpo.py training_configs/mistral-7b-base-simpo.yaml
@@ -125,7 +125,7 @@ accelerate launch --config_file accelerate_configs/deepspeed_zero3.yaml \
   scripts/run_simpo.py training_configs/llama3-8b-instruct-simpo.yaml
 ```
 
-### 工作流 3：需要大量推理的任务（较低学习率）
+### 工作流 3：需大量推理的任务（较低学习率）
 
 **适用于数学/代码任务**：
 ```yaml
@@ -148,12 +148,12 @@ gradient_accumulation_steps: 16
 
 **适合使用 SimPO 的情况**：
 - 希望采用比 DPO 更简单的训练方式（无需参考模型）
-- 拥有偏好数据（选择/拒绝对）
+- 已有偏好数据（选定/拒绝的配对）
 - 需要比 DPO 更好的性能
 - 计算资源有限
 - 单节点训练即可满足需求
 
-**算法选择**：
+**算法选择对比**：
 - **SimPO**：最简单，性能最佳，无需参考模型
 - **DPO**：需要参考模型作为基准，策略更为保守
 - **PPO**：控制能力最强，但需要奖励模型，设置较为复杂
@@ -166,19 +166,19 @@ gradient_accumulation_steps: 16
 
 ## 常见问题
 
-**问题：损失发散**
+**问题：损失值发散**
 
 降低学习率：
 ```yaml
 learning_rate: 3e-7  # Reduce from 5e-7
 ```
 
-降低测试版强度：
+降低测试版本强度：
 ```yaml
 beta: 1.0  # Reduce from 2.0
 ```
 
-**问题：模型遗忘其能力**
+**问题：模型遗忘自身能力**
 
 添加SFT正则化机制：
 ```yaml
@@ -187,15 +187,14 @@ sft_weight: 0.1  # Add SFT loss component
 
 **问题：偏好设置分离度不足**
 
-增加 beta 值与边际值：
+提高β值与边际值：
 ```yaml
 beta: 5.0            # Increase from 2.0
 gamma_beta_ratio: 0.8  # Increase from 0.5
 ```
 
-**问题：训练过程中出现内存溢出**
-
-减小批次大小：
+**问题：训练过程中出现内存不足**  
+降低批次大小：
 ```yaml
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 16  # Maintain effective batch
@@ -208,17 +207,17 @@ gradient_checkpointing: true
 
 ## 高级主题
 
-**损失函数**：如需了解 Sigmoid 损失与 Hinge 损失的对比、数学表达式以及各自的适用场景，请参阅 [references/loss-functions.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/simpo/references/loss-functions.md)。
+**损失函数**：如需了解 Sigmoid 损失与 Hinge 损失的对比、数学表达式以及各自的适用场景，请参阅 [references/loss-functions.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\simpo/references/loss-functions.md)。
 
-**超参数调优**：关于 beta、gamma 参数及学习率的选择指南，以及针对不同模型规模的优化建议，可参考 [references/hyperparameters.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/simpo/references/hyperparameters.md)。
+**超参数调优**：关于 beta、gamma 参数及学习率的选择指南，以及针对不同模型规模的推荐方案，可参考 [references/hyperparameters.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\~po/references/hyperparameters.md)。
 
-**数据集准备**：有关偏好数据格式、数据质量筛选以及自定义数据集的创建方法，请查看 [references/datasets.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/simpo/references/datasets.md)。
+**数据集准备**：偏好数据格式、数据质量筛选以及自定义数据集的创建方法，详见 [references/datasets.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\~po/references/datasets.md)。
 
 ## 硬件要求
 
 - **GPU**：推荐使用 NVIDIA A100/H100
 - **显存需求**：
-  - 7B 模型：1 块 A100 40GB 显存（搭配 DeepSpeed ZeRO-3）
+  - 7B 模型：1 块 A100 40GB 显存（配合 DeepSpeed ZeRO-3）
   - 8B 模型：2 块 A100 40GB 显存
   - 70B 模型：8 块 A100 80GB 显存
 - **单节点部署**：使用 DeepSpeed ZeRO-3 即可满足需求
@@ -231,7 +230,7 @@ gradient_checkpointing: true
 
 ## 相关资源
 
-- 论文链接：https://arxiv.org/abs/2405.14734（2024 年 NeurIPS 大会发表）
+- 论文：https://arxiv.org/abs/2405.14734（2024 年 NeurIPS 大会发表）
 - GitHub 仓库：https://github.com/princeton-nlp/SimPO
 - 模型地址：https://huggingface.co/princeton-nlp
 - 对齐手册：https://github.com/huggingface/alignment-handbook

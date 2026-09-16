@@ -3209,7 +3209,7 @@
             - [Qdrant 向量搜索引擎](zh/website/docs/user-guide/skills/optional/mlops/mlops-qdrant.md)
             - [Dspy](zh/website/docs/user-guide/skills/optional/mlops/mlops-research-dspy.md)
             - [稀疏自编码器训练](zh/website/docs/user-guide/skills/optional/mlops/mlops-saelens.md)
-            - [Simpo 训练方法](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
+            - [Simpo](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
             - [Slime Rl Training](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
             - [Stable Diffusion 图像生成](zh/website/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion.md)
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
