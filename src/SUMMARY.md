@@ -1745,6 +1745,7 @@
 - [Docker]()
   - [Soul](zh/docker/SOUL.md)
 - [Docs]()
+  - [架构决策记录](zh/docs/ADR.md)
   - [计费生命周期：客户端状态、错误处理与恢复机制](zh/docs/billing-lifecycle.md)
   - [Chronos managed-cron — 代理 ↔ NAS 通信协议](zh/docs/chronos-managed-cron-contract.md)
   - [Cron Doctor 规范](zh/docs/cron-doctor-spec.md)
