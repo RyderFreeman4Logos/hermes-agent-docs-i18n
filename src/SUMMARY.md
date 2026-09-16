@@ -2843,6 +2843,7 @@
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
       - [更新与卸载](zh/website/docs/getting-started/updating.md)
     - [Guides]()
+      - [为你的智能体配置专属邮箱地址](zh/website/docs/guides/agent-email-address.md)
       - [利用 Cron 自动化任何任务](zh/website/docs/guides/automate-with-cron.md)
       - [自动化蓝图](zh/website/docs/guides/automation-blueprints.md)
       - [AWS Bedrock](zh/website/docs/guides/aws-bedrock.md)
