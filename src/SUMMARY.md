@@ -2284,6 +2284,8 @@
   - [Productivity]()
     - [Canvas]()
       - [Canvas LMS — 课程与作业访问功能](zh/optional-skills/productivity/canvas/SKILL.md)
+    - [Decision Questionnaire]()
+      - [决策问卷功能](zh/optional-skills/productivity/decision-questionnaire/SKILL.md)
     - [Here Now]()
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
     - [Memento Flashcards]()
