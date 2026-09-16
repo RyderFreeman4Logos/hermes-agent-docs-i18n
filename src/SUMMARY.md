@@ -2779,6 +2779,7 @@
       - [References]()
         - [CI故障排查快速参考指南](zh/skills/software-development/github/references/ci-troubleshooting.md)
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
+        - [GitHub REST API 快速参考指南](zh/skills/software-development/github/references/github-api-cheatsheet.md)
         - [将 GitHub Issue 转换为经过测试的 PR](zh/skills/software-development/github/references/issue-to-pr.md)
         - [输出模板说明](zh/skills/software-development/github/references/review-output-template.md)
       - [Templates]()
