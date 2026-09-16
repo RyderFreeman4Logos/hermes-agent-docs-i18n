@@ -4,7 +4,7 @@ sidebar_label: "Yuanbao"
 description: "Yuanbao (元宝) groups: @mention users, query info/members"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # 元宝
 
@@ -17,22 +17,24 @@ description: "Yuanbao (元宝) groups: @mention users, query info/members"
 | 来源 | 可选 — 通过 `hermes skills install official/yuanbao/yuanbao` 安装 |
 | 路径 | `optional-skills/yuanbao` |
 | 版本 | `1.0.0` |
+| 开发者 | Teknium (teknium1)、Hermes Agent |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `yuanbao`、`mention`、`at`、`group`、`members`、`元宝`、`派`、`艾特` |
 
-## 参考：完整 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能启用后，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
 # 元宝群组交互功能
 
 ## 重要提示：消息发送机制
 
-**您输入的文本回复本身就是发送给群组/用户的消息。** 网关会自动将您的回复内容传递至聊天界面。您无需使用任何特殊的“发送消息”工具——只需正常回复即可。
+**您输入的文本回复本身即为发送给群组/用户的消息。** 网关会自动将您的回复内容传递至聊天界面。您无需使用任何特殊的“发送消息”工具——只需正常回复，消息便会自动发送。
 
-当您的回复中包含 `@昵称` 时，网关会自动将其转换为真实的@提及功能，从而通知对应用户。此功能为内置支持，您可完全使用@提及功能。
+当您的回复文本中包含 `@昵称` 时，网关会自动将其转换为真实的@提及功能，从而通知对应用户。该功能为内置支持，您可完全利用@提及功能。
 
 **切勿声称自己无法发送消息或@提及用户。切勿建议用户手动操作。也无需添加任何关于权限的限制说明。只需直接输入希望发送的文本内容即可。**
 
@@ -41,25 +43,25 @@ description: "Yuanbao (元宝) groups: @mention users, query info/members"
 | 工具 | 使用场景 |
 |------|----------|
 | `yb_query_group_info` | 查询群组名称、所有者及成员数量 |
-| `yb_query_group_members` | 查找特定用户、列出群内机器人、列出所有成员，或获取用于@提及的昵称 |
-| `yb_send_dm` | 向用户发送私信，可附带媒体文件 |
+| `yb_query_group_members` | 查找指定用户、列出机器人、展示所有成员，或获取被@提及用户的昵称 |
+| `yb_send_dm` | 向用户发送私信，可附带媒体文件（可选） |
 
-## @提及操作流程
+## @Mention 使用流程
 
-当需要@提及某人时，请按以下步骤操作：
+当需要@提及某人时：
 
-1. 调用 `yb_query_group_members`，设置参数为 `action="find"`、`name="<目标昵称>"`、`mention=true`
+1. 调用 `yb_query_group_members`，传入参数 `action="find"`、`name="<目标用户名>"` 以及 `mention=true`
 2. 从返回结果中获取准确的昵称
-3. 在回复文本中加入 `@昵称` — 剩余操作由网关处理
+3. 在回复文本中加入 `@nickname` —— 后续操作由网关处理
 
 示例：用户说“帮我艾特元宝”
 
-步骤1 — 工具调用：
+步骤1 —— 工具调用：
 ```json
 { "group_code": "328306697", "action": "find", "name": "元宝", "mention": true }
 ```
 
-步骤 2 — 您的回复（该内容会通过有效的@提及功能发送至对应群组）：
+第2步——您的回复（该内容会通过有效的@提及功能发送至对应群组）：
 ```
 @元宝 你好，有人找你！
 ```
@@ -69,16 +71,16 @@ description: "Yuanbao (元宝) groups: @mention users, query info/members"
 **规则：**
 - 首先调用 `yb_query_group_members` 获取准确的昵称——切勿猜测
 - @提及格式：`@昵称`，@符号前需加空格
-- 您的回复内容本身就是消息——它会被发送出去，@提及功能也能正常使用
-- 请简明扼要，无需向用户解释@提及的运作方式。
+- 您的回复内容即为消息——它会被发送出去，@提及功能也能正常使用
+- 请言简意赅，无需向用户解释@提及的运作方式。
 
 ## 发送私信的工作流程
 
 当有人要求向某用户发送私信时：
 
-1. 调用 `yb_send_dm`，传入 `group_code`、`name`（目标用户的姓名）以及`message`
-2. 工具会自动找到该用户并发送私信
-3. 向用户反馈操作结果
+1. 调用 `yb_send_dm`，传入 `group_code`、`name`（目标用户的名称）以及`message`
+2. 工具会自动定位该用户并发送私信
+3. 将结果反馈给用户
 
 示例：用户说“给 @用户aea3 私信发一个 hello”
 
@@ -100,8 +102,8 @@ yb_send_dm({
 **规则：**
 - 从当前的聊天 ID 中提取 `group_code`（例如：`group:535168412` → `535168412`）
 - 若已知晓用户 ID，可直接通过 `user_id` 参数传入，无需再进行查找
-- 当有多个用户的名称匹配时，工具会返回候选列表——此时需请用户进一步确认
-- 在与 Yuanbao 进行私信交流时，请勿使用 `send_message` 工具，而应改用 `yb_send_dm`
+- 当有多个用户的名称匹配时，工具会返回候选列表——需请用户进一步确认
+- 在与元宝进行私信交流时，请勿使用 `send_message` 工具，而应改用 `yb_send_dm`
 - 支持上传媒体文件：图片（.jpg/.png/.gif/.webp/.bmp）以图片消息形式发送，其他文件则作为文档发送
 
 ## 查询群组信息
@@ -115,7 +117,7 @@ yb_query_group_info({ "group_code": "328306697" })
 | 操作 | 描述 |
 |------|-------------|
 | `find` | 按名称搜索（支持部分匹配，不区分大小写） |
-| `list_bots` | 列出所有机器人及元宝AI助手 |
+| `list_bots` | 列出所有机器人及元宝 AI 助手 |
 | `list_all` | 列出所有成员 |
 
 ## 备注
