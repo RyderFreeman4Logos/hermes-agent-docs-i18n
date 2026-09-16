@@ -2759,6 +2759,7 @@
     - [Github]()
       - [GitHub](zh/skills/software-development/github/SKILL.md)
       - [References]()
+        - [CI故障排查快速参考指南](zh/skills/software-development/github/references/ci-troubleshooting.md)
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
         - [输出模板说明](zh/skills/software-development/github/references/review-output-template.md)
       - [Templates]()
