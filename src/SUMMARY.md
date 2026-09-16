@@ -2170,6 +2170,7 @@
           - [全面 JSON 生成指南](zh/optional-skills/mlops/inference/outlines/references/json_generation.md)
       - [Serving Llms Vllm]()
         - [References]()
+          - [性能优化](zh/optional-skills/mlops/inference/serving-llms-vllm/references/optimization.md)
           - [服务器部署模式](zh/optional-skills/mlops/inference/serving-llms-vllm/references/server-deployment.md)
     - [Instructor]()
       - [Instructor：结构化大语言模型输出功能](zh/optional-skills/mlops/instructor/SKILL.md)
