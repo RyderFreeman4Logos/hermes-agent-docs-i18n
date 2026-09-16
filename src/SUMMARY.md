@@ -2438,6 +2438,7 @@
 - [Providers](zh/providers/README.md)
 - [Scripts]()
   - [工具搜索实时测试套件](zh/scripts/LIVETEST_README.md)
+  - [Toolperf Abeval](zh/scripts/toolperf_abeval/README.md)
 - [Skills]()
   - [Apple]()
     - [Description](zh/skills/apple/DESCRIPTION.md)
