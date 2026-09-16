@@ -1740,6 +1740,7 @@
       - [Perf](zh/apps/desktop/scripts/perf/README.md)
     - [Src]()
       - [Plugins](zh/apps/desktop/src/plugins/README.md)
+        - [Radio](zh/apps/desktop/src/plugins/radio/README.md)
 - [Contributors](zh/contributors/README.md)
 - [Docker]()
   - [Soul](zh/docker/SOUL.md)
