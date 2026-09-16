@@ -2708,6 +2708,7 @@
       - [References]()
         - [批量操作](zh/skills/productivity/box/references/bulk-operations.md)
         - [内容工作流](zh/skills/productivity/box/references/content-workflows.md)
+        - [Box Hubs](zh/skills/productivity/box/references/hubs.md)
         - [REST API 作为备用方案](zh/skills/productivity/box/references/rest-api.md)
         - [SDK 开发](zh/skills/productivity/box/references/sdk-development.md)
         - [故障排除](zh/skills/productivity/box/references/troubleshooting.md)
