@@ -1728,6 +1728,7 @@
 - [Hermes Agent ☤](zh/README.md)
 - [Hermes Agent 安全政策](zh/SECURITY.es.md)
 - [Hermes Agent 安全策略](zh/SECURITY.md)
+- [Soul](zh/SOUL.md)
 - [.Pytest Cache](zh/.pytest_cache/README.md)
 - [Apps]()
   - [Desktop](zh/apps/desktop/README.md)
