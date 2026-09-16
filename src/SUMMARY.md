@@ -1883,6 +1883,8 @@
           - [浪漫风格](zh/optional-skills/creative/baoyu-comic/references/tones/romantic.md)
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
+    - [Comfyui]()
+      - [Tests](zh/optional-skills/creative/comfyui/tests/README.md)
     - [Concept Diagrams]()
       - [概念图绘制](zh/optional-skills/creative/concept-diagrams/SKILL.md)
       - [Examples]()
