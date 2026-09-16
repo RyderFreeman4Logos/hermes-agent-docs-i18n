@@ -1,5 +1,5 @@
 ---
-name: simpo-training
+name: simpo
 description: Reference-free preference alignment, simpler than DPO.
 version: 1.0.0
 author: Orchestra Research
@@ -12,11 +12,11 @@ metadata:
 
 ---
 
-# SimPO——简易偏好优化方法
+# SimPO – 简易偏好优化算法
 
 ## 快速入门
 
-SimPO是一种无需参考模型的偏好优化方法，即便在没有参考模型的情况下也能展现出优于DPO的性能。
+SimPO是一种无需参考模型的偏好优化方法，即便没有参考模型也能实现优于DPO的优化效果。
 
 **安装方式**：
 ```bash
@@ -76,7 +76,7 @@ gradient_accumulation_steps: 8
 output_dir: ./outputs/mistral-7b-simpo
 ```
 
-**启动训练**：
+**启动培训**：
 ```bash
 accelerate launch --config_file accelerate_configs/deepspeed_zero3.yaml \
   scripts/run_simpo.py training_configs/mistral-7b-base-simpo.yaml
@@ -108,7 +108,7 @@ accelerate launch --config_file accelerate_configs/deepspeed_zero3.yaml \
   scripts/run_simpo.py training_configs/llama3-8b-instruct-simpo.yaml
 ```
 
-### 工作流 3：需要大量推理的任务（较低学习率）
+### 工作流 3：需大量推理的任务（较低学习率）
 
 **适用于数学/代码任务**：
 ```yaml
@@ -131,12 +131,12 @@ gradient_accumulation_steps: 16
 
 **适合使用 SimPO 的情况**：
 - 希望采用比 DPO 更简单的训练方式（无需参考模型）
-- 拥有偏好数据（选择/拒绝对）
-- 需要比 DPO 更优异的性能
+- 已有偏好数据（选定/拒绝的配对）
+- 需要比 DPO 更好的性能
 - 计算资源有限
 - 单节点训练即可满足需求
 
-**算法选择指南**：
+**算法选择对比**：
 - **SimPO**：最简单，性能最佳，无需参考模型
 - **DPO**：需要参考模型作为基准，策略更为保守
 - **PPO**：控制能力最强，但需要奖励模型，设置较为复杂
@@ -144,8 +144,8 @@ gradient_accumulation_steps: 16
 
 **应选择替代方案的情况**：
 - **OpenRLHF**：支持多节点分布式训练，可采用 PPO/GRPO 算法
-- **TRL**：需要在同一框架中集成多种方法
-- **DPO**：作为成熟的基准用于性能对比
+- **TRL**：需要在同一框架中整合多种方法
+- **DPO**：作为成熟的基准进行对比测试
 
 ## 常见问题
 
@@ -156,7 +156,7 @@ gradient_accumulation_steps: 16
 learning_rate: 3e-7  # Reduce from 5e-7
 ```
 
-降低测试版强度：
+降低测试版本强度：
 ```yaml
 beta: 1.0  # Reduce from 2.0
 ```
@@ -168,16 +168,16 @@ beta: 1.0  # Reduce from 2.0
 sft_weight: 0.1  # Add SFT loss component
 ```
 
-**问题：偏好设置区分度不足**
+**问题：偏好设置分离度不足**
 
-提高 Beta 值与边际值：
+提高β值与边际值：
 ```yaml
 beta: 5.0            # Increase from 2.0
 gamma_beta_ratio: 0.8  # Increase from 0.5
 ```
 
 **问题：训练过程中出现内存不足**  
-降低批量大小：
+降低批次大小：
 ```yaml
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 16  # Maintain effective batch
@@ -190,21 +190,21 @@ gradient_checkpointing: true
 
 ## 高级主题
 
-**损失函数**：如需了解 Sigmoid 损失与 Hinge 损失的对比、数学公式以及各自的适用场景，请参阅 [references/loss-functions.md](references/loss-functions.md)。
+**损失函数**：有关 Sigmoid 损失与 Hinge 损失的对比、数学公式以及各自适用场景的信息，请参阅 [references/loss-functions.md](references/loss-functions.md)。
 
-**超参数调优**：关于 beta、gamma 参数及学习率的选择指南，以及针对不同模型规模的推荐方案，请查阅 [references/hyperparameters.md](references/hyperparameters.md)。
+**超参数调优**：关于 beta、gamma 参数及学习率的选择指南，以及针对不同模型规模的推荐方案，请查看 [references/hyperparameters.md](references/hyperparameters.md)。
 
-**数据集准备**：有关偏好数据格式、数据质量筛选以及自定义数据集的创建方法，可参考 [references/datasets.md](references/datasets.md)。
+**数据集准备**：有关偏好数据格式、数据质量筛选以及自定义数据集创建的方法，请参考 [references/datasets.md](references/datasets.md)。
 
 ## 硬件要求
 
-- **GPU**：推荐使用 NVIDIA A100/H100
+- **GPU**：建议使用 NVIDIA A100/H100
 - **显存需求**：
-  - 7B 模型：1 块 A100 40GB 显存（配合 DeepSpeed ZeRO-3 技术）
+  - 7B 模型：1 块 A100 40GB 显存（搭配 DeepSpeed ZeRO-3）
   - 8B 模型：2 块 A100 40GB 显存
   - 70B 模型：8 块 A100 80GB 显存
 - **单节点部署**：使用 DeepSpeed ZeRO-3 即可满足需求
-- **混合精度计算**：推荐采用 BF16 格式
+- **混合精度计算**：建议采用 BF16 格式
 
 **内存优化方案**：
 - DeepSpeed ZeRO-3（默认配置）
@@ -213,7 +213,7 @@ gradient_checkpointing: true
 
 ## 相关资源
 
-- 论文链接：https://arxiv.org/abs/2405.14734（2024 年 NeurIPS 大会发表）
+- 论文：https://arxiv.org/abs/2405.14734（2024 年 NeurIPS 大会发表）
 - GitHub 仓库：https://github.com/princeton-nlp/SimPO
 - 模型地址：https://huggingface.co/princeton-nlp
 - 对齐手册：https://github.com/huggingface/alignment-handbook
