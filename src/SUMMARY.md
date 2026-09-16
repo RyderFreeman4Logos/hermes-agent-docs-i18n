@@ -3002,6 +3002,7 @@
         - [网页搜索与内容提取](zh/website/docs/user-guide/features/web-search.md)
         - [X（Twitter）搜索功能](zh/website/docs/user-guide/features/x-search.md)
       - [Messaging](zh/website/docs/user-guide/messaging/index.md)
+        - [A2A（智能体间通信）](zh/website/docs/user-guide/messaging/a2a.md)
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
         - [钉钉集成设置](zh/website/docs/user-guide/messaging/dingtalk.md)
         - [Discord 设置](zh/website/docs/user-guide/messaging/discord.md)
