@@ -2632,6 +2632,7 @@
     - [Github]()
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
+        - [Pr Body Bugfix](zh/skills/software-development/github/templates/pr-body-bugfix.md)
     - [Hermes Agent Skill Authoring]()
       - [编写 Hermes-Agent 技能（在代码仓库中）](zh/skills/software-development/hermes-agent-skill-authoring/SKILL.md)
     - [Node Inspect Debugger]()
