@@ -2841,6 +2841,7 @@
       - [构建密钥源插件](zh/website/docs/developer-guide/secret-source-plugin.md)
       - [会话存储](zh/website/docs/developer-guide/session-storage.md)
       - [公共子代理生命周期 API](zh/website/docs/developer-guide/subagent-lifecycle-api.md)
+      - [终端环境提供者插件](zh/website/docs/developer-guide/terminal-environment-plugin.md)
       - [工具运行时](zh/website/docs/developer-guide/tools-runtime.md)
       - [轨迹格式](zh/website/docs/developer-guide/trajectory-format.md)
       - [构建视频生成提供者插件](zh/website/docs/developer-guide/video-gen-provider-plugin.md)
