@@ -1739,6 +1739,7 @@
         - [任务列表截取功能异常](zh/apps/desktop/scripts/fixtures/tasks-scroll.md)
       - [Perf](zh/apps/desktop/scripts/perf/README.md)
     - [Src]()
+      - [Debug](zh/apps/desktop/src/debug/README.md)
       - [Plugins](zh/apps/desktop/src/plugins/README.md)
         - [Radio](zh/apps/desktop/src/plugins/radio/README.md)
 - [Contributors](zh/contributors/README.md)
