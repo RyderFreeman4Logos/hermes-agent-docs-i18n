@@ -2665,6 +2665,8 @@
 - [Tests]()
   - [E2E]()
     - [Matrix Xsign Bootstrap](zh/tests/e2e/matrix_xsign_bootstrap/README.md)
+- [Tools]()
+  - [Wakewords](zh/tools/wakewords/README.md)
 - [Ui Tui](zh/ui-tui/README.md)
 - [Web](zh/web/README.md)
 - [Website](zh/website/README.md)
