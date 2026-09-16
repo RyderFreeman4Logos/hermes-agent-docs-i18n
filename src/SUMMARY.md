@@ -1988,6 +1988,7 @@
         - [验证检查清单](zh/optional-skills/creative/simple-english/references/checklist.md)
     - [Touchdesigner Mcp]()
       - [References]()
+        - [Geometry COMP 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/geometry-comp.md)
         - [GLSL 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/glsl.md)
         - [布局合成器参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/layout-compositor.md)
         - [操作员指南](zh/optional-skills/creative/touchdesigner-mcp/references/operator-tips.md)
