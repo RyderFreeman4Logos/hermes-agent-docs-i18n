@@ -2895,6 +2895,7 @@
       - [Google Vertex AI](zh/website/docs/guides/google-vertex.md)
       - [在 Mac 上运行本地大语言模型](zh/website/docs/guides/local-llm-on-mac.md)
       - [使用 Ollama 在本地运行 Hermes —— 零 API 费用](zh/website/docs/guides/local-ollama-setup.md)
+      - [使用 MCP 管理 Hermes Cloud](zh/website/docs/guides/manage-hermes-cloud-with-mcp.md)
       - [注册 Microsoft Graph 应用程序](zh/website/docs/guides/microsoft-graph-app-registration.md)
       - [从 OpenClaw 迁移](zh/website/docs/guides/migrate-from-openclaw.md)
       - [MiniMax OAuth 认证方式](zh/website/docs/guides/minimax-oauth.md)
