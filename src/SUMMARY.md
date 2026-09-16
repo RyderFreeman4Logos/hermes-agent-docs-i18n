@@ -1762,6 +1762,7 @@
 - [Evals]()
   - [Desktop Bug Campaign]()
     - [导航/Markdown 活动检测功能](zh/evals/desktop_bug_campaign/navigation-markdown-README.md)
+  - [Gateway Completion](zh/evals/gateway_completion/README.md)
 - [Gateway]()
   - [Platforms]()
     - [添加新的消息平台](zh/gateway/platforms/ADDING_A_PLATFORM.md)
