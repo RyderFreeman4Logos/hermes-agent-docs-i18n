@@ -2628,6 +2628,7 @@
       - [References]()
         - [批量操作](zh/skills/productivity/box/references/bulk-operations.md)
         - [REST API 作为备用方案](zh/skills/productivity/box/references/rest-api.md)
+        - [Webhook与事件](zh/skills/productivity/box/references/webhooks-and-events.md)
     - [Docx]()
       - [DOCX技能](zh/skills/productivity/docx/SKILL.md)
     - [Google Workspace]()
