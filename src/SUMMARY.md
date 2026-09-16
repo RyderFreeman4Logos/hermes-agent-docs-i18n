@@ -1761,6 +1761,7 @@
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Evals]()
   - [Desktop Bug Campaign]()
+    - [Markdown空白检测探针](zh/evals/desktop_bug_campaign/markdown-README.md)
     - [导航/Markdown 活动检测功能](zh/evals/desktop_bug_campaign/navigation-markdown-README.md)
   - [Gateway Completion](zh/evals/gateway_completion/README.md)
   - [Readtool]()
