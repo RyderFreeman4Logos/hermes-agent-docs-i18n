@@ -2035,6 +2035,8 @@
         - [运行应用](zh/optional-skills/devops/inference-sh-cli/references/running-apps.md)
     - [Pinggy Tunnel]()
       - [Pinggy 隧道技能](zh/optional-skills/devops/pinggy-tunnel/SKILL.md)
+    - [Setup Wizard Generator]()
+      - [设置向导生成器](zh/optional-skills/devops/setup-wizard-generator/SKILL.md)
     - [Watchers]()
       - [监视器](zh/optional-skills/devops/watchers/SKILL.md)
   - [Dogfood]()
