@@ -3059,6 +3059,7 @@
             - [PDF 处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-pdf.md)
             - [PowerPoint](zh/website/docs/user-guide/skills/bundled/productivity/productivity-powerpoint.md)
             - [Teams 会议处理流程](zh/website/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline.md)
+            - [每周回顾规划](zh/website/docs/user-guide/skills/bundled/productivity/productivity-weekly-review-planning.md)
           - [Research]()
             - [Arxiv](zh/website/docs/user-guide/skills/bundled/research/research-arxiv.md)
             - [Blogwatcher](zh/website/docs/user-guide/skills/bundled/research/research-blogwatcher.md)
