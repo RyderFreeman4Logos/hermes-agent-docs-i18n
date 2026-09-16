@@ -2654,6 +2654,7 @@
     - [Google Workspace]()
       - [Google Workspace](zh/skills/productivity/google-workspace/SKILL.md)
       - [References]()
+        - [每日简报（Gmail + 日历）](zh/skills/productivity/google-workspace/references/daily-brief.md)
         - [Gmail 搜索语法](zh/skills/productivity/google-workspace/references/gmail-search-syntax.md)
     - [Maps]()
       - [地图技能](zh/skills/productivity/maps/SKILL.md)
