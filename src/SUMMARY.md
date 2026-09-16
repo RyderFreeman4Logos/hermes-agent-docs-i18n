@@ -2413,7 +2413,7 @@
     - [Page Agent]()
       - [page-agent](zh/optional-skills/web-development/page-agent/SKILL.md)
   - [Yuanbao]()
-    - [元宝群组交互指南](zh/optional-skills/yuanbao/SKILL.md)
+    - [元宝群组交互功能](zh/optional-skills/yuanbao/SKILL.md)
 - [Plugin Catalog](zh/plugin-catalog/README.md)
 - [Plugins]()
   - [Disk Cleanup](zh/plugins/disk-cleanup/README.md)
