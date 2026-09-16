@@ -2680,6 +2680,7 @@
       - [GitHub](zh/skills/software-development/github/SKILL.md)
       - [References]()
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
+        - [输出模板说明](zh/skills/software-development/github/references/review-output-template.md)
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
         - [Example usage](zh/skills/software-development/github/templates/feature-request.md)
