@@ -1735,6 +1735,8 @@
     - [桌面设计系统](zh/apps/desktop/DESIGN.md)
     - [Scripts]()
       - [分析渲染器的输入延迟问题](zh/apps/desktop/scripts/profile-typing-lag.md)
+      - [Fixtures]()
+        - [任务列表截取功能异常](zh/apps/desktop/scripts/fixtures/tasks-scroll.md)
       - [Perf](zh/apps/desktop/scripts/perf/README.md)
     - [Src]()
       - [Plugins](zh/apps/desktop/src/plugins/README.md)
