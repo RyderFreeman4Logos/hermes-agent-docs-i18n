@@ -2454,7 +2454,7 @@
         - [Petdex — 动态宠物吉祥物](zh/skills/autonomous-ai-agents/hermes-agent/references/petdex.md)
         - [Nous Portal — 如何让第三方应用无需复制粘贴API密钥即可使用订阅服务](zh/skills/autonomous-ai-agents/hermes-agent/references/portal-auth-for-third-party-apps.md)
         - [项目上下文文件](zh/skills/autonomous-ai-agents/hermes-agent/references/project-context-files.md)
-        - [提供商与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
+        - [提供者与模型别名](zh/skills/autonomous-ai-agents/hermes-agent/references/providers-and-models.md)
         - [安全与隐私相关开关](zh/skills/autonomous-ai-agents/hermes-agent/references/security-privacy.md)
         - [斜杠命令（会话内使用）](zh/skills/autonomous-ai-agents/hermes-agent/references/slash-commands.md)
         - [主题/皮肤——创建 Hermes 颜色主题](zh/skills/autonomous-ai-agents/hermes-agent/references/themes.md)
