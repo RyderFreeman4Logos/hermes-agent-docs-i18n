@@ -2796,6 +2796,8 @@
     - [Persistence](zh/tests/conformance/persistence/README.md)
   - [E2E]()
     - [Matrix Xsign Bootstrap](zh/tests/e2e/matrix_xsign_bootstrap/README.md)
+  - [Install]()
+    - [已确认的历史升级限制](zh/tests/install/KNOWN_FAILURES.md)
 - [Tools]()
   - [Wakewords](zh/tools/wakewords/README.md)
 - [Ui Tui](zh/ui-tui/README.md)
