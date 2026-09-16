@@ -2848,6 +2848,7 @@
       - [使用技能](zh/website/docs/guides/work-with-skills.md)
       - [xAI Grok OAuth（SuperGrok / X Premium+）](zh/website/docs/guides/xai-grok-oauth.md)
     - [Integrations](zh/website/docs/integrations/index.md)
+      - [Buzz 集成](zh/website/docs/integrations/buzz.md)
       - [Nous Portal](zh/website/docs/integrations/nous-portal.md)
       - [AI 提供商](zh/website/docs/integrations/providers.md)
     - [Reference]()
