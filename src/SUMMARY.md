@@ -3137,6 +3137,7 @@
             - [Hermes S6 容器监控功能](zh/website/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision.md)
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-inference-sh-cli.md)
             - [Pinggy 隧道](zh/website/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel.md)
+            - [设置向导生成器](zh/website/docs/user-guide/skills/optional/devops/devops-setup-wizard-generator.md)
             - [监视器](zh/website/docs/user-guide/skills/optional/devops/devops-watchers.md)
           - [Dogfood]()
             - [对抗性用户体验测试](zh/website/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test.md)
