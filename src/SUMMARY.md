@@ -2743,6 +2743,7 @@
       - [架构](zh/website/docs/developer-guide/architecture.md)
       - [构建浏览器提供程序插件](zh/website/docs/developer-guide/browser-provider-plugin.md)
       - [浏览器 CDP 监控器](zh/website/docs/developer-guide/browser-supervisor.md)
+      - [代码库归属映射表](zh/website/docs/developer-guide/codebase-ownership.md)
       - [后台任务完成队列](zh/website/docs/developer-guide/completion-backlog-delivery.md)
       - [上下文压缩与缓存机制](zh/website/docs/developer-guide/context-compression-and-caching.md)
       - [构建上下文引擎插件](zh/website/docs/developer-guide/context-engine-plugin.md)
