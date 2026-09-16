@@ -3077,6 +3077,7 @@
             - [PDF 处理](zh/website/docs/user-guide/skills/bundled/productivity/productivity-pdf.md)
             - [PowerPoint](zh/website/docs/user-guide/skills/bundled/productivity/productivity-powerpoint.md)
             - [商品价格监控器](zh/website/docs/user-guide/skills/bundled/productivity/productivity-product-price-monitor.md)
+            - [会话管理助手](zh/website/docs/user-guide/skills/bundled/productivity/productivity-session-librarian.md)
             - [Teams 会议处理流程](zh/website/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline.md)
             - [每周回顾规划](zh/website/docs/user-guide/skills/bundled/productivity/productivity-weekly-review-planning.md)
           - [Research]()
