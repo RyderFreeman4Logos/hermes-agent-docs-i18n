@@ -1773,6 +1773,7 @@
   - [Readtool](zh/evals/readtool/README.md)
     - [Results]()
       - [Read-Tool Eval — 结果日志](zh/evals/readtool/results/SUMMARY.md)
+  - [Session Search Schema](zh/evals/session_search_schema/README.md)
 - [Gateway]()
   - [Platforms]()
     - [添加新的消息平台](zh/gateway/platforms/ADDING_A_PLATFORM.md)
