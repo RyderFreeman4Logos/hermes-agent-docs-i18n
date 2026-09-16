@@ -2677,6 +2677,7 @@
     - [Grounded Citations]()
       - [References]()
         - [不同输出目标对应的引用格式](zh/skills/research/grounded-citations/references/citation-formats.md)
+        - [为何要使用编号的账本ID（研究依据）](zh/skills/research/grounded-citations/references/grounding-rationale.md)
     - [Llm Wiki]()
       - [Karpathy的LLM维基](zh/skills/research/llm-wiki/SKILL.md)
   - [Social Media]()
