@@ -2972,6 +2972,7 @@
         - [功能概览](zh/website/docs/user-guide/features/overview.md)
         - [性格与 SOUL.md](zh/website/docs/user-guide/features/personality.md)
         - [宠物插件](zh/website/docs/user-guide/features/pets.md)
+        - [插件目录](zh/website/docs/user-guide/features/plugin-catalog.md)
         - [插件](zh/website/docs/user-guide/features/plugins.md)
         - [提供商路由功能](zh/website/docs/user-guide/features/provider-routing.md)
         - [技能系统](zh/website/docs/user-guide/features/skills.md)
