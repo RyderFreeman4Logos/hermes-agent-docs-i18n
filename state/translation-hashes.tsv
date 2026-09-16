@@ -1025,6 +1025,7 @@ website/docs/user-guide/skills/bundled/software-development/software-development
 website/docs/user-guide/skills/bundled/software-development/software-development-dogfood.md	676c01ba1e7cde1a4d3ea2a13a85fc221b385e7f11b8f59249e9f83ab9bcba47
 website/docs/user-guide/skills/bundled/software-development/software-development-github.md	90d2f91e85e4c75dc2ea13393f0c24ea996013966625e9aef283b31d4fe88589
 website/docs/user-guide/skills/bundled/software-development/software-development-hermes-agent-skill-authoring.md	4a43ea447087f385dcfb9caa6dc1e99d2f3d5be4dcd35d3125e94752e63e037e
+website/docs/user-guide/skills/bundled/software-development/software-development-inspecting-hermes-desktop-dom.md	262a6a1694fadecba74ae69dcf82921251104134567cc1080dadb02d10d5d672
 website/docs/user-guide/skills/bundled/software-development/software-development-node-inspect-debugger.md	fff412e321e5033699cc30738a0f17f26f791084889d041b06741ae9513c36fb
 website/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy.md	22739f630283d41155e521b61053d192051934d9274ee01de35ec8e2ed8bcc10
 website/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review.md	d572eb05286668674534a7ef52a70d6cd5ab1bc1046865b966a6040553ebd303
