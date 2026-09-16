@@ -8,25 +8,25 @@ description: "Delegate coding to OpenAI Codex CLI (features, PRs)"
 
 # Codex
 
-通过 OpenAI Codex CLI 授权任务进行编程（支持功能开发与代码提交）。
+通过 OpenAI Codex CLI（功能、Pull Request 功能）来委托编程任务。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/autonomous-ai-agents/codex` |
-| 版本 | `1.0.0` |
+| 路径 | `skills/autonomous-ai-agents\codex` |
+| 版本 | `1.0.1` |
 | 开发者 | Hermes Agent |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Coding-Agent`、`Codex`、`OpenAI`、`Code-Review`、`Refactoring` |
 | 相关技能 | [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code)、[`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。当该技能处于激活状态时，智能体将依据此内容执行指令。
 :::
 
 # Codex CLI
@@ -35,23 +35,23 @@ description: "Delegate coding to OpenAI Codex CLI (features, PRs)"
 
 ## 适用场景
 
-- 功能开发
+- 开发新功能
 - 代码重构
-- 代码提交审核
-- 批量问题修复
+- Pull Request 审核
+- 批量修复问题
 
-使用前需准备 Codex CLI 及对应的 Git 仓库。
+使用时需要具备 codex CLI 工具以及 Git 仓库。
 
 ## 先决条件
 
-- 已安装 Codex：`npm install -g @openai/codex`
-- 已配置 OpenAI 认证信息：可使用 `OPENAI_API_KEY`，或通过 Codex CLI 登录流程获取的 Codex OAuth 凭证
-- **必须运行在 Git 仓库内部**——Codex 不支持在仓库外部运行
-- 在终端调用时需添加 `pty=true` 参数——因为 Codex 是交互式终端应用
+- 已安装 Codex：`npm install -g @openai/codex`  
+- 已配置 OpenAI 认证：可使用 `OPENAI_API_KEY`，或通过 Codex CLI 登录流程获取的 Codex OAuth 凭据  
+- **必须在 Git 仓库内部运行**——Codex 不支持在仓库外部执行  
+- 在终端调用时需添加 `pty=true` 参数——因为 Codex 是一款交互式终端应用  
 
-对于 Hermes 本身，若设置 `model.provider: openai-codex`，则会在执行 `hermes auth add openai-codex` 后使用来自 `~/.hermes/auth.json` 的 Hermes 管理型 Codex OAuth 凭证。而对于独立的 Codex CLI，有效的 CLI OAuth 会存储在 `~/.codex/auth.json` 文件中；请勿仅因未找到 `OPENAI_API_KEY` 就判定 Codex 认证缺失。
+对于 Hermes 本身，若设置 `model.provider: openai-codex`，则会在执行 `hermes auth add openai-codex` 后，使用来自 `~/.hermes/auth.json` 的由 Hermes 管理的 Codex OAuth 凭据。而对于独立的 Codex CLI，有效的 CLI OAuth 会存储在 `~/.codex/auth.json` 中；请勿仅因未找到 `OPENAI_API_KEY` 就判定 Codex 认证缺失。  
 
-## 单次任务处理
+## 单次任务
 
 ```
 terminal(command="codex exec 'Add dark mode toggle to settings'", workdir="~/project", pty=true)
@@ -66,7 +66,7 @@ terminal(command="cd $(mktemp -d) && git init && codex exec 'Build a snake game 
 
 ```
 # Start in background with PTY
-terminal(command="codex exec --full-auto 'Refactor the auth module'", workdir="~/project", background=true, pty=true)
+terminal(command="codex exec --sandbox workspace-write 'Refactor the auth module'", workdir="~/project", background=true, pty=true)
 # Returns session_id
 
 # Monitor progress
@@ -80,26 +80,28 @@ process(action="submit", session_id="<id>", data="yes")
 process(action="kill", session_id="<id>")
 ```
 
-## 主要标志位
+## 主要标志参数
 
-| 标志位 | 效果 |
-|------|------|
-| `exec "prompt"` | 单次执行，任务完成后退出 |
-| `--full-auto` | 使用沙箱机制，但会自动批准工作区中的文件更改 |
-| `--yolo` | 不使用沙箱且无需审批（速度最快，但也最危险） |
-| `--sandbox danger-full-access` | 不启用 Codex 沙箱；当主机服务环境破坏了隔离层时非常有用 |
+| 标志参数 | 效果 |
+|----------|------|
+| `exec "prompt"` | 单次执行，完成后立即退出 |
+| `--sandbox workspace-write` (`-s`) | 启用沙箱机制，但自动批准工作区内的文件修改（推荐的自动构建模式） |
+| `--dangerously-bypass-approvals-and-sandbox` | 关闭沙箱与审批流程（速度最快，风险最高；`--yolo` 仍可作为隐藏别名使用） |
+| `--sandbox danger-full-access` | 关闭 Codex 沙箱机制；当主机服务上下文破坏了隔离层时十分有用 |
+
+> **已废弃**：`--full-auto` 参数仍然可用，但实时 CLI 会提示建议改用 `--sandbox workspace-write`。
 
 ## Hermes Gateway 的注意事项
 
-当从 Hermes gateway 或服务环境（例如由 Telegram 驱动的智能体会话）调用 Codex CLI 时，即使相同的命令在用户的交互式 shell 中可以正常运行，Codex 的 `workspace-write` 沙箱机制仍可能失效。典型的异常表现为与隔离层/用户命名空间相关的错误，例如 `setting up uid map: Permission denied` 或 `loopback: Failed RTM_NEWADDR: Operation not permitted`。
+当从 Hermes gateway 或服务上下文调用 Codex CLI 时（例如由 Telegram 驱动的智能体会话），即便相同的命令在用户的交互式 shell 中可以正常运行，Codex 的 `workspace-write` 沙箱机制仍可能失效。典型的错误表现为隔离层/用户命名空间相关的问题，如 `setting up uid map: Permission denied` 或 `loopback: Failed RTM_NEWADDR: Operation not permitted`。
 
-在这种情况下，建议使用：
+在这种情况下，建议优先使用：
 
 ```
 codex exec --sandbox danger-full-access "<task>"
 ```
 
-不妨采用进程隔离作为安全防护层：明确指定`workdir`，在启动前确保Git状态整洁，缩小任务提示范围，通过`git diff`进行审查，执行针对性测试，并在提交重大变更之前由人工或智能代理进行确认。
+不妨采用进程隔离作为安全防护层：明确指定`workdir`，在启动前确保Git状态整洁，缩小任务提示范围，通过`git diff`进行审查，执行有针对性的测试，并在对重大变更进行提交之前，由人工或智能代理进行最终确认。
 
 ## PR审查
 
@@ -117,8 +119,8 @@ terminal(command="git worktree add -b fix/issue-78 /tmp/issue-78 main", workdir=
 terminal(command="git worktree add -b fix/issue-99 /tmp/issue-99 main", workdir="~/project")
 
 # Launch Codex in each
-terminal(command="codex --yolo exec 'Fix issue #78: <description>. Commit when done.'", workdir="/tmp/issue-78", background=true, pty=true)
-terminal(command="codex --yolo exec 'Fix issue #99: <description>. Commit when done.'", workdir="/tmp/issue-99", background=true, pty=true)
+terminal(command="codex --sandbox workspace-write exec 'Fix issue #78: <description>. Commit when done.'", workdir="/tmp/issue-78", background=true, pty=true)
+terminal(command="codex --sandbox workspace-write exec 'Fix issue #99: <description>. Commit when done.'", workdir="/tmp/issue-99", background=true, pty=true)
 
 # Monitor
 process(action="list")
@@ -150,7 +152,7 @@ terminal(command="gh pr comment 86 --body '<review>'", workdir="~/project")
 1. **始终使用 `pty=true`** — Codex 是一款交互式终端应用，若没有伪终端（PTY）则会挂起。
 2. **需要 Git 仓库** — Codex 无法在非 Git 目录下运行。如需临时创建环境，可使用 `mktemp -d && git init` 命令。
 3. **一次性任务请使用 `exec`** — 使用 `codex exec "prompt"` 可让命令正常运行并立即退出。
-4. **构建任务使用 `--full-auto`** — 该选项可在沙箱环境中自动批准所有更改。
-5. **长时间任务请在后台运行** — 请使用 `background=true` 参数，并通过 `process` 工具进行监控。
-6. **避免干扰** — 通过 `poll`/`log` 方法进行监控，对长时间运行的任务保持耐心。
-7. **并行运行也可** — 如需批量处理任务，可同时启动多个 Codex 进程。
+4. **构建时使用 `--sandbox workspace-write`** — 该选项会自动批准在沙箱环境中的更改（此功能已不再推荐使用 `--full-auto`）。
+5. **长时间任务请在后台运行** — 使用 `background=true` 参数，并通过 `process` 工具进行监控。
+6. **避免干扰** — 通过 `poll`/`log` 功能进行监控，对长时间运行的任务保持耐心。
+7. **并行运行也是可行的** — 如需批量处理任务，可同时启动多个 Codex 进程。
