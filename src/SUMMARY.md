@@ -2363,6 +2363,8 @@
         - [渗透测试报告](zh/optional-skills/security/web-pentest/templates/pentest-report.md)
   - [Smart Home]()
     - [Description](zh/optional-skills/smart-home/DESCRIPTION.md)
+    - [Openhue]()
+      - [OpenHue CLI](zh/optional-skills/smart-home/openhue/SKILL.md)
   - [Software Development]()
     - [Code Wiki]()
       - [Code Wiki 技能](zh/optional-skills/software-development/code-wiki/SKILL.md)
