@@ -1988,6 +1988,7 @@
       - [Hermes s6-overlay 容器监控功能](zh/optional-skills/devops/hermes-s6-container-supervision/SKILL.md)
     - [Inference Sh Cli]()
       - [References]()
+        - [发现应用](zh/optional-skills/devops/inference-sh-cli/references/app-discovery.md)
         - [认证与设置](zh/optional-skills/devops/inference-sh-cli/references/authentication.md)
     - [Pinggy Tunnel]()
       - [Pinggy 隧道技能](zh/optional-skills/devops/pinggy-tunnel/SKILL.md)
