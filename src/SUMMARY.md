@@ -2012,6 +2012,7 @@
     - [Agentmail]()
       - [AgentMail — 智能体专属邮箱收件箱](zh/optional-skills/email/agentmail/SKILL.md)
       - [References]()
+        - [AgentMail Core](zh/optional-skills/email/agentmail/references/core.md)
         - [AgentMail MCP](zh/optional-skills/email/agentmail/references/mcp.md)
         - [AgentMail 自签注功能](zh/optional-skills/email/agentmail/references/signup.md)
         - [AgentMail Webhook 功能](zh/optional-skills/email/agentmail/references/webhooks.md)
