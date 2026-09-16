@@ -2330,6 +2330,8 @@
   - [Research]()
     - [Bioinformatics]()
       - [生物信息学技能门户](zh/optional-skills/research/bioinformatics/SKILL.md)
+    - [Blogwatcher]()
+      - [Blogwatcher](zh/optional-skills/research/blogwatcher/SKILL.md)
     - [Darwinian Evolver]()
       - [达尔文进化器](zh/optional-skills/research/darwinian-evolver/SKILL.md)
     - [Domain Intel]()
