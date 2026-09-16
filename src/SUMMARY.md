@@ -1753,6 +1753,7 @@
   - [根因分析：执行 `hermes update` 后 SSL 证书包损坏](zh/docs/rca-ssl-cacert-post-git-pull.md)
   - [Relay ↔ Connector 接口规范（v1，实验性版本）](zh/docs/relay-connector-contract.md)
   - [会话生命周期](zh/docs/session-lifecycle.md)
+  - [流式文本转语音功能](zh/docs/streaming-tts.md)
   - [Design]()
     - [配置文件构建器 —— 原生仪表板式、功能完备的配置创建工具](zh/docs/design/profile-builder.md)
   - [Kanban]()
