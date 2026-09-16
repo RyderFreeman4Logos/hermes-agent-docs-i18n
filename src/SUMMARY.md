@@ -1762,6 +1762,7 @@
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Evals]()
   - [Codex Echo](zh/evals/codex_echo/README.md)
+  - [Core Tool Deferral](zh/evals/core_tool_deferral/README.md)
   - [Delegation Group Schema](zh/evals/delegation_group_schema/README.md)
   - [Desktop Pane Fixture](zh/evals/desktop-pane-fixture/README.md)
   - [Desktop Bug Campaign]()
