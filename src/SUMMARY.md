@@ -2682,6 +2682,8 @@
       - [Microsoft Teams 会议处理流程](zh/skills/productivity/teams-meeting-pipeline/SKILL.md)
     - [Xlsx]()
       - [XLSX 技能](zh/skills/productivity/xlsx/SKILL.md)
+      - [References]()
+        - [基于引用信息的结构重排（xlsx_restructure.py）](zh/skills/productivity/xlsx/references/restructuring.md)
   - [Research]()
     - [Description](zh/skills/research/DESCRIPTION.md)
     - [Arxiv]()
