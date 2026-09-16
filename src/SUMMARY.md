@@ -2013,7 +2013,7 @@
       - [对抗性用户体验测试](zh/optional-skills/dogfood/adversarial-ux-test/SKILL.md)
   - [Email]()
     - [Agentmail]()
-      - [AgentMail — 智能体专属邮箱收件箱](zh/optional-skills/email/agentmail/SKILL.md)
+      - [AgentMail 技能](zh/optional-skills/email/agentmail/SKILL.md)
       - [References]()
         - [AgentMail Core](zh/optional-skills/email/agentmail/references/core.md)
         - [AgentMail MCP](zh/optional-skills/email/agentmail/references/mcp.md)
