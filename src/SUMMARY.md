@@ -3127,6 +3127,8 @@
             - [OSS取证分析](zh/website/docs/user-guide/skills/optional/security/security-oss-forensics.md)
             - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
             - [网络渗透测试](zh/website/docs/user-guide/skills/optional/security/security-web-pentest.md)
+          - [Smart Home]()
+            - [Openhue](zh/website/docs/user-guide/skills/optional/smart-home/smart-home-openhue.md)
           - [Software Development]()
             - [Code Wiki](zh/website/docs/user-guide/skills/optional/software-development/software-development-code-wiki.md)
             - [REST GraphQL 调试](zh/website/docs/user-guide/skills/optional/software-development/software-development-rest-graphql-debug.md)
