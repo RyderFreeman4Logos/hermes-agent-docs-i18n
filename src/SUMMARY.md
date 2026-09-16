@@ -2640,6 +2640,8 @@
       - [系统化调试方法](zh/skills/software-development/systematic-debugging/SKILL.md)
     - [Test Driven Development]()
       - [测试驱动开发（TDD）](zh/skills/software-development/test-driven-development/SKILL.md)
+  - [Web]()
+    - [Description](zh/skills/web/DESCRIPTION.md)
 - [Tests]()
   - [E2E]()
     - [Matrix Xsign Bootstrap](zh/tests/e2e/matrix_xsign_bootstrap/README.md)
