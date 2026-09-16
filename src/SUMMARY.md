@@ -2632,6 +2632,7 @@
     - [Github]()
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
+        - [Example usage](zh/skills/software-development/github/templates/feature-request.md)
         - [Pr Body Bugfix](zh/skills/software-development/github/templates/pr-body-bugfix.md)
         - [Pr Body Feature](zh/skills/software-development/github/templates/pr-body-feature.md)
     - [Hermes Agent Skill Authoring]()
