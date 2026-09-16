@@ -8,50 +8,50 @@ description: "Fast vector similarity search at billion scale"
 
 # Faiss
 
-支持百亿级数据量的快速向量相似度搜索引擎。
+支持数十亿级数据量的快速向量相似度搜索引擎。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/mlops/faiss` 安装 |
-| 路径 | `optional-skills/mlops/faiss` |
+| 路径 | `optional-skills/mlops\faiss` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `faiss-cpu`, `faiss-gpu`, `numpy` |
 | 支持平台 | linux, macos |
-| 标签 | `RAG`, `FAISS`, `相似度搜索`, `向量搜索`, `Facebook AI`, `GPU加速`, `百亿级处理`, `K-NN`, `HNSW`, `高性能`, `大规模处理` |
+| 标签 | `RAG`, `FAISS`, `相似度搜索`, `向量搜索`, `Facebook AI`, `GPU加速`, `数十亿级处理`, `K-NN`, `HNSW`, `高性能`, `大规模处理` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
-# FAISS —— 高效相似度搜索工具
+# FAISS - 高效相似度搜索引擎
 
-Facebook AI 开发的用于百亿级向量相似度搜索的库。
+Facebook AI 开发的用于处理数十亿级向量相似度搜索的库。
 
 ## 何时使用 FAISS
 
-**以下情况建议使用 FAISS：**
-- 需要对大规模向量数据集（数百万至数十亿条）进行快速相似度搜索
-- 需要 GPU 加速支持
-- 仅需进行纯向量相似度比较（无需元数据过滤）
+**以下情况适合使用 FAISS：**
+- 需要对大规模向量数据集（数百万/数十亿条）进行快速相似度搜索
+- 需要 GPU 加速
+- 仅需进行纯向量相似度比较（无需过滤元数据）
 - 对高吞吐量与低延迟有严格要求
 - 需要对嵌入向量进行离线/批量处理
 
-**相关数据：**
-- **在 GitHub 上拥有 31,700 多个星标**
+**核心优势：**
+- **拥有 31,700 多个 GitHub 星标**
 - 由 Meta/Facebook AI Research 团队开发
-- **可处理数十亿条向量数据**
+- **可处理数十亿级向量数据**
 - 基于 **C++** 构建，并提供 Python 接口
 
-**如需其他替代方案，可选择：**
-- **Chroma/Pinecone**：适用于需要元数据过滤的场景
-- **Weaviate**：需要完整数据库功能时使用
-- **Annoy**：功能更简单，但功能点较少
+**其他可选方案：**
+- **Chroma/Pinecone**：需要元数据过滤功能  
+- **Weaviate**：需要完整的数据库功能  
+- **Annoy**：更为简单，功能较少  
 
 ## 快速入门
 
@@ -91,7 +91,7 @@ print(f"Distances: {distances}")
 
 ## 索引类型
 
-### 1. 平面型（精确搜索）
+### 1. 平面索引（精确搜索）
 
 ```python
 # L2 (Euclidean) distance
@@ -103,7 +103,7 @@ index = faiss.IndexFlatIP(d)
 # Slowest, most accurate
 ```
 
-### 2. IVF（倒序文件）——快速近似模式
+### 2. IVF（倒序文件）模式——快速近似检索
 
 ```python
 # Create quantizer
@@ -124,7 +124,7 @@ index.nprobe = 10
 distances, indices = index.search(query, k)
 ```
 
-### 3. HNSW（分层新稀疏向量索引）——最佳质量与速度平衡方案
+### 3. HNSW（分层新维搜索）——最佳质量与速度平衡方案
 
 ```python
 # HNSW index
@@ -178,7 +178,7 @@ index_gpu = faiss.index_cpu_to_all_gpus(index_cpu)
 # 10-100× faster than CPU
 ```
 
-## 与LangChain的集成
+## 与 LangChain 的集成
 
 ```python
 from langchain_community.vectorstores import FAISS
@@ -216,25 +216,25 @@ vector_store = FaissVectorStore(faiss_index=faiss_index)
 
 ## 最佳实践
 
-1. **选择合适的索引类型**：数据量小于1万时使用Flat索引，1万至100万条数据时选用IVF索引，若对查询精度有较高要求则推荐HNSW索引。
-2. **进行余弦相似度归一化处理**：使用IndexFlatIP时需对向量数据进行归一化。
+1. **选择合适的索引类型**：数据量小于1万时使用Flat索引，1万至100万条数据时选用IVF索引，追求高精度时可使用HNSW索引。
+2. **进行余弦值归一化处理**：对向量进行归一化后，再使用IndexFlatIP索引。
 3. **大规模数据集优先使用GPU**：处理速度可提升10至100倍。
 4. **保存训练好的索引**：模型训练成本较高，建议保存已训练完成的索引以节省资源。
-5. **调整nprobe/ef_search参数**：在速度与查询精度之间找到最佳平衡点。
-6. **监控内存使用情况**：处理大规模数据集时建议采用PQ索引以控制内存占用。
-7. **批量执行查询**：有助于更高效地利用GPU资源。
+5. **调整nprobe/ef_search参数**：在速度与准确率之间找到最佳平衡点。
+6. **监控内存使用情况**：处理大规模数据集时需特别注意内存占用。
+7. **批量处理查询请求**：有助于更高效地利用GPU资源。
 
 ## 性能表现
 
-| 索引类型 | 构建时间 | 查询速度 | 内存占用 | 查询精度 |
-|----------|----------|----------|----------|----------|
-| Flat     | 快       | 慢       | 高       | 100%     |
-| IVF      | 中等     | 快       | 中等     | 95-99%   |
-| HNSW     | 慢       | 最快     | 高       | 99%      |
-| PQ       | 中等     | 快       | 低       | 90-95%   |
+| 索引类型 | 构建时间 | 查询速度 | 内存占用 | 准确率 |
+|----------|----------|----------|----------|--------|
+| Flat | 快 | 慢 | 高 | 100% |
+| IVF | 中等 | 快 | 中等 | 95-99% |
+| HNSW | 慢 | 最快 | 高 | 99% |
+| PQ | 中等 | 快 | 低 | 90-95% |
 
 ## 相关资源
 
 - **GitHub仓库**：https://github.com/facebookresearch/faiss ⭐ 31,700+个星标
-- **文档Wiki**：https://github.com/facebookresearch/faiss/wiki
+- **官方文档**：https://github.com/facebookresearch/faiss/wiki
 - **许可证**：MIT许可证
