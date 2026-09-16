@@ -1768,6 +1768,7 @@
     - [Docker部署环境下的网络出口隔离](zh/docs/security/network-egress-isolation.md)
 - [Evals]()
   - [输出容量限制移除：作用范围与本地证据](zh/evals/output_caps_scope.md)
+  - [Browser Use](zh/evals/browser_use/README.md)
   - [Codebase Navigability](zh/evals/codebase_navigability/README.md)
   - [Codex Echo](zh/evals/codex_echo/README.md)
   - [Compaction](zh/evals/compaction/README.md)
