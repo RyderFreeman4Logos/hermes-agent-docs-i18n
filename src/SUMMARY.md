@@ -3246,7 +3246,7 @@
             - [Instructor](zh/website/docs/user-guide/skills/optional/mlops/mlops-instructor.md)
             - [Lambda Labs GPU 云服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
-            - [Modal Serverless GPU](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
+            - [Modal](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
             - [Huggingface Hub](zh/website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md)
             - [Nemo Curator](zh/website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md)
             - [Obliteratus](zh/website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md)

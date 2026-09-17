@@ -1,61 +1,61 @@
 ---
-title: "Modal Serverless Gpu — Serverless GPU cloud platform for running ML workloads"
-sidebar_label: "Modal Serverless Gpu"
-description: "Serverless GPU cloud platform for running ML workloads"
+title: "Modal — Serverless GPU cloud for ML jobs and model APIs"
+sidebar_label: "Modal"
+description: "Serverless GPU cloud for ML jobs and model APIs"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# Modal Serverless GPU
+# Modal
 
-专为运行机器学习工作负载打造的服务器less GPU云平台。当您需要无需管理基础设施即可按需使用GPU、将机器学习模型部署为API，或运行具备自动扩展功能的批处理作业时，可选用此平台。
+专为机器学习任务和模型 API 设计的无服务器 GPU 云平台。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/mlops/modal` 安装 |
-| 路径 | `optional-skills/mlops/modal` |
-| 版本 | `1.0.0` |
+| 来源 | 可选 —— 使用 `hermes skills install official/mlops/modal` 安装 |
+| 路径 | `optional-skills/mlops\modal` |
+| 版本 | `1.0.1` |
 | 开发者 | Orchestra Research |
-| 许可证 | MIT |
-| 依赖项 | `modal>=0.64.0` |
+| 许可协议 | MIT |
+| 依赖项 | `modal>=1.0` |
 | 支持平台 | linux、macos、windows |
-| 标签 | `基础设施`、`服务器less`、`GPU`、`云服务`、`部署`、`Modal` |
+| 标签 | `基础设施`, `无服务器`, `GPU`, `云服务`, `部署`, `Modal` |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时Hermes所加载的完整技能定义。技能处于激活状态时，代理程序将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指令。
 :::
 
-# Modal Serverless GPU
+# Modal 无服务器 GPU
 
-关于在Modal的服务器less GPU云平台上运行机器学习工作负载的全面指南。
+关于在 Modal 的无服务器 GPU 云平台上运行机器学习工作负载的指南。
 
-## 何时选择Modal
+## 何时使用 Modal
 
-**以下情况适合使用Modal：**
-- 在无需管理基础设施的情况下运行对GPU性能要求较高的机器学习工作负载
-- 将机器学习模型部署为具备自动扩展功能的API
-- 运行批处理作业（包括模型训练、推理及数据处理）
-- 需要按使用时长计费的GPU资源，且无需承担空闲成本
-- 快速构建机器学习应用原型
-- 执行定时任务（类似cron的作业调度）
+**适合使用 Modal 的场景包括：**
+- 运行对 GPU 性能要求高的机器学习任务，且无需自行管理基础设施
+- 将机器学习模型部署为可自动扩展的 API
+- 执行批处理任务（训练、推理、数据处理）
+- 需要按秒计费的 GPU 使用价格，且无闲置成本
+- 快速开发机器学习应用原型
+- 运行定时任务（类似 cron 的工作负载）
 
 **核心功能：**
-- **服务器less GPU**：支持按需使用T4、L4、A10G、L40S、A100、H100、H200、B200等型号的GPU
-- **原生Python支持**：可通过Python代码定义基础设施，无需使用YAML格式
-- **自动扩展**：可瞬间将资源扩展至零，或扩展至100多台GPU
-- **亚秒级冷启动**：基于Rust技术的基础设施，可实现快速容器启动
-- **容器缓存**：对镜像层进行缓存，从而加快迭代速度
-- **Web端点**：可将函数部署为REST API，并实现无中断更新
+- **无服务器 GPU**：支持按需使用的 T4、L4、A10G、L40S、A100、H100、H200、B200 等型号  
+- **原生 Python 支持**：通过 Python 代码定义基础设施，无需 YAML 配置  
+- **自动扩展**：可瞬间将资源扩展至零，或扩展至 100 多块 GPU  
+- **亚秒级冷启动**：基于 Rust 的基础设施，实现快速容器启动  
+- **容器缓存**：对镜像层进行缓存，加速迭代速度  
+- **Web 接口**：可将函数部署为 REST API，并实现无停机更新  
 
-**如需其他替代方案，请考虑：**
-- **RunPod**：适用于需要持久化状态的长时间运行的容器任务
-- **Lambda Labs**：适用于预留GPU实例的场景
-- **SkyPilot**：适用于多云环境下的任务编排及成本优化
-- **Kubernetes**：适用于复杂的多服务架构
+**如需其他替代方案：**  
+- **RunPod**：适用于需要持久化状态的长时间运行的容器  
+- **Lambda Labs**：适用于预留 GPU 实例的场景  
+- **SkyPilot**：适用于多云编排及成本优化需求  
+- **Kubernetes**：适用于复杂的多服务架构  
 
 ## 快速入门
 
@@ -114,9 +114,9 @@ def main():
 ### 主要组件
 
 | 组件 | 功能 |
-|------|------|
+|-------|------|
 | `App` | 函数与资源的容器 |
-| `Function` | 具有计算规格的无服务器函数 |
+| `Function` | 具有计算配置的无服务器函数 |
 | `Cls` | 带有生命周期钩子的基于类的函数 |
 | `Image` | 容器镜像定义 |
 | `Volume` | 模型/数据的持久化存储 |
@@ -135,7 +135,7 @@ def main():
 ### 可用 GPU
 
 | GPU | VRAM容量 | 最佳适用场景 |
-|-----|---------|------------|
+|-----|---------|--------------|
 | `T4` | 16GB | 预算型推理任务及小型模型 |
 | `L4` | 24GB | 推理任务，采用Ada Lovelace架构 |
 | `A10G` | 24GB | 训练/推理任务，性能是T4的3.3倍 |
@@ -244,7 +244,6 @@ async def batch_predict(inputs: list[str]) -> list[dict]:
     # Inputs automatically batched
     return model.batch_predict(inputs)
 ```
-
 ## 密钥管理
 
 ```bash
@@ -259,7 +258,7 @@ def download_model():
     token = os.environ["HF_TOKEN"]
 ```
 
-## 日程安排
+## 安排调度时间
 
 ```python
 @app.function(schedule=modal.Cron("0 0 * * *"))  # Daily midnight
@@ -276,10 +275,10 @@ def hourly_job():
 ### 缓解冷启动问题
 
 ```python
-@app.function(
-    container_idle_timeout=300,  # Keep warm 5 min
-    allow_concurrent_inputs=10,  # Handle concurrent requests
-)
+# Modal 1.0 autoscaler params: scaledown_window (was container_idle_timeout).
+# Input concurrency moved to the @modal.concurrent decorator.
+@app.function(scaledown_window=300)  # Keep warm 5 min
+@modal.concurrent(max_inputs=10)     # Handle concurrent requests per container
 def inference():
     pass
 ```
@@ -321,13 +320,20 @@ def run_parallel():
     memory=32768,              # 32GB RAM
     cpu=4,                     # 4 CPU cores
     timeout=3600,              # 1 hour max
-    container_idle_timeout=120,# Keep warm 2 min
+    scaledown_window=120,      # Keep warm 2 min (was container_idle_timeout)
     retries=3,                 # Retry on failure
-    concurrency_limit=10,      # Max concurrent containers
+    max_containers=10,         # Max concurrent containers (was concurrency_limit)
+    min_containers=1,          # Keep N containers warm (was keep_warm)
 )
 def my_function():
     pass
 ```
+
+> **Modal 1.0 自动扩缩容功能名称变更**（详情请参阅[迁移指南](https://modal.com/docs/guide/modal-1-0-migration)）：
+> - `container_idle_timeout` → `scaledown_window`
+> - `concurrency_limit` → `max_containers`
+> - `keep_warm` → `min_containers`
+> - `allow_concurrent_inputs=N` → `@modal.concurrent(max_inputs=N)` 装饰器
 
 ## 调试
 
@@ -344,15 +350,15 @@ if __name__ == "__main__":
 
 | 问题 | 解决方案 |
 |-------|----------|
-| 冷启动延迟 | 增大 `container_idle_timeout` 的值，使用 `@modal.enter()` |
+| 冷启动延迟 | 增大 `scaledown_window` 的值，使用 `@modal.enter()` |
 | GPU 内存不足 | 使用容量更大的 GPU（如 `A100-80GB`），启用梯度检查点机制 |
-| 图像构建失败 | 固定依赖版本，检查 CUDA 兼容性 |
+| 图像构建失败 | 固定依赖项版本，检查 CUDA 兼容性 |
 | 超时错误 | 增大 `timeout` 的值，添加检查点功能 |
 
 ## 参考资料
 
-- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/modal/references/advanced-usage.md)** - 多 GPU 使用、分布式训练、成本优化
-- **[故障排查](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/modal/references/troubleshooting.md)** - 常见问题及解决方案
+- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\modal/references/advanced-usage.md)** - 多 GPU 使用、分布式训练、成本优化
+- **[故障排除](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\modal/references/troubleshooting.md)** - 常见问题及解决方案
 
 ## 资源链接
 
