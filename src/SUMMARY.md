@@ -3256,6 +3256,7 @@
             - [Huggingface Tokenizers](zh/website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md)
             - [Llama Cpp](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md)
             - [Outlines](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md)
+            - [提供 Llms Vllm 服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-serving-llms-vllm.md)
             - [Instructor](zh/website/docs/user-guide/skills/optional/mlops/mlops-instructor.md)
             - [Lambda Labs GPU 云服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
