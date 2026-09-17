@@ -3102,6 +3102,8 @@
             - [Sketch](zh/website/docs/user-guide/skills/bundled/creative/creative-sketch.md)
             - [歌曲创作与 AI 音乐](zh/website/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music.md)
             - [Touchdesigner Mcp](zh/website/docs/user-guide/skills/bundled/creative/creative-touchdesigner-mcp.md)
+          - [Devops]()
+            - [SDLC 审核](zh/website/docs/user-guide/skills/bundled/devops/devops-sdlc-review.md)
           - [Email]()
             - [邮箱内容分类处理](zh/website/docs/user-guide/skills/bundled/email/email-email-inbox-triage.md)
             - [Himalaya](zh/website/docs/user-guide/skills/bundled/email/email-himalaya.md)
