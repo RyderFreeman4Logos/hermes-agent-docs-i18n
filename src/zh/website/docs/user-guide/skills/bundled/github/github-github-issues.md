@@ -23,20 +23,20 @@ description: "Create, triage, label, assign GitHub issues via gh or REST"
 | 标签 | `GitHub`、`Issues`、`项目管理`、`缺陷追踪`、`问题分类` |
 | 相关技能 | [`github-auth`](/docs/user-guide/skills/bundled/github/github-github-auth)、[`github-pr-workflow`](/docs/user-guide/skills/bundled/github/github-github-pr-workflow) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能启用后，Agent 就会依据这些内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，代理程序将依据此内容执行操作。
 :::
 
 # GitHub 问题处理
 
-创建、搜索、分类并管理 GitHub 问题。各部分首先介绍 `gh` 命令的使用方式，随后提供 `curl` 的备用方案。
+创建、搜索、分类并管理 GitHub 问题。各部分首先介绍 `gh` 命令的使用方法，随后提供 `curl` 的备用方案。
 
 ## 先决条件
 
 - 已完成 GitHub 认证（参见 `github-auth` 技能）
-- 处于包含 GitHub 远端仓库的 git 仓库中，或需明确指定仓库地址
+- 处于包含 GitHub 远程仓库的 git 项目目录中，或需明确指定仓库地址
 
 ### 设置步骤
 
@@ -49,7 +49,7 @@ else
     if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-      GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
+      GITHUB_TOKEN=$(uv run python3 "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
     fi
   fi
 fi
@@ -289,9 +289,9 @@ curl -s -X PATCH \
   -d '{"state": "open"}'
 ```
 
-### 将问题关联到 Pull Request
+### 将问题关联到 PR 中
 
-当 Pull Request 合并时，若其正文中含有相应关键词，相关问题将会自动关闭：
+当 PR 合并时，若其正文中含有指定关键词，相关问题将会自动关闭：
 
 ```
 Closes #42
@@ -299,9 +299,9 @@ Fixes #42
 Resolves #42
 ```
 
-从问题创建分支：
+从问题中创建分支：
 
-**使用 gh 命令：**
+**使用 gh：**
 
 ```bash
 gh issue develop 42 --checkout
@@ -314,7 +314,7 @@ git checkout main && git pull origin main
 git checkout -b fix/issue-42-login-redirect
 ```
 
-## 4. 问题分类处理流程
+## 4. 问题分类处理工作流程
 
 当需要对问题进行分类处理时：
 
@@ -335,13 +335,13 @@ for i in json.load(sys.stdin):
         print(f\"#{i['number']}  {i['title']}\")"
 ```
 
-2. **阅读并分类**每个问题（查看详细信息，了解相关错误或功能需求）
+2. **阅读并分类**每个问题（查看详情，了解相关缺陷或功能需求）
 
 3. **添加标签与设定优先级**（参见上文“问题管理”部分）
 
 4. 若已明确负责人，则直接**分配任务**
 
-5. 如有需要，可**留下分诊备注**
+5. 如有需要，可**留下分类处理备注**
 
 ## 5. 批量操作
 
