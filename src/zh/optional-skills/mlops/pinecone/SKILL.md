@@ -1,10 +1,10 @@
 ---
 name: pinecone
 description: Managed vector DB for production RAG and search.
-version: 1.0.0
+version: 1.0.1
 author: Orchestra Research
 license: MIT
-dependencies: [pinecone-client]
+dependencies: [pinecone]
 platforms: [linux, macos, windows]
 metadata:
   hermes:
@@ -12,38 +12,40 @@ metadata:
 
 ---
 
-# Pinecone – 托管向量数据库
+# Pinecone - 托管向量数据库
 
 专为生产级 AI 应用打造的向量数据库。
 
 ## 何时选择 Pinecone
 
 **适用场景：**
-- 需要托管型、无服务器架构的向量数据库
+- 需要托管式、无服务器架构的向量数据库
 - 生产环境中的 RAG 应用
 - 需要自动扩展能力
-- 对低延迟有严格要求（<100ms）
-- 不希望自行管理基础设施
+- 对低延迟有严格要求（<100毫秒）
+- 不愿自行管理基础设施
 - 需要混合搜索功能（密集向量与稀疏向量）
 
 **核心优势：**
-- 全托管式 SaaS 服务
-- 可自动扩展至数十亿个向量
-- **p95 延迟低于 100ms**
+- 全面托管的 SaaS 服务
+- 可支持数十亿级向量数据自动扩展
+- **p95 延迟低于 100毫秒**
 - 99.9% 的正常运行时间服务等级协议
 
-**可选替代方案：**
-- **Chroma**：开源、可自托管
-- **FAISS**：离线运行、纯相似度搜索工具
-- **Weaviate**：功能更丰富的自托管方案
+**可选择的其他替代方案：**
+- **Chroma**：开源、自托管版本
+- **FAISS**：离线使用、纯相似度搜索工具
+- **Weaviate**：功能更丰富的自托管版本
 
 ## 快速入门
 
 ### 安装指南
 
 ```bash
-pip install pinecone-client
+pip install pinecone
 ```
+
+> 注意：旧的 `pinecone-client` 包已不再维护。请安装 `pinecone`（版本 5 及以上，当前为 9.x 版）。导入语句仍需保持为 `from pinecone import Pinecone`。
 
 ### 基本用法
 
@@ -226,18 +228,35 @@ index.upsert(vectors=[
 ])
 
 # Hybrid query
+# NOTE: index.query() does NOT accept an `alpha` kwarg. Pinecone stores a
+# single sparse-dense vector, so weighting must be applied by pre-scaling the
+# query vectors before sending them. Use the hybrid_score_norm helper below
+# (alpha * dense + (1 - alpha) * sparse; alpha=1 → pure dense, 0 → pure sparse).
+
+def hybrid_score_norm(dense, sparse, alpha: float):
+    """Scale dense/sparse query vectors for weighted hybrid search."""
+    if not 0 <= alpha <= 1:
+        raise ValueError("alpha must be between 0 and 1")
+    scaled_sparse = {
+        "indices": sparse["indices"],
+        "values": [v * (1 - alpha) for v in sparse["values"]],
+    }
+    return [v * alpha for v in dense], scaled_sparse
+
+hdense, hsparse = hybrid_score_norm(
+    dense=[0.1, 0.2, ...],
+    sparse={"indices": [10, 45], "values": [0.5, 0.3]},
+    alpha=0.5,  # 0=sparse, 1=dense, 0.5=balanced
+)
+
 results = index.query(
-    vector=[0.1, 0.2, ...],
-    sparse_vector={
-        "indices": [10, 45],
-        "values": [0.5, 0.3]
-    },
+    vector=hdense,
+    sparse_vector=hsparse,
     top_k=5,
-    alpha=0.5  # 0=sparse, 1=dense, 0.5=hybrid
 )
 ```
 
-## 与LangChain的集成
+## 与 LangChain 的集成
 
 ```python
 from langchain_pinecone import PineconeVectorStore
@@ -335,21 +354,21 @@ index.delete(delete_all=True)
 
 | 操作类型 | 延迟时间 | 备注 |
 |---------|---------|------|
-| 插入/更新数据 | 约50-100毫秒 | 每批处理一次 |
-| 查询（p50分位数） | 约50毫秒 | 取决于索引规模 |
-| 查询（p95分位数） | 约100毫秒 | 符合服务等级协议目标 |
+| 插入/更新数据 | 约50-100毫秒 | 每批处理量对应此延迟 |
+| 查询（p50分位值） | 约50毫秒 | 取决于索引规模 |
+| 查询（p95分位值） | 约100毫秒 | 符合服务等级协议要求 |
 | 元数据筛选 | 约+10-20毫秒 | 额外的处理开销 |
 
-## 定价信息（截至2025年）
+## 定价方案（2025年数据）
 
-**无服务器架构方案**：
+**无服务器架构**：
 - 每百万次读取操作费用：0.096美元  
 - 每百万次写入操作费用：0.06美元  
 - 每GB存储空间每月费用：0.06美元  
 
 **免费套餐**：
-- 提供1个无服务器索引  
-- 可存储10万条向量（每个向量1536个维度）  
+- 提供1个无服务器索引
+- 支持存储10万条向量（1536个维度）
 - 非常适合原型开发  
 
 ## 相关资源
