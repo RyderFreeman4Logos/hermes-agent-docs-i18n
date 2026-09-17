@@ -1,39 +1,39 @@
 ---
-title: "Pytorch Lightning"
+title: "Pytorch Lightning — Clean training loops with built-in distributed support"
 sidebar_label: "Pytorch Lightning"
-description: "High-level PyTorch framework with Trainer class, automatic distributed training (DDP/FSDP/DeepSpeed), callbacks system, and minimal boilerplate"
+description: "Clean training loops with built-in distributed support"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Pytorch Lightning
 
-这是一个高级的 PyTorch 框架，具备 Trainer 类、自动分布式训练功能（DDP/FSDP/DeepSpeed）、回调系统以及极简的代码结构。使用同一份代码即可在从笔记本电脑到超级计算机的各类设备上实现高效训练。当您需要具备内置最佳实践的简洁训练流程时，可选用此框架。
+具备内置分布式训练支持，可简化训练流程。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/mlops/pytorch-lightning` 安装 |
-| 路径 | `optional-skills/mlops/pytorch-lightning` |
+| 路径 | `optional-skills/mlops\pytorch-lightning` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `lightning`, `torch`, `transformers` |
-| 支持平台 | linux, macos, windows |
-| 标签 | `PyTorch Lightning`, `训练框架`, `分布式训练`, `DDP`, `FSDP`, `DeepSpeed`, `高级 API`, `回调功能`, `最佳实践`, `可扩展` |
+| 支持平台 | linux、macos、windows |
+| 标签 | `PyTorch Lightning`, `训练框架`, `分布式训练`, `DDP`, `FSDP`, `DeepSpeed`, `高级API`, `回调函数`, `最佳实践`, `可扩展` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指南。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指令。
 :::
 
 # PyTorch Lightning —— 高级训练框架
 
 ## 快速入门
 
-PyTorch Lightning 能够对 PyTorch 代码进行结构化整理，在保持灵活性的同时减少冗余代码。
+PyTorch Lightning 能够对 PyTorch 代码进行结构化整理，在消除冗余代码的同时保持高度灵活性。
 
 **安装方式**：
 ```bash
@@ -82,7 +82,7 @@ trainer.fit(model, train_loader)
 - 分布式训练（DDP、FSDP、DeepSpeed）
 - 混合精度训练（FP16、BF16）
 - 梯度累积
-- 检查点保存
+- 检点保存
 - 日志记录
 - 进度条显示
 
@@ -105,7 +105,7 @@ for epoch in range(max_epochs):
         optimizer.step()
 ```
 
-**轻量版**：
+**闪电版**：
 ```python
 class LitModel(L.LightningModule):
     def __init__(self):
@@ -124,7 +124,7 @@ trainer = L.Trainer(max_epochs=10, accelerator='gpu')
 trainer.fit(LitModel(), train_loader)
 ```
 
-**优势**：代码行数从40多行缩减至15行，无需进行设备管理，可实现自动分布式处理。 
+**优势**：代码行数从40多行缩减至15行，无需进行设备管理，可实现自动分布式处理。
 
 ### 工作流程2：验证与测试
 
@@ -167,7 +167,7 @@ trainer.test(model, test_loader)
 ```
 
 **自动功能**：
-- 默认情况下，每个训练周期都会执行验证
+- 默认情况下，每个训练周期都会进行验证
 - 将指标记录到 TensorBoard 中
 - 根据 val_loss 自动保存最佳模型检查点
 
@@ -227,9 +227,9 @@ trainer.fit(model, train_loader, val_loader)
 ```
 
 **结果**：
-- 自动保存最优的3个模型
+- 自动保存表现最佳的3个模型
 - 若连续5个训练周期未见改进则提前终止
-- 将学习率信息记录至TensorBoard中
+- 将学习率信息记录到TensorBoard中
 
 ### 工作流程5：学习率调度
 
@@ -265,20 +265,20 @@ trainer.fit(model, train_loader)
 
 **适合使用 PyTorch Lightning 的情况包括**：
 - 希望拥有结构清晰、条理分明的代码
-- 需要可用于生产环境的训练流程
-- 在单 GPU、多 GPU 或 TPU 环境之间切换
+- 需要可用于生产环境的训练循环
+- 在单 GPU、多 GPU 或 TPU 环境间切换
 - 需要内置的回调函数和日志记录功能
 - 团队协作（标准化代码结构）
 
 **主要优势**：
 - **结构清晰**：将研究代码与工程实现分开
-- **操作便捷**：仅需一行代码即可启用 DDP、FSDP 和 DeepSpeed
+- **操作简单**：仅需一行代码即可启用 DDP、FSDP 和 DeepSpeed
 - **回调功能**：支持模块化的训练扩展
-- **可复现性强**：减少样板代码，从而降低错误率
-- **经过验证**：每月下载量超 100 万次，经实际项目检验
+- **可复现性强**：减少样板代码，从而降低错误概率
+- **经过验证**：每月下载量超 100 万次，经实际项目充分检验
 
 **适合选择替代方案的情况**：
-- **Accelerate**：对现有代码改动最小，灵活性更高
+- **Accelerate**：对现有代码修改最小，灵活性更高
 - **Ray Train**：支持多节点调度及超参数调优
 - **原始 PyTorch**：提供最大程度的控制权，适用于学习研究
 - **Keras**：属于 TensorFlow 生态系统
@@ -332,31 +332,31 @@ trainer = L.Trainer(accelerator='gpu', devices=1)
 
 ## 高级主题
 
-**回调机制**：如需了解 EarlyStopping、ModelCheckpoint、自定义回调函数以及回调钩子的相关内容，请参阅 [references/callbacks.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/pytorch-lightning/references/callbacks.md)。
+**回调功能**：如需了解 EarlyStopping、ModelCheckpoint、自定义回调以及回调钩子的相关用法，请参阅 [references/callbacks.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\pytorch-lightning/references/callbacks.md)。
 
-**分布式训练策略**：关于 DDP、FSDP、DeepSpeed ZeRO 集成以及多节点部署的详细信息，请查看 [references/distributed.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/pytorch-lightning/references/distributed.md)。
+**分布式训练策略**：关于 DDP、FSDP、DeepSpeed ZeRO 集成以及多节点部署的详细信息，请查看 [references/distributed.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\pytorch-lightning/references/distributed.md)。
 
-**超参数调优**：若需了解如何与 Optuna、Ray Tune 以及 WandB 的超参数扫描功能进行集成，请参考 [references/hyperparameter-tuning.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/pytorch-lightning/references/hyperparameter-tuning.md)。
+**超参数调优**：若需了解如何与 Optuna、Ray Tune 以及 WandB 的超参数扫描功能进行集成，请参阅 [references/hyperparameter-tuning.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\pytorch-lightning/references/hyperparameter-tuning.md)。
 
 ## 硬件要求
 
 - **CPU**：可用（适合调试）
 - **单 GPU**：可用
 - **多 GPU**：支持 DDP（默认）、FSDP 或 DeepSpeed
-- **多节点环境**：支持 DDP、FSDP、DeepSpeed
+- **多节点**：支持 DDP、FSDP、DeepSpeed
 - **TPU**：支持（需 8 核）
 - **Apple MPS**：支持
 
 **精度选项**：
 - FP32（默认）
-- FP16（适用于 V100 及更早版本的 GPU）
+- FP16（适用于 V100 及更早型号的 GPU）
 - BF16（推荐用于 A100/H100）
 - FP8（仅适用于 H100）
 
 ## 相关资源
 
 - 文档：https://lightning.ai/docs/pytorch/stable/
-- GitHub 仓库：https://github.com/Lightning-AI/pytorch-lightning ⭐ 29,000+ 次星标
+- GitHub 仓库：https://github.com/Lightning-AI/pytorch-lightning ⭐ 29,000+ 个星标
 - 版本：2.5.5 及以上
 - 示例代码：https://github.com/Lightning-AI/pytorch-lightning/tree/master/examples
 - Discord 社群：https://discord.gg/lightning-ai
