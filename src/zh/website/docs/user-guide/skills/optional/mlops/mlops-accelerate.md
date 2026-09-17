@@ -1,22 +1,22 @@
 ---
-title: "Huggingface Accelerate — Run PyTorch training across GPUs with minimal changes"
-sidebar_label: "Huggingface Accelerate"
+title: "Accelerate — Run PyTorch training across GPUs with minimal changes"
+sidebar_label: "Accelerate"
 description: "Run PyTorch training across GPUs with minimal changes"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# Huggingface Accelerate
+# Accelerate
 
-只需少量修改即可实现跨 GPU 的 PyTorch 训练。
+通过最少的代码修改即可实现跨 GPU 的 PyTorch 训练。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/mlops/accelerate` 安装 |
-| 路径 | `optional-skills/mlops/accelerate` |
-| 版本 | `1.0.0` |
+| 路径 | `optional-skills/mlops\accelerate` |
+| 版本 | `1.0.1` |
 | 开发者 | Orchestra Research |
 | 许可协议 | MIT |
 | 依赖项 | `accelerate`, `torch`, `transformers` |
@@ -26,16 +26,16 @@ description: "Run PyTorch training across GPUs with minimal changes"
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为此内容。
 :::
 
-# HuggingFace Accelerate - 统一分布式训练
+# HuggingFace Accelerate - 统一分布式训练方案
 
 ## 快速入门
 
-Accelerate 能将分布式训练简化为仅 4 行代码。
+Accelerate 将分布式训练简化为仅 4 行代码即可完成。
 
-**安装**：
+**安装方式**：
 ```bash
 pip install accelerate
 ```
@@ -88,7 +88,7 @@ for epoch in range(10):
         optimizer.step()
 ```
 
-**使用 Accelerate 功能**（新增 4 行）：
+**启用 Accelerate 功能**（新增 4 行）：
 ```python
 # train.py
 import torch
@@ -116,13 +116,13 @@ for epoch in range(10):
 accelerate config
 ```
 
-**问题**：
-- 使用哪款硬件？（单GPU/多GPU/TPU/CPU）
-- 需要多少台设备？（1台）
-- 是否支持混合精度计算？（否/fp16/bf16/fp8）
-- 是否启用DeepSpeed？（否/是）
+**问题设置**：
+- 使用哪种计算设备？（单 GPU/多 GPU/TPU/CPU）
+- 需要多少台设备？（1 台）
+- 是否使用混合精度？（否/fp16/bf16/fp8）
+- 是否启用 DeepSpeed？（否/是）
 
-**启动方式**（适用于任何配置环境）：
+**启动选项**（适用于所有配置环境）：
 ```bash
 # Single GPU
 accelerate launch train.py
@@ -163,31 +163,35 @@ for batch in dataloader:
 
 ### 工作流 3：DeepSpeed ZeRO 集成
 
-**启用 DeepSpeed ZeRO-2**：
+**启用 DeepSpeed ZeRO-2**（需传入 `DeepSpeedPlugin` 对象，而非原始字典）：
 ```python
-from accelerate import Accelerator
+from accelerate import Accelerator, DeepSpeedPlugin
+
+deepspeed_plugin = DeepSpeedPlugin(
+    zero_stage=2,                     # ZeRO-2
+    offload_optimizer_device="none",  # or "cpu" to offload
+    gradient_accumulation_steps=4,
+)
 
 accelerator = Accelerator(
     mixed_precision='bf16',
-    deepspeed_plugin={
-        "zero_stage": 2,  # ZeRO-2
-        "offload_optimizer": False,
-        "gradient_accumulation_steps": 4
-    }
+    deepspeed_plugin=deepspeed_plugin,  # DeepSpeedPlugin instance (or dict[str, DeepSpeedPlugin])
 )
 
 # Same code as before!
 model, optimizer, dataloader = accelerator.prepare(model, optimizer, dataloader)
 ```
 
-**或通过配置文件**：
-```bash
-accelerate config
-# Select: DeepSpeed → ZeRO-2
+**或者通过插件直接指定完整的 DeepSpeed JSON 配置文件**：
+```python
+from accelerate import Accelerator, DeepSpeedPlugin
+
+# hf_ds_config accepts a path to a DeepSpeed config JSON (or a dict)
+deepspeed_plugin = DeepSpeedPlugin(hf_ds_config="ds_config.json")
+accelerator = Accelerator(mixed_precision='bf16', deepspeed_plugin=deepspeed_plugin)
 ```
 
-**deepspeed_config.json**：  
-深度速度配置文件
+**ds_config.json**（原始的 DeepSpeed 配置文件——通过插件传递，而非通过 `--config_file` 参数传递）：
 ```json
 {
     "fp16": {"enabled": false},
@@ -201,9 +205,20 @@ accelerate config
 }
 ```
 
-**启动**：
+**或通过交互式配置**：
 ```bash
-accelerate launch --config_file deepspeed_config.json train.py
+accelerate config
+# Select: DeepSpeed → ZeRO-2
+# This writes an accelerate YAML config (default: ~/.cache/huggingface/accelerate/default_config.yaml)
+```
+
+**启动**（`--config_file` 参数要求输入的是加速配置的 YAML 文件，而非原始的 DeepSpeed JSON 文件）：
+```bash
+# Uses the default accelerate config written by `accelerate config`
+accelerate launch train.py
+
+# Or point at a specific accelerate YAML
+accelerate launch --config_file accelerate_deepspeed.yaml train.py
 ```
 
 ### 工作流 4：FSDP（完全分片数据并行）
@@ -214,7 +229,7 @@ from accelerate import Accelerator, FullyShardedDataParallelPlugin
 
 fsdp_plugin = FullyShardedDataParallelPlugin(
     sharding_strategy="FULL_SHARD",  # ZeRO-3 equivalent
-    auto_wrap_policy="TRANSFORMER_AUTO_WRAP",
+    auto_wrap_policy="transformer_based_wrap",  # valid: transformer_based_wrap | size_based_wrap | no_wrap
     cpu_offload=False
 )
 
@@ -256,23 +271,23 @@ for batch in dataloader:
 
 **适合使用 Accelerate 的情况**：
 - 需要最简单的分布式训练方式
-- 希望用单个脚本适配各种硬件
-- 使用 HuggingFace 生态系统
+- 希望使用单个脚本适配各类硬件
+- 已在使用 HuggingFace 生态系统
 - 需要多种训练框架的灵活性（DDP/DeepSpeed/FSDP/Megatron）
 - 需要快速进行原型开发
 
 **主要优势**：
 - **仅需 4 行代码**：几乎无需修改现有代码
 - **统一 API**：DDP、DeepSpeed、FSDP、Megatron 均可使用相同代码
-- **自动处理**：设备分配、混合精度计算及数据分片功能
+- **自动处理**：设备分配、混合精度计算及数据分片等功能均由系统自动完成
 - **交互式配置**：无需手动设置启动参数
-- **单次启动**：可在任何环境中运行
+- **单次启动即可运行**：在任何环境中都能正常工作
 
-**适合选择替代方案的情况**：
+**应选择替代方案的情况**：
 - **PyTorch Lightning**：需要回调函数及高级抽象层功能
 - **Ray Train**：需要进行多节点任务调度及超参数调优
-- **DeepSpeed**：需要直接控制 API 及使用高级功能
-- **原始 DDP**：需要最大程度的控制权且偏好最低层抽象
+- **DeepSpeed**：需要直接控制 API 并使用高级功能
+- **原始 DDP**：需要最大程度的控制权且不希望过多抽象层
 
 ## 常见问题
 
@@ -320,16 +335,16 @@ set_seed(42)
 
 ## 高级主题
 
-**Megatron集成**：如需了解张量并行、流水线并行及序列并行配置的相关信息，请参阅[references/megatron-integration.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/accelerate/references/megatron-integration.md)。
+**Megatron集成**：如需了解张量并行、流水线并行及序列并行配置的相关信息，请参阅[references/megatron-integration.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\accelerate/references/megatron-integration.md)。
 
-**自定义插件**：如需创建自定义分布式插件并进行高级配置，可参考[references/custom-plugins.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/accelerate/references/custom-plugins.md)。
+**自定义插件**：如需创建自定义分布式插件并进行高级配置，可参考[references/custom-plugins.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\accelerate/references/custom-plugins.md)。
 
-**性能调优**：有关性能分析、内存优化及最佳实践的内容，请查阅[references/performance.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/accelerate/references/performance.md)。
+**性能调优**：有关性能分析、内存优化及最佳实践的内容，请查阅[references/performance.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\accelerate/references/performance.md)。
 
 ## 硬件要求
 
-- **CPU**：可运行（速度较慢）
-- **单GPU**：可运行
+- **CPU**：可用（速度较慢）
+- **单GPU**：可用
 - **多GPU**：支持DDP（默认）、DeepSpeed或FSDP
 - **多节点**：支持DDP、DeepSpeed、FSDP及Megatron
 - **TPU**：支持
@@ -339,13 +354,13 @@ set_seed(42)
 - **DDP**：使用`torch.distributed.run`（内置功能）
 - **DeepSpeed**：需安装`deepspeed`（通过pip命令安装）
 - **FSDP**：需要PyTorch 1.12及以上版本（内置功能）
-- **Megatron**：需自定义配置
+- **Megatron**：需进行自定义配置
 
 ## 参考资源
 
 - 文档：https://huggingface.co/docs/accelerate
 - GitHub仓库：https://github.com/huggingface/accelerate
 - 版本：1.11.0及以上
-- 教程：“加速你的脚本编写”
+- 教程：“加速你的脚本”
 - 示例代码：https://github.com/huggingface/accelerate/tree/main/examples
-- 被以下项目采用：HuggingFace Transformers、TRL、PEFT以及所有HuggingFace相关库
+- 被以下工具采用：HuggingFace Transformers、TRL、PEFT以及所有HF系列库

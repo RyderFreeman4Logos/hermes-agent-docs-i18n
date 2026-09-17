@@ -3236,7 +3236,7 @@
           - [Migration]()
             - [OpenClaw 迁移](zh/website/docs/user-guide/skills/optional/migration/migration-openclaw-migration.md)
           - [Mlops]()
-            - [Huggingface Accelerate](zh/website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md)
+            - [Accelerate](zh/website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md)
             - [Chroma](zh/website/docs/user-guide/skills/optional/mlops/mlops-chroma.md)
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
