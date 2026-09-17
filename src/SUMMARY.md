@@ -2721,6 +2721,7 @@
     - [Box]()
       - [References]()
         - [批量操作](zh/skills/productivity/box/references/bulk-operations.md)
+        - [Box CLI 使用指南](zh/skills/productivity/box/references/cli-guide.md)
         - [内容工作流](zh/skills/productivity/box/references/content-workflows.md)
         - [Box Hubs](zh/skills/productivity/box/references/hubs.md)
         - [OAuth 设置](zh/skills/productivity/box/references/oauth-setup.md)
