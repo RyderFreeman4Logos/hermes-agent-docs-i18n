@@ -1,24 +1,24 @@
 ---
-title: "Chroma — Open-source embedding database for AI applications"
+title: "Chroma — Embedding database for RAG and semantic search"
 sidebar_label: "Chroma"
-description: "Open-source embedding database for AI applications"
+description: "Embedding database for RAG and semantic search"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Chroma
 
-专为人工智能应用设计的开源嵌入数据库。可用于存储嵌入向量及元数据，支持向量和全文搜索，并能根据元数据进行过滤。该数据库提供简洁的 4 种功能 API，可从笔记本环境扩展至生产级集群。适用于语义搜索、RAG 应用以及文档检索场景，尤其适合本地开发及开源项目使用。
+用于 RAG 及语义搜索的嵌入数据库。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/mlops/chroma` 命令安装 |
-| 路径 | `optional-skills/mlops/chroma` |
+| 来源 | 可选 — 通过 `hermes skills install official/mlops/chroma` 安装 |
+| 路径 | `optional-skills/mlops\chroma` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `chromadb`, `sentence-transformers` |
 | 支持平台 | linux、macos、windows |
 | 标签 | `RAG`、`Chroma`、`向量数据库`、`嵌入向量`、`语义搜索`、`开源`、`自托管`、`文档检索`、`元数据过滤` |
@@ -26,34 +26,34 @@ description: "Open-source embedding database for AI applications"
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为此内容。
 :::
 
 # Chroma —— 开源嵌入数据库
 
-专为构建具备记忆功能的 LLM 应用而设计的原生人工智能数据库。
+专为构建具备记忆功能的 LLM 应用而设计的原生 AI 数据库。
 
 ## 何时使用 Chroma
 
-**以下情况适合使用 Chroma：**
-- 开发 RAG（检索增强生成）应用
+**以下情况建议使用 Chroma：**
+- 构建 RAG（检索增强生成）应用
 - 需要本地/自托管的向量数据库
-- 寻求开源解决方案（遵循 Apache 2.0 许可协议）
-- 在笔记本环境中进行原型设计
+- 寻求开源解决方案（Apache 2.0 许可）
+- 在笔记本中进行原型开发
 | 对文档进行语义搜索 |
-| 同时存储嵌入向量及元数据 |
+| 同时存储嵌入向量和元数据 |
 
-**相关数据统计：**
+**相关数据：**
 - **GitHub 星标数超过 24,300 个**
-- **代码复用次数超过 1,900 次**
-- **当前版本为 v1.3.3**，稳定发布且每周都有新版本
-- **采用 Apache 2.0 许可协议**
+- **代码仓库分叉数超过 1,900 个**
+- **当前版本为 v1.3.3**（稳定版，每周发布新版本）
+- **采用 Apache 2.0 许可证**
 
 **如需替代方案，可选择：**
-- **Pinecone**：托管型云服务，具备自动扩展功能
-- **FAISS**：纯相似度搜索工具，不支持元数据处理
-- **Weaviate**：专为生产环境设计的原生机器学习数据库
-- **Qdrant**：高性能数据库，基于 Rust 语言开发
+- **Pinecone**：托管式云服务，具备自动扩展功能  
+- **FAISS**：纯相似度搜索引擎，不支持元数据处理  
+- **Weaviate**：专为生产环境设计的原生机器学习数据库  
+- **Qdrant**：基于Rust语言开发的高性能搜索引擎  
 
 ## 快速入门
 
@@ -324,7 +324,7 @@ results = collection.query(
 )
 ```
 
-## 与LangChain的集成
+## 与 LangChain 的集成
 
 ```python
 from langchain_chroma import Chroma
@@ -404,7 +404,7 @@ collection = client.get_or_create_collection("my_docs")
 5. **运用过滤器**——缩小搜索范围  
 6. **使用唯一标识符**——防止数据冲突  
 7. **定期备份**——复制chroma_db目录  
-8. **监控集合大小**——必要时进行扩展  
+8. **监控集合规模**——必要时进行扩展  
 9. **测试嵌入功能**——确保输出质量  
 10. **生产环境采用服务器模式**——更适用于多用户场景  
 
@@ -412,9 +412,9 @@ collection = client.get_or_create_collection("my_docs")
 
 | 操作 | 延迟时间 | 备注 |
 |------|----------|------|
-| 添加100个文档 | 约1-3秒 | 已包含嵌入处理 |
+| 添加100个文档 | 约1-3秒 | 已启用嵌入功能 |
 | 查询（前10条结果） | 约50-200毫秒 | 取决于集合规模 |
-| 元数据筛选 | 约10-50毫秒 | 通过合理索引可大幅提升速度 |
+| 元数据筛选 | 约10-50毫秒 | 通过合理索引可显著提升速度 |
 
 ## 资源链接
 
