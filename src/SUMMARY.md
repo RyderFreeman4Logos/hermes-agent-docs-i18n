@@ -2954,6 +2954,7 @@
       - [在个人电脑或工作机上运行 Hermes](zh/website/docs/guides/secure-hermes-on-a-work-machine.md)
       - [设置团队专用 Telegram 助手](zh/website/docs/guides/team-telegram-assistant.md)
       - [提示与最佳实践](zh/website/docs/guides/tips.md)
+      - [故障排除：“我的智能体好像变笨了”](zh/website/docs/guides/troubleshooting-agent-quality.md)
       - [在 Hermes 中使用 MCP](zh/website/docs/guides/use-mcp-with-hermes.md)
       - [在 Hermes 中使用 SOUL.md](zh/website/docs/guides/use-soul-with-hermes.md)
       - [在 Hermes 中使用语音模式](zh/website/docs/guides/use-voice-mode-with-hermes.md)
