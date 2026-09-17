@@ -15,7 +15,7 @@ description: "Transcribe and translate speech in 99 languages"
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/mlops/whisper` 命令安装 |
-| 路径 | `optional-skills/mlops/whisper` |
+| 路径 | `optional-skills/mlops\whisper` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
 | 许可协议 | MIT |
@@ -26,12 +26,12 @@ description: "Transcribe and translate speech in 99 languages"
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能激活后，智能体将依据此内容执行相应操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，智能体将依据此内容执行操作。
 :::
 
 # Whisper - 强大的语音识别引擎
 
-基于 OpenAI 开发的多语言语音识别模型。
+OpenAI 开发的多语言语音识别模型。
 
 ## 何时使用 Whisper
 
@@ -43,20 +43,20 @@ description: "Transcribe and translate speech in 99 languages"
 - 噪音环境下的音频转写
 - 多语言音频处理
 
-**核心数据：**
-- **GitHub 星标数超过 72,900 个**
+**核心数据表现：**
+- **GitHub 星标数超过72,900个**
 - 支持99种语言
 - 基于68万小时的音频数据训练
-- 采用 MIT 许可协议
+- 采用MIT许可协议
 
 **可选替代方案：**
-- **AssemblyAI**：托管型 API，支持说话人分离功能
+- **AssemblyAI**：托管型API，支持说话人分离功能
 - **Deepgram**：实时流式语音识别服务
 - **Google Speech-to-Text**：基于云端的解决方案
 
 ## 快速入门
 
-### 安装
+### 安装指南
 
 ```bash
 # Requires Python 3.8-3.11
@@ -87,7 +87,7 @@ for segment in result["segments"]:
     print(f"[{segment['start']:.2f}s - {segment['end']:.2f}s] {segment['text']}")
 ```
 
-## 模型规模
+## 模型尺寸
 
 ```python
 # Available models
@@ -280,15 +280,15 @@ whisper audio.wav
 
 ## 最佳实践建议
 
-1. **使用 Turbo 模型** – 能为英文内容提供最佳的速度与质量平衡  
+1. **使用 Turbo 模型** – 英语内容的速度与质量最佳  
 2. **明确指定语言** – 比自动检测更快  
-3. **添加初始提示词** – 有助于提升技术术语处理的准确性  
-4. **启用 GPU 加速** – 处理速度可提升 10–20 倍  
-5. **批量处理文件** – 提高整体效率  
-6. **转换为 WAV 格式** – 增强兼容性  
-7. **拆分过长音频** – 每段时长建议控制在 30 分钟以内  
-8. **确认语言支持情况** – 不同语言的生成质量可能存在差异  
-9. **选用 faster-whisper 模型** – 相比 openai-whisper，处理速度快 4 倍  
+3. **添加初始提示词** – 更好地处理专业术语  
+4. **启用 GPU 加速** – 速度提升 10–20 倍  
+5. **批量处理** – 提高效率  
+6. **转换为 WAV 格式** – 兼容性更强  
+7. **拆分长音频文件** – 每段时长控制在 30 分钟以内  
+8. **确认语言支持情况** – 不同语言的生成质量有所差异  
+9. **使用 faster-whisper 模型** – 速度是 openai-whisper 的 4 倍  
 10. **监控显存使用情况** – 根据硬件条件调整模型规模  
 
 ## 性能表现
@@ -300,7 +300,7 @@ whisper audio.wav
 | turbo   | 约 0.08           | 约 0.01          |
 | large   | 约 1.0            | 约 0.05          |
 
-*实时处理系数说明：系数为 0.1 表示处理速度是实时处理的 10 倍*
+*实时处理系数说明：系数为 0.1 表示速度是实时处理的 10 倍*
 
 ## 支持的语言
 
@@ -320,17 +320,17 @@ whisper audio.wav
 
 ## 局限性
 
-1. **幻觉现象** – 可能会出现重复内容或编造文本  
-2. **长音频处理精度** – 音频时长超过 30 分钟时准确性会下降  
-3. **说话人识别功能缺失** – 不支持语音分段  
-4. **口音处理效果差异** – 不同口音的生成质量不同  
-5. **背景噪音影响** – 可能降低识别准确性  
-6. **实时延迟问题** – 不适合用于实时字幕生成  
+1. **幻觉现象** – 可能会重复或编造内容  
+2. **长文本准确性** – 音频时长超过 30 分钟时准确度下降  
+3. **说话人识别** – 不支持语音分段  
+4. **口音处理** – 生成质量因口音不同而有所差异  
+5. **背景噪音** – 可能影响生成准确性  
+6. **实时延迟** – 不适合用于实时字幕生成  
 
 ## 相关资源
 
-- **GitHub 仓库**：https://github.com/openai/whisper ⭐ 72,900+ 次点赞  
-- **研究论文**：https://arxiv.org/abs/2212.04356  
-- **模型说明文档**：https://github.com/openai/whisper/blob/main/model-card.md  
-- **Colab 实验环境**：可在仓库中找到  
-- **许可证**：MIT 许可证
+- **GitHub仓库**：https://github.com/openai/whisper ⭐ 72,900+  
+- **相关论文**：https://arxiv.org/abs/2212.04356  
+- **模型卡片**：https://github.com/openai/whisper/blob/main/model-card.md  
+- **Colab运行环境**：可在对应仓库中找到  
+- **许可证**：MIT许可证
