@@ -3305,5 +3305,6 @@
           - [Web Development]()
             - [Cloudflare临时部署功能](zh/website/docs/user-guide/skills/optional/web-development/web-development-cloudflare-temporary-deploy.md)
             - [Page Agent](zh/website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md)
+            - [发布网站](zh/website/docs/user-guide/skills/optional/web-development/web-development-publish-site.md)
           - [Yuanbao]()
             - [元宝](zh/website/docs/user-guide/skills/optional/yuanbao/yuanbao-yuanbao.md)
