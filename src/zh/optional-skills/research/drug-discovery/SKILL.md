@@ -1,12 +1,6 @@
 ---
 name: drug-discovery
-description: >
-  Pharmaceutical research assistant for drug discovery workflows. Search
-  bioactive compounds on ChEMBL, calculate drug-likeness (Lipinski Ro5, QED,
-  TPSA, synthetic accessibility), look up drug-drug interactions via
-  OpenFDA, interpret ADMET profiles, and assist with lead optimization.
-  Use for medicinal chemistry questions, molecule property analysis, clinical
-  pharmacology, and open-science drug research.
+description: "Drug discovery: ChEMBL search, drug-likeness, interactions."
 platforms: [linux, macos, windows]
 version: 1.0.0
 author: bennytimz
@@ -15,25 +9,25 @@ metadata:
   hermes:
     tags: [science, chemistry, pharmacology, research, health]
 prerequisites:
-  commands: [curl, python3]
+  commands: [curl, python]
 ---
 
 # 药物发现与制药研究
 
-您是一位经验丰富的制药科学家和药物化学家，精通药物发现、化学信息学及临床药理学领域。可运用此技能处理各类制药/化学研究任务。
+您是一位经验丰富的制药科学家和药物化学家，精通药物发现、化学生物学以及临床药理学领域。您可以将此技能应用于各类制药/化学研究任务中。
 
 ## 核心工作流程
 
 ### 1 — 生物活性化合物检索（ChEMBL）
 
-可通过靶点、活性或分子名称在ChEMBL（全球最大的开放生物活性数据库）中检索相关化合物，无需API密钥。
+通过靶点、活性或分子名称，在全球最大的开放生物活性数据库ChEMBL中检索相关化合物。无需API密钥即可使用。
 
 ```bash
 # Search compounds by target name (e.g. "EGFR", "COX-2", "ACE")
 TARGET="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET")
 curl -s "https://www.ebi.ac.uk/chembl/api/data/target/search?q=${ENCODED}&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 targets=data.get('targets',[])[:5]
@@ -49,7 +43,7 @@ for t in targets:
 # Get bioactivity data for a ChEMBL target ID
 TARGET_ID="$1"   # e.g. CHEMBL203
 curl -s "https://www.ebi.ac.uk/chembl/api/data/activity?target_chembl_id=${TARGET_ID}&pchembl_value__gte=6&limit=10&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 acts=data.get('activities',[])
@@ -63,7 +57,7 @@ for a in acts:
 # Look up a specific molecule by ChEMBL ID
 MOL_ID="$1"   # e.g. CHEMBL25 (aspirin)
 curl -s "https://www.ebi.ac.uk/chembl/api/data/molecule/${MOL_ID}?format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 m=json.load(sys.stdin)
 props=m.get('molecule_properties',{}) or {}
@@ -85,9 +79,9 @@ print(f\"QED        : {props.get('qed_weighted','N/A')}\")
 
 ```bash
 COMPOUND="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
 curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${ENCODED}/property/MolecularWeight,XLogP,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,TPSA,InChIKey/JSON" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 props=data['PropertyTable']['Properties'][0]
@@ -116,9 +110,9 @@ print(f'  Both rules met: {\"Yes → good oral absorption predicted\" if tpsa<=1
 
 ```bash
 DRUG="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
 curl -s "https://api.fda.gov/drug/label.json?search=drug_interactions:\"${ENCODED}\"&limit=3" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 results=data.get('results',[])
@@ -137,9 +131,9 @@ for r in results[:2]:
 
 ```bash
 DRUG="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
 curl -s "https://api.fda.gov/drug/event.json?search=patient.drug.medicinalproduct:\"${ENCODED}\"&count=patient.reaction.reactionmeddrapt.exact&limit=10" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 results=data.get('results',[])
@@ -156,11 +150,11 @@ for r in results[:10]:
 
 ```bash
 COMPOUND="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
 CID=$(curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${ENCODED}/cids/TXT" | head -1 | tr -d '[:space:]')
 echo "PubChem CID: $CID"
 curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${CID}/property/IsomericSMILES,InChIKey,IUPACName/JSON" \
-  | python3 -c "
+  | python -c "
 import json,sys
 p=json.load(sys.stdin)['PropertyTable']['Properties'][0]
 print(f\"IUPAC Name : {p.get('IUPACName','N/A')}\")
@@ -169,14 +163,14 @@ print(f\"InChIKey   : {p.get('InChIKey','N/A')}\")
 "
 ```
 
-### 5 — 目标基因与疾病相关文献（OpenTargets）
+### 5 — 目标与疾病相关文献（OpenTargets）
 
 ```bash
 GENE="$1"
 curl -s -X POST "https://api.platform.opentargets.org/api/v4/graphql" \
   -H "Content-Type: application/json" \
   -d "{\"query\":\"{ search(queryString: \\\"${GENE}\\\", entityNames: [\\\"target\\\"], page: {index: 0, size: 1}) { hits { id score object { ... on Target { id approvedSymbol approvedName associatedDiseases(page: {index: 0, size: 5}) { count rows { score disease { id name } } } } } } } }\"}" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 hits=data.get('data',{}).get('search',{}).get('hits',[])
@@ -194,21 +188,21 @@ for row in assoc.get('rows',[]):
 
 ## 推理指南
 
-在分析药物相似性或分子特性时，请始终遵循以下步骤：
+在分析药物相似性或分子特性时，应始终遵循以下步骤：
 
-1. **首先列出原始数值** — 分子量、LogP值、HBD值、HBA值、TPSA值、RotBonds值
+1. **首先列出原始数值** — 分子量、LogP值、HBD值、HBA值、TPSA值以及旋转键数
 2. **应用规则集** — 在适用情况下使用Ro5（Lipinski规则）、Veber规则及Ghose过滤器
-3. **标记潜在风险点** — 代谢热点区域、hERG基因风险，以及影响中枢神经系统渗透的高TPSA值
-4. **提出优化建议** — 生物等效替代方案、前药设计策略、环结构截断等
-5. **标注数据来源API** — ChEMBL、PubChem、OpenFDA或OpenTargets
+3. **标记潜在风险点** — 代谢热点区域、hERG基因风险，以及可能影响中枢神经系统渗透的高TPSA值
+4. **提出优化建议** — 如生物等效替代、前药策略或环结构截断等方案
+5. **注明数据来源API** — ChEMBL、PubChem、OpenFDA或OpenTargets
 
-针对ADMET相关问题，需系统地从吸收、分布、代谢、排泄和毒性五个方面进行分析。详细指导请参阅参考文档/ADMET_REFERENCE.md。
+针对ADMET相关问题，需系统地从吸收、分布、代谢、排泄和毒性五个方面进行分析。详细指导可参阅参考文档/ADMET_REFERENCE.md。
 
-## 重要注意事项
+## 重要说明
 
 - 所有API均为免费且公开可用，无需身份验证
-- ChEMBL存在调用频率限制：批量请求之间需添加1秒的延迟
-- FDA数据仅反映已报告的不良事件，未必能说明因果关系
+- ChEMBL存在调用频率限制：批量请求之间需添加1秒的间隔
+- FDA数据库中的数据仅反映已报告的不良事件，不必然代表因果关系
 - 对于临床决策，始终建议咨询持证药剂师或医生
 
 ## 快速参考表
