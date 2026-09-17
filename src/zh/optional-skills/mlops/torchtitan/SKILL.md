@@ -1,7 +1,7 @@
 ---
-name: distributed-llm-pretraining-torchtitan
+name: torchtitan
 description: Pretrain LLMs at scale with PyTorch 4D parallelism.
-version: 1.0.0
+version: 1.0.1
 author: Orchestra Research
 license: MIT
 dependencies: [torch>=2.6.0, torchtitan>=0.2.0, torchao>=0.5.0]
@@ -12,11 +12,11 @@ metadata:
 
 ---
 
-# TorchTitan——PyTorch原生分布式大语言模型预训练框架
+# TorchTitan——PyTorch 原生分布式大语言模型预训练框架
 
 ## 快速入门
 
-TorchTitan是PyTorch官方推出的大规模大语言模型预训练平台，它支持可组合的4D并行计算技术（FSDP2、TP、PP、CP），在H100显卡上相较于基准方案可实现65%以上的速度提升。
+TorchTitan 是 PyTorch 官方推出的大规模大语言模型预训练平台，支持可组合的 4D 并行计算技术（FSDP2、TP、PP、CP），在 H100 GPU 上的训练速度相比基础方案可提升 65% 以上。
 
 **安装方式**：
 ```bash
@@ -37,14 +37,16 @@ python scripts/download_hf_assets.py --repo_id meta-llama/Llama-3.1-8B --assets 
 
 **在8块GPU上开始训练**：
 ```bash
-CONFIG_FILE="./torchtitan/models/llama3/train_configs/llama3_8b.toml" ./run_train.sh
+# Configs are selected by name from the Python config registry
+# (torchtitan/models/llama3/config_registry.py), not by TOML path
+MODULE=llama3 CONFIG=llama3_8b ./run_train.sh
 ```
 
 ## 常见工作流程
 
 ### 工作流程 1：在单节点上预训练 Llama 3.1 8B 模型
 
-复制此清单：
+复制此检查清单：
 
 ```
 Single Node Pretraining:
@@ -63,12 +65,14 @@ python scripts/download_hf_assets.py \
   --hf_token=YOUR_HF_TOKEN
 ```
 
-**步骤 2：配置训练参数**
+**第2步：配置训练参数**
 
-编辑或创建一个 TOML 配置文件：
+在torchtitan当前的架构中，运行配置定义在Python的**配置注册表**中（位于`torchtitan/models/llama3/config_registry.py`），可通过`CONFIG=<名称>`（或`--config <名称>`）按名称来选择这些配置。如需自定义配置，可在注册表中添加自己的配置文件；或者直接在命令行中覆盖特定字段的值（例如`--optimizer.lr 3e-4 --training.steps 1000`）。
+
+对于8B参数规模的模型，相应的设置如下所示（以字段形式呈现；可在注册表条目中设置这些值，或通过`--section.key value`的方式进行覆盖）：
 
 ```toml
-# llama3_8b_custom.toml
+# fields for a llama3 8B run (register in config_registry.py or pass as --overrides)
 [job]
 dump_folder = "./outputs"
 description = "Llama 3.1 8B training"
@@ -108,13 +112,16 @@ interval = 500
 **第3步：启动训练**
 
 ```bash
-# 8 GPUs on single node
-CONFIG_FILE="./llama3_8b_custom.toml" ./run_train.sh
+# 8 GPUs on single node (config selected by name from the registry)
+MODULE=llama3 CONFIG=llama3_8b ./run_train.sh
 
-# Or explicitly with torchrun
+# Override individual fields on the command line
+MODULE=llama3 CONFIG=llama3_8b ./run_train.sh --optimizer.lr 3e-4 --training.steps 1000
+
+# Or explicitly with torchrun (run_train.sh wraps this)
 torchrun --nproc_per_node=8 \
   -m torchtitan.train \
-  --job.config_file ./llama3_8b_custom.toml
+  --module llama3 --config llama3_8b
 ```
 
 **第4步：监控与检查点生成**
@@ -134,9 +141,9 @@ Multi-Node Training:
 - [ ] Step 4: Resume from checkpoint
 ```
 
-**步骤 1：配置并行度以实现扩展**
+**步骤 1：配置并行度以实现规模扩展**
 
-针对在 256 块 GPU（32 个节点）上运行的 700 亿参数模型：
+针对基于 256 块 GPU（32 个节点）运行的 700 亿参数模型：
 ```toml
 [parallelism]
 data_parallel_shard_degree = 32  # FSDP across 32 ranks
@@ -160,7 +167,7 @@ srun torchrun \
   --rdzv_backend=c10d \
   --rdzv_endpoint=$MASTER_ADDR:$MASTER_PORT \
   -m torchtitan.train \
-  --job.config_file ./llama3_70b.toml
+  --module llama3 --config llama3_70b
 ```
 
 **步骤 3：提交任务**
@@ -175,7 +182,7 @@ sbatch multinode_trainer.slurm
 
 ### 工作流程3：为H100显卡启用Float8训练模式
 
-在H100 GPU上，使用Float8格式可将训练速度提升30-50%。
+在H100 GPU上，使用Float8格式可提升30-50%的训练速度。
 
 ```
 Float8 Training:
@@ -192,28 +199,36 @@ USE_CPP=0 pip install git+https://github.com/pytorch/ao.git
 
 **步骤 2：配置 Float8**
 
-在您的 TOML 配置文件中添加以下内容：
+在当前的 torchtitan 中，Float8 是通过在配置注册表中的 `model_registry()` 调用中设置 `quantization` 参数来在配置阶段实现的（而非通过 `[quantize.linear.float8]` 这一 TOML 配置项）。需添加一个 `Float8LinearConverter.Config` 对象：
+
+```python
+# in torchtitan/models/llama3/config_registry.py (your model_registry(...) call)
+from torchtitan.components.quantization import Float8LinearConverter
+
+model_spec = model_registry(
+    "8B",
+    quantization=[
+        Float8LinearConverter.Config(
+            recipe_name="rowwise",          # or "rowwise_with_gw_hp"
+            filter_fqns=["output"],          # skip layers too small to benefit
+            model_compile_enabled=True,      # requires torch.compile for competitive perf
+        ),
+    ],
+)
+```
+
+也请在运行配置中启用 `torch.compile`：
 ```toml
-[model]
-converters = ["quantize.linear.float8"]
-
-[quantize.linear.float8]
-enable_fsdp_float8_all_gather = true
-precompute_float8_dynamic_scale_for_fsdp = true
-filter_fqns = ["output"]  # Exclude output layer
-
 [compile]
 enable = true
 components = ["model", "loss"]
 ```
 
-**步骤 3：通过编译方式启动**
+**第3步：通过编译方式启动**
 
 ```bash
-CONFIG_FILE="./llama3_8b.toml" ./run_train.sh \
-  --model.converters="quantize.linear.float8" \
-  --quantize.linear.float8.enable_fsdp_float8_all_gather \
-  --compile.enable
+# Float8 config is baked into the registered config; just select it and enable compile
+MODULE=llama3 CONFIG=llama3_8b ./run_train.sh --compile.enable
 ```
 
 ### 工作流 4：针对 405B 模型的 4D 并行处理方案
@@ -227,9 +242,9 @@ CONFIG_FILE="./llama3_8b.toml" ./run_train.sh \
 
 **步骤 1：创建种子检查点**
 
-这是确保在多个 PP 阶段之间实现一致初始化所必需的。
+这是确保在多个 PP 阶段之间实现一致初始化的必要条件：
 ```bash
-NGPU=1 CONFIG_FILE=./llama3_405b.toml ./run_train.sh \
+NGPU=1 MODULE=llama3 CONFIG=llama3_405b ./run_train.sh \
   --checkpoint.enable \
   --checkpoint.create_seed_checkpoint \
   --parallelism.data_parallel_shard_degree 1 \
@@ -257,23 +272,23 @@ seq_len = 8192
 # 64 nodes x 8 GPUs = 512 GPUs
 srun torchrun --nnodes=64 --nproc_per_node=8 \
   -m torchtitan.train \
-  --job.config_file ./llama3_405b.toml
+  --module llama3 --config llama3_405b
 ```
 
 ## 何时使用 TorchTitan 及其替代方案
 
 **适合使用 TorchTitan 的场景：**
-- 从零开始预训练大语言模型（8B 到 405B+ 参数量）
+- 从零开始预训练大型语言模型（8B 到 405B+ 参数量）
 - 需要无需第三方依赖的纯 PyTorch 解决方案
 - 需要可组合的 4D 并行计算能力（FSDP2、TP、PP、CP）
 - 在支持 Float8 加速的 H100 硬件上进行训练
-- 希望与 torchtune/HuggingFace 实现检查点互操作
+- 希望生成的检查点能与 torchtune/HuggingFace 兼容
 
 **可选择的其他替代方案：**
-- **Megatron-LM**：专为 NVIDIA 硬件部署设计，性能最优
+- **Megatron-LM**：专为 NVIDIA 平台设计，可实现最佳性能
 - **DeepSpeed**：拥有更完善的 ZeRO 优化生态及推理支持功能
-- **Axolotl/TRL**：适用于微调而非预训练场景
-- **LitGPT**：用于教学目的的小规模训练
+- **Axolotl/TRL**：适用于微调而非预训练任务
+- **LitGPT**：用于教学目的的小规模训练场景
 
 ## 常见问题
 
@@ -288,14 +303,14 @@ mode = "full"  # Instead of "selective"
 local_batch_size = 1
 ```
 
-或者使用梯度累积法：
+或者可以使用梯度累积方法：
 ```toml
 [training]
 local_batch_size = 1
 global_batch_size = 32  # Accumulates gradients
 ```
 
-**问题：异步集合操作会导致 TP 消耗大量内存**
+**问题：异步集合操作导致 TP 模式下内存占用过高**
 
 设置环境变量：
 ```bash
@@ -304,15 +319,20 @@ export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 
 **问题：Float8训练并未带来更快的速度提升**
 
-Float8的优势主要体现在大规模矩阵乘法操作上。对于包含小型层的模型，此优化方法并无显著效果：
-```toml
-[quantize.linear.float8]
-filter_fqns = ["attention.wk", "attention.wv", "output", "auto_filter_small_kn"]
+Float8的优势仅体现在大规模矩阵乘法运算中。可通过转换器中的`filter_fqns`功能来过滤掉小型层：
+```python
+from torchtitan.components.quantization import Float8LinearConverter
+
+Float8LinearConverter.Config(
+    # add "auto_filter_small_kn" to auto-skip layers too small to benefit
+    filter_fqns=["attention.wk", "attention.wv", "output", "auto_filter_small_kn"],
+    model_compile_enabled=True,
+)
 ```
 
 **问题：更改并行度后检查点加载失败**
 
-请使用 DCP 的重新分片功能：
+请使用 DCP 的重分片功能：
 ```bash
 # Convert sharded checkpoint to single file
 python -m torch.distributed.checkpoint.format_utils \
@@ -326,7 +346,7 @@ python -m torch.distributed.checkpoint.format_utils \
 ## 支持的模型
 
 | 模型 | 参数量 | 状态 |
-|-------|-------|--------|
+|-------|--------|------|
 | Llama 3.1 | 8B、70B、405B | 已投入生产使用 |
 | Llama 4 | 多种规格 | 测试中 |
 | DeepSeek V3 | 16B、236B、671B（混合精度版） | 测试中 |
@@ -337,26 +357,26 @@ python -m torch.distributed.checkpoint.format_utils \
 ## 性能基准测试（H100）
 
 | 模型 | GPU 数量 | 并行策略 | 每 GPU TPS | 优化技术 |
-|-------|---------|-----------|------------|----------|
+|-------|----------|----------|-----------|----------|
 | Llama 8B | 8 | FSDP | 5,762 | 基准值 |
 | Llama 8B | 8 | FSDP+编译+FP8 | 8,532 | 提升 48% |
-| Llama 70B | 256 | FSDP+TP+异步 TP | 876 | 二维并行 |
+| Llama 70B | 256 | FSDP+TP+AsyncTP | 876 | 二维并行 |
 | Llama 405B | 512 | FSDP+TP+PP | 128 | 三维并行 |
 
 ## 进阶主题
 
-**FSDP2 配置**：有关 FSDP2 与 FSDP1 的详细对比以及 ZeRO 等效配置，可参阅 [references/fsdp.md](references/fsdp.md)。
+**FSDP2 配置**：有关 FSDP2 与 FSDP1 的详细对比以及 ZeRO 等效配置，请参阅 [references/fsdp.md](references/fsdp.md)。
 
-**Float8 训练**：关于张量级缩放与行级缩放的实现方法，可参阅 [references/float8.md](references/float8.md)。
+**Float8 训练**：关于张量级缩放与行级缩放的实现方法，请参阅 [references/float8.md](references/float8.md)。
 
-**检查点保存**：有关 HuggingFace 格式转换及异步检查点保存的详细信息，可参阅 [references/checkpoint.md](references/checkpoint.md)。
+**检查点保存**：有关 HuggingFace 格式转换及异步检查点保存的详细信息，请参阅 [references/checkpoint.md](references/checkpoint.md)。
 
-**添加自定义模型**：关于 TrainSpec 协议的用法，可参阅 [references/custom-models.md](references/custom-models.md)。
+**添加自定义模型**：关于 TrainSpec 协议的用法，请参阅 [references/custom-models.md](references/custom-models.md)。
 
 ## 相关资源
 
 - GitHub 仓库：https://github.com/pytorch/torchtitan
 - 论文链接：https://arxiv.org/abs/2410.06511
-- ICLR 2025 发表页面：https://iclr.cc/virtual/2025/poster/29620
+- ICLR 2025 发表页：https://iclr.cc/virtual/2025/poster/29620
 - PyTorch 论坛讨论帖：https://discuss.pytorch.org/c/distributed/torchtitan/44
 
