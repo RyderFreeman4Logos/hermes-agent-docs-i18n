@@ -15,9 +15,9 @@ Himalaya CLI：通过终端操作 IMAP/SMTP 邮件。
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/email/himalaya` |
+| 路径 | `skills/email\himalaya` |
 | 版本 | `1.1.0` |
-| 开发者 | 社区 |
+| 开发者 | 社区用户 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Email`、`IMAP`、`SMTP`、`CLI`、`Communication` |
@@ -25,18 +25,18 @@ Himalaya CLI：通过终端操作 IMAP/SMTP 邮件。
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，代理程序会依据此内容执行操作。
 :::
 
 # Himalaya 邮件 CLI
 
 Himalaya 是一款 CLI 邮件客户端，允许您通过 IMAP、SMTP、Notmuch 或 Sendmail 后端在终端中管理邮件。
 
-该技能与 Hermes 邮件网关适配器是独立的。网关适配器用于让用户向代理发送邮件，且使用 Hermes 内置的 IMAP/SMTP 适配器；而该技能则允许代理通过终端工具操作邮箱，需要外部安装 `himalaya` CLI。
+该技能与 Hermes 邮件网关适配器是独立的。网关适配器用于让用户向代理发送邮件，且使用 Hermes 内置的 IMAP/SMTP 适配器；而此技能则让代理能够通过终端工具操作邮箱，需要依赖外部 `himalaya` CLI 工具。
 
 ## 参考资料
 
-- `references/configuration.md`（配置文件设置 + IMAP/SMTP 认证）
+- `references/configuration.md`（配置文件设置及 IMAP/SMTP 认证）
 - `references/message-composition.md`（用于编写邮件的 MML 语法）
 
 ## 先决条件
@@ -45,7 +45,7 @@ Himalaya 是一款 CLI 邮件客户端，允许您通过 IMAP、SMTP、Notmuch �
 2. 在 `~/.config/himalaya/config.toml` 中存在配置文件
 3. 已配置 IMAP/SMTP 凭据（密码将安全存储）
 
-### 安装方法
+### 安装方式
 
 ```bash
 # Pre-built binary (Linux/macOS — recommended)
@@ -100,14 +100,16 @@ folder.aliases.drafts = "Drafts"
 folder.aliases.trash = "Trash"
 ```
 
-> **关于别名语法的注意事项。** 在 1.2.0 版本之前的文档中使用了 `[accounts.NAME.folder.alias]` 这种子结构（其中 `alias` 为单数形式）。v1.2.0 版本会默默忽略这种格式——虽然 TOML 解析没有问题，但别名解析器根本不会读取它，因此所有查询都会直接转而使用标准名称。在 Gmail 环境下，这意味着在 SMTP 发送成功之后，保存到“已发送”文件夹的操作会失败，同时 `himalaya message send` 命令的返回码也会不为零。任何基于该错误码进行重试的调用方（无论是代理、脚本还是用户），都会重新执行整个发送流程——包括 SMTP 发送步骤——从而导致向收件人发送重复邮件。请始终使用 `folder.aliases.X` 这种格式（`alias` 为复数形式，采用点号分隔的键值结构，直接位于 `[accounts.NAME]` 下方）。
+> **关于别名语法的注意事项。** 在 v1.2.0 之前的文档中使用了  
+> `[accounts.NAME.folder.alias]` 这种子结构（其中 `alias` 为单数形式）。  
+> v1.2.0 版本会默默忽略这种格式——虽然 TOML 解析没有问题，但别名解析器根本不会读取它，因此所有查询都会直接回退到标准名称。在 Gmail 上，这意味着在 SMTP 发送成功之后，保存到“已发送”文件夹的操作会失败，且 `himalaya message send` 命令的退出码也为非零值。任何基于该退出码进行重试的调用方（无论是代理、脚本还是用户），都会重新执行整个发送流程——包括 SMTP 发送步骤——从而导致向收件人发送重复邮件。请始终使用 `folder.aliases.X` 这种格式（复数形式，带点分隔的键，直接位于 `[accounts.NAME]` 下）。
 
 ## Hermes 集成说明
 
-- **读取、列出、搜索、移动、删除** 操作均可直接通过终端工具完成
-- **撰写/回复/转发** 操作——为确保稳定性，建议使用管道输入方式（如 `cat << EOF | himalaya template send`）。交互式的 `$EDITOR` 模式可在设置 `pty=true` 并在后台运行进程工具的情况下使用，但前提是用户需熟悉所使用的编辑器及其命令
-- 若需要结构化输出以便程序化解析，可使用 `--output json` 选项
-- `himalaya account configure` 向导需要用户进行交互式输入——请使用 PTY 模式：`terminal(command="himalaya account configure", pty=true)`
+- **读取、列出、搜索、移动、删除** 操作均可直接通过终端工具完成  
+- **撰写/回复/转发** 操作——为确保可靠性，建议使用管道输入方式（如 `cat << EOF | himalaya template send`）。交互式的 `$EDITOR` 模式可在设置 `pty=true` 并在后台运行进程工具的情况下使用，但需要熟悉所使用的编辑器及其命令  
+- 若需结构化输出以便程序化解析，请使用 `--output json` 参数  
+- `himalaya account configure` 向导需要用户交互输入——请使用 PTY 模式：`terminal(command="himalaya account configure", pty=true)`
 
 ## 常见操作
 
@@ -179,7 +181,7 @@ Your reply here.
 EOF
 ```
 
-全组回复（交互式——需要使用 $EDITOR，建议采用上述模板方式）：
+全选回复（交互式——需要使用 $EDITOR，建议采用上述模板方式）：
 
 ```bash
 himalaya message reply 42 --all
@@ -212,17 +214,17 @@ EOF
 himalaya message write -H "To:recipient@example.com" -H "Subject:Test" "Message body here"
 ```
 
-注意：若不通过管道传递输入内容来使用 `himalaya message write` 命令，它会直接打开 `$EDITOR` 编辑器。虽然结合 `pty=true` 和后台模式也能实现相同功能，但使用管道传输数据更为简单且可靠。
+注意：若不使用管道输入命令 `himalaya message write`，则会打开 `$EDITOR` 编辑器。虽然在开启 `pty=true` 且处于后台模式时也能正常工作，但使用管道输入更为简单且可靠。
 
 ### 移动/复制邮件
 
-移动到文件夹：
+将邮件移动到指定文件夹（格式为：目标文件夹路径，后跟邮件编号）：
 
 ```bash
 himalaya message move "Archive" 42
 ```
 
-复制到文件夹：
+复制到文件夹（先输入目标文件夹路径，再输入消息 ID）：
 
 ```bash
 himalaya message copy "Important" 42
@@ -301,7 +303,7 @@ RUST_LOG=trace RUST_BACKTRACE=1 himalaya envelope list
 
 ## 小贴士
 
-- 如需了解详细使用方法，请使用 `himalaya --help` 或 `himalaya <command> --help`。
-- 消息 ID 是相对于当前文件夹而言的；更改文件夹后需重新列出。
+- 如需了解详细用法，请使用 `himalaya --help` 或 `himalaya <command> --help`。
+- 消息 ID 是相对于当前文件夹而言的；若更改了文件夹结构，需重新列出。
 - 若要编写包含附件的富文本邮件，请使用 MML 语法（详见 `references/message-composition.md`）。
 - 建议通过 `pass`、系统密钥环或能够输出密码的命令来安全地存储密码。
