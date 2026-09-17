@@ -2014,6 +2014,7 @@
       - [References]()
         - [动画参考](zh/optional-skills/creative/touchdesigner-mcp/references/animation.md)
         - [基于音频的响应式参考方案](zh/optional-skills/creative/touchdesigner-mcp/references/audio-reactive.md)
+        - [外部数据引用](zh/optional-skills/creative/touchdesigner-mcp/references/external-data.md)
         - [Geometry COMP 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/geometry-comp.md)
         - [GLSL 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/glsl.md)
         - [布局合成器参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/layout-compositor.md)
