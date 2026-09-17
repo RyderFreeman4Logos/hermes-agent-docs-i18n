@@ -1,7 +1,7 @@
 ---
 name: nemo-curator
 description: "Curate LLM training data: dedupe, filter, PII redaction."
-version: 1.0.0
+version: 1.0.1
 author: Orchestra Research
 license: MIT
 dependencies: [nemo-curator, cudf, dask, rapids]
@@ -12,70 +12,74 @@ metadata:
 
 ---
 
-# NeMo Curator——基于GPU的数据整理工具
+# NeMo Curator——基于GPU加速的数据筛选工具
 
 NVIDIA专为LLM准备高质量训练数据而打造的工具包。
 
 ## 何时使用NeMo Curator
 
 **以下情况建议使用NeMo Curator：**
-- 从网络爬取数据（如Common Crawl）来准备LLM训练数据
-- 需要快速进行数据去重处理（速度是CPU的16倍）
-- 对多模态数据集（文本、图像、视频、音频）进行整理
+- 从网络爬取数据（如Common Crawl）中整理LLM训练数据
+- 需要快速进行数据去重处理（速度比CPU快16倍）
+- 对多模态数据集（文本、图像、视频、音频）进行筛选
 - 过滤低质量或有害内容
 - 在GPU集群上扩展数据处理规模
 
 **性能优势：**
 - 模糊去重速度提升16倍（处理8TB的RedPajama v2数据）
-- 相较于CPU方案，总体拥有成本降低40%
-- 在多个GPU节点之间可实现近乎线性的性能扩展
+- 相比CPU方案，总体拥有成本降低40%
+- 在多个GPU节点间可实现近乎线性的性能扩展
 
-**可选替代方案：**
+**可选择的其他工具：**
 - **datatrove**：基于CPU的开源数据处理工具
 - **dolma**：Allen AI提供的数据处理工具包
-- **Ray Data**：通用的机器学习数据处理工具（不侧重数据整理功能）
+- **Ray Data**：通用的机器学习数据处理工具（不侧重数据筛选功能）
 
 ## 快速入门
 
 ### 安装指南
 
 ```bash
+# NeMo Curator 1.x installs with uv. Extras use hyphens (PyPI-normalized):
+#   text-cuda12 / text-cpu (and image/video/audio/math variants), or `all`.
+
 # Text curation (CUDA 12)
-uv pip install "nemo-curator[text_cuda12]"
+uv pip install "nemo-curator[text-cuda12]"
 
 # All modalities
-uv pip install "nemo-curator[all_cuda12]"
+uv pip install "nemo-curator[all]"
 
-# CPU-only (slower)
-uv pip install "nemo-curator[cpu]"
+# CPU-only text (slower)
+uv pip install "nemo-curator[text-cpu]"
 ```
 
-### 基础文本整理流程
+### 基本文本筛选流程
+
+> **主要版本重写（1.x）：** NeMo Curator基于**基于Ray的流程/阶段架构**进行了重写。0.x版本中原有的`DocumentDataset` + `nemo_curator.modules.*`、`ScoreFilter`以及针对数据集对象的`Modify`调用接口已不再使用。在1.x版本中，需要将多个`ProcessingStage`组合成一个`Pipeline`，再通过执行器来运行它。不同数据类型对应的阶段及导入方式各不相同——请将下文中的示例视为**概念性说明**（采用0.x版本的思路），实际使用时应参考当前的[快速入门指南](https://github.com/NVIDIA-NeMo/Curator/blob/main/tutorials/quickstart.py)和[文本处理指南](https://docs.nvidia.com/nemo/curator/latest/get-started/text)，了解1.x版本的确切API接口，而非直接复制代码中的导入语句。
+
+1.x版本流程的结构（参考上游项目的快速入门指南）：
 
 ```python
-from nemo_curator import ScoreFilter, Modify
-from nemo_curator.datasets import DocumentDataset
-import pandas as pd
+from nemo_curator.pipeline import Pipeline
+from nemo_curator.stages.base import ProcessingStage
+from nemo_curator.stages.resources import Resources
+from nemo_curator.backends.xenna import XennaExecutor
+from nemo_curator.core.client import RayClient
 
-# Load data
-df = pd.DataFrame({"text": ["Good document", "Bad doc", "Excellent text"]})
-dataset = DocumentDataset(df)
+# 1. Define/compose stages (load -> filter -> dedupe -> classify -> write).
+#    Each stage declares its own Resources (CPU cores, GPU memory, replicas).
+pipeline = Pipeline(name="curation", stages=[...])
 
-# Quality filtering
-def quality_score(doc):
-    return len(doc["text"].split()) > 5  # Filter short docs
-
-filtered = ScoreFilter(quality_score)(dataset)
-
-# Deduplication
-from nemo_curator.modules import ExactDuplicates
-deduped = ExactDuplicates()(filtered)
-
-# Save
-deduped.to_parquet("curated_data/")
+# 2. Run it with an executor (Ray-backed).
+client = RayClient()
+client.start()
+pipeline.run(XennaExecutor())
+client.stop()
 ```
 
-## 数据筛选流程
+以下各节中采用 0.x 风格编写的示例用于阐释相关*概念*（质量过滤、精确/模糊/语义去重、个人身份信息脱敏以及分类器过滤）。如需可运行的 1.x 版本代码，请将每个概念对应到模式指南中的相应处理阶段。
+
+## 数据整理流程
 
 ### 第一阶段：质量过滤
 
@@ -172,11 +176,11 @@ quality_clf = QualityClassifier(
 high_quality = dataset.filter(lambda doc: quality_clf(doc["text"]) > 0.5)
 ```
 
-## GPU加速功能
+## GPU加速
 
 ### GPU与CPU的性能对比
 
-| 操作任务 | CPU（16核） | GPU（A100） | 加速倍数 |
+| 操作任务 | CPU（16核） | GPU（A100） | 加速比 |
 |---------|----------------|------------|---------|
 | 模糊去重（8TB） | 120小时 | 7.5小时 | 16倍 |
 | 精确去重（1TB） | 8小时 | 0.5小时 | 16倍 |
@@ -197,7 +201,7 @@ deduped = FuzzyDuplicates(...)(dataset)
 
 ## 多模态内容精选
 
-### 图片内容精选
+### 图像内容精选
 
 ```python
 from nemo_curator.image import (
@@ -219,7 +223,7 @@ clip_embedder = CLIPEmbedder(model="openai/clip-vit-base-patch32")
 image_embeddings = clip_embedder(safe_images)
 ```
 
-### 视频精选
+### 视频精选功能
 
 ```python
 from nemo_curator.video import (
@@ -357,7 +361,7 @@ cluster.close()
 - 处理8TB数据所需时间：7.5小时
 - **总成本**：491.55美元
 
-**节省费用**：成本降低89%，可节省3,828美元
+**节省金额**：成本降低89%，可节省3,828美元
 
 ## 支持的数据格式
 
@@ -368,19 +372,19 @@ cluster.close()
 ## 应用场景
 
 **生产环境部署**：
-- NVIDIA曾使用NeMo Curator来准备Nemotron-4的训练数据
-- 已整理的开源数据集包括：RedPajama v2、The Pile
+- NVIDIA利用NeMo Curator工具准备Nemotron-4模型的训练数据
+- 已完成整理的开源数据集包括：RedPajama v2、The Pile
 
 ## 参考资料
 
-- **[过滤指南](references/filtering.md)** – 提供30多种质量过滤规则与算法建议
-- **[去重指南](references/deduplication.md)** – 介绍精确去重、模糊去重及语义去重方法
+- **[过滤指南](references/filtering.md)** – 提供30多种质量过滤规则及启发式方法
+- **[去重处理指南](references/deduplication.md)** – 介绍精确去重、模糊去重及语义去重等方法
 
 ## 相关资源
 
-- **GitHub仓库**：https://github.com/NVIDIA/NeMo-Curator ⭐ 500+星标
-- **文档页面**：https://docs.nvidia.com/nemo-framework/user-guide/latest/datacuration/
-- **当前版本**：0.4.0及以上
+- **GitHub仓库**：https://github.com/NVIDIA-NeMo/Curator
+- **文档页面**：https://docs.nvidia.com/nemo/curator/latest/
+- **当前版本**：1.2.0（1.x版本是基于Ray框架重写的流程——在复制0.x版本的代码片段之前，请先参阅快速入门指南）
 - **许可证**：Apache 2.0
 
 
