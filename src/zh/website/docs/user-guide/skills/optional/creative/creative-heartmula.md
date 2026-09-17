@@ -8,47 +8,49 @@ description: "HeartMuLa: Suno-like song generation from lyrics + tags"
 
 # Heartmula
 
-HeartMuLa：基于歌词与标签的类 Suno 音乐生成工具。
+HeartMuLa：基于歌词与标签生成类似 Suno 风格的歌曲。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/creative/heartmula` 安装 |
-| 路径 | `optional-skills/creative/heartmula` |
+| 来源 | 可选 — 通过 `hermes skills install official/creative/heartmula` 安装 |
+| 路径 | `optional-skills/creative\heartmula` |
 | 版本 | `1.0.0` |
+| 开发者 | Teknium (teknium1)、Hermes Agent |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `音乐`, `音频`, `生成`, `AI`, `heartmula`, `heartcodec`, `歌词`, `歌曲` |
-| 相关技能 | [`audiocraft-audio-generation`](/docs/user-guide/skills/optional/creative/creative-audiocraft), [`songwriting-and-ai-music`](/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music) |
+| 标签 | `音乐`、`音频`、`生成`、`AI`、`heartmula`、`heartcodec`、`歌词`、`歌曲` |
+| 相关技能 | [`audiocraft-audio-generation`](/docs/user-guide/skills/optional/creative/creative-audiocraft-audio-generation)、[`songwriting-and-ai-music`](/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能运行时，智能体将依据此内容执行相应操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
-# HeartMuLa —— 开源音乐生成工具
+# HeartMuLa - 开源音乐生成工具
 
 ## 概述
-HeartMuLa 是一系列开源音乐基础模型（采用 Apache-2.0 许可协议），能够根据歌词和标签生成音乐，并支持多语言处理。它可以从歌词与标签直接生成完整歌曲，在开源领域可视为 Suno 的替代方案。该系列包括：
-- **HeartMuLa** —— 用于基于歌词和标签生成音乐的文本模型（3B/7B 版本）
-- **HeartCodec** —— 用于高保真音频重建的 12.5Hz 音乐编解码器
-- **HeartTranscriptor** —— 基于 Whisper 技术的歌词转录工具
-- **HeartCLAP** —— 音频与文本对齐模型
+HeartMuLa 是一系列开源音乐基础模型（遵循 Apache-2.0 许可协议），能够根据歌词和标签生成音乐，并支持多语言处理。它可以从歌词与标签直接生成完整歌曲，在开源领域可视为 Suno 的替代方案。功能包括：
+- **HeartMuLa** – 基于歌词与标签的音乐生成语言模型（3B/7B版本）  
+- **HeartCodec** – 用于高保真音频重建的12.5Hz音乐编解码器  
+- **HeartTranscriptor** – 基于Whisper技术的歌词转录工具  
+- **HeartCLAP** – 音频与文本对齐模型  
 
-## 适用场景
-- 用户希望根据文字描述生成音乐或歌曲
-- 用户需要开源版的 Suno 替代方案
-- 用户希望进行本地/离线音乐生成
-- 用户咨询有关 HeartMuLa、heartlib 或 AI 音乐生成的相关内容
+## 适用场景  
+- 用户希望根据文本描述生成音乐或歌曲  
+- 用户需要开源的Suno替代方案  
+- 用户需要本地/离线环境下的音乐生成功能  
+- 用户咨询有关HeartMuLa、heartlib或AI音乐生成的相关问题  
 
-## 硬件要求
-- **最低配置**：8GB 显存，同时启用 `--lazy_load true` 参数（实现模型顺序加载/卸载）
-- **推荐配置**：16GB+ 显存，以便在单 GPU 环境下更流畅地运行
-- **多 GPU 场景**：可使用 `--mula_device cuda:0 --codec_device cuda:1` 参数将任务分配到不同 GPU 上处理
-- 启用 lazy_load 功能后，3B 模型的最大显存占用约为 6.2GB
+## 硬件要求  
+- **最低配置**：8GB显存，并启用`--lazy_load true`选项（实现模型顺序加载与卸载）  
+- **推荐配置**：16GB及以上显存，以便在单GPU环境下更流畅地运行  
+- **多GPU场景**：可使用`--mula_device cuda:0 --codec_device cuda:1`指令将任务分配到不同GPU上处理  
+- 启用懒加载功能的3B模型最多需约6.2GB显存  
 
-## 安装步骤
+## 安装步骤  
 
 ### 1. 克隆代码仓库
 ```bash
@@ -66,7 +68,7 @@ uv pip install -e .
 
 ### 3. 解决依赖兼容性问题
 
-**重要提示**：截至2026年2月，固定的依赖项已与更新版本的包产生冲突。请应用以下修复方案：
+**重要提示**：截至2026年2月，已固定的依赖项与更新版本的软件包存在冲突。请应用以下修复方案：
 
 ```bash
 # Upgrade datasets (old version incompatible with current pyarrow)
@@ -80,7 +82,7 @@ uv pip install --upgrade transformers
 
 **补丁 1 —— RoPE 缓存修复**，位于 `src/heartlib/heartmula/modeling_heartmula.py` 文件中：
 
-需在 `HeartMuLa` 类的 `setup_caches` 方法中，在 `reset_caches` 的 try/except 块之后、`with device:` 块之前，添加 RoPE 重置代码：
+在 `HeartMuLa` 类的 `setup_caches` 方法中，在 `reset_caches` 的 try/except 代码块之后、`with device:` 代码块之前，添加 RoPE 重置逻辑：
 
 ```python
 # Re-initialize RoPE caches that were skipped during meta-device loading
@@ -91,13 +93,15 @@ for module in self.modules():
         module.to(device)
 ```
 
-**原因**：`from_pretrained` 方法会首先在元设备上创建模型；而 `Llama3ScaledRoPE.rope_init()` 方法则会跳过对元张量的缓存构建，且在权重加载到实际设备后也不会再次进行构建。
+**原因**：`from_pretrained` 会首先在元设备上创建模型；而 `Llama3ScaledRoPE.rope_init()` 会跳过对元张量的缓存构建，且在权重加载到实际设备后也不会再次进行构建。
 
 位于 `src/heartlib/pipelines/music_generation.py` 中的 **Patch 2 - HeartCodec 加载修复**：
 
-需在所有 `HeartCodec.from_pretrained()` 调用中添加 `ignore_mismatched_sizes=True` 参数（共有两处调用：一处是在 `__init__` 方法中的即时加载，另一处是在 `codec` 属性中的延迟加载）。
+需在所有 `HeartCodec.from_pretrained()` 调用中添加 `ignore_mismatched_sizes=True` 参数（共有两处调用：即 `__init__` 方法中的即时加载，以及 `codec` 属性中的延迟加载）。
 
-**原因**：检查点文件中的 VQ 代码本已初始化缓冲区的形状为 `[1]`，而模型中的相应缓冲区形状为 `[]`。尽管数据内容相同，但前者为标量值，后者为零维张量，因此可以安全地忽略这种尺寸差异。
+**原因**：检查点文件中的 VQ 代码本已初始化缓冲区的形状为 `[1]`，而模型中的相应缓冲区形状为 `[]`。虽然数据内容相同，但前者为标量值，后者为 0 维张量，因此可以安全地忽略这种尺寸差异。
+
+### 5. 下载模型检查点
 ```bash
 cd heartlib  # project root
 hf download --local-dir './ckpt' 'HeartMuLa/HeartMuLaGen'
@@ -109,12 +113,12 @@ hf download --local-dir './ckpt/HeartCodec-oss' 'HeartMuLa/HeartCodec-oss-202601
 
 ## GPU / CUDA
 
-HeartMuLa默认使用CUDA（通过`--mula_device cuda --codec_device cuda`参数指定）。只要用户拥有安装了PyTorch CUDA支持的NVIDIA GPU，就无需额外配置。
+HeartMuLa默认使用CUDA（通过`--mula_device cuda --codec_device cuda`参数指定）。只要用户拥有支持PyTorch CUDA功能的NVIDIA GPU，即无需额外设置。
 
-- 已安装的`torch==2.4.1`版本默认支持CUDA 12.1
-- `torchtune`工具显示的版本可能为`0.4.0+cpu`——这只是软件包的元数据信息，实际仍通过PyTorch使用CUDA
-- 要确认是否使用了GPU，可查看输出结果中的“CUDA内存”相关行（例如“卸载前CUDA内存：6.20 GB”）
-- **没有GPU？** 可以通过`--mula_device cpu --codec_device cpu`参数在CPU模式下运行，但生成速度会**极其缓慢**（处理一首歌曲可能需要30到60分钟甚至更久，而GPU模式下仅需约4分钟）。CPU模式还要求有足够的RAM（建议预留12GB以上空闲内存）。如果用户没有NVIDIA GPU，建议使用云GPU服务（如Google Colab的免费T4版本、Lambda Labs等），或访问在线演示地址https://heartmula.github.io/进行测试。
+- 已安装的`torch==2.4.1`版本可直接支持CUDA 12.1
+- `torchtune`工具显示的版本信息可能为`0.4.0+cpu`——这只是软件包的元数据，实际仍通过PyTorch使用CUDA
+- 要确认是否使用了GPU，可查看输出结果中的“CUDA内存”相关内容（例如“卸载前CUDA内存占用：6.20 GB”）
+- **没有GPU？** 可以通过`--mula_device cpu --codec_device cpu`参数在CPU模式下运行，但生成速度会**极其缓慢**（处理一首歌曲可能需要30到60分钟甚至更久，而GPU模式下仅需约4分钟）。CPU模式还要求有足够的RAM（建议预留12GB以上空闲内存）。如果用户没有NVIDIA GPU，建议使用云GPU服务（如Google Colab的免费T4版本、Lambda Labs等），或访问在线演示地址https://heartmula.github.io/进行试用。
 
 ## 使用方法
 
@@ -160,23 +164,23 @@ Bridge lyrics...
 
 ### 关键参数
 | 参数 | 默认值 | 描述 |
-|-----------|--------|------|
+|------|--------|------|
 | `--max_audio_length_ms` | 240000 | 最大长度，单位为毫秒（240秒 = 4分钟） |
 | `--topk` | 50 | Top-k采样策略 |
-| `--temperature` | 1.0 | 采样温度参数 |
-| `--cfg_scale` | 1.5 | 无分类器引导系数 |
-| `--lazy_load` | false | 按需加载/卸载模型（可节省VRAM） |
-| `--mula_dtype` | bfloat16 | HeartMuLa的数据类型（推荐使用bf16） |
-| `--codec_dtype` | float32 | HeartCodec的 data类型（为保证音质，推荐使用fp32） |
+| `--temperature` | 1.0 | 采样温度系数 |
+| `--cfg_scale` | 1.5 | 无分类器引导强度参数 |
+| `--lazy_load` | false | 按需加载/卸载模型（可节省VRAM资源） |
+| `--mula_dtype` | bfloat16 | HeartMuLa的数值类型（建议使用bf16） |
+| `--codec_dtype` | float32 | HeartCodec的数值类型（为保证音质，建议使用fp32） |
 
 ### 性能表现
-- 实时因子（RTF）约为1.0——一首4分钟的歌曲大约需要4分钟的时间来生成
+- 实时因子（RTF）≈ 1.0 —— 一首4分钟的歌曲大约需要4分钟时间生成
 - 输出格式：MP3，48kHz立体声，128kbps比特率
 
 ## 常见问题与注意事项
-1. **请勿对HeartCodec使用bf16格式**——这会降低音频质量。请使用默认的fp32格式。
-2. **标签信息可能会被忽略**——这是一个已知问题（编号#90）。歌词内容往往占主导地位，可尝试调整标签的顺序。
-3. **macOS系统不支持Triton框架**——GPU加速功能仅适用于Linux系统及CUDA环境。
+1. **请勿为HeartCodec使用bf16格式** —— 这会降低音频质量。建议使用默认的fp32格式。
+2. **标签信息可能会被忽略** —— 这是一个已知问题（编号#90）。歌词内容往往占主导地位，可尝试调整标签的顺序。
+3. **macOS系统不支持Triton框架** —— GPU加速功能仅适用于Linux系统及CUDA环境。
 4. 有报告指出RTX 5080显卡可能存在兼容性问题。
 5. 由于依赖项版本冲突，需按照上文所述进行手动升级和打补丁操作。
 
