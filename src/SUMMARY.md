@@ -2764,7 +2764,7 @@
     - [Document To Action Items]()
       - [文档转行动项指南](zh/skills/productivity/document-to-action-items/SKILL.md)
     - [Docx]()
-      - [DOCX技能](zh/skills/productivity/docx/SKILL.md)
+      - [Docx技能](zh/skills/productivity/docx/SKILL.md)
       - [References]()
         - [修改与注释 — XML 详细信息](zh/skills/productivity/docx/references/revisions-and-comments.md)
     - [Google Workspace]()
