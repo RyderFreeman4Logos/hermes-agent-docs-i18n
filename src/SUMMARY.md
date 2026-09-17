@@ -3102,7 +3102,7 @@
             - [Humanizer](zh/website/docs/user-guide/skills/bundled/creative/creative-humanizer.md)
             - [Manim 视频生成](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
             - [p5Js](zh/website/docs/user-guide/skills/bundled/creative/creative-p5js.md)
-            - [热门网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
+            - [流行网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
             - [Pretext](zh/website/docs/user-guide/skills/bundled/creative/creative-pretext.md)
             - [Sketch](zh/website/docs/user-guide/skills/bundled/creative/creative-sketch.md)
             - [歌曲创作与 AI 音乐](zh/website/docs/user-guide/skills/bundled/creative/creative-songwriting-and-ai-music.md)
