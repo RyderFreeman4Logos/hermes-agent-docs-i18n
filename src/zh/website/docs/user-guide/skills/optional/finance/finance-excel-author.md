@@ -1,45 +1,44 @@
 ---
-title: "Excel Author"
+title: "Excel Author — Build auditable financial workbooks headless via openpyxl"
 sidebar_label: "Excel Author"
-description: "Build auditable Excel workbooks headless with openpyxl — blue/black/green cell conventions, formulas over hardcodes, named ranges, balance checks, sensitivit..."
+description: "Build auditable financial workbooks headless via openpyxl"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据该技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Excel Author
 
-使用 openpyxl 在无界面模式下创建可审计的 Excel 工作簿——支持蓝/黑/绿单元格规范、公式替代硬编码、命名范围、余额校验以及敏感性分析表。适用于财务模型、审计输出及对账工作。
+利用 openpyxl 在无界面模式下生成可审计的财务工作簿。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/finance/excel-author` 安装 |
-| 路径 | `optional-skills/finance/excel-author` |
+| 路径 | `optional-skills/finance\excel-author` |
 | 版本 | `1.0.0` |
 | 开发者 | Anthropic（由 Nous Research 改编） |
 | 许可协议 | Apache-2.0 |
 | 支持平台 | linux、macos、windows |
 | 标签 | `excel`、`openpyxl`、`finance`、`spreadsheet`、`modeling` |
-| 相关技能 | [`pptx-author`](/docs/user-guide/skills/optional/finance/finance-pptx-author)、[`dcf-model`](/docs/user-guide/skills/optional/finance/finance-dcf-model)、[`comps-analysis`](/docs/user-guide/skills/optional/finance/finance-comps-analysis)、[`lbo-model`](/docs/user-guide/skills/optional/finance/finance-lbo-model)、[`3-statement-model`](/docs/user-guide/skills/optional/finance/finance-3-statement-model) |
+| 相关技能 | [`xlsx`](/docs/user-guide/skills/bundled/productivity/productivity-xlsx)、[`pptx-author`](/docs/user-guide/skills/optional/finance/finance-pptx-author)、[`dcf-model`](/docs/user-guide/skills/optional/finance/finance-dcf-model)、[`comps-analysis`](/docs/user-guide/skills/optional/finance/finance-comps-analysis)、[`lbo-model`](/docs/user-guide/skills/optional/finance/finance-lbo-model)、[`3-statement-model`](/docs/user-guide/skills/optional/finance/finance-3-statement-model) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。当该技能处于激活状态时，智能体看到的指令即为此内容。
 :::
 
-# excel-author
+# Excel Author
 
-使用 `openpyxl` 在磁盘上生成 .xlsx 格式的文件。请遵循以下银行级规范，以确保模型具备可审计性、灵活性，并能被创建者之外的其他人进行审核。
+使用 `openpyxl` 在磁盘上生成 .xlsx 格式的文件。请遵循以下银行级规范，以确保生成的模型具备可审计性、灵活性，并能由创建者之外的其他人进行审核。
 
-该技能基于 Anthropic 在 [anthropics/financial-services](https://github.com/anthropics/financial-services) 仓库中开发的 `xlsx-author` 和 `audit-xls` 技能改编而来。原版本中的 MCP / Office-JS / Cowork 相关分支已被移除——本技能假定在无界面 Python 环境下运行。
+该技能基于 Anthropic 在 [anthropics/financial-services](https://github.com/anthropics/financial-services) 仓库中开发的 `xlsx-author` 和 `audit-xls` 技能优化而来。原代码中的 MCP / Office-JS / Cowork 相关分支已被移除——本技能仅适用于无界面 Python 环境。
 
 ## 输出规范
-
-- 将文件写入 `./out/<名称>.xlsx`。如果 `./out/` 目录不存在，则需先创建。
-- 在最终消息中返回相对路径，以便后续工具能够获取该文件。
-- 每个文件对应一个独立的逻辑模型。除非有明确要求，否则不得向现有工作簿追加内容。
+- 将结果写入 `./out/<名称>.xlsx` 文件中。若目录不存在，则自动创建。
+- 在最终响应中返回相对路径，以便后续工具读取文件。
+- 每个文件对应一个逻辑模型。除非另有明确要求，否则不得向现有工作簿追加内容。
 
 ## 设置指南
 
@@ -54,10 +53,10 @@ pip install "openpyxl>=3.0"
 - **黑色**（默认值）——公式。所有派生出的单元格均为实时 Excel 公式。
 - **绿色**（`Font(color="006100")`）——指向其他工作表或外部文件的链接。
 
-这样一来，审核人员只需浏览表格，即可立即区分哪些是假设值，哪些是计算结果。
+这样，审核人员只需浏览表格，即可立即区分哪些是假设值，哪些是计算结果。
 
 ### 必须使用公式而非固定值
-每一个计算单元格都必须为公式字符串，绝不能是先用 Python 计算出数值后再作为内容粘贴进去。
+所有计算单元格都必须为公式字符串，绝不能是将用 Python 计算出的数值直接粘贴作为内容。
 
 ```python
 # WRONG — silent bug waiting to happen
@@ -68,11 +67,11 @@ ws["D20"] = "=D19*(1+$B$8)"
 ```
 
 唯一允许硬编码的数值包括：
-1. 原始历史数据（实际营收、报告的EBITDA等）；
+1. 原始历史数据（实际营收、报告中的EBITDA等）；
 2. 用户可自行调整的假设参数（增长率、WACC数值、终端增长率）；
-3. 当前市场数据（股价、债务余额）——需在对应单元格中添加注释，注明数据来源与日期。
+3. 当前市场数据（股价、债务余额）——需在对应单元格中备注数据来源及日期。
 
-如果您发现自己正在用Python计算某个数值并将其写入文件，请立即停止。
+若发现自己正在用Python计算数值并直接写入结果，请立即停止。
 
 ### 用于跨工作表引用的命名范围
 对于需要从其他工作表、演示文稿或备忘录中引用的任何数据，均应使用命名范围。
@@ -84,11 +83,11 @@ wb.defined_names["WACC"] = DefinedName("WACC", attr_text="Inputs!$C$8")
 calc["D30"] = "=D29/WACC"
 ```
 
-### 余额校验标签页
-该标签页包含一个 `Checks` 标签页，用于整合各项数据并输出 TRUE/FALSE 结果：
+### 净值检查标签页
+该标签页包含一个 `Checks` 标签页，用于整合所有相关数据并显示 TRUE/FALSE 结果：
 - 资产负债表平衡性（资产 = 负债 + 所有者权益）
 - 现金流与资产负债表中各期现金变动的匹配情况
-- 各组成部分之和与合并后总金额的匹配情况
+- 各组成部分之和与合并总数的匹配情况
 - 计算范围内不存在非法硬编码
 
 示例：
@@ -100,7 +99,7 @@ checks["C2"] = "=ABS(B2)<0.01"  # TRUE/FALSE
 ```
 
 ### 对每个硬编码输入添加单元格注释
-应在创建单元格时立即添加注释，切勿延后操作。
+请在创建单元格时即添加注释，切勿事后补加。
 
 ```python
 from openpyxl.comments import Comment
@@ -109,9 +108,9 @@ ws["C2"].font = Font(color="0000FF")
 ws["C2"].comment = Comment("Source: 10-K FY2024, p.47, revenue line", "analyst")
 ```
 
-格式：`来源：[系统/文档]，[日期]，[参考编号]，[如有网址则填写]。`
+格式：`来源：[系统/文档]，[日期]，[参考编号]，[如有相关网址则填写]。`
 
-绝不可延迟标注来源。也严禁使用“TODO: 添加来源”这类表述。
+绝不可延迟标注信息来源。切勿写入“TODO: 添加来源”此类内容。
 
 ## 典型财务模型框架
 
@@ -164,7 +163,7 @@ wb.save("./out/model.xlsx")
 
 ## 合并单元格的章节标题设置
 
-openpyxl 的特殊要求：在合并单元格时，需先设置左上角单元格的值，再单独为整个合并区域设置样式。
+openpyxl 的特殊要求：在合并单元格时，需先设置左上角单元格的值，然后再单独为整个合并区域设置样式。
 
 ```python
 ws["A7"] = "CASH FLOW PROJECTION"
@@ -178,10 +177,10 @@ for col in range(1, 9):  # A..H
 
 应通过循环构建表格，而非为每个单元格硬编码公式。相关规则如下：
 
-- **行数/列数为奇数**（如5×5或7×7）——这样才能确保存在真正的中心单元格。
-- **中心单元格即为基准情况**。中间行/列的数值必须与模型实际的加权平均资本成本及长期增长率一致，这样中心的计算结果才会对应基准情况下的预期股价。这是用于验证计算正确性的关键步骤。
-- 用中蓝色填充色（`"BDD7EE"`）并加粗来标记中心单元格。
-- 每个单元格都需填入完整的重新计算公式——绝不能使用近似值。
+- **行数/列数为奇数**（如5×5或7×7）——这样可以确保存在真正的中心单元格。
+- **中心单元格即为基准情况**。中间行/列的数值必须与模型实际的加权平均资本成本及永久增长率一致，这样才能使中心位置的输出值对应基准情况下的预期股价。这是用于验证计算正确性的关键步骤。
+- 使用中蓝色填充色（`"BDD7EE"`）并加粗来标出中心单元格。
+- 每个单元格都应填入经过完整重新计算的公式——绝不能使用近似值。
 
 ```python
 # 5x5 WACC (rows) x terminal growth (cols) sensitivity
@@ -218,7 +217,7 @@ center.font = BOLD
 
 ## 交付前的重新计算
 
-openpyxl仅负责写入公式字符串，而不会实际计算这些公式。Excel在文件被打开时会自动重新计算，但后续的使用者（如自动检测脚本、持续集成系统）需要的是已计算完成的数值。
+openpyxl仅会写入公式字符串，而不会实际计算这些公式。Excel在文件被打开时会自动重新计算，但后续的处理程序（如自动检查脚本、持续集成系统）需要的是已计算完成的数值。
 
 因此，在交付之前，请先运行LibreOffice或执行专门的重新计算步骤：
 
@@ -227,36 +226,36 @@ openpyxl仅负责写入公式字符串，而不会实际计算这些公式。Exc
 libreoffice --headless --calc --convert-to xlsx ./out/model.xlsx --outdir ./out/
 ```
 
-或者可以使用 Python 重算辅助工具（详见该技能中的 `scripts/recalc.py` 文件）。
+或者可以使用 Python 重算辅助工具（参见该技能中的 `scripts/recalc.py` 文件）。
 
 ## 模型结构规划
 
-在编写任何公式之前，请按以下步骤操作：
-1. 确定所有板块行的位置
-2. 编写所有的表头和标签
-3. 添加所有的板块分隔符及空行
-4. 最后再根据已确定的行位置编写公式
+在编写任何公式之前：
+1. 先确定所有板块行的位置
+2. 再编写所有的表头和标签
+3. 接着添加所有的板块分隔符及空行
+4. 最后利用已确定的行位置来编写公式
 
-这样做可以避免“公式链断裂”问题——即在公式编写完成后插入表头行会导致后续的所有引用出错。
+这样做可以避免“公式链断裂”问题——即在公式编写完成后插入表头行会导致后续的所有引用地址发生偏移。
 
-## 与用户逐步验证结果
+## 与用户逐步验证
 
-对于大型模型（DCF、三报表模型、LBO模型），在继续下一步之前，请暂停并向用户展示中间结果。在生成下游敏感性分析表之前发现 margin 假设错误，往往能节省数小时的工作时间。
+对于大型模型（DCF、三报表模型、LBO模型），在继续推进之前应暂停并向用户展示中间结果。在生成下游敏感性分析表之前发现 margin 假设有误，往往能节省数小时的工作时间。
 
-建议的验证节点如下：
-- 输入数据部分完成后 → 显示原始输入数据，并在继续运算前获得用户确认
-- 收入预测完成后 → 确认总收入及增长趋势
-- 自由现金流计算完成后 → 确认整个时间表内容
-- 加权平均资本成本计算完成后 → 确认输入参数
-- 估值完成后 → 确认股权价值过渡逻辑
-- 所有步骤确认无误后，再生成敏感性分析表
+检查点设置方式：
+- 完成“输入数据”部分后 → 显示原始输入数据，并在继续推演前获得用户确认
+- 完成收入预测后 → 确认营业收入及增长趋势
+- 完成自由现金流计算后 → 确认整个时间表的内容
+- 计算出加权平均资本成本后 → 确认输入参数
+- 完成估值后 → 确认股权价值过渡部分的计算结果
+- 此时再生成敏感性分析表
 
 ## 何时不宜使用此技能
 
-- 用户正在使用支持 Office MCP 的实时 Excel 会话——建议让他们直接操作自己的实时工作簿。
-- 仅需要导出不含公式的纯表格数据——使用 `csv` 或 `pandas.to_excel` 更为简单。
-- 需要高度交互功能的仪表板或图表——应选用专业的商业智能工具。
+- 用户正处于实时 Excel 会话中且已启用 Office MCP——建议让用户直接操作其实时工作簿。
+- 仅需导出纯表格数据且不包含公式的情况——使用 `csv` 或 `pandas.to_excel` 更为简便。
+- 需要高度交互功能的仪表板/图表——应选用专业的商业智能工具。
 
-## 规范说明
+## 致谢
 
-本文所采用的规范（蓝色/黑色/绿色标识、优先使用公式而非硬编码、命名范围、敏感性分析规则等）借鉴自 Anthropic 的 Claude for Financial Services 插件套件，遵循 Apache-2.0 许可协议。原始文档地址：https://github.com/anthropics/financial-services/tree/main/plugins/vertical-plugins/financial-analysis/skills/xlsx-author
+这些约定规范（蓝色/黑色/绿色标识、公式优先于硬编码、命名范围以及敏感度规则）借鉴自 Anthropic 的 Claude for Financial Services 插件套件，采用 Apache-2.0 许可协议。原始文档地址：https://github.com/anthropics/financial-services/tree/main/plugins/vertical-plugins/financial-analysis/skills/xlsx-author
