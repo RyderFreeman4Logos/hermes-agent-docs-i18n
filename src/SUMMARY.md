@@ -2813,6 +2813,7 @@
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
         - [GitHub REST API 快速参考指南](zh/skills/software-development/github/references/github-api-cheatsheet.md)
         - [将 GitHub Issue 转换为经过测试的 PR](zh/skills/software-development/github/references/issue-to-pr.md)
+        - [GitHub 问题管理](zh/skills/software-development/github/references/issues.md)
         - [输出模板说明](zh/skills/software-development/github/references/review-output-template.md)
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
