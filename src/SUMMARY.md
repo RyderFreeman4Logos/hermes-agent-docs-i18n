@@ -2536,7 +2536,7 @@
         - [主题/皮肤——创建 Hermes 颜色主题](zh/skills/autonomous-ai-agents/hermes-agent/references/themes.md)
         - [故障排除](zh/skills/autonomous-ai-agents/hermes-agent/references/troubleshooting.md)
         - [TUI 小部件——Ink TUI Dock 的实时面板功能](zh/skills/autonomous-ai-agents/hermes-agent/references/tui-widgets.md)
-        - [Webhook 订阅](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
+        - [Webhook 订阅功能](zh/skills/autonomous-ai-agents/hermes-agent/references/webhooks.md)
         - [Windows 系统特有的问题](zh/skills/autonomous-ai-agents/hermes-agent/references/windows-quirks.md)
     - [Opencode]()
       - [OpenCode CLI](zh/skills/autonomous-ai-agents/opencode/SKILL.md)
