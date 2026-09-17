@@ -1,21 +1,21 @@
 # 轨迹格式
 
-Hermes Agent以兼容ShareGPT的JSONL格式保存对话轨迹，这些数据可用于训练数据、调试输出以及强化学习数据集。
+Hermes Agent以兼容ShareGPT的JSONL格式保存对话轨迹，这些轨迹可用于训练数据、调试信息以及强化学习数据集。
 
-相关源文件：`agent/trajectory.py`、`run_agent.py`（查找 `_save_trajectory` 函数）、`batch_runner.py`
+相关源文件：`agent/trajectory.py`、`agent/session_persistence.py`（查找 `_save_trajectory` 函数）、`batch_runner.py`
 
 ## 文件命名规则
 
-轨迹数据会保存在当前工作目录下的相应文件中：
+轨迹文件会存储在当前工作目录中：
 
 | 文件名 | 适用场景 |
 |------|----------|
-| `trajectory_samples.jsonl` | 对话成功结束的记录（`completed=True`） |
-| `failed_trajectories.jsonl` | 对话失败或被中断的记录（`completed=False`） |
+| `trajectory_samples.jsonl` | 成功完成的对话（`completed=True`） |
+| `failed_trajectories.jsonl` | 失败或被中断的对话（`completed=False`） |
 
-批量运行工具（`batch_runner.py`）会为每个批次生成包含额外元数据字段的定制输出文件（例如：`batch_001_output.jsonl`）。
+批量处理工具`batch_runner.py`会为每批处理结果生成一个包含额外元数据字段的定制输出文件（例如：`batch_001_output.jsonl`）。
 
-您可以通过 `save_trajectory()` 函数中的 `filename` 参数来自定义文件名。
+您可以通过`save_trajectory()`函数中的`filename`参数来自定义文件名。
 
 ## JSONL记录格式
 
@@ -56,18 +56,18 @@ Hermes Agent以兼容ShareGPT的JSONL格式保存对话轨迹，这些数据可�
 }
 ```
 
-`tool_stats`与`tool_error_counts`这两个字典会经过标准化处理，确保包含`model_tools.TOOL_TO_TOOLSET_MAP`中列出的所有可能工具，且默认值为零。这样一来，在加载HuggingFace数据集时，各条记录的架构就能保持一致。
+`tool_stats`与`tool_error_counts`这两个字典均经过标准化处理，会包含`model_tools.TOOL_TO_TOOLSET_MAP`中列出的所有可能工具，且默认值为零。这样的设计能够确保在加载HuggingFace数据集时，各个条目的结构保持一致。
 
 ## 对话数组（ShareGPT格式）
 
 `conversations`数组遵循ShareGPT的角色规范：
 
 | API角色 | ShareGPT `from`值 |
-|----------|-----------------|
-| 系统角色 | `"system"` |
-| 用户角色 | `"human"` |
-| 助手角色 | `"gpt"` |
-| 工具角色 | `"tool"` |
+|----------|-------------------|
+| system  | `"system"`       |
+| user     | `"human"`        |
+| assistant| `"gpt"`          |
+| tool     | `"tool"`         |
 
 ### 完整示例
 
@@ -108,15 +108,15 @@ Hermes Agent以兼容ShareGPT的JSONL格式保存对话轨迹，这些数据可�
 
 轨迹转换器会将所有推理内容统一转换为 `<think>` 标签，而不论模型最初是以何种形式生成这些内容的：
 
-1. **原生推理标记**（来自 Anthropic、OpenAI o 系列等提供商的 `msg["reasoning"]` 字段）：会被包装为 `<think>\n{reasoning}\n</think>\n` 的格式，并置于内容之前。
+1. **原生推理标记**（来自 Anthropic、OpenAI o 系列等提供方的 `msg["reasoning"]` 字段）：会被封装为 `<think>\n{reasoning}\n</think>\n` 的格式，并置于内容之前。
 
-2. **REASONING_SCRATCHPAD XML**（当禁用原生推理且模型通过系统提示指令以 XML 格式进行推理时）：`convert_scratchpad_to_think()` 函数会将 `<REASONING_SCRATCHPAD>` 标签转换为 `<think>` 标签。
+2. **REASONING_SCRATCHPAD XML**（在禁用原生推理且模型通过系统提示指令以 XML 格式进行推理时）：`convert_scratchpad_to_think()` 函数会将 `<REASONING_SCRATCHPAD>` 标签转换为 `<think>` 标签。
 
-3. **空的思考块**：每个 `gpt` 轮次都必定包含一个 `<think>` 块。如果未生成任何推理内容，则会插入一个空块：<think>\n</think>\n>——此举旨在确保训练数据格式的一致性。
+3. **空的思考块**：每个 `gpt` 回应都必定包含一个 `<think>` 块。如果未生成任何推理内容，则会插入一个空块：<think>\n</think>\n>——这样做是为了确保训练数据格式的一致性。
 
 ### 工具调用标准化
 
-API 格式的工具调用（包含 `tool_call_id`、函数名称以及作为 JSON 字符串的参数）会被转换为 XML 包装的 JSON 格式：
+API 格式的工具调用（包含 `tool_call_id`、函数名称以及作为 JSON 字符串的参数）会被转换为 XML 封装的 JSON 格式：
 
 ```
 <tool_call>
@@ -125,12 +125,12 @@ API 格式的工具调用（包含 `tool_call_id`、函数名称以及作为 JSO
 ```
 
 - 参数会从 JSON 字符串解析为对象形式（不会进行双重编码）。
-- 若 JSON 解析失败（本不应发生，因为已在对话过程中进行过验证），则使用空的 `{}` 并记录警告信息。
-- 在一次助手回复中调用多个工具时，会在一个 `gpt` 消息中生成多个 `<tool_call>` 块。
+- 若 JSON 解析失败（本不应发生，因为已在对话过程中进行了验证），则使用空对象 `{}` 并记录警告信息。
+- 在一个助手轮次中发起的多次工具调用，会在单个 `gpt` 消息中生成多个 `<tool_call>` 块。
 
 ### 工具响应规范化
 
-助手消息之后的所有工具响应都会被汇总到同一个 `tool` 回复中，且响应形式为经过 XML 包装的 JSON：
+助手消息之后的所有工具响应都会被汇总到同一个 `tool` 轮次中，并以 XML 包装的 JSON 格式返回。
 
 ```
 <tool_response>
@@ -138,7 +138,7 @@ API 格式的工具调用（包含 `tool_call_id`、函数名称以及作为 JSO
 </tool_response>
 ```
 
-- 如果工具内容为 JSON 格式（以 `{` 或 `[` 开头），系统会对其进行解析，从而使 `content` 字段中存储的是 JSON 对象/数组而非字符串。
+- 如果工具内容为 JSON 格式（以 `{` 或 `[` 开头），系统会对其进行解析，从而使 `content` 字段存储的是 JSON 对象/数组而非字符串。
 - 多个工具的返回结果会在同一条消息中通过换行符分隔。
 - 工具名称会根据其在父助手的 `tool_calls` 数组中的位置进行匹配。
 
@@ -150,7 +150,7 @@ API 格式的工具调用（包含 `tool_call_id`、函数名称以及作为 JSO
 - `FunctionCall` 对象的架构参考；
 - `<tool_call>` 的示例。
 
-工具定义包括 `name`、`description`、`parameters` 和 `required` 字段（如需符合标准格式，可将其值设为 `null`）。
+工具定义需包含 `name`、`description`、`parameters` 和 `required` 字段（如需符合标准格式，可将该字段设置为 `null`）。
 
 ## 加载轨迹数据
 
@@ -189,16 +189,14 @@ ds = load_dataset("json", data_files="trajectory_samples.jsonl")
 
 ## 控制轨迹保存功能
 
-在 CLI 中，轨迹保存功能可通过以下方式控制：
+轨迹保存功能属于 `run_agent.py` 或库级别的开关——`hermes` CLI 并未提供相关的配置键或参数。
 
-```yaml
-# config.yaml
-agent:
-  save_trajectories: true  # default: false
+```bash
+python run_agent.py --save_trajectories --query='your question here'
 ```
 
-或者也可以通过 `--save-trajectories` 参数来实现。当代理以 `save_trajectories=True` 的参数初始化时，每次对话轮次结束时都会调用 `_save_trajectory()` 方法。
+或者通过编程方式实现：`AIAgent(..., save_trajectories=True)` / `initialize_agent(..., save_trajectories=True)`。启用该选项后，每次对话轮次结束时都会调用`_save_trajectory()`方法。
 
-批量运行器会始终保存对话轨迹（这正是它的核心功能）。
+批量运行器会始终保存对话轨迹数据（这正是它的核心功能）。
 
-对于所有轮次中均无推理行为的样本，批量运行器会自动将其丢弃，以避免用这类非推理样本污染训练数据。
+对于所有对话轮次中均无推理行为的样本，批量运行器会自动将其丢弃，以避免用此类非推理样本污染训练数据。
