@@ -1964,6 +1964,7 @@
       - [References]()
         - [捕获与分割问题的排查](zh/optional-skills/creative/draw-your-font/references/troubleshooting.md)
     - [Excalidraw]()
+      - [Excalidraw 图表生成技能](zh/optional-skills/creative/excalidraw/SKILL.md)
       - [References]()
         - [Excalidraw 颜色方案](zh/optional-skills/creative/excalidraw/references/colors.md)
         - [Excalidraw 深色模式图表](zh/optional-skills/creative/excalidraw/references/dark-mode.md)
