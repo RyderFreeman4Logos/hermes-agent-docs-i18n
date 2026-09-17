@@ -12,33 +12,25 @@ Hermes 不仅是一款命令行工具。您可以直接导入 `AIAgent`，并在
 
 ## 安装
 
-直接从仓库安装 Hermes：
+克隆 Hermes 并创建其支持的可编辑开发环境：
 
 ```bash
-pip install git+https://github.com/NousResearch/hermes-agent.git
+git clone https://github.com/NousResearch/hermes-agent.git
+cd hermes-agent
+uv sync
 ```
 
-或者使用 [uv](https://docs.astral.sh/uv/)：
-
-```bash
-uv pip install git+https://github.com/NousResearch/hermes-agent.git
-```
-
-您也可以将其添加到 `requirements.txt` 文件中：
-
-```text
-hermes-agent @ git+https://github.com/NousResearch/hermes-agent.git
-```
+通过在该检出目录下执行 `uv run python your_app.py` 即可运行您的应用程序。Hermes 并不提供针对 `requirements.txt` 安装方式的兼容 wheel 或源码分发版本。
 
 :::提示
-当将 Hermes 作为库使用时，需要使用与 CLI 相同的环境变量。至少需设置 `OPENROUTER_API_KEY`（如果直接通过提供商访问，则需设置 `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`）。
+将 Hermes 作为库使用时，需要使用与 CLI 相同的环境变量。至少需设置 `OPENROUTER_API_KEY`（若直接使用提供商接口，则需设置 `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`）。
 :::
 
 ---
 
 ## 基本用法
 
-使用 Hermes 最简单的方法就是调用 `chat()` 方法——传入消息，即可获得返回的字符串：
+使用 Hermes 最简单的方式就是调用 `chat()` 方法——传入消息，即可获得返回的字符串：
 
 ```python
 from run_agent import AIAgent
@@ -54,7 +46,7 @@ print(response)
 `chat()` 函数会内部处理整个对话流程——包括工具调用、重试等所有操作——并仅返回最终的文本响应。
 
 :::warning
-在将 Hermes 集成到自定义代码中时，务必设置 `quiet_mode=True`。如果不设置该参数，代理将会输出 CLI 旋转指示器、进度条以及其他终端信息，从而导致应用程序的输出变得杂乱无章。
+在将 Hermes 集成到自己的代码中时，务必设置 `quiet_mode=True`。如果不设置该参数，智能体将会输出 CLI 旋转指示器、进度指示符以及其他终端信息，这些都会使应用程序的输出显得杂乱无章。
 :::
 
 ---
@@ -82,7 +74,7 @@ print(f"Messages exchanged: {len(result['messages'])}")
 - **`final_response`** — 智能体的最终文本回复
 - **`messages`** — 完整的消息历史记录（系统消息、用户消息、助手消息以及工具调用记录）
 
-（您传入的 `task_id` 会存储在智能体实例中以实现虚拟机隔离，但不会出现在返回的字典中。）
+（您传入的 `task_id` 会被存储在智能体实例中，用于实现虚拟机隔离，但不会出现在返回的字典中。）
 
 您还可以传入自定义的系统消息，以此覆盖该次调用的临时系统提示语：
 
@@ -114,14 +106,14 @@ agent = AIAgent(
 ```
 
 :::提示
-若需创建功能极简且受到严格限制的智能体（例如仅用于研究的网页搜索机器人），请使用 `enabled_toolsets` 参数。若希望保留大部分功能但需限制某些特定功能（例如在共享环境中禁止使用终端），则应使用 `disabled_toolsets` 参数。
+如果您希望创建一个功能极简且受到严格限制的智能体（例如仅用于研究的网页搜索机器人），请使用 `enabled_toolsets`。而如果您需要大部分功能，但又要限制某些特定功能（例如在共享环境中禁止使用终端），则应使用 `disabled_toolsets`。
 :::
 
 ---
 
 ## 多轮对话
 
-通过将消息历史记录传递回去，从而在多轮对话中保持上下文状态：
+通过将消息历史记录传递回去，从而在多轮对话中保持对话状态：
 
 ```python
 agent = AIAgent(
@@ -141,13 +133,13 @@ result2 = agent.run_conversation(
 print(result2["final_response"])  # "Your name is Alice."
 ```
 
-`conversation_history` 参数可接收之前结果中的 `messages` 列表。智能体会在内部复制该列表，因此您的原始列表绝不会被修改。
+`conversation_history` 参数可接收之前响应结果中的 `messages` 列表。智能体会在内部复制该列表，因此您的原始列表绝不会被修改。
 
 ---
 
 ## 保存对话轨迹
 
-启用轨迹保存功能，即可以 ShareGPT 格式保存对话内容——这有助于生成训练数据或进行调试：
+启用轨迹保存功能后，即可以 ShareGPT 格式保存对话内容——这有助于生成训练数据或进行故障排查：
 
 ```python
 agent = AIAgent(
@@ -166,7 +158,7 @@ agent.chat("Write a Python function to sort a list")
 
 ## 自定义系统提示词
 
-可使用 `ephemeral_system_prompt` 设置自定义系统提示词，用以引导智能体的行为，但此类提示词**不会**被保存到轨迹文件中（从而保持训练数据的纯净性）：
+可使用 `ephemeral_system_prompt` 来设置自定义系统提示词，以此引导智能体的行为，但该提示词**不会**被保存到轨迹文件中（从而保持训练数据的纯净性）：
 
 ```python
 agent = AIAgent(
@@ -179,19 +171,19 @@ response = agent.chat("How do I write a JOIN query?")
 print(response)
 ```
 
-这非常适合构建各类专用智能体——无论是代码审查员、文档编写工具，还是SQL助手——所有这些智能体都可以共享相同的底层技术框架。
+这非常适合构建各类专业智能体——无论是代码审查员、文档编写工具，还是SQL助手——所有这些智能体都可以共享相同的底层技术框架。
 
 ---
 
 ## 批量处理
 
-为支持并行执行多个提示词，Hermes提供了`batch_runner.py`工具。该工具能够对多个`AIAgent`实例进行管理，并通过有效的资源隔离机制确保各实例之间的独立运行：
+为便于并行执行多个提示词，Hermes提供了`batch_runner.py`工具。该工具能够通过合理的资源隔离机制，同时管理多个`AIAgent`实例：
 
 ```bash
 python batch_runner.py --input prompts.jsonl --output results.jsonl
 ```
 
-每个提示词都会拥有独立的 `task_id` 以及隔离的运行环境。如果您需要自定义批量处理逻辑，可以直接使用 `AIAgent` 来构建相应的功能：
+每个提示词都会拥有独立的 `task_id` 以及隔离的运行环境。如果您需要自定义的批量处理逻辑，可以直接使用 `AIAgent` 来构建相应的功能：
 
 ```python
 import concurrent.futures
@@ -220,7 +212,7 @@ for prompt, result in zip(prompts, results):
 ```
 
 :::warning
-请务必为每个线程或任务创建一个**新的 `AIAgent` 实例**。该智能体会维护内部状态（对话历史、工具会话、迭代计数器），这些状态并不适合在多个线程之间共享。
+请始终为每个线程或任务创建一个**新的 `AIAgent` 实例**。该智能体会维护内部状态（对话历史、工具会话、迭代计数器），这些状态并不适合在多个线程之间共享。
 :::
 
 ---
@@ -252,7 +244,7 @@ async def chat(request: ChatRequest):
     return {"response": response}
 ```
 
-### Discord机器人
+### Discord 机器人
 
 ```python
 import discord
@@ -309,16 +301,16 @@ print(review)
 
 | 参数 | 类型 | 默认值 | 描述 |
 |-----------|------|---------|-------------|
-| `model` | `str` | `""` | OpenRouter 格式的模型名称（默认为空；会在运行时从您的 hermes 配置中读取） |
-| `quiet_mode` | `bool` | `False` | 是否抑制 CLI 输出 |
+| `model` | `str` | `""` | OpenRouter 格式的模型名称（默认为空；运行时从您的 hermes 配置中读取） |
+| `quiet_mode` | `bool` | `False` | 抑制 CLI 输出 |
 | `enabled_toolsets` | `List[str]` | `None` | 允许使用的工具集白名单 |
 | `disabled_toolsets` | `List[str]` | `None` | 禁用的工具集黑名单 |
-| `save_trajectories` | `bool` | `False` | 是否将对话内容保存为 JSONL 格式 |
+| `save_trajectories` | `bool` | `False` | 将对话内容保存为 JSONL 格式 |
 | `ephemeral_system_prompt` | `str` | `None` | 自定义系统提示词（不会被保存到对话记录中） |
-| `max_iterations` | `int` | `90` | 每次对话中工具调用的最大迭代次数 |
-| `skip_context_files` | `bool` | `False` | 是否跳过加载 AGENTS.md 文件 |
-| `skip_memory` | `bool` | `False` | 是否禁用持久内存的读写功能 |
-| `api_key` | `str` | `None` | API 密钥（如未提供则自动从环境变量中读取） |
+| `max_iterations` | `int` | `500` | 每次对话中工具调用的最大迭代次数 |
+| `skip_context_files` | `bool` | `False` | 跳过加载 AGENTS.md 文件 |
+| `skip_memory` | `bool` | `False` | 禁用持久化内存的读写功能 |
+| `api_key` | `str` | `None` | API 密钥（若未提供则从环境变量中读取） |
 | `base_url` | `str` | `None` | 自定义 API 接口地址 |
 | `platform` | `str` | `None` | 平台标识（如 `"discord"`、`"telegram"` 等） |
 
@@ -328,12 +320,11 @@ print(review)
 
 :::tip
 - 如果不希望将工作目录中的 `AGENTS.md` 文件内容加载到系统提示词中，请设置 **`skip_context_files=True`**。
-- 若需防止智能体读取或写入持久内存，可设置 **`skip_memory=True`**——这对无状态 API 接口尤为推荐。
-- `platform` 参数（例如 `"discord"`、`"telegram"`）会注入特定于平台的格式化提示，以便智能体调整输出风格。
+- 若需阻止智能体读取或写入持久化内存，可设置 **`skip_memory=True`**——这对于无状态 API 接口尤为推荐。
+- `platform` 参数（例如 `"discord"`、`"telegram"`）会注入特定于平台的格式化提示，帮助智能体调整输出风格。
 :::
 
 :::warning
-- **线程安全性**：每个线程或任务应创建一个独立的 `AIAgent` 实例。切勿在并发调用之间共享同一个实例。
-- **资源清理**：当对话结束时，智能体会自动清理相关资源（如终端会话、浏览器窗口）。如果在长期运行的进程中使用该功能，请确保每次对话都能正常结束。
-- **迭代次数限制**：默认的 `max_iterations=90` 值已较为宽松。对于简单的问答场景，建议降低该值（例如设置为 `max_iterations=10`），以避免工具调用陷入无限循环并控制成本。
-:::
+- **线程安全性**：每个线程或任务应创建一个独立的 `AIAgent` 实例，严禁在并发调用之间共享同一个实例。  
+- **资源清理**：当对话结束时，该智能体会自动释放相关资源（如终端会话、浏览器实例）。若您在长生命周期的进程中运行该智能体，请确保每个对话都能正常结束。  
+- **迭代次数限制**：默认的 `max_iterations=500` 值已相当宽松。对于简单的问答场景，建议适当降低该数值（例如设置为 `max_iterations=10`），以避免工具调用陷入无限循环并控制成本。
