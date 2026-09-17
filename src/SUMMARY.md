@@ -3162,6 +3162,7 @@
             - [宝玉漫画](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-comic.md)
             - [概念图绘制](zh/website/docs/user-guide/skills/optional/creative/creative-concept-diagrams.md)
             - [创意构思](zh/website/docs/user-guide/skills/optional/creative/creative-creative-ideation.md)
+            - [绘制字体](zh/website/docs/user-guide/skills/optional/creative/creative-draw-your-font.md)
             - [Heartmula](zh/website/docs/user-guide/skills/optional/creative/creative-heartmula.md)
             - [Hyperframes](zh/website/docs/user-guide/skills/optional/creative/creative-hyperframes.md)
             - [Impeccable](zh/website/docs/user-guide/skills/optional/creative/creative-impeccable.md)
