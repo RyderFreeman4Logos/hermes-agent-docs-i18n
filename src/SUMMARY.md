@@ -2487,6 +2487,8 @@
     - [网页开发](zh/optional-skills/web-development/DESCRIPTION.md)
     - [Cloudflare Temporary Deploy]()
       - [Cloudflare临时部署技能](zh/optional-skills/web-development/cloudflare-temporary-deploy/SKILL.md)
+    - [Har Derived Api Client]()
+      - [HAR派生API客户端](zh/optional-skills/web-development/har-derived-api-client/SKILL.md)
     - [Page Agent]()
       - [page-agent](zh/optional-skills/web-development/page-agent/SKILL.md)
     - [Publish Site]()
