@@ -1,10 +1,10 @@
 ---
-name: modal-serverless-gpu
+name: modal
 description: Serverless GPU cloud for ML jobs and model APIs.
-version: 1.0.0
+version: 1.0.1
 author: Orchestra Research
 license: MIT
-dependencies: [modal>=0.64.0]
+dependencies: [modal>=1.0]
 platforms: [linux, macos, windows]
 metadata:
   hermes:
@@ -14,35 +14,35 @@ metadata:
 
 # Modal Serverless GPU
 
-关于在Modal的无服务器GPU云平台上运行机器学习工作负载的完整指南。
+关于在Modal的服务器端GPU云平台上运行机器学习工作负载的指南。
 
 ## 何时选择Modal
 
 **以下情况适合使用Modal：**
 - 运行对GPU性能要求极高的机器学习任务，且无需自行管理基础设施
 - 将机器学习模型部署为可自动扩展的API
-- 执行批处理任务（训练、推理、数据处理）
-- 需要按秒计费的GPU使用模式，避免资源闲置带来的浪费
+- 执行批处理作业（训练、推理、数据处理）
+- 需要按秒计费的GPU使用模式，避免资源闲置产生的额外成本
 - 快速构建机器学习应用原型
 - 运行定时任务（类似cron的任务调度）
 
 **核心功能：**
-- **无服务器GPU**：支持按需使用T4、L4、A10G、L40S、A100、H100、H200、B200等型号的GPU
-- **原生Python支持**：可通过Python代码定义基础设施，无需编写YAML文件
-- **自动扩展**：可瞬间将资源扩展至零，或扩展至100多台GPU
-- **亚秒级冷启动**：基于Rust开发的基础设施，可实现快速容器启动
-- **容器缓存**：对镜像层进行缓存，加快迭代速度
-- **Web端点**：可将函数部署为REST API，并实现无中断更新
+- **服务器端GPU资源**：支持按需使用T4、L4、A10G、L40S、A100、H100、H200、B200等型号的GPU
+- **原生Python支持**：可通过Python代码定义基础设施配置，无需使用YAML文件
+- **自动扩展能力**：可瞬间将资源扩展至零，或扩展至100多台GPU
+- **亚秒级冷启动时间**：基于Rust开发的基础设施，可实现快速容器启动
+- **容器缓存功能**：对镜像层进行缓存，从而加速迭代速度
+- **Web接口支持**：可将函数部署为REST API，并实现无停机时间的更新
 
 **如需其他替代方案，请考虑：**
-- **RunPod**：适用于需要持久化状态的长时间运行的容器任务
-- **Lambda Labs**：适合使用预留GPU实例的场景
-- **SkyPilot**：用于多云环境下的任务编排与成本优化
+- **RunPod**：适用于需要长期运行且具有持久化状态的容器任务
+- **Lambda Labs**：适合需要预留GPU实例的场景
+- **SkyPilot**：用于多云环境下的任务编排及成本优化
 - **Kubernetes**：适用于复杂的多服务架构
 
 ## 快速入门
 
-### 安装
+### 安装指南
 
 ```bash
 pip install modal
@@ -97,7 +97,7 @@ def main():
 ### 主要组件
 
 | 组件 | 功能 |
-|------|------|
+|-------|------|
 | `App` | 函数与资源的容器 |
 | `Function` | 具有计算配置的无服务器函数 |
 | `Cls` | 带有生命周期钩子的基于类的函数 |
@@ -111,7 +111,7 @@ def main():
 |------|------|
 | `modal run script.py` | 执行后退出 |
 | `modal serve script.py` | 支持实时热重载的开发模式 |
-| `modal deploy script.py` | 持久化云部署 |
+| `modal deploy script.py` | 持久化的云端部署 |
 
 ## GPU 配置
 
@@ -125,7 +125,7 @@ def main():
 | `L40S` | 48GB | 推理任务的推荐选择（性价比最高） |
 | `A100-40GB` | 40GB | 大型模型训练 |
 | `A100-80GB` | 80GB | 超大型模型 |
-| `H100` | 80GB | 性能最佳，支持FP8格式及Transformer引擎 |
+| `H100` | 80GB | 性能最快，支持FP8格式及Transformer引擎 |
 | `H200` | 141GB | 可由H100自动升级，带宽达4.8TB/s |
 | `B200` | 最新款 | 采用Blackwell架构 |
 
@@ -182,9 +182,9 @@ def load_model():
     return load_from_path(model_path)
 ```
 
-## Web端点
+## Web 接口端点
 
-### FastAPI端点装饰器
+### FastAPI 接口端点装饰器
 
 ```python
 @app.function()
@@ -227,7 +227,6 @@ async def batch_predict(inputs: list[str]) -> list[dict]:
     # Inputs automatically batched
     return model.batch_predict(inputs)
 ```
-
 ## 密钥管理
 
 ```bash
@@ -242,7 +241,7 @@ def download_model():
     token = os.environ["HF_TOKEN"]
 ```
 
-## 日程安排
+## 安排调度时间
 
 ```python
 @app.function(schedule=modal.Cron("0 0 * * *"))  # Daily midnight
@@ -259,10 +258,10 @@ def hourly_job():
 ### 缓解冷启动问题
 
 ```python
-@app.function(
-    container_idle_timeout=300,  # Keep warm 5 min
-    allow_concurrent_inputs=10,  # Handle concurrent requests
-)
+# Modal 1.0 autoscaler params: scaledown_window (was container_idle_timeout).
+# Input concurrency moved to the @modal.concurrent decorator.
+@app.function(scaledown_window=300)  # Keep warm 5 min
+@modal.concurrent(max_inputs=10)     # Handle concurrent requests per container
 def inference():
     pass
 ```
@@ -304,13 +303,20 @@ def run_parallel():
     memory=32768,              # 32GB RAM
     cpu=4,                     # 4 CPU cores
     timeout=3600,              # 1 hour max
-    container_idle_timeout=120,# Keep warm 2 min
+    scaledown_window=120,      # Keep warm 2 min (was container_idle_timeout)
     retries=3,                 # Retry on failure
-    concurrency_limit=10,      # Max concurrent containers
+    max_containers=10,         # Max concurrent containers (was concurrency_limit)
+    min_containers=1,          # Keep N containers warm (was keep_warm)
 )
 def my_function():
     pass
 ```
+
+> **Modal 1.0 自动扩缩容功能名称变更**（详情请参阅[迁移指南](https://modal.com/docs/guide/modal-1-0-migration)）：
+> - `container_idle_timeout` → `scaledown_window`
+> - `concurrency_limit` → `max_containers`
+> - `keep_warm` → `min_containers`
+> - `allow_concurrent_inputs=N` → `@modal.concurrent(max_inputs=N)` 装饰器
 
 ## 调试
 
@@ -327,19 +333,19 @@ if __name__ == "__main__":
 
 | 问题 | 解决方案 |
 |-------|----------|
-| 冷启动延迟 | 增大 `container_idle_timeout` 的值，使用 `@modal.enter()` 方法 |
-| GPU 内存不足 | 使用容量更大的 GPU（如 `A100-80GB`），并启用梯度检查点机制 |
-| 图像构建失败 | 固定依赖项的版本，检查 CUDA 兼容性 |
-| 超时错误 | 增大 `timeout` 参数值，加入检查点功能 |
+| 冷启动延迟 | 增大 `scaledown_window` 的值，使用 `@modal.enter()` |
+| GPU 内存不足 | 使用容量更大的 GPU（如 `A100-80GB`），启用梯度检查点机制 |
+| 图像构建失败 | 固定依赖版本，检查 CUDA 兼容性 |
+| 超时错误 | 增大 `timeout` 的值，添加检查点功能 |
 
 ## 参考资料
 
 - **[高级用法](references/advanced-usage.md)** - 多 GPU 使用、分布式训练、成本优化
-- **[故障排查](references/troubleshooting.md)** - 常见问题及解决方案
+- **[故障排除](references/troubleshooting.md)** - 常见问题及解决方案
 
 ## 资源链接
 
 - **文档**：https://modal.com/docs
 - **示例代码**：https://github.com/modal-labs/modal-examples
 - **定价信息**：https://modal.com/pricing
-- **Discord 社区**：https://discord.gg/modal
+- **Discord 社群**：https://discord.gg/modal
