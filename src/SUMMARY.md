@@ -3156,6 +3156,7 @@
             - [会话管理助手](zh/website/docs/user-guide/skills/bundled/productivity/productivity-session-librarian.md)
             - [Teams 会议处理流程](zh/website/docs/user-guide/skills/bundled/productivity/productivity-teams-meeting-pipeline.md)
             - [每周回顾规划](zh/website/docs/user-guide/skills/bundled/productivity/productivity-weekly-review-planning.md)
+            - [Xlsx](zh/website/docs/user-guide/skills/bundled/productivity/productivity-xlsx.md)
           - [Research]()
             - [Arxiv](zh/website/docs/user-guide/skills/bundled/research/research-arxiv.md)
             - [被屏蔽页面恢复](zh/website/docs/user-guide/skills/bundled/research/research-blocked-page-recovery.md)
