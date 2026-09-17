@@ -2474,6 +2474,8 @@
       - [Cloudflare临时部署技能](zh/optional-skills/web-development/cloudflare-temporary-deploy/SKILL.md)
     - [Page Agent]()
       - [page-agent](zh/optional-skills/web-development/page-agent/SKILL.md)
+    - [Publish Site]()
+      - [发布网站](zh/optional-skills/web-development/publish-site/SKILL.md)
   - [Yuanbao]()
     - [元宝群组交互功能](zh/optional-skills/yuanbao/SKILL.md)
 - [Plugin Catalog](zh/plugin-catalog/README.md)
