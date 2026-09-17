@@ -1798,6 +1798,8 @@
   - [可选技能](zh/optional-skills/DESCRIPTION.md)
   - [Autonomous Ai Agents]()
     - [Description](zh/optional-skills/autonomous-ai-agents/DESCRIPTION.md)
+    - [Agent Merge Conflict Arbiter]()
+      - [Agent合并冲突仲裁器](zh/optional-skills/autonomous-ai-agents/agent-merge-conflict-arbiter/SKILL.md)
     - [Antigravity Cli]()
       - [Antigravity CLI（`agy`）](zh/optional-skills/autonomous-ai-agents/antigravity-cli/SKILL.md)
       - [References]()
