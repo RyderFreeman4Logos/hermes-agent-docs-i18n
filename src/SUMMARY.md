@@ -3264,6 +3264,8 @@
             - [网络渗透测试](zh/website/docs/user-guide/skills/optional/security/security-web-pentest.md)
           - [Smart Home]()
             - [Openhue](zh/website/docs/user-guide/skills/optional/smart-home/smart-home-openhue.md)
+          - [Social Media]()
+            - [Reddit 阅读功能](zh/website/docs/user-guide/skills/optional/social-media/social-media-reddit-reading.md)
           - [Software Development]()
             - [Code Wiki](zh/website/docs/user-guide/skills/optional/software-development/software-development-code-wiki.md)
             - [Grill Me](zh/website/docs/user-guide/skills/optional/software-development/software-development-grill-me.md)
