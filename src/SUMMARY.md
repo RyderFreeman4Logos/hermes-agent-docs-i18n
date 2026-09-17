@@ -2455,6 +2455,7 @@
         - [CLI 参考 — `sg` / `ast-grep`](zh/optional-skills/software-development/ast-grep/references/cli.md)
         - [安装 ast-grep](zh/optional-skills/software-development/ast-grep/references/install.md)
         - [模式语法 —— 元变量与模式解析方式](zh/optional-skills/software-development/ast-grep/references/patterns.md)
+        - [常见陷阱——导致模式失效的原因及解决方案](zh/optional-skills/software-development/ast-grep/references/pitfalls.md)
         - [模板集——按语言分类的复制粘贴模板](zh/optional-skills/software-development/ast-grep/references/recipes.md)
         - [sgconfig.yml — 项目配置](zh/optional-skills/software-development/ast-grep/references/sgconfig.md)
     - [Code Wiki]()
