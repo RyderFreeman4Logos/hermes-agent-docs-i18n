@@ -1,13 +1,9 @@
 ---
 name: fitness-nutrition
-description: >
-  Gym workout planner and nutrition tracker. Search 690+ exercises by muscle,
-  equipment, or category via wger. Look up macros and calories for 380,000+
-  foods via USDA FoodData Central. Compute BMI, TDEE, one-rep max, macro
-  splits, and body fat — pure Python, no pip installs. Built for anyone
-  chasing gains, cutting weight, or just trying to eat better.
+description: "Workout planning, macros, and body metrics via wger/USDA."
 platforms: [linux, macos, windows]
 version: 1.0.0
+author: Hailey Marshall (haileymarshall), Hermes Agent
 authors:
   - haileymarshall
 license: MIT
@@ -16,7 +12,7 @@ metadata:
     tags: [health, fitness, nutrition, gym, workout, diet, exercise]
     category: health
     prerequisites:
-      commands: [curl, python3]
+      commands: [curl, python]
 required_environment_variables:
   - name: USDA_API_KEY
     prompt: "USDA FoodData Central API key (free)"
@@ -27,12 +23,12 @@ required_environment_variables:
 
 # 健身与营养
 
-拥有专业健身教练及运动营养师技能。整合两大数据源以及离线计算工具——将健身者所需的一切功能汇聚于一处。
+拥有专业健身教练及运动营养师技能。整合两大数据源以及离线计算工具——让健身爱好者所需的一切尽在一体。
 
-**数据源（全部免费，无需安装额外依赖）：**
+**数据源（全部免费，无需安装额外包）：**
 
-- **wger**（https://wger.de/api/v2/）——开源运动数据库，收录690多种运动项目，附带相关肌肉群、训练器械及图片信息。公共接口无需任何身份验证。
-- **USDA FoodData Central**（https://api.nal.usda.gov/fdc/v1/）——美国政府营养数据库，涵盖38万多种食物信息。使用`DEMO_KEY`即可立即使用；如需更高数据量限制，可免费注册。
+- **wger**（https://wger.de/api/v2/）——开源运动数据库，涵盖690多种运动项目，包含相关肌肉群、训练器械及图片信息。公共接口无需任何身份验证。
+- **USDA FoodData Central**（https://api.nal.usda.gov/fdc/v1/）——美国政府营养数据库，收录38万多种食物信息。使用`DEMO_KEY`即可立即使用；如需更高数据量限制，可免费注册。
 
 **离线计算工具（仅使用Python标准库）：**
 
@@ -42,10 +38,11 @@ required_environment_variables:
 
 ## 适用场景
 
-当用户询问以下内容时，可触发此技能：
-- 运动项目、训练计划、健身流程、肌肉群、训练分组方式
-- 食物的宏量营养素含量、热量值、蛋白质含量、膳食规划、热量统计
-- 身体成分：BMI指数、体脂率、TDEE值、热量盈余/缺口
+当用户询问以下内容时，可调用此技能：
+
+- 运动项目、训练计划、健身流程、肌肉群分类、训练周期安排
+- 食物中的宏量营养素、热量、蛋白质含量、膳食规划、热量统计
+- 身体成分分析：BMI指数、体脂率、TDEE值、热量盈余/缺口
 - 一次最大力量估算、训练强度百分比、渐进超负荷训练法
 - 减脂、增肌或维持体重的宏量营养素比例
 
@@ -57,64 +54,64 @@ required_environment_variables:
 
 所有wger公共接口均返回JSON格式数据，且无需身份验证。在查询运动项目时，请务必添加`format=json`和`language=2`（英语）参数。
 
-**步骤1 — 确定用户需求：**
+**第一步——明确用户需求：**
 
-- 按肌肉群查询 → 使用`/api/v2/exercise/?muscles={id}&language=2&status=2&format=json`
-- 按类别查询 → 使用`/api/v2/exercise/?category={id}&language=2&status=2&format=json`
-- 按训练器械查询 → 使用`/api/v2/exercise/?equipment={id}&language=2&status=2&format=json`
-- 按名称查询 → 使用`/api/v2/exercise/search/?term={query}&language=english&format=json`
-- 查看完整信息 → 使用`/api/v2/exerciseinfo/{exercise_id}/?format=json`
+- 按肌肉类型筛选 → 使用 `/api/v2/exercise/?muscles={id}&language=2&status=2&format=json`  
+- 按训练类别筛选 → 使用 `/api/v2/exercise/?category={id}&language=2&status=2&format=json`  
+- 按训练器械筛选 → 使用 `/api/v2/exercise/?equipment={id}&language=2&status=2&format=json`  
+- 按名称筛选 → 使用 `/api/v2/exercise/search/?term={query}&language=english&format=json`  
+- 查看完整信息 → 使用 `/api/v2/exerciseinfo/{exercise_id}/?format=json`  
 
-**步骤2 — 参考ID（避免多次调用API）：**
+**步骤 2 — 参考编号（无需额外调用 API）：**  
 
-运动类别对应ID：
+训练类别：  
 
-| ID | 类别       |
-|----|------------|
-| 8  | 上肢       |
-| 9  | 下肢       |
-| 10 | 腹部       |
-| 11 | 胸部       |
-| 12 | 背部       |
-| 13 | 肩部       |
-| 14 | 小腿       |
-| 15 | 有氧运动   |
+| ID | 类别       |  
+|----|------------|  
+| 8  | 上肢       |  
+| 9  | 下肢       |  
+| 10 | 腹部       |  
+| 11 | 胸部       |  
+| 12 | 背部       |  
+| 13 | 肩部       |  
+| 14 | 小腿       |  
+| 15 | 有氧运动   |  
 
-肌肉对应ID：
+肌肉名称：  
 
-| ID | 肌肉名称               | ID | 肌肉名称               |
-|----|------------------------|----|------------------------|
-| 1  | 肱二头肌               | 2  | 前三角肌               |
-| 3  | 前锯肌                 | 4  | 胸大肌                 |
-| 5  | 外斜肌                 | 6  | 腓肠肌                 |
-| 7  | 腹直肌                 | 8  | 臀大肌                 |
-| 9  | 斜方肌                 | 10 | 股四头肌               |
-| 11 | 股二头肌               | 12 | 背阔肌                 |
-| 13 | 肱肌                   | 14 | 肱三头肌               |
-| 15 | 胫骨后肌               |    |                        |
+| ID | 肌肉名称               | ID | 肌肉名称               |  
+|----|------------------------|----|------------------------|  
+| 1  | 肱二头肌               | 2  | 前三角肌               |  
+| 3  | 前锯肌                 | 4  | 胸大肌                 |  
+| 5  | 外斜肌                 | 6  | 腓肠肌                 |  
+| 7  | 腹直肌                 | 8  | 臀大肌                 |  
+| 9  | 斜方肌                 | 10 | 股四头肌               |  
+| 11 | 股二头肌               | 12 | 背阔肌                 |  
+| 13 | 肱肌                   | 14 | 肱三头肌               |  
+| 15 | 胫骨后肌               |    |                        |  
 
-训练器械对应ID：
+训练器械：
 
-| ID | 训练器械     |
-|----|--------------|
-| 1  | 杠铃         |
-| 3  | 哑铃         |
-| 4  | 健身垫       |
-| 5  | 瑞士球       |
-| 6  | 单杠         |
+| ID | 设备名称      |
+|----|----------------|
+| 1  | 杠铃          |
+| 3  | 哑铃          |
+| 4  | 健身垫        |
+| 5  | 瑞士球        |
+| 6  | 单杠          |
 | 7  | 无（自重训练）|
-| 8  | 长凳         |
-| 9  | 斜板长凳     |
-| 10 | 铁壶铃       |
+| 8  | 长凳          |
+| 9  | 斜板长凳      |
+| 10 | 壶铃          |
 
-**步骤3 — 获取并展示结果：**
+**第3步 — 获取并展示结果：**
 
 ```bash
 # Search exercises by name
 QUERY="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$QUERY")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$QUERY")
 curl -s "https://wger.de/api/v2/exercise/search/?term=${ENCODED}&language=english&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 for s in data.get('suggestions',[])[:10]:
@@ -127,7 +124,7 @@ for s in data.get('suggestions',[])[:10]:
 # Get full details for a specific exercise
 EXERCISE_ID="$1"
 curl -s "https://wger.de/api/v2/exerciseinfo/${EXERCISE_ID}/?format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys,html,re
 data=json.load(sys.stdin)
 trans=[t for t in data.get('translations',[]) if t.get('language')==2]
@@ -149,7 +146,7 @@ if imgs: print(f\"Image     : {imgs[0].get('image','')}\")
 # Combine filters as needed: ?muscles=4&equipment=1&language=2&status=2
 FILTER="$1"  # e.g. "muscles=4" or "category=11" or "equipment=3"
 curl -s "https://wger.de/api/v2/exercise/?${FILTER}&language=2&status=2&limit=20&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 print(f'Found {data.get(\"count\",0)} exercises.')
@@ -161,15 +158,15 @@ for ex in data.get('results',[]):
 ### 营养成分查询（USDA FoodData Central）
 
 若已设置 `USDA_API_KEY` 环境变量，则使用该密钥；否则将自动回退至 `DEMO_KEY`。
-`DEMO_KEY` 每小时允许 30 次请求，而免费注册生成的密钥则每小时允许 1,000 次请求。
+`DEMO_KEY` 每小时允许 30 次请求，而免费注册获得的密钥则每小时允许 1,000 次请求。
 
 ```bash
 # Search foods by name
 FOOD="$1"
 API_KEY="${USDA_API_KEY:-DEMO_KEY}"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$FOOD")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$FOOD")
 curl -s "https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${API_KEY}&query=${ENCODED}&pageSize=5&dataType=Foundation,SR%20Legacy" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 foods=data.get('foods',[])
@@ -190,7 +187,7 @@ for f in foods:
 FDC_ID="$1"
 API_KEY="${USDA_API_KEY:-DEMO_KEY}"
 curl -s "https://api.nal.usda.gov/fdc/v1/food/${FDC_ID}?api_key=${API_KEY}" \
-  | python3 -c "
+  | python -c "
 import json,sys
 d=json.load(sys.stdin)
 print(f\"Food: {d.get('description','N/A')}\")
@@ -206,49 +203,49 @@ for x in sorted(d.get('foodNutrients',[]),key=lambda x:x.get('nutrient',{}).get(
 ### 离线计算工具
 
 如需批量运算，可使用 `scripts/` 目录中的辅助脚本；
-如需单次计算，则可直接运行以下命令：
+若仅需进行单次计算，则可直接运行以下命令：
 
-- `python3 scripts/body_calc.py bmi <体重公斤> <身高厘米>`
-- `python3 scripts/body_calc.py tdee <体重公斤> <身高厘米> <年龄> <男|女> <活动强度 1-5>`
-- `python3 scripts/body_calc.py 1rm <体重> <重复次数>`
-- `python3 scripts/body_calc.py macros <每日总能量消耗千卡> <减脂|维持体重|增肌>`
-- `python3 scripts/body_calc.py bodyfat <男|女> <颈围厘米> <腰围厘米> [臀围厘米] <身高厘米>`
+- `python scripts/body_calc.py bmi <体重_kg> <身高_cm>`
+- `python scripts/body_calc.py tdee <体重_kg> <身高_cm> <年龄> <男|女> <活动强度 1-5>`
+- `python scripts/body_calc.py 1rm <重量> <重复次数>`
+- `python scripts/body_calc.py macros <每日总能量消耗_kcal> <减脂|维持体重|增肌>`
+- `python scripts/body_calc.py bodyfat <男|女> <颈围_cm> <腰围_cm> [臀围_cm] <身高_cm>`
 
-有关各公式背后的科学原理，请参阅 `references/FORMULAS.md` 文件。
+如需了解各公式背后的科学依据，请参阅 `references/FORMULAS.md` 文件。
 
 ---
 
 ## 常见问题与注意事项
 
-- wger 的运动数据接口**默认返回所有语言版本**——如需获取英文内容，务必添加 `language=2` 参数。
-- wger 中包含**未经验证的用户提交内容**——如只想查看已通过审核的运动项目，请添加 `status=2` 参数。
-- USDA 提供的 `DEMO_KEY` 每小时仅有**30次请求限制**——若需高频调用，可在批量请求之间添加 `sleep 2` 命令，或申请免费密钥。
-- USDA 的数据是按**每100克**计算的——需提醒用户根据实际食用份量进行换算。
-- BMI 指标无法区分肌肉与脂肪——肌肉量较大的人即便BMI偏高，也未必意味着健康状况不佳。
-- 体脂率计算公式仅为**估算值**（误差范围为±3-5%）——如需精确数值，建议进行DEXA扫描。
-- 1RM（一次最大力量）计算公式的准确度在**超过10次重复次数时会有所下降**——为获得最佳估算结果，建议以3-5次为一组进行测试。
-- wger 的 `exercise/search` 接口使用的参数名为 `term`，而非 `query`。
+- wger 的运动数据接口**默认返回所有语言版本**——如需获取英文结果，务必添加参数 `language=2`
+- wger 中包含**未经验证的用户提交内容**——如仅需查看已通过审核的运动项目，请添加参数 `status=2`
+- USDA 提供的 `DEMO_KEY` 每小时仅有 **30次请求权限**——如需提高请求频率，可在批量请求之间添加 `sleep 2` 命令，或申请免费密钥
+- USDA 的数据是按 **100克** 计算的——需提醒用户根据实际食用量进行换算
+- BMI 指标无法区分肌肉与脂肪——肌肉量较大的人即便 BMI 较高也不一定代表健康状况不佳
+- 体脂率计算公式仅为**估算值**（误差范围为±3-5%）——如需精确数值，建议进行 DEXA 扫描
+- 1RM 计算公式的准确度在 **10次重复以上会下降**——为获得最佳估算结果，建议以3-5次为一组进行测试
+- wger 的 `exercise/search` 接口使用的参数名为 `term`，而非 `query`
 
 ---
 
-## 结果验证
+## 验证流程
 
-执行运动搜索后，需确认返回的结果包含运动名称、涉及的肌肉群以及所需器械。
-执行营养查询后，需确认返回的每100克营养成分数据中包含千卡值、蛋白质、脂肪和碳水化合物的含量。
-使用计算工具后，应对输出结果进行合理性检查（例如：大多数成年人的每日总能量消耗应在1500-3500千卡之间）。
+执行锻炼搜索后：需确认返回的结果包含锻炼名称、目标肌肉群以及所需器械。  
+执行营养查询后：需确认能获取每100克的宏量营养素数据，包括千卡值、蛋白质、脂肪和碳水化合物的含量。  
+使用计算器后：应对输出结果进行合理性检查（例如，大多数成年人的每日总能量消耗应在1500至3500千卡之间）。  
 
 ---
 
-## 快速参考表
+## 快速参考
 
-| 功能 | 数据来源 | 接口地址 |
+| 任务 | 数据来源 | 接口地址 |
 |------|----------|----------|
-| 按名称搜索运动 | wger | `GET /api/v2/exercise/search/?term=&language=english` |
-| 查看运动详情 | wger | `GET /api/v2/exerciseinfo/{id}/` |
-| 按涉及的肌肉群筛选 | wger | `GET /api/v2/exercise/?muscles={id}&language=2&status=2` |
+| 按名称搜索锻炼 | wger | `GET /api/v2/exercise/search/?term=&language=english` |
+| 获取锻炼详情 | wger | `GET /api/v2/exerciseinfo/{id}/` |
+| 按目标肌肉群筛选 | wger | `GET /api/v2/exercise/?muscles={id}&language=2&status=2` |
 | 按所需器械筛选 | wger | `GET /api/v2/exercise/?equipment={id}&language=2&status=2` |
-| 查看运动类别列表 | wger | `GET /api/v2/exercisecategory/` |
-| 查看肌肉列表 | wger | `GET /api/v2/muscle/` |
+| 列出锻炼类别 | wger | `GET /api/v2/exercisecategory/` |
+| 列出目标肌肉 | wger | `GET /api/v2/muscle/` |
 | 搜索食物信息 | USDA | `GET /fdc/v1/foods/search?query=&dataType=Foundation,SR Legacy` |
-| 查看食物详情 | USDA | `GET /fdc/v1/food/{fdcId}` |
-| BMI/每日总能量消耗/1RM/营养成分计算 | 离线工具 | `python3 scripts/body_calc.py` |
+| 获取食物详情 | USDA | `GET /fdc/v1/food/{fdcId}` |
+| 计算BMI、每日总能量消耗、1RM及宏量营养素 | 离线计算 | `python scripts/body_calc.py` |
