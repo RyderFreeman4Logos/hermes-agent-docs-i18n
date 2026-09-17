@@ -6,19 +6,19 @@ description: "Build wrapper CLIs that extend the Hermes TUI with custom widgets,
 
 # 扩展 CLI 功能
 
-Hermes 在 `HermesCLI` 中提供了受保护的扩展钩子，使得封装层 CLI 能够添加控件、键盘绑定以及布局自定义功能，而无需覆盖长达 1000 多行的 `run()` 方法。这样一来，您的扩展就能与内部的变更保持解耦。
+Hermes 在 `HermesCLI` 中提供了受保护的扩展钩子，这使得封装层 CLI 能够添加各种组件、快捷键以及自定义布局，而无需覆盖 `run()` 方法或 `hermes_cli/cli_tui_mixin.py` 中的 TUI 构建逻辑（这些钩子即定义于此文件；`cli.py` 中的 `HermesCLI` 会将其整合进来）。这样一来，您的扩展就能与内部实现的变化保持解耦。
 
 ## 扩展点
 
 目前共有五种可用的扩展接口：
 
-| 钩子名称 | 功能用途 | 何时需要重写该钩子 |
-|----------|----------|-------------------|
-| `_get_extra_tui_widgets()` | 将控件注入布局中 | 需要持久性 UI 元素（如面板、状态行、迷你播放器） |
-| `_register_extra_tui_keybindings(kb, *, input_area)` | 添加键盘快捷键 | 需要热键功能（用于切换面板、控制播放进度、模态窗口快捷操作等） |
-| `_build_tui_layout_children(**widgets)` | 完全掌控控件顺序 | 需要重新排序或封装现有控件（较为少见） |
-| `process_command()` | 添加自定义斜杠命令 | 需要处理 `/mycommand` 类型的命令（该钩子已存在） |
-| `_build_tui_style_dict()` | 自定义 prompt_toolkit 样式 | 需要自定义颜色或样式设置（该钩子已存在） |
+| 钩子名称 | 功能用途 | 何时需要覆盖该钩子 |
+|----------|----------|------------------|
+| `_get_extra_tui_widgets()` | 将组件注入布局中 | 需要添加持久性 UI 元素（如面板、状态行、迷你播放器） |
+| `_register_extra_tui_keybindings(kb, *, input_area)` | 添加键盘快捷键 | 需要为特定操作设置热键（如切换面板、控制播放进度、模态窗口快捷键） |
+| `_build_tui_layout_children(**widgets)` | 完全掌控组件的排列顺序 | 需要对现有组件进行重新排序或包裹处理（较为少见） |
+| `process_command()` | 添加自定义斜杠命令 | 需要处理类似 `/mycommand` 的自定义命令（该钩子已存在） |
+| `_build_tui_style_dict()` | 自定义 prompt_toolkit 样式 | 需要设置自定义颜色或样式（该钩子已存在） |
 
 前三个为新的受保护钩子，后两个则早已存在。
 
@@ -85,14 +85,14 @@ python my_cli.py
 
 ### `_get_extra_tui_widgets()`
 
-该函数会返回一个包含 prompt_toolkit 小部件的列表，这些小部件将被插入到 TUI 布局中。它们会显示在**分隔符与状态栏之间**——即输入区域的上方、主要输出内容的下方。
+该方法会返回一个包含 prompt_toolkit 小部件的列表，这些小部件将被插入到 TUI 布局中。这些小部件会显示在**分隔符与状态栏之间**——即输入区域的上方、主要输出内容的下方。
 
 ```python
 def _get_extra_tui_widgets(self) -> list:
     return []  # default: no extra widgets
 ```
 
-每个组件都应当是 prompt_toolkit 提供的容器对象（例如 `Window`、`ConditionalContainer`、`HSplit`）。若需让这些组件具备切换功能，可使用 `ConditionalContainer` 或 `filter=Condition(...)`。
+每个小部件都应是一个 prompt_toolkit 容器（例如 `Window`、`ConditionalContainer`、`HSplit`）。若需让这些小部件具备切换功能，可使用 `ConditionalContainer` 或 `filter=Condition(...)`。
 
 ```python
 from prompt_toolkit.layout import ConditionalContainer, Window, FormattedTextControl
@@ -174,19 +174,19 @@ def _build_tui_layout_children(self, *, sudo_widget, secret_widget,
 
 默认的从上到下布局如下：
 
-1. **输出区域** — 滚动显示对话历史记录
+1. **输出区域**——可滚动的对话历史记录
 2. **间隔区**
-3. **附加组件** — 来自 `_get_extra_tui_widgets()`
-4. **状态栏** — 显示模型类型、上下文占比及耗时
-5. **图片栏** — 显示已附上的图片数量
-6. **输入区域** — 用户输入提示语
-7. **语音状态栏** — 录音指示器
-8. **自动补全菜单** — 自动完成建议列表
+3. **附加组件**——来自 `_get_extra_tui_widgets()` 的功能模块
+4. **状态栏**——显示模型类型、上下文占比及耗时
+5. **图片栏**——显示已附上的图片数量
+6. **输入区域**——用户输入的提示词
+7. **语音状态栏**——录音指示器
+8. **自动补全菜单**——自动完成建议列表
 
 ## 使用技巧
 
-- **状态变更后刷新显示**：调用 `self._invalidate()` 以触发 prompt_toolkit 的重新绘制。
+- **状态变更后刷新界面**：调用 `self._invalidate()` 以触发 prompt_toolkit 的界面重绘。
 - **访问智能体状态**：`self.agent`、`self.model` 和 `self.conversation_history` 均可直接使用。
 - **自定义样式**：重写 `_build_tui_style_dict()` 方法，并为自定义样式类添加对应配置项。
 - **斜杠命令处理**：重写 `process_command()` 方法来处理自定义命令，其余情况则调用 `super().process_command(cmd)`。
-- **除非必要否则勿重写 `run()` 方法**——设计扩展钩子正是为了避免这种紧密耦合。
+- **除非必要否则勿重写 `run()` 方法**——扩展钩子正是为避免这种紧密耦合而设计的。
