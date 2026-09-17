@@ -1,49 +1,49 @@
 ---
-title: "Scrapling"
+title: "Scrapling — Scrape sites with stealth browsing and Cloudflare bypass"
 sidebar_label: "Scrapling"
-description: "Web scraping with Scrapling - HTTP fetching, stealth browser automation, Cloudflare bypass, and spider crawling via CLI and Python"
+description: "Scrape sites with stealth browsing and Cloudflare bypass"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据该技能的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# 网页抓取
+# 网站抓取
 
-使用 Scrapling 进行网页抓取——支持通过 CLI 和 Python 实现 HTTP 请求、隐身浏览器自动化、Cloudflare 绕过以及蜘蛛爬虫功能。
+通过隐身浏览及 Cloudflare 绕过功能实现网站抓取。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 使用 `hermes skills install official/research/scrapling` 安装 |
-| 路径 | `optional-skills/research/scraping` |
+| 来源 | 可选 — 通过 `hermes skills install official/research/scraping` 安装 |
+| 路径 | `optional-skills/research\scraping` |
 | 版本 | `1.0.0` |
 | 开发者 | FEUAZUR |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `网页抓取`、`浏览器`、`Cloudflare`、`隐身模式`、`爬虫`、`蜘蛛` |
+| 标签 | `Web Scraping`、`浏览器`、`Cloudflare`、`隐身模式`、`爬取`、`蜘蛛爬虫` |
 | 相关技能 | [`duckduckgo-search`](/docs/user-guide/skills/optional/research/research-duckduckgo-search)、[`domain-intel`](/docs/user-guide/skills/optional/research/research-domain-intel) |
 
 ## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，代理程序会将这些内容视为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能运行时，智能体将依据此内容执行操作。
 :::
 
-# 网页抓取
+# 网站抓取
 
-[Scrapling](https://github.com/D4Vinci/Scrapling) 是一个具备反机器人绕过功能、隐身浏览器自动化能力以及蜘蛛爬虫框架的网页抓取工具。它提供了三种获取数据的方式（HTTP 请求、动态 JS 渲染、隐身模式/Cloudflare 绕过），并配有完整的 CLI 接口。
+[Scraping](https://github.com/D4Vinci/Scraping) 是一个具备反机器人绕过功能、隐身浏览器自动化能力以及蜘蛛爬虫框架的网页抓取工具。它提供了三种数据获取策略（HTTP、动态 JS、隐身/Cloudflare 模式），并配有完整的命令行界面。
 
-**本技能仅用于教育和研究目的。** 用户必须遵守当地及国际上的网页抓取相关法律，并尊重网站的条款和服务协议。
+**本技能仅用于教育与研究目的。** 用户必须遵守当地及国际上的数据抓取法规，并尊重目标网站的条款和服务协议。
 
 ## 适用场景
 
-- 抓取静态 HTML 页面（效率高于浏览器工具）
-- 抓取需要真实浏览器才能渲染的 JS 页面
-- 绕过 Cloudflare Turnstile 或机器人检测机制
-- 使用蜘蛛爬虫批量爬取多个页面
-- 当内置的 `web_extract` 工具无法获取所需数据时
+- 抓取静态 HTML 页面（速度优于浏览器工具）  
+- 抓取需要真实浏览器才能渲染的 JS 页面  
+- 规避 Cloudflare Turnstile 及机器人检测机制  
+- 使用爬虫程序批量抓取多个页面  
+- 当内置的 `web_extract` 工具无法获取所需数据时  
 
-## 安装方式
+## 安装指南
 
 ```bash
 pip install "scrapling[all]"
@@ -65,12 +65,12 @@ scrapling install
 
 | 方式 | 类别 | 适用场景 |
 |------|------|----------|
-| HTTP | `Fetcher` / `FetcherSession` | 静态页面、API以及大量数据的快速请求 |
-| 动态渲染 | `DynamicFetcher` / `DynamicSession` | 通过JS渲染的内容及单页应用 |
-| 隐蔽访问 | `StealthyFetcher` / `StealthySession` | 面临Cloudflare防护或反爬虫措施的网站 |
+| HTTP | `Fetcher` / `FetcherSession` | 静态页面、API 以及大量数据的快速请求 |
+| 动态渲染 | `DynamicFetcher` / `DynamicSession` | 通过 JavaScript 渲染的内容及单页应用 |
+| 隐秘模式 | `StealthyFetcher` / `StealthySession` | 面临 Cloudflare 保护或反爬虫机制的网站 |
 | 爬虫模式 | `Spider` | 基于链接追踪进行多页面爬取 |
 
-## CLI使用方法
+## CLI 使用方法
 
 ### 提取静态页面
 
@@ -145,7 +145,7 @@ with FetcherSession(impersonate='chrome') as session:
         print(sub.css('h1::text').get())
 ```
 
-### POST / PUT / DELETE 操作
+### POST / PUT / DELETE 请求
 
 ```python
 page = Fetcher.post('https://api.example.com/data', json={"key": "value"})
@@ -153,7 +153,7 @@ page = Fetcher.put('https://api.example.com/item/1', data={"name": "updated"})
 page = Fetcher.delete('https://api.example.com/item/1')
 ```
 
-### 使用代理设置
+### 使用代理时
 
 ```python
 page = Fetcher.get('https://example.com', proxy='http://user:pass@proxy:8080')
@@ -182,7 +182,7 @@ page = DynamicFetcher.fetch(
 
 ### 禁用冗余资源以提升速度
 
-屏蔽字体、图片、媒体文件及样式表（可提升约25%的速度）：
+关闭字体、图片、媒体文件及样式表的功能（可提升约25%的速度）：
 
 ```python
 from scrapling.fetchers import DynamicSession
@@ -210,7 +210,7 @@ results = page.css('.extra-results .item::text').getall()
 
 ## Python：隐身模式（防止机器人绕过检测）
 
-适用于受 Cloudflare 保护或存在严重指纹特征的网站：
+适用于受 Cloudflare 保护或存在严重指纹识别特征的网站：
 
 ```python
 from scrapling.fetchers import StealthyFetcher
@@ -225,7 +225,7 @@ page = StealthyFetcher.fetch(
 content = page.css('.protected-content::text').getall()
 ```
 
-### 隐秘会话
+### 隐秘会话模式
 
 ```python
 from scrapling.fetchers import StealthySession
@@ -345,7 +345,7 @@ spider.start()  # Ctrl+C to pause, re-run to resume from checkpoint
 
 - **需安装浏览器**：在运行 `pip install` 之后必须执行 `scraping install`——若未完成此步骤，`DynamicFetcher` 和 `StealthyFetcher` 将无法正常工作。
 - **超时设置**：`DynamicFetcher`/`StealthyFetcher` 的超时时间以**毫秒**为单位（默认值为 30000），而普通 `Fetcher` 的超时时间则以**秒**为单位。
-- **Cloudflare 反爬绕过**：使用 `solve_cloudflare=True` 会使得数据获取时间增加 5 至 15 秒——请仅在必要时启用该选项。
-- **资源占用**：`StealthyFetcher` 需要启动真实的浏览器，因此请控制其并发使用数量。
-- **法律合规**：在抓取数据之前，请务必查阅目标网站的 `robots.txt` 文件及服务条款。本库仅用于教育与研究目的。
+- **Cloudflare 反爬绕过**：设置 `solve_cloudflare=True` 会使数据获取时间增加 5 至 15 秒——请仅在确实需要时启用该选项。
+- **资源占用**：`StealthyFetcher` 会启动真实的浏览器，因此需控制其并发使用数量。
+- **法律合规**：在抓取数据前，请务必查阅目标网站的 robots.txt 文件及服务条款。本库仅用于教学与研究目的。
 - **Python 版本要求**：需使用 Python 3.10 及更高版本。
