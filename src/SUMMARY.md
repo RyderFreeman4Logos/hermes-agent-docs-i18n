@@ -2020,6 +2020,7 @@
         - [操作员指南](zh/optional-skills/creative/touchdesigner-mcp/references/operator-tips.md)
         - [后处理效果参考](zh/optional-skills/creative/touchdesigner-mcp/references/postfx.md)
         - [投影映射参考指南](zh/optional-skills/creative/touchdesigner-mcp/references/projection-mapping.md)
+        - [Replicator COMP 参考文档](zh/optional-skills/creative/touchdesigner-mcp/references/replicator.md)
         - [TouchDesigner 故障排除（twozero MCP）](zh/optional-skills/creative/touchdesigner-mcp/references/troubleshooting.md)
     - [Unreal Mcp]()
       - [Unreal Engine MCP 技能](zh/optional-skills/creative/unreal-mcp/SKILL.md)
