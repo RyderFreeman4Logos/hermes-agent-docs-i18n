@@ -1825,6 +1825,8 @@
     - [One Three One Rule]()
       - [1-3-1 沟通规则](zh/optional-skills/communication/one-three-one-rule/SKILL.md)
   - [Creative]()
+    - [Ascii Art]()
+      - [ASCII艺术生成技能](zh/optional-skills/creative/ascii-art/SKILL.md)
     - [Baoyu Article Illustrator]()
       - [端口说明 — baoyu-article-illustrator](zh/optional-skills/creative/baoyu-article-illustrator/PORT_NOTES.md)
       - [文章插画生成工具](zh/optional-skills/creative/baoyu-article-illustrator/SKILL.md)
