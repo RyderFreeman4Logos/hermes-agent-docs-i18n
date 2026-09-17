@@ -2786,7 +2786,7 @@
     - [Weekly Review Planning]()
       - [每周回顾与规划](zh/skills/productivity/weekly-review-planning/SKILL.md)
     - [Xlsx]()
-      - [XLSX 技能](zh/skills/productivity/xlsx/SKILL.md)
+      - [Xlsx 技能](zh/skills/productivity/xlsx/SKILL.md)
       - [References]()
         - [基于引用信息的结构重排（xlsx_restructure.py）](zh/skills/productivity/xlsx/references/restructuring.md)
   - [Research]()
