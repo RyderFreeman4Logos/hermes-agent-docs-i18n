@@ -2508,6 +2508,7 @@
     - [Langfuse](zh/plugins/observability/langfuse/README.md)
   - [Platforms]()
     - [A2A](zh/plugins/platforms/a2a/README.md)
+      - [A2A平台插件——设计说明](zh/plugins/platforms/a2a/DESIGN.md)
     - [Photon](zh/plugins/platforms/photon/README.md)
       - [Sidecar](zh/plugins/platforms/photon/sidecar/README.md)
   - [Security Guidance](zh/plugins/security-guidance/README.md)
