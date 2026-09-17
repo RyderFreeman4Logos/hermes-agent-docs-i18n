@@ -3167,6 +3167,7 @@
           - [Data Science]()
             - [Jupyter Notebook](zh/website/docs/user-guide/skills/optional/data-science/data-science-jupyter-notebook.md)
           - [Devops]()
+            - [Actual Computer 的配置](zh/website/docs/user-guide/skills/optional/devops/devops-actual-setup.md)
             - [Docker 管理](zh/website/docs/user-guide/skills/optional/devops/devops-docker-management.md)
             - [Hermes S6 容器监控功能](zh/website/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision.md)
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-inference-sh-cli.md)
