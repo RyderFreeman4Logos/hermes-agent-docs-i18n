@@ -1904,6 +1904,8 @@
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Comfyui]()
+      - [References]()
+        - [comfy-cli 命令参考手册](zh/optional-skills/creative/comfyui/references/official-cli.md)
       - [Tests](zh/optional-skills/creative/comfyui/tests/README.md)
       - [Workflows](zh/optional-skills/creative/comfyui/workflows/README.md)
     - [Concept Diagrams]()
