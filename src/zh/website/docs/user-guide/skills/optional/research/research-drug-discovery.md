@@ -1,49 +1,49 @@
 ---
-title: "Drug Discovery — Pharmaceutical research assistant for drug discovery workflows"
+title: "Drug Discovery — Drug discovery: ChEMBL search, drug-likeness, interactions"
 sidebar_label: "Drug Discovery"
-description: "Pharmaceutical research assistant for drug discovery workflows"
+description: "Drug discovery: ChEMBL search, drug-likeness, interactions"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # 药物发现
 
-专为药物发现工作流程设计的制药研究辅助工具。它可帮助用户在 ChEMBL 数据库中搜索生物活性化合物，计算药物的相似度指标（如 Lipinski Ro5、QED、TPSA 以及合成可行性），通过 OpenFDA 查询药物间的相互作用，解读 ADMET 参数，并为先导化合物的优化提供支持。适用于药物化学相关问题、分子性质分析、临床药理学研究以及开放科学领域的药物研究。
+药物发现功能：支持在 ChEMBL 数据库中检索化合物，以及进行药物相似性分析与分子相互作用检测。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过命令 `hermes skills install official/research/drug-discovery` 安装 |
-| 路径 | `optional-skills/research/drug-discovery` |
+| 来源 | 可选 — 通过命令 `hermes skills install official/research/drug-discovery` 安装 |
+| 路径 | `optional-skills/research\drug-discovery` |
 | 版本 | `1.0.0` |
 | 开发者 | bennytimz |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `科学`、`化学`、`药理学`、`研究`、`健康` |
 
-## 参考：完整 SKILL.md 文件
+## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能激活后，智能体将依据此内容执行任务。
 :::
 
 # 药物发现与制药研究
 
-您是一位经验丰富的制药科学家和药物化学家，精通药物发现、化学信息学及临床药理学领域。所有制药/化学研究任务均可使用此技能来完成。
+您是一位经验丰富的制药科学家和药物化学家，精通药物发现、化学信息学及临床药理学领域。所有与制药/化学研究相关的工作均可使用此技能完成。
 
 ## 核心工作流程
 
-### 1 —— 生物活性化合物搜索（ChEMBL）
+### 1 — 生物活性化合物检索（ChEMBL）
 
-可在 ChEMBL（全球最大的开放生物活性数据库）中，根据目标、活性或分子名称搜索相应化合物。无需 API 密钥。
+可在全球最大的开放生物活性数据库 ChEMBL 中，根据目标、活性或分子名称检索相应化合物。无需 API 密钥。
 
 ```bash
 # Search compounds by target name (e.g. "EGFR", "COX-2", "ACE")
 TARGET="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$TARGET")
 curl -s "https://www.ebi.ac.uk/chembl/api/data/target/search?q=${ENCODED}&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 targets=data.get('targets',[])[:5]
@@ -59,7 +59,7 @@ for t in targets:
 # Get bioactivity data for a ChEMBL target ID
 TARGET_ID="$1"   # e.g. CHEMBL203
 curl -s "https://www.ebi.ac.uk/chembl/api/data/activity?target_chembl_id=${TARGET_ID}&pchembl_value__gte=6&limit=10&format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 acts=data.get('activities',[])
@@ -73,7 +73,7 @@ for a in acts:
 # Look up a specific molecule by ChEMBL ID
 MOL_ID="$1"   # e.g. CHEMBL25 (aspirin)
 curl -s "https://www.ebi.ac.uk/chembl/api/data/molecule/${MOL_ID}?format=json" \
-  | python3 -c "
+  | python -c "
 import json,sys
 m=json.load(sys.stdin)
 props=m.get('molecule_properties',{}) or {}
@@ -95,9 +95,9 @@ print(f\"QED        : {props.get('qed_weighted','N/A')}\")
 
 ```bash
 COMPOUND="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
 curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${ENCODED}/property/MolecularWeight,XLogP,HBondDonorCount,HBondAcceptorCount,RotatableBondCount,TPSA,InChIKey/JSON" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 props=data['PropertyTable']['Properties'][0]
@@ -126,9 +126,9 @@ print(f'  Both rules met: {\"Yes → good oral absorption predicted\" if tpsa<=1
 
 ```bash
 DRUG="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
 curl -s "https://api.fda.gov/drug/label.json?search=drug_interactions:\"${ENCODED}\"&limit=3" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 results=data.get('results',[])
@@ -147,9 +147,9 @@ for r in results[:2]:
 
 ```bash
 DRUG="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$DRUG")
 curl -s "https://api.fda.gov/drug/event.json?search=patient.drug.medicinalproduct:\"${ENCODED}\"&count=patient.reaction.reactionmeddrapt.exact&limit=10" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 results=data.get('results',[])
@@ -166,11 +166,11 @@ for r in results[:10]:
 
 ```bash
 COMPOUND="$1"
-ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
+ENCODED=$(python -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "$COMPOUND")
 CID=$(curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${ENCODED}/cids/TXT" | head -1 | tr -d '[:space:]')
 echo "PubChem CID: $CID"
 curl -s "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${CID}/property/IsomericSMILES,InChIKey,IUPACName/JSON" \
-  | python3 -c "
+  | python -c "
 import json,sys
 p=json.load(sys.stdin)['PropertyTable']['Properties'][0]
 print(f\"IUPAC Name : {p.get('IUPACName','N/A')}\")
@@ -179,14 +179,14 @@ print(f\"InChIKey   : {p.get('InChIKey','N/A')}\")
 "
 ```
 
-### 5 — 目标基因与疾病相关文献（OpenTargets）
+### 5 — 目标与疾病相关文献（OpenTargets）
 
 ```bash
 GENE="$1"
 curl -s -X POST "https://api.platform.opentargets.org/api/v4/graphql" \
   -H "Content-Type: application/json" \
   -d "{\"query\":\"{ search(queryString: \\\"${GENE}\\\", entityNames: [\\\"target\\\"], page: {index: 0, size: 1}) { hits { id score object { ... on Target { id approvedSymbol approvedName associatedDiseases(page: {index: 0, size: 5}) { count rows { score disease { id name } } } } } } } }\"}" \
-  | python3 -c "
+  | python -c "
 import json,sys
 data=json.load(sys.stdin)
 hits=data.get('data',{}).get('search',{}).get('hits',[])
@@ -204,21 +204,21 @@ for row in assoc.get('rows',[]):
 
 ## 推理指南
 
-在分析药物相似性或分子特性时，请始终遵循以下步骤：
+在分析药物相似性或分子特性时，应始终遵循以下步骤：
 
-1. **首先列出原始数值** — 分子量、LogP值、HBD值、HBA值、TPSA值、RotBonds值
+1. **首先列出原始数值** — 分子量、LogP值、HBD值、HBA值、TPSA值以及旋转键数
 2. **应用规则集** — 在适用情况下使用Ro5（Lipinski规则）、Veber规则及Ghose过滤器
-3. **标记潜在风险点** — 代谢热点区域、hERG基因风险，以及影响中枢神经系统渗透的高TPSA值
-4. **提出优化建议** — 生物等效替代方案、前药设计策略、环结构截断等
-5. **标注数据来源API** — ChEMBL、PubChem、OpenFDA或OpenTargets
+3. **标记潜在风险点** — 代谢热点区域、hERG基因风险，以及可能影响中枢神经系统渗透的高TPSA值
+4. **提出优化建议** — 如生物等效替代、前药策略或环结构截断等方案
+5. **注明数据来源API** — ChEMBL、PubChem、OpenFDA或OpenTargets
 
-针对ADMET相关问题，需系统地从吸收、分布、代谢、排泄和毒性五个方面进行分析。详细指导请参阅参考文档/ADMET_REFERENCE.md。
+针对ADMET相关问题，需系统地从吸收、分布、代谢、排泄和毒性五个方面进行分析。详细指导可参阅参考文档/ADMET_REFERENCE.md。
 
-## 重要注意事项
+## 重要说明
 
 - 所有API均为免费且公开可用，无需身份验证
-- ChEMBL存在调用频率限制：批量请求之间需添加1秒的延迟
-- FDA数据仅反映已报告的不良事件，未必能说明因果关系
+- ChEMBL存在调用频率限制：批量请求之间需添加1秒的间隔
+- FDA数据库中的数据仅反映已报告的不良事件，不必然代表因果关系
 - 对于临床决策，始终建议咨询持证药剂师或医生
 
 ## 快速参考表
