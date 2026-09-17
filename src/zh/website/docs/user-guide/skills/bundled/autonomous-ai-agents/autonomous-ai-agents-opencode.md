@@ -8,17 +8,17 @@ description: "Delegate coding to OpenCode CLI (features, PR review)"
 
 # Opencode
 
-将编码任务委托给 OpenCode CLI（支持功能开发与代码审查）。
+将编码任务委托给 OpenCode CLI（支持功能实现与代码审查）。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/autonomous-ai-agents/opencode` |
+| 路径 | `skills/autonomous-ai-agents\opencode` |
 | 版本 | `1.2.0` |
 | 开发者 | Hermes Agent |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `Coding-Agent`、`OpenCode`、`Autonomous`、`Refactoring`、`Code-Review` |
 | 相关技能 | [`claude-code`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code)、[`codex`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex)、[`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
@@ -26,12 +26,12 @@ description: "Delegate coding to OpenCode CLI (features, PR review)"
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，智能体将依据此内容执行任务。
 :::
 
 # OpenCode CLI
 
-利用 [OpenCode](https://opencode.ai) 作为由 Hermes 终端/进程工具协调管理的自主编码工具。OpenCode 是一款与具体提供方无关的开源 AI 编码智能体，同时支持 TUI 和 CLI 模式。
+利用 [OpenCode](https://opencode.ai) 作为由 Hermes 终端/进程工具协调管理的自主编码工具。OpenCode 是一款与具体提供商无关的开源 AI 编码智能体，同时支持 TUI 和 CLI 模式。
 
 ## 适用场景
 
@@ -39,25 +39,24 @@ description: "Delegate coding to OpenCode CLI (features, PR review)"
 - 需要外部编码智能体来实现代码功能、重构代码或进行代码审查
 - 需要长时间运行的编码任务，并能随时查看进度
 - 希望在独立的目录/工作树中并行执行多个任务
-
 ## 先决条件
 
 - 已安装 OpenCode：`npm i -g opencode-ai@latest` 或 `brew install anomalyco/tap/opencode`
-- 已完成身份认证：执行 `opencode auth login`，或设置相关提供方环境变量（如 OPENROUTER_API_KEY 等）
-- 验证认证状态：执行 `opencode auth list`，应至少显示一个可用提供方
-- 用于代码任务的 Git 仓库（推荐）
-- 如需交互式 TUI 模式，请设置 `pty=true`
+- 已配置认证信息：执行 `opencode auth login`，或设置相关提供方环境变量（如 OPENROUTER_API_KEY 等）
+- 验证配置：执行 `opencode auth list` 后应至少显示一个提供方
+- 建议准备用于代码开发的 Git 仓库
+- 如需交互式 TUI 会话，请使用 `pty=true` 参数
 
 ## 二进制文件解析（重要提示）
 
-不同 Shell 环境可能会加载不同的 OpenCode 二进制文件。如果终端与 Hermes 的行为存在差异，请检查：
+不同的 Shell 环境可能会解析出不同的 OpenCode 二进制文件。如果终端与 Hermes 的运行行为存在差异，请检查：
 
 ```
 terminal(command="which -a opencode")
 terminal(command="opencode --version")
 ```
 
-如有需要，可指定明确的二进制文件路径：
+如有必要，可指定明确的二进制文件路径：
 
 ```
 terminal(command="$HOME/.opencode/bin/opencode run '...'", workdir="~/project", pty=true)
@@ -65,19 +64,19 @@ terminal(command="$HOME/.opencode/bin/opencode run '...'", workdir="~/project", 
 
 ## 单次任务
 
-对于有边界且非交互式的任务，请使用 `opencode run` 命令：
+对于有时间限制且无需交互的任务，请使用 `opencode run` 命令：
 
 ```
 terminal(command="opencode run 'Add retry logic to API calls and update tests'", workdir="~/project")
 ```
 
-使用 `-f` 选项附加上下文文件：
+使用 `-f` 参数附加上下文文件：
 
 ```
 terminal(command="opencode run 'Review this config for security issues' -f config.yaml -f .env.example", workdir="~/project")
 ```
 
-使用 `--thinking` 参数即可展示模型的思维过程：
+使用 `--thinking` 参数展示模型思维过程：
 
 ```
 terminal(command="opencode run 'Debug why tests fail in CI' --thinking", workdir="~/project")
@@ -113,7 +112,7 @@ process(action="write", session_id="<id>", data="\x03")
 process(action="kill", session_id="<id>")
 ```
 
-**重要提示：** 请勿使用 `/exit` 命令——该命令并非有效的 OpenCode 命令，反而会弹出代理选择器对话框。如需退出，请使用 Ctrl+C (`\x03`) 或 `process(action="kill")`。
+**重要提示：** 请勿使用 `/exit` 命令——它并非有效的 OpenCode 命令，反而会打开代理选择器对话框。如需退出，请使用 Ctrl+C (`\x03`) 或 `process(action="kill")`。
 
 ### TUI 键绑定
 
@@ -137,9 +136,9 @@ terminal(command="opencode -c", workdir="~/project", background=true, pty=true) 
 terminal(command="opencode -s ses_abc123", workdir="~/project", background=true, pty=true)  # Specific session
 ```
 
-## 常用参数
+## 常用标志
 
-| 参数 | 用途 |
+| 标志 | 用途 |
 |------|-----|
 | `run 'prompt'` | 单次执行后立即退出 |
 | `--continue` / `-c` | 继续上一次的 OpenCode 会话 |
@@ -155,25 +154,25 @@ terminal(command="opencode -s ses_abc123", workdir="~/project", background=true,
 
 ## 操作步骤
 
-1. 验证工具是否准备就绪：
+1. 验证工具是否可用：
    - `terminal(command="opencode --version")`
    - `terminal(command="opencode auth list")`
 2. 对于有限步骤的任务，使用 `opencode run '...'`（无需伪终端）。
 3. 对于需要迭代处理的任务，以 `background=true, pty=true` 参数启动 `opencode`。
 4. 使用 `process(action="poll"|"log")` 监控长时间运行的任务。
-5. 若 OpenCode 请求输入，通过 `process(action="submit", ...)` 进行响应。
-6. 通过 `process(action="write", data="\x03")` 或 `process(action="kill")` 退出程序。
+5. 如果 OpenCode 请求输入，通过 `process(action="submit", ...)` 进行响应。
+6. 使用 `process(action="write", data="\x03")` 或 `process(action="kill")` 退出程序。
 7. 向用户总结文件更改情况、测试结果及后续步骤。
 
 ## PR 审核工作流程
 
-OpenCode 内置了 PR 相关命令：
+OpenCode 提供了内置的 PR 命令：
 
 ```
 terminal(command="opencode pr 42", workdir="~/project", pty=true)
 ```
 
-或可在独立的临时克隆版本中进行查看，以实现隔离：
+或可在临时克隆版本中进行查看，以实现隔离：
 
 ```
 terminal(command="REVIEW=$(mktemp -d) && git clone https://github.com/user/repo.git $REVIEW && cd $REVIEW && opencode run 'Review this PR vs main. Report bugs, security risks, test gaps, and style issues.' -f $(git diff origin/main --name-only | head -20 | tr '\n' ' ')", pty=true)
@@ -206,13 +205,13 @@ terminal(command="opencode stats --days 7 --models anthropic/claude-sonnet-4")
 
 ## 常见问题
 
-- 交互式 `opencode`（TUI）会话需要设置 `pty=true`。而 `opencode run` 命令则无需该参数。
-- `/exit` 不是有效命令——它只会打开代理选择器。如需退出 TUI，请使用 Ctrl+C。
-- PATH 路径配置错误可能导致加载错误的 OpenCode 可执行文件或模型配置。
-- 若发现 OpenCode 卡住，建议在终止进程前先查看日志：
+- 交互式 `opencode`（TUI）会话需要设置 `pty=true`。而 `opencode run` 命令则无需此参数。
+- `/exit` 不是有效命令——它只会打开代理选择器。若要退出 TUI，应使用 Ctrl+C。
+- PATH 路径配置错误可能导致选择错误的 OpenCode 可执行文件或模型配置。
+- 若发现 OpenCode 卡住，应在终止进程前先查看日志：
   - `process(action="log", session_id="<id>")`
 - 应避免在多个并行运行的 OpenCode 会话之间共享同一个工作目录。
-- 在 TUI 环境中，可能需要按两次 Enter 才能提交内容（一次用于确认输入文本，一次用于发送）。
+- 在 TUI 环境中，可能需要按两次 Enter 才能提交内容（一次用于确认文本，一次用于发送）。
 
 ## 验证
 
@@ -229,9 +228,9 @@ terminal(command="opencode run 'Respond with exactly: OPENCODE_SMOKE_OK'")
 
 ## 规则  
 
-1. 对于一次性自动化任务，优先使用 `opencode run` —— 它更为简单，且无需伪终端。  
+1. 对于一次性自动化任务，优先使用 `opencode run`——该方式更为简单，且无需伪终端。  
 2. 仅当需要迭代处理时才使用交互式后台模式。  
-3. OpenCode 会话的范围始终应限制在单个仓库/工作目录内。  
+3. OpenCode 会话的范围始终应限制在单个仓库或工作目录内。  
 4. 对于耗时较长的任务，需通过 `process` 日志提供进度更新。  
 5. 需汇报具体的执行结果（如文件修改情况、测试结果及剩余风险）。  
-6. 应使用 Ctrl+C 或 kill 命令结束交互式会话，严禁使用 `/exit`。
+6. 应使用 Ctrl+C 或 kill 命令结束交互式会话，切勿使用 `/exit`。
