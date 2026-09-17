@@ -2765,6 +2765,7 @@
         - [OAuth 设置](zh/skills/productivity/box/references/oauth-setup.md)
         - [REST API 作为备用方案](zh/skills/productivity/box/references/rest-api.md)
         - [SDK 开发](zh/skills/productivity/box/references/sdk-development.md)
+        - [搜索、元数据与 Box AI](zh/skills/productivity/box/references/search-and-ai.md)
         - [故障排除](zh/skills/productivity/box/references/troubleshooting.md)
         - [Webhook与事件](zh/skills/productivity/box/references/webhooks-and-events.md)
     - [Document To Action Items]()
