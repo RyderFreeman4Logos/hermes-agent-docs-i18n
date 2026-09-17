@@ -1757,6 +1757,7 @@
   - [状态数据库与FTS恢复机制](zh/docs/state-db-recovery.md)
   - [流式文本转语音功能](zh/docs/streaming-tts.md)
   - [Design]()
+    - [多路复用网关](zh/docs/design/multiplexing-gateway.md)
     - [配置文件构建器 —— 原生仪表板式、功能完备的配置创建工具](zh/docs/design/profile-builder.md)
   - [Kanban]()
     - [多网关部署](zh/docs/kanban/multi-gateway.md)
