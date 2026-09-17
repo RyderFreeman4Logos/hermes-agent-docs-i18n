@@ -2173,6 +2173,7 @@
     - [Inference]()
       - [Description](zh/optional-skills/mlops/inference/DESCRIPTION.md)
       - [Llama Cpp]()
+        - [llama.cpp + GGUF](zh/optional-skills/mlops/inference/llama-cpp/SKILL.md)
         - [References]()
           - [llama.cpp 的 Hugging Face URL 工作流](zh/optional-skills/mlops/inference/llama-cpp/references/hub-discovery.md)
           - [性能优化指南](zh/optional-skills/mlops/inference/llama-cpp/references/optimization.md)
