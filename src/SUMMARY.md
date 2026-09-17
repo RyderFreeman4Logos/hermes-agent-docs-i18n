@@ -1785,6 +1785,7 @@
   - [Desktop Mcp Oauth](zh/evals/desktop_mcp_oauth/README.md)
   - [Gateway Completion](zh/evals/gateway_completion/README.md)
   - [Gateway Failure Ownership](zh/evals/gateway_failure_ownership/README.md)
+  - [Postmortem](zh/evals/postmortem/README.md)
   - [Readtool](zh/evals/readtool/README.md)
     - [Results]()
       - [Read-Tool Eval — 结果日志](zh/evals/readtool/results/SUMMARY.md)
