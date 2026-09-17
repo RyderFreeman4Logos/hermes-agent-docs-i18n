@@ -2188,6 +2188,7 @@
           - [可直接用于生产环境的示例](zh/optional-skills/mlops/inference/outlines/references/examples.md)
           - [全面 JSON 生成指南](zh/optional-skills/mlops/inference/outlines/references/json_generation.md)
       - [Serving Llms Vllm]()
+        - [vLLM——高性能大语言模型服务框架](zh/optional-skills/mlops/inference/serving-llms-vllm/SKILL.md)
         - [References]()
           - [性能优化](zh/optional-skills/mlops/inference/serving-llms-vllm/references/optimization.md)
           - [量化指南](zh/optional-skills/mlops/inference/serving-llms-vllm/references/quantization.md)
