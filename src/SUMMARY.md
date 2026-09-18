@@ -3285,6 +3285,7 @@
             - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
             - [像素艺术](zh/website/docs/user-guide/skills/optional/creative/creative-pixel-art.md)
             - [Pretext](zh/website/docs/user-guide/skills/optional/creative/creative-pretext.md)
+            - [简明英语](zh/website/docs/user-guide/skills/optional/creative/creative-simple-english.md)
             - [Sketch](zh/website/docs/user-guide/skills/optional/creative/creative-sketch.md)
             - [社交媒体内容日历](zh/website/docs/user-guide/skills/optional/creative/creative-social-media-content-calendar.md)
             - [Tldraw 离线功能](zh/website/docs/user-guide/skills/optional/creative/creative-tldraw-offline.md)
