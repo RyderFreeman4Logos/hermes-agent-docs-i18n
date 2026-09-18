@@ -2444,6 +2444,7 @@
     - [Qmd]()
       - [QMD — 查询标记文档工具](zh/optional-skills/research/qmd/SKILL.md)
     - [Research Paper Writing]()
+      - [研究论文撰写流程](zh/optional-skills/research/research-paper-writing/SKILL.md)
       - [References]()
         - [Autoreason：迭代优化方法论](zh/optional-skills/research/research-paper-writing/references/autoreason-methodology.md)
         - [会议论文检查清单](zh/optional-skills/research/research-paper-writing/references/checklists.md)
