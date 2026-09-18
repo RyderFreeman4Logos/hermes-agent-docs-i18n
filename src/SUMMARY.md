@@ -2431,6 +2431,7 @@
     - [Research Paper Writing]()
       - [References]()
         - [会议论文检查清单](zh/optional-skills/research/research-paper-writing/references/checklists.md)
+        - [引用管理与幻觉预防](zh/optional-skills/research/research-paper-writing/references/citation-workflow.md)
         - [审稿人指南与评估标准](zh/optional-skills/research/research-paper-writing/references/reviewer-guidelines.md)
         - [参考文献](zh/optional-skills/research/research-paper-writing/references/sources.md)
       - [Templates](zh/optional-skills/research/research-paper-writing/templates/README.md)
