@@ -3231,7 +3231,7 @@
             - [Heartmula](zh/website/docs/user-guide/skills/optional/creative/creative-heartmula.md)
             - [Hyperframes](zh/website/docs/user-guide/skills/optional/creative/creative-hyperframes.md)
             - [Impeccable](zh/website/docs/user-guide/skills/optional/creative/creative-impeccable.md)
-            - [Kanban 视频编排工具](zh/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
+            - [看板式视频编排器](zh/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
             - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
             - [像素艺术](zh/website/docs/user-guide/skills/optional/creative/creative-pixel-art.md)
             - [Sketch](zh/website/docs/user-guide/skills/optional/creative/creative-sketch.md)
