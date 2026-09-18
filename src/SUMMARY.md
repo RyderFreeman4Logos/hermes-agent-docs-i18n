@@ -2857,6 +2857,7 @@
       - [References]()
         - [GitHub 认证设置](zh/skills/software-development/github/references/auth.md)
         - [CI故障排查快速参考指南](zh/skills/software-development/github/references/ci-troubleshooting.md)
+        - [GitHub代码审查](zh/skills/software-development/github/references/code-review.md)
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
         - [GitHub REST API 快速参考指南](zh/skills/software-development/github/references/github-api-cheatsheet.md)
         - [将 GitHub Issue 转换为经过测试的 PR](zh/skills/software-development/github/references/issue-to-pr.md)

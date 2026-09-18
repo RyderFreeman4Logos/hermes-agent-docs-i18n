@@ -1,0 +1,464 @@
+# GitHub代码审查
+
+在推送代码之前，可先对本地修改进行代码审查，或查看GitHub上已开放的Pull Request。该功能主要使用基础的`git`命令——只有在进行Pull Request相关操作时，才需要区分使用`gh`还是`curl`命令。
+
+## 先决条件
+
+- 已在GitHub完成身份验证（参见`github-auth`功能）
+- 位于某个git仓库中
+
+### 设置（用于处理Pull Request）
+
+```bash
+if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+  AUTH="gh"
+else
+  AUTH="git"
+  if [ -z "$GITHUB_TOKEN" ]; then
+    if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
+      GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
+    elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
+      GITHUB_TOKEN=$(uv run python "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
+    fi
+  fi
+fi
+
+REMOTE_URL=$(git remote get-url origin)
+OWNER_REPO=$(echo "$REMOTE_URL" | sed -E 's|.*github\.com[:/]||; s|\.git$||')
+OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
+REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
+```
+
+## 1. 查看本地更改（推送前）
+
+这完全基于 `git` —— 在任何地方都能使用，无需 API。
+
+### 获取差异内容
+
+```bash
+# Staged changes (what would be committed)
+git diff --staged
+
+# All changes vs main (what a PR would contain)
+git diff main...HEAD
+
+# File names only
+git diff main...HEAD --name-only
+
+# Stat summary (insertions/deletions per file)
+git diff main...HEAD --stat
+```
+
+### 审核策略
+
+1. **首先把握整体情况：**
+
+```bash
+git diff main...HEAD --stat
+git log main..HEAD --oneline
+```
+
+2. **逐个文件查看**——对发生变更的文件使用 `read_file` 函数以获取完整上下文，并通过差异对比功能了解具体更改内容：
+
+```bash
+git diff main...HEAD -- src/auth/login.py
+```
+
+3. **检查常见问题：**
+
+```bash
+# Debug statements, TODOs, console.logs left behind
+git diff main...HEAD | grep -n "print(\|console\.log\|TODO\|FIXME\|HACK\|XXX\|debugger"
+
+# Large files accidentally staged
+git diff main...HEAD --stat | sort -t'|' -k2 -rn | head -10
+
+# Secrets or credential patterns
+git diff main...HEAD | grep -in "password\|secret\|api_key\|token.*=\|private_key"
+
+# Merge conflict markers
+git diff main...HEAD | grep -n "<<<<<<\|>>>>>>\|======="
+```
+
+4. **向用户提供结构化的反馈**。
+
+### 审核输出格式
+
+在审核本地代码变更时，请按照以下结构呈现审核结果：
+
+```
+## Code Review Summary
+
+### Critical
+- **src/auth.py:45** — SQL injection: user input passed directly to query.
+  Suggestion: Use parameterized queries.
+
+### Warnings
+- **src/models/user.py:23** — Password stored in plaintext. Use bcrypt or argon2.
+- **src/api/routes.py:112** — No rate limiting on login endpoint.
+
+### Suggestions
+- **src/utils/helpers.py:8** — Duplicates logic in `src/core/utils.py:34`. Consolidate.
+- **tests/test_auth.py** — Missing edge case: expired token test.
+
+### Looks Good
+- Clean separation of concerns in the middleware layer
+- Good test coverage for the happy path
+```
+
+## 2. 在 GitHub 上审查拉取请求
+
+### 查看 PR 详情
+
+**使用 gh 命令：**
+
+```bash
+gh pr view 123
+gh pr diff 123
+gh pr diff 123 --name-only
+```
+
+**使用 git + curl 方式：**
+
+```bash
+PR_NUMBER=123
+
+# Get PR details
+curl -s \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+  | python -c "
+import sys, json
+pr = json.load(sys.stdin)
+print(f\"Title: {pr['title']}\")
+print(f\"Author: {pr['user']['login']}\")
+print(f\"Branch: {pr['head']['ref']} -> {pr['base']['ref']}\")
+print(f\"State: {pr['state']}\")
+print(f\"Body:\n{pr['body']}\")"
+
+# List changed files
+curl -s \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/files \
+  | python -c "
+import sys, json
+for f in json.load(sys.stdin):
+    print(f\"{f['status']:10} +{f['additions']:-4} -{f['deletions']:-4}  {f['filename']}\")"
+```
+
+### 在本地查看 PR 以进行完整审查
+
+该功能可直接使用常规的 `git` 命令实现——无需借助 `gh`：
+
+```bash
+# Fetch the PR branch and check it out
+git fetch origin pull/123/head:pr-123
+git checkout pr-123
+
+# Now you can use read_file, search_files, run tests, etc.
+
+# View diff against the base branch
+git diff main...pr-123
+```
+
+**使用 gh（快捷键）：**
+
+```bash
+gh pr checkout 123
+```
+
+### 在 Pull Request 上添加评论
+
+**使用 gh 工具添加常规 PR 评论：**
+
+```bash
+gh pr comment 123 --body "Overall looks good, a few suggestions below."
+```
+
+**使用 curl 发送常规 Pull Request 评论：**
+
+```bash
+curl -s -X POST \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/issues/$PR_NUMBER/comments \
+  -d '{"body": "Overall looks good, a few suggestions below."}'
+```
+
+### 留下内联评审评论
+
+**使用 gh（通过 API）添加单条内联评论：**
+
+```bash
+HEAD_SHA=$(gh pr view 123 --json headRefOid --jq '.headRefOid')
+
+gh api repos/$OWNER/$REPO/pulls/123/comments \
+  --method POST \
+  -f body="This could be simplified with a list comprehension." \
+  -f path="src/auth/login.py" \
+  -f commit_id="$HEAD_SHA" \
+  -f line=45 \
+  -f side="RIGHT"
+```
+
+**使用 curl 添加单行内联注释：**
+
+```bash
+# Get the head commit SHA
+HEAD_SHA=$(curl -s \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+
+curl -s -X POST \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/comments \
+  -d "{
+    \"body\": \"This could be simplified with a list comprehension.\",
+    \"path\": \"src/auth/login.py\",
+    \"commit_id\": \"$HEAD_SHA\",
+    \"line\": 45,
+    \"side\": \"RIGHT\"
+  }"
+```
+
+### 提交正式审核（批准/请求修改）
+
+**使用 gh 工具：**
+
+```bash
+gh pr review 123 --approve --body "LGTM!"
+gh pr review 123 --request-changes --body "See inline comments."
+gh pr review 123 --comment --body "Some suggestions, nothing blocking."
+```
+
+**使用 curl 时——多条评论可原子化地一并提交：**
+
+```bash
+HEAD_SHA=$(curl -s \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+
+curl -s -X POST \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews \
+  -d "{
+    \"commit_id\": \"$HEAD_SHA\",
+    \"event\": \"COMMENT\",
+    \"body\": \"Code review from Hermes Agent\",
+    \"comments\": [
+      {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"Use parameterized queries to prevent SQL injection.\"},
+      {\"path\": \"src/models/user.py\", \"line\": 23, \"body\": \"Hash passwords with bcrypt before storing.\"},
+      {\"path\": \"tests/test_auth.py\", \"line\": 1, \"body\": \"Add test for expired token edge case.\"}
+    ]
+  }"
+```
+
+事件值：`"APPROVE"`、`"REQUEST_CHANGES"`、`"COMMENT"`
+
+`line` 字段表示文件*新版本*中的行号。对于被删除的行，请使用 `"side": "LEFT"`。
+
+---
+
+## 3. 审核检查清单
+
+在执行代码审核（本地或 PR）时，需系统地检查以下内容：
+
+### 正确性
+- 代码是否实现了预期的功能？
+- 是否处理了边缘情况（空输入、空值、大数据量、并发访问）？
+- 错误处理是否得当？
+
+### 安全性
+- 不存在硬编码的机密信息、凭证或 API 密钥
+- 对用户输入进行验证
+- 无 SQL 注入、XSS 或路径遍历风险
+- 在必要处进行身份认证与授权检查
+
+### 代码质量
+- 变量、函数和类的命名清晰明了
+- 无不必要的复杂性或过早的抽象设计
+- 遵循 DRY 原则——无应被提取出来的重复逻辑
+- 函数职责单一，专注明确
+
+### 测试
+- 是否测试了新的代码路径？
+- 是否覆盖了正常流程和错误场景？
+- 测试用例是否易于阅读和维护？
+
+### 性能
+- 无 N+1 查询或不必要的循环
+- 在合适的地方使用缓存提升性能
+- 异步代码路径中无阻塞操作
+
+### 文档
+- 公共 API 已有文档说明
+- 非显而易见的逻辑配有解释“为何如此设计”的注释
+- 若功能发生变更，需及时更新 README
+
+---
+
+## 4. 推送前审核工作流程
+
+当用户要求你“审核代码”或“在推送前进行检查”时：
+
+1. `git diff main...HEAD --stat` — 查看变更范围  
+2. `git diff main...HEAD` — 查看完整差异内容  
+3. 对于每个被修改的文件，如需更多上下文信息，请使用 `read_file` 功能  
+4. 按照上述清单进行检查  
+5. 以结构化格式呈现检测结果（严重问题 / 警告 / 建议 / 无问题）  
+6. 若发现严重问题，可主动提出在用户推送代码前帮其修复  
+
+---
+
+## 5. PR 审核工作流程（端到端）
+
+当用户要求你“审核 PR #N”、“看看这个 PR”，或提供 PR 链接时，请按照以下步骤操作：
+
+### 第一步：准备环境
+
+```bash
+source "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/gh-env.sh"
+# Or run the inline setup block from the top of this skill
+```
+
+### 第 2 步：收集 Pull Request 相关信息
+
+在深入研究代码之前，先获取 Pull Request 的元数据、描述以及修改过的文件列表，以便了解其范围。
+
+**使用 gh 工具时：**
+```bash
+gh pr view 123
+gh pr diff 123 --name-only
+gh pr checks 123
+```
+
+**使用 curl：**
+```bash
+PR_NUMBER=123
+
+# PR details (title, author, description, branch)
+curl -s -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER
+
+# Changed files with line counts
+curl -s -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/files
+```
+
+### 第3步：在本地查看该拉取请求
+
+这样您就可以完全使用 `read_file` 和 `search_files` 函数，同时还能运行测试。
+
+```bash
+git fetch origin pull/$PR_NUMBER/head:pr-$PR_NUMBER
+git checkout pr-$PR_NUMBER
+```
+
+### 第4步：查看差异并了解具体变更内容
+
+```bash
+# Full diff against the base branch
+git diff main...HEAD
+
+# Or file-by-file for large PRs
+git diff main...HEAD --name-only
+# Then for each file:
+git diff main...HEAD -- path/to/file.py
+```
+
+对于每一个被修改过的文件，建议使用 `read_file` 命令来查看该改动周围的完整代码上下文——仅通过差异对比往往无法发现那些只有结合周边代码才能识别的问题。
+
+### 第 5 步：在本地运行自动化检查（如适用）
+
+```bash
+# Run tests if there's a test suite
+python -m pytest 2>&1 | tail -20
+# or: npm test, cargo test, go test ./..., etc.
+
+# Run linter if configured
+ruff check . 2>&1 | head -30
+# or: eslint, clippy, etc.
+```
+
+### 第6步：应用审查检查清单（第3节）
+
+逐一检查以下类别：正确性、安全性、代码质量、测试、性能以及文档。
+
+### 第7步：将审查结果发布到GitHub
+
+汇总您的发现，并以包含内联评论的正式审查形式提交。
+
+**使用gh命令：**
+```bash
+# If no issues — approve
+gh pr review $PR_NUMBER --approve --body "Reviewed by Hermes Agent. Code looks clean — good test coverage, no security concerns."
+
+# If issues found — request changes with inline comments
+gh pr review $PR_NUMBER --request-changes --body "Found a few issues — see inline comments."
+```
+
+**使用 curl — 带有多条内联评论的原子化审核：**
+```bash
+HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER \
+  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+
+# Build the review JSON — event is APPROVE, REQUEST_CHANGES, or COMMENT
+curl -s -X POST \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/reviews \
+  -d "{
+    \"commit_id\": \"$HEAD_SHA\",
+    \"event\": \"REQUEST_CHANGES\",
+    \"body\": \"## Hermes Agent Review\n\nFound 2 issues, 1 suggestion. See inline comments.\",
+    \"comments\": [
+      {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"🔴 **Critical:** User input passed directly to SQL query — use parameterized queries.\"},
+      {\"path\": \"src/models.py\", \"line\": 23, \"body\": \"⚠️ **Warning:** Password stored without hashing.\"},
+      {\"path\": \"src/utils.py\", \"line\": 8, \"body\": \"💡 **Suggestion:** This duplicates logic in core/utils.py:34.\"}
+    ]
+  }"
+```
+
+### 第8步：另外添加总结评论
+
+除了内联评论外，还需留下顶层总结，以便 PR 提交者能一目了然地掌握整体情况。请使用 `references/review-output-template.md` 中规定的审查输出格式。
+
+**通过 gh 工具操作时：**
+```bash
+gh pr comment $PR_NUMBER --body "$(cat <<'EOF'
+## Code Review Summary
+
+**Verdict: Changes Requested** (2 issues, 1 suggestion)
+
+### 🔴 Critical
+- **src/auth.py:45** — SQL injection vulnerability
+
+### ⚠️ Warnings
+- **src/models.py:23** — Plaintext password storage
+
+### 💡 Suggestions
+- **src/utils.py:8** — Duplicated logic, consider consolidating
+
+### ✅ Looks Good
+- Clean API design
+- Good error handling in the middleware layer
+
+---
+*Reviewed by Hermes Agent*
+EOF
+)"
+```
+
+### 第9步：清理工作
+
+```bash
+git checkout main
+git branch -D pr-$PR_NUMBER
+```
+
+### 决策选项：批准、要求修改或仅发表意见
+
+- **批准** — 不存在任何严重或警告级别的问题，仅有轻微建议或所有方面均无问题  
+- **要求修改** — 存在必须在合并前解决的严重或警告级别问题  
+- **仅发表意见** — 仅提出观察结果与建议，且不存在阻碍因素（在不确定或该 Pull Request 仍处于草稿阶段时使用）
