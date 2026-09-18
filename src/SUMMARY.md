@@ -2022,6 +2022,7 @@
       - [References]()
         - [前提模式](zh/optional-skills/creative/pretext/references/patterns.md)
     - [Simple English]()
+      - [简明英语：像编写航空航天手册那样写作](zh/optional-skills/creative/simple-english/SKILL.md)
       - [References]()
         - [验证检查清单](zh/optional-skills/creative/simple-english/references/checklist.md)
         - [超出文档应用场景的用法](zh/optional-skills/creative/simple-english/references/use-cases.md)
