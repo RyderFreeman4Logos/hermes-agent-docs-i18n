@@ -2445,6 +2445,7 @@
         - [Autoreason：迭代优化方法论](zh/optional-skills/research/research-paper-writing/references/autoreason-methodology.md)
         - [会议论文检查清单](zh/optional-skills/research/research-paper-writing/references/checklists.md)
         - [引用管理与幻觉预防](zh/optional-skills/research/research-paper-writing/references/citation-workflow.md)
+        - [实验设计模式](zh/optional-skills/research/research-paper-writing/references/experiment-patterns.md)
         - [机器学习/人工智能研究中的人工评估指南](zh/optional-skills/research/research-paper-writing/references/human-evaluation.md)
         - [超出实证机器学习的论文类型](zh/optional-skills/research/research-paper-writing/references/paper-types.md)
         - [审稿人指南与评估标准](zh/optional-skills/research/research-paper-writing/references/reviewer-guidelines.md)
