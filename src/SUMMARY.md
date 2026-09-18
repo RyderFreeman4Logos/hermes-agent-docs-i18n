@@ -3049,6 +3049,7 @@
       - [内置工具参考](zh/website/docs/reference/tools-reference.md)
       - [工具集参考](zh/website/docs/reference/toolsets-reference.md)
     - [User Guide]()
+      - [机器人模式](zh/website/docs/user-guide/bot-mode.md)
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
       - [CLI 接口](zh/website/docs/user-guide/cli.md)
       - [配置](zh/website/docs/user-guide/configuration.md)
