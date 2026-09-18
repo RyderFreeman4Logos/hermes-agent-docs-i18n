@@ -1753,7 +1753,7 @@
   - [微量压缩功能](zh/docs/micro-compaction.md)
   - [基于配置文件的入站消息路由](zh/docs/profile-routing.md)
   - [根因分析：执行 `hermes update` 后 SSL 证书包损坏](zh/docs/rca-ssl-cacert-post-git-pull.md)
-  - [Relay ↔ Connector 接口规范（v1，实验性版本）](zh/docs/relay-connector-contract.md)
+  - [中继 ↔ 连接器接口规范（v1，实验性版本）](zh/docs/relay-connector-contract.md)
   - [会话生命周期](zh/docs/session-lifecycle.md)
   - [状态数据库与FTS恢复机制](zh/docs/state-db-recovery.md)
   - [流式文本转语音功能](zh/docs/streaming-tts.md)
