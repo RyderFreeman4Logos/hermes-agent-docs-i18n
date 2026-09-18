@@ -1,6 +1,6 @@
 ---
-name: lambda-labs-gpu-cloud
-description: Reserved and on-demand GPU cloud instances for ML training and inference. Use when you need dedicated GPU instances with simple SSH access, persistent filesystems, or high-performance multi-node clusters for large-scale training.
+name: lambda-labs
+description: On-demand GPU cloud instances for ML training.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -14,51 +14,51 @@ metadata:
 
 # Lambda Labs GPU 云平台
 
-本指南全面介绍如何使用 Lambda Labs GPU 云平台上的按需实例及一键集群功能来运行机器学习工作负载。
+本指南介绍如何使用 Lambda Labs GPU 云平台上的按需实例及一键集群功能来运行机器学习工作负载。
 
 ## 何时选择 Lambda Labs
 
-**以下情况推荐使用 Lambda Labs：**
+**以下情况适合使用 Lambda Labs：**
 - 需要具备完整 SSH 访问权限的专用 GPU 实例
 - 需要运行耗时较长的训练任务（数小时至数天）
-- 希望享受简单透明的定价机制且无需支付数据出站费用
-- 需要在不同会话之间保持数据持久化存储
-- 需要构建高性能多节点集群（16–512 个 GPU）
-- 希望使用预装好的机器学习框架套件（包含 PyTorch、CUDA、NCCL 的 Lambda Stack）
+- 希望享受无数据输出费用且定价简单的服务
+- 需要在不同会话之间保持数据持久化
+- 需要高性能的多节点集群（16–512 个 GPU）
+- 希望使用预安装的机器学习套件（包含 PyTorch、CUDA、NCCL 的 Lambda Stack）
 
-**核心功能亮点：**
+**主要功能：**
 - **多种 GPU 选择**：B200、H100、GH200、A100、A10、A6000、V100
-- **预装 Lambda Stack**：内置 PyTorch、TensorFlow、CUDA、cuDNN、NCCL 等工具
+- **Lambda Stack**：预安装了 PyTorch、TensorFlow、CUDA、cuDNN、NCCL
 - **持久化文件系统**：确保数据在实例重启后依然保留
-- **一键集群功能**：支持构建包含 16–512 个 GPU 且配备 InfiniBand 的 Slurm 集群
-- **透明定价**：按分钟计费，无数据出站费用
-- **全球覆盖**：在全球 12 个以上地区提供服务
+- **一键集群功能**：支持配备 InfiniBand 的 16–512 个 GPU Slurm 集群
+- **简单透明的定价**：按分钟计费，无数据输出费用
+- **全球多区域部署**：覆盖全球 12 个以上地区
 
-**其他可选方案：**
+**如需其他替代方案，请考虑：**
 - **Modal**：适用于无服务器及自动扩展型工作负载
 - **SkyPilot**：用于多云资源编排与成本优化
-- **RunPod**：提供更廉价的按需实例及无服务器端点
+- **RunPod**：提供更便宜的按需实例及无服务器端点
 - **Vast.ai**：拥有价格最低的 GPU 市场平台
 
-## 快速入门指南
+## 快速入门
 
 ### 账户创建
 
 1. 访问 https://lambda.ai 创建账户
 2. 添加支付方式
 3. 通过控制面板生成 API 密钥
-4. 添加 SSH 密钥（启动实例前必填）
+4. 添加 SSH 密钥（启动实例前必需）
 
 ### 通过控制台启动实例
 
-1. 访问 https://cloud.lambda.ai/instances
-2. 点击“启动实例”
-3. 选择 GPU 类型及所在区域
-4. 选择对应的 SSH 密钥
-5. 可选：附加文件系统
-6. 启动实例，等待 3–15 分钟
+1. 访问 https://cloud.lambda.ai/instances  
+2. 点击“启动实例”  
+3. 选择GPU类型与区域  
+4. 选定SSH密钥  
+5. 如有需要，可附加文件系统  
+6. 启动实例并等待3至15分钟  
 
-### 通过 SSH 连接
+### 通过SSH连接
 
 ```bash
 # Get instance IP from console
@@ -73,14 +73,14 @@ ssh -i ~/.ssh/lambda_key ubuntu@<INSTANCE-IP>
 ### 可用GPU型号
 
 | GPU | 显存容量 | 每小时价格 | 最佳适用场景 |
-|-----|----------|--------------|----------|
+|-----|----------|--------------|------------|
 | B200 SXM6 | 180 GB | $4.99 | 大型模型训练，追求最快训练速度 |
 | H100 SXM | 80 GB | $2.99-3.29 | 大型模型训练 |
-| H100 PCIe | 80 GB | $2.49 | 性价比高的H100选项 |
+| H100 PCIe | 80 GB | $2.49 | 性价比高的H100方案 |
 | GH200 | 96 GB | $1.49 | 单GPU驱动的大型模型训练 |
 | A100 80GB | 80 GB | $1.79 | 生产环境训练 |
 | A100 40GB | 40 GB | $1.29 | 标准训练任务 |
-| A10 | 24 GB | $0.75 | 推理与微调任务 |
+| A10 | 24 GB | $0.75 | 推理及模型微调 |
 | A6000 | 48 GB | $0.80 | 显存容量与价格比优异 |
 | V100 | 16 GB | $0.55 | 预算有限的训练场景 |
 
@@ -269,9 +269,9 @@ python train.py --checkpoint-dir /lambda/nfs/my-storage/checkpoints
 3. 选择区域（必须与实例所在区域一致）。
 4. 命名并创建。
 
-### 附加到实例
+### 连接到实例
 
-文件系统必须在实例启动时进行附加：
+文件系统必须在实例启动时进行关联：
 - 通过控制台操作：在启动实例时选择相应的文件系统。
 - 通过 API 操作：在启动请求中包含 `file_system_names` 参数。
 
@@ -286,7 +286,7 @@ python train.py --checkpoint-dir /lambda/nfs/my-storage/checkpoints
   └── outputs/
 
 # Local SSD (faster, ephemeral)
-/home/ubuntu/
+~/ (instance home)
   └── working/  # Temporary files
 ```
 
@@ -316,7 +316,7 @@ echo 'ssh-rsa AAAA...' >> ~/.ssh/authorized_keys
 ssh-import-id gh:username
 ```
 
-### SSH 隧道功能
+### SSH 隧道传输
 
 ```bash
 # Forward Jupyter
@@ -416,14 +416,14 @@ torch.save({
 ### 概述
 
 高性能 Slurm 集群，具备以下配置：
-- 16 至 512 块 NVIDIA H100 或 B200 GPU
+- 16–512 块 NVIDIA H100 或 B200 GPU
 - NVIDIA Quantum-2 400 Gb/s InfiniBand 网络
-- 3200 Gb/s 高速的 GPUDirect RDMA 技术
-- 预装好的分布式机器学习框架套件
+- 3200 Gb/s 的 GPUDirect RDMA 技术
+- 预装好的分布式机器学习框架栈
 
 ### 包含的软件
 
-- Ubuntu 22.04 LTS 操作系统 + Lambda 框架套件
+- Ubuntu 22.04 LTS 操作系统 + Lambda Stack 框架
 - NCCL、Open MPI 工具
 - 支持 DDP 和 FSDP 模式的 PyTorch
 - TensorFlow 框架
@@ -448,12 +448,12 @@ srun --nodes=4 --ntasks-per-node=8 --gpus-per-node=8 \
 
 ### 带宽
 
-- 实例间通信（同一区域）：最高可达 200 Gbps
+- 实例间（同一区域）：最高可达 200 Gbps
 - 接入互联网的出站带宽：最高为 20 Gbps
 
-### 防火墙设置
+### 防火墙
 
-- 默认情况下：仅开放端口 22（SSH）
+- 默认设置：仅开放端口 22（SSH）
 - 可在 Lambda 控制台配置其他端口
 - 默认允许 ICMP 流量
 
@@ -507,8 +507,8 @@ python inference.py \
 
 | 任务 | 推荐 GPU |
 |------|----------|
-| LLM 微调（7B） | A100 40GB |
-| LLM 微调（70B） | 8 枚 H100 |
+| LLM 微调（70亿参数） | A100 40GB |
+| LLM 微调（700亿参数） | 8台 H100 |
 | 推理任务 | A10、A6000 |
 | 开发测试 | V100、A10 |
 | 最高性能需求 | B200 |
@@ -517,7 +517,7 @@ python inference.py \
 
 1. **使用文件系统**：避免重复下载数据
 2. **频繁保存检查点**：便于从中断处继续训练
-3. **合理配置资源**：无需过度配置 GPU
+3. **合理配置资源**：避免过度分配 GPU 资源
 4. **手动终止空闲实例**：不设置自动停止功能，需手动操作
 
 ### 监控使用情况
@@ -530,10 +530,10 @@ python inference.py \
 | 问题 | 解决方案 |
 |------|----------|
 | 实例无法启动 | 检查所在区域是否可用，尝试更换其他 GPU |
-| SSH 连接被拒绝 | 等待实例完成初始化（3-15 分钟） |
+| SSH 连接被拒绝 | 等待实例完成初始化（需3-15分钟） |
 | 终止实例后数据丢失 | 使用持久化文件系统 |
 | 数据传输速度慢 | 使用同一区域的文件系统 |
-| 无法检测到 GPU | 重启实例并检查驱动程序
+| 无法检测到 GPU | 重启实例，检查驱动程序 |
 
 ## 参考资料
 
@@ -545,5 +545,5 @@ python inference.py \
 - **文档**：https://docs.lambda.ai
 - **控制台**：https://cloud.lambda.ai
 - **价格信息**：https://lambda.ai/instances
-- **支持服务**：https://support.lambdalabs.com
+- **技术支持**：https://support.lambdalabs.com
 - **博客**：https://lambda.ai/blog
