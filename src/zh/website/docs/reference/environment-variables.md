@@ -6,497 +6,893 @@ description: "Complete reference of all environment variables used by Hermes Age
 
 # 环境变量参考
 
-Hermes 会从进程环境读取环境变量，而对于用户管理的机密信息，则从 `~/.hermes/.env` 文件中获取。请将 API 密钥、机器人令牌、OAuth 密钥以及其他凭证存储在 `.env` 文件中；如果存在配置键，建议优先使用 `config.yaml` 来设置非机密性的行为参数。以下部分变量仅为进程级覆盖项或内部桥接变量，即便此处有相关说明，也不应将其加入 `.env` 文件中。
+Hermes 会从进程环境读取环境变量，而对于用户管理的机密信息，则会从 `~/.hermes/.env` 文件中获取。请将 API 密钥、机器人令牌、OAuth 密钥以及其他凭证存储在 `.env` 文件中；如果存在配置键，建议优先使用 `config.yaml` 来设置非机密类的行为参数。以下部分变量仅为进程级覆盖项或内部桥接变量，即便此处有相关说明，也不应将其添加到 `.env` 文件中。
 
-## 大语言模型提供方| 变量名 | 描述 |
+## 大语言模型提供方
+
+| Variable | Description |
+|----------|-------------|
+| `OPENROUTER_API_KEY` | OpenRouter API key (recommended for flexibility) |
+| `OPENROUTER_BASE_URL` | Override the OpenRouter-compatible base URL |
+| `FIREWORKS_API_KEY` | Fireworks AI API key ([app.fireworks.ai](https://app.fireworks.ai/settings/users/api-keys)). Configure endpoint overrides with `model.base_url` in `config.yaml`. |
+| `HERMES_OPENROUTER_CACHE` | Enable OpenRouter response caching (`1`/`true`/`yes`/`on`). Overrides `openrouter.response_cache` in config.yaml. See [Response Caching](https://openrouter.ai/docs/guides/features/response-caching). |
+| `HERMES_OPENROUTER_CACHE_TTL` | Cache TTL in seconds (1-86400). Overrides `openrouter.response_cache_ttl` in config.yaml. |
+| `NOUS_BASE_URL` | Override Nous Portal base URL (rarely needed; development/testing only) |
+| `NOUS_INFERENCE_BASE_URL` | Override Nous inference endpoint directly |
+| `AI_GATEWAY_API_KEY` | Vercel AI Gateway API key ([ai-gateway.vercel.sh](https://ai-gateway.vercel.sh)) |
+| `AI_GATEWAY_BASE_URL` | Override AI Gateway base URL (default: `https://ai-gateway.vercel.sh/v1`) |
+| `OPENAI_API_KEY` | API key for custom OpenAI-compatible endpoints (used with `OPENAI_BASE_URL`) |
+| `OPENAI_BASE_URL` | Base URL for custom endpoint (VLLM, SGLang, etc.) |
+| `LM_API_KEY` | API key for LM Studio (`lmstudio` provider). Often a placeholder for local servers |
+| `LM_BASE_URL` | LM Studio base URL (default: `http://localhost:1234/v1`) |
+| `COPILOT_GITHUB_TOKEN` | GitHub token for Copilot API — first priority (OAuth `gho_*` or fine-grained PAT `github_pat_*`; classic PATs `ghp_*` are **not supported**) |
+| `GH_TOKEN` | GitHub token — second priority for Copilot (also used by `gh` CLI) |
+| `GITHUB_TOKEN` | GitHub token — third priority for Copilot |
+| `HERMES_COPILOT_ACP_COMMAND` | Override Copilot ACP CLI binary path (default: `copilot`) |
+| `COPILOT_CLI_PATH` | Alias for `HERMES_COPILOT_ACP_COMMAND` |
+| `HERMES_COPILOT_ACP_ARGS` | Override Copilot ACP arguments (default: `--acp --stdio`) |
+| `COPILOT_ACP_BASE_URL` | Override Copilot ACP base URL |
+| `COPILOT_API_BASE_URL` | Override the Copilot API base URL (`copilot` provider) |
+| `GLM_API_KEY` | z.ai / ZhipuAI GLM API key ([z.ai](https://z.ai)) |
+| `ZAI_API_KEY` | Alias for `GLM_API_KEY` |
+| `Z_AI_API_KEY` | Alias for `GLM_API_KEY` |
+| `GLM_BASE_URL` | Override z.ai base URL (default: `https://api.z.ai/api/paas/v4`) |
+| `KIMI_API_KEY` | Kimi / Moonshot AI API key ([moonshot.ai](https://platform.moonshot.ai)) |
+| `KIMI_CODING_API_KEY` | Alias key for the `kimi-coding` provider (accepted alongside `KIMI_API_KEY`) |
+| `KIMI_BASE_URL` | Override Kimi base URL (default: `https://api.moonshot.ai/v1`) |
+| `KIMI_CN_API_KEY` | Kimi / Moonshot China API key ([moonshot.cn](https://platform.moonshot.cn)) |
+| `ARCEEAI_API_KEY` | Arcee AI API key ([chat.arcee.ai](https://chat.arcee.ai/)) |
+| `ARCEE_BASE_URL` | Override Arcee base URL (default: `https://api.arcee.ai/api/v1`) |
+| `GMI_API_KEY` | GMI Cloud API key ([gmicloud.ai](https://www.gmicloud.ai/)) |
+| `GMI_BASE_URL` | Override GMI Cloud base URL (default: `https://api.gmi-serving.com/v1`) |
+| `ACTUAL_API_KEY` | Actual Computer inference key (`ac_...`, [actual.inc/user/keys](https://actual.inc/user/keys)). Not needed for the local daemon. |
+| `ACTUAL_BASE_URL` | Override Actual Computer base URL (default: `https://api.actual.inc/v1`). Set to `http://127.0.0.1:8080` for the local offline daemon — loopback hosts need no API key. |
+| `MINIMAX_API_KEY` | MiniMax API key — global endpoint ([minimax.io](https://www.minimax.io)). **Not used by `minimax-oauth`** (OAuth path uses browser login instead). |
+| `MINIMAX_BASE_URL` | Override MiniMax base URL (default: `https://api.minimax.io/anthropic` — Hermes uses MiniMax's Anthropic Messages-compatible endpoint). **Not used by `minimax-oauth`**. |
+| `MINIMAX_CN_API_KEY` | MiniMax API key — China endpoint ([minimaxi.com](https://www.minimaxi.com)). **Not used by `minimax-oauth`** (OAuth path uses browser login instead). |
+| `MINIMAX_CN_BASE_URL` | Override MiniMax China base URL (default: `https://api.minimaxi.com/anthropic`). **Not used by `minimax-oauth`**. |
+| `KILOCODE_API_KEY` | Kilo Code API key ([kilo.ai](https://kilo.ai)) |
+| `KILOCODE_BASE_URL` | Override Kilo Code base URL (default: `https://api.kilo.ai/api/gateway`) |
+| `XIAOMI_API_KEY` | Xiaomi MiMo API key ([platform.xiaomimimo.com](https://platform.xiaomimimo.com)) |
+| `XIAOMI_BASE_URL` | Override Xiaomi MiMo base URL (default: `https://api.xiaomimimo.com/v1`) |
+| `UPSTAGE_API_KEY` | Upstage API key for Solar models ([console.upstage.ai](https://console.upstage.ai/api-keys)) |
+| `UPSTAGE_BASE_URL` | Override Upstage base URL (default: `https://api.upstage.ai/v1`) |
+| `TOKENHUB_API_KEY` | Tencent TokenHub API key ([tokenhub.tencentmaas.com](https://tokenhub.tencentmaas.com)) |
+| `TOKENHUB_BASE_URL` | Override Tencent TokenHub base URL (default: `https://tokenhub.tencentmaas.com/v1`) |
+| `TOKENPLAN_API_KEY` | Tencent TokenPlan API key (LKEAP; Anthropic Messages endpoint) |
+| `TOKENPLAN_BASE_URL` | Override Tencent TokenPlan base URL (default: `https://api.lkeap.cloud.tencent.com/plan/anthropic`) |
+| `AZURE_FOUNDRY_API_KEY` | Microsoft Foundry / Azure OpenAI API key ([ai.azure.com](https://ai.azure.com/)). Not needed when `model.auth_mode: entra_id` |
+| `AZURE_FOUNDRY_BASE_URL` | Microsoft Foundry endpoint URL (e.g. `https://<resource>.openai.azure.com/openai/v1` for OpenAI-style, or `https://<resource>.services.ai.azure.com/anthropic` for Anthropic-style) |
+| `AZURE_ANTHROPIC_KEY` | Azure Anthropic API key for `provider: anthropic` + `base_url` pointing at a Microsoft Foundry Claude deployment (alternative to `ANTHROPIC_API_KEY` when both Anthropic and Azure Anthropic are configured) |
+| `AZURE_TENANT_ID` | Entra ID tenant ID (service-principal flows; honored by `azure-identity` when `model.auth_mode: entra_id`) |
+| `AZURE_CLIENT_ID` | Entra ID client ID (service principal, workload identity, or user-assigned managed identity) |
+| `AZURE_CLIENT_SECRET` | Service principal secret used by `EnvironmentCredential` |
+| `AZURE_CLIENT_CERTIFICATE_PATH` | Service principal certificate (alternative to `AZURE_CLIENT_SECRET`) |
+| `AZURE_FEDERATED_TOKEN_FILE` | Federated token file path for AKS Workload Identity / OIDC flows |
+| `AZURE_AUTHORITY_HOST` | Sovereign-cloud authority override (e.g. `https://login.microsoftonline.us` for Azure Government). See [Azure Foundry guide](/guides/azure-foundry#sovereign-clouds-government-china) |
+| `IDENTITY_ENDPOINT` / `MSI_ENDPOINT` | Managed Identity endpoint for App Service, Functions, and Container Apps; VMs usually use IMDS instead and do not set these |
+| `HF_TOKEN` | Hugging Face token for Inference Providers ([huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)) |
+| `HF_BASE_URL` | Override Hugging Face base URL (default: `https://router.huggingface.co/v1`) |
+| `GOOGLE_API_KEY` | Google AI Studio API key ([aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)) |
+| `GEMINI_API_KEY` | Alias for `GOOGLE_API_KEY` |
+| `GEMINI_BASE_URL` | Override Google AI Studio base URL |
+| `VERTEX_CREDENTIALS_PATH` | Path to a Google Cloud service account JSON for Vertex AI (Gemini). Vertex uses OAuth2, not a static API key. Falls back to `GOOGLE_APPLICATION_CREDENTIALS`, then to ADC (`gcloud auth application-default login`). Set project/region under `vertex:` in `config.yaml` |
+| `ANTHROPIC_API_KEY` | Anthropic Console API key ([console.anthropic.com](https://console.anthropic.com/)) |
+| `ANTHROPIC_BASE_URL` | Override the Anthropic API base URL |
+| `ANTHROPIC_TOKEN` | Manual or legacy Anthropic OAuth/setup-token override |
+| `DASHSCOPE_API_KEY` | Qwen Cloud (Alibaba DashScope) API key for Qwen models ([modelstudio.console.alibabacloud.com](https://modelstudio.console.alibabacloud.com/)) |
+| `DASHSCOPE_BASE_URL` | Custom DashScope base URL (default: `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`; use `https://dashscope.aliyuncs.com/compatible-mode/v1` for mainland-China region) |
+| `DASHSCOPE_CN_BASE_URL` | Override the `alibaba-cn` mainland-China DashScope base URL |
+| `ALIBABA_CODING_PLAN_API_KEY` | Qwen Coding Plan API key (`alibaba-coding-plan`; also a fallback for `alibaba-coding-plan-cn`) |
+| `ALIBABA_CODING_PLAN_CN_API_KEY` | Qwen Coding Plan API key for the mainland-China `alibaba-coding-plan-cn` provider (checked before the shared key, so only the CN row lights up) |
+| `ALIBABA_CODING_PLAN_BASE_URL` | Override the Qwen Coding Plan base URL (international) |
+| `ALIBABA_CODING_PLAN_CN_BASE_URL` | Override the Qwen Coding Plan base URL (mainland China) |
+| `ALIBABA_TOKEN_PLAN_API_KEY` | Alibaba Model Studio Token Plan API key (`alibaba-token-plan`; also a fallback for `alibaba-token-plan-cn`) |
+| `ALIBABA_TOKEN_PLAN_CN_API_KEY` | Token Plan API key for the mainland-China `alibaba-token-plan-cn` provider (checked before the shared key) |
+| `ALIBABA_TOKEN_PLAN_BASE_URL` | Override the Token Plan base URL (international) |
+| `ALIBABA_TOKEN_PLAN_CN_BASE_URL` | Override the Token Plan base URL (mainland China) |
+| `DEEPSEEK_API_KEY` | DeepSeek API key for direct DeepSeek access ([platform.deepseek.com](https://platform.deepseek.com/api_keys)) |
+| `DEEPSEEK_BASE_URL` | Custom DeepSeek API base URL |
+| `DEEPINFRA_API_KEY` | DeepInfra API key ([deepinfra.com](https://deepinfra.com/dash/api_keys)) |
+| `DEEPINFRA_BASE_URL` | DeepInfra base URL override |
+| `NOVITA_API_KEY` | NovitaAI API key — AI-native cloud for Model API, Agent Sandbox, and GPU Cloud ([novita.ai/settings/key-management](https://novita.ai/settings/key-management)) |
+| `NOVITA_BASE_URL` | Override NovitaAI base URL (default: `https://api.novita.ai/openai/v1`) |
+| `RAMP_ROUTER_API_KEY` | Ramp Router API key ([app.router.com/keys](https://app.router.com/keys)); alias `ROUTER_API_KEY` also accepted |
+| `RAMP_ROUTER_BASE_URL` | Override Ramp Router base URL (default: `https://api.router.com/v1`) |
+| `NEBIUS_API_KEY` | Nebius Token Factory API key ([tokenfactory.nebius.com](https://tokenfactory.nebius.com/)); `NEBIUS_TOKEN_FACTORY_API_KEY` also accepted |
+| `NEBIUS_BASE_URL` | Override Nebius Token Factory base URL (default: `https://api.tokenfactory.nebius.com/v1`) |
+| `NVIDIA_API_KEY` | NVIDIA NIM API key — Nemotron and open models ([build.nvidia.com](https://build.nvidia.com)) |
+| `NVIDIA_BASE_URL` | Override NVIDIA base URL (default: `https://integrate.api.nvidia.com/v1`; set to `http://localhost:8000/v1` for a local NIM endpoint) |
+| `STEPFUN_API_KEY` | StepFun API key — Step-series models ([platform.stepfun.com](https://platform.stepfun.com)) |
+| `STEPFUN_BASE_URL` | Override StepFun base URL (default: `https://api.stepfun.com/v1`) |
+| `OLLAMA_API_KEY` | Ollama Cloud API key — managed Ollama catalog without local GPU ([ollama.com/settings/keys](https://ollama.com/settings/keys)) |
+| `OLLAMA_BASE_URL` | Override Ollama Cloud base URL (default: `https://ollama.com/v1`) |
+| `XAI_API_KEY` | xAI (Grok) API key for chat + TTS + web search ([console.x.ai](https://console.x.ai/)) |
+| `XAI_BASE_URL` | Override xAI base URL (default: `https://api.x.ai/v1`) |
+| `MISTRAL_API_KEY` | Mistral API key for Voxtral TTS and Voxtral STT ([console.mistral.ai](https://console.mistral.ai)) |
+| `AWS_REGION` | AWS region for Bedrock inference (e.g. `us-east-1`, `eu-central-1`). Read by boto3. |
+| `AWS_PROFILE` | AWS named profile for Bedrock authentication (reads `~/.aws/credentials`). Leave unset to use default boto3 credential chain. |
+| `BEDROCK_BASE_URL` | Override Bedrock runtime base URL (default: `https://bedrock-runtime.us-east-1.amazonaws.com`; usually leave unset and use `AWS_REGION` instead) |
+| `HERMES_QWEN_BASE_URL` | Qwen Portal base URL override (default: `https://portal.qwen.ai/v1`) |
+| `OPENCODE_ZEN_API_KEY` | OpenCode Zen API key — pay-as-you-go access to curated models ([opencode.ai](https://opencode.ai/auth)) |
+| `OPENCODE_ZEN_BASE_URL` | Override OpenCode Zen base URL |
+| `OPENCODE_GO_API_KEY` | OpenCode Go API key — $10/month subscription for open models ([opencode.ai](https://opencode.ai/auth)) |
+| `OPENCODE_GO_BASE_URL` | Override OpenCode Go base URL |
+| `CLAUDE_CODE_OAUTH_TOKEN` | Explicit Claude Code token override if you export one manually |
+| `HERMES_MODEL` | Override model name at process level (used by cron scheduler; prefer `config.yaml` for normal use) |
+| `VOICE_TOOLS_OPENAI_KEY` | Preferred OpenAI key for OpenAI speech-to-text and text-to-speech providers |
+| `HERMES_LOCAL_STT_COMMAND` | Optional local speech-to-text command template. Supports `{input_path}`, `{output_dir}`, `{language}`, and `{model}` placeholders |
+| `HERMES_LOCAL_STT_LANGUAGE` | Default language hint for STT. Used by the `local` (faster-whisper) provider, `HERMES_LOCAL_STT_COMMAND`, the local `whisper` CLI fallback (default: `en`), Groq, and xAI when no per-provider `language` is set in `config.yaml` |
+| `HERMES_HOME` | Override Hermes config directory (default: `~/.hermes`). Also scopes the gateway PID file and systemd service name, so multiple installations can run concurrently |
+| `HERMES_GIT_BASH_PATH` | **Windows only.** Override `bash.exe` discovery for the terminal tool. Points at any bash — full Git-for-Windows install, WSL bash via symlink, MSYS2, Cygwin. The installer sets this automatically to the PortableGit it provisioned. See the [Windows (Native) Guide](../user-guide/windows-native.md#how-hermes-runs-shell-commands-on-windows) |
+| `HERMES_DISABLE_WINDOWS_UTF8` | **Windows only.** Set to `1` to disable the UTF-8 stdio shim (`configure_windows_stdio()`) and fall back to the console's locale code page. Useful for bisecting encoding bugs; rarely the right setting in normal operation |
+| `HERMES_KANBAN_HOME` | Override the shared Hermes root that anchors the kanban board (db + workspaces + worker logs). Falls back to `get_default_hermes_root()` (the parent of any active profile). Useful for tests and unusual deployments |
+| `HERMES_KANBAN_BOARD` | Pin the active kanban board for this process. Takes precedence over `~/.hermes/kanban/current`; the dispatcher injects this into worker subprocess env so workers physically cannot see tasks on other boards. Defaults to `default`. Slug validation: lowercase alphanumerics + hyphens + underscores, 1-64 chars |
+| `HERMES_KANBAN_DB` | Pin the kanban database file path directly (highest precedence; beats `HERMES_KANBAN_BOARD` and `HERMES_KANBAN_HOME`). The dispatcher injects this into worker subprocess env so profile workers converge on the dispatcher's board |
+| `HERMES_KANBAN_WORKSPACES_ROOT` | Pin the kanban workspaces root directly (highest precedence for workspaces; beats `HERMES_KANBAN_HOME`). The dispatcher injects this into worker subprocess env |
+| `HERMES_KANBAN_DISPATCH_IN_GATEWAY` | Runtime override for `kanban.dispatch_in_gateway`. Set to `0`, `false`, `no`, or `off` to keep the gateway from starting the embedded Kanban dispatcher; any other non-empty value enables it. Useful when a separate dispatcher process owns the board. |
+
+## 提供商认证（OAuth）
+
+对于原生 Anthropic 认证方式，若存在 Claude Code 自带的凭据文件，Hermes 会优先使用这些文件，因为它们可以自动刷新。**通过 OAuth 连接 Anthropic 需要订阅包含额外使用额度的 Claude Max 套餐**——Hermes 会以 Claude Code 的身份发起请求，仅消耗 Max 套餐中的额外/超额额度，而不占用基础额度，且不支持在 Claude Pro 上使用。若没有 Max 套餐及额外额度，则建议使用 API 密钥。虽然 `ANTHROPIC_TOKEN` 等环境变量仍可作为手动覆盖方式，但已不再推荐用于 Claude Max 的登录流程。
+
+| 变量名 | 描述 |
 |--------|------|
-| `OPENROUTER_API_KEY` | OpenRouter API密钥（为提升灵活性推荐使用） |
-| `OPENROUTER_BASE_URL` | 覆盖与OpenRouter兼容的基URL |
-| `HERMES_OPENROUTER_CACHE` | 启用OpenRouter响应缓存（值为`1`/`true`/`yes`/`on`）。会覆盖`config.yaml`中的`openrouter.response_cache`设置。详情请参阅[响应缓存](https://openrouter.ai/docs/guides/features/response-caching)。 |
-| `HERMES_OPENROUTER_CACHE_TTL` | 缓存有效期，以秒为单位（范围：1-86400）。会覆盖`config.yaml`中的`openrouter.response_cache_ttl`设置。 |
-| `NOUS_BASE_URL` | 覆盖Nous Portal的基URL（极少需要，仅用于开发/测试） |
-| `NOUS_INFERENCE_BASE_URL` | 直接覆盖Nous推理接口的地址 |
-| `OPENAI_API_KEY` | 用于自定义OpenAI兼容接口的API密钥（需与`OPENAI_BASE_URL`一起使用） |
-| `OPENAI_BASE_URL` | 自定义接口的基URL（适用于VLLM、SGLang等框架） |
-| `LM_API_KEY` | LM Studio（`lmstudio`提供者）的API密钥。通常用于本地服务器场景 |
-| `LM_BASE_URL` | LM Studio的基URL（默认值：`http://localhost:1234/v1`） |
-| `COPILOT_GITHUB_TOKEN` | Copilot API所需的GitHub令牌——优先级最高（支持OAuth类型的`gho_*`令牌或细粒度PAT类型的`github_pat_*`令牌；传统的PAT类型`ghp_*`不受支持） |
-| `GH_TOKEN` | GitHub令牌——Copilot的第二优先级令牌（同时也被`gh` CLI使用） |
-| `GITHUB_TOKEN` | GitHub令牌——Copilot的第三优先级令牌 |
-| `HERMES_COPILOT_ACP_COMMAND` | 覆盖Copilot ACP CLI二进制文件的路径（默认值：`copilot`） |
-| `COPILOT_CLI_PATH` | `HERMES_COPILOT_ACP_COMMAND`的别名 |
-| `HERMES_COPILOT_ACP_ARGS` | 覆盖Copilot ACP的参数（默认值：`--acp --stdio`） |
-| `COPILOT_ACP_BASE_URL` | 覆盖Copilot ACP的基URL |
-| `COPILOT_API_BASE_URL` | 覆盖Copilot API的基URL（对应`copilot`提供者） |
-| `GLM_API_KEY` | z.ai / ZhipuAI GLM API密钥（平台地址：[z.ai](https://z.ai)） |
-| `ZAI_API_KEY` | `GLM_API_KEY`的别名 |
-| `Z_AI_API_KEY` | `GLM_API_KEY`的别名 |
-| `GLM_BASE_URL` | 覆盖z.ai的基URL（默认值：`https://api.z.ai/api/paas/v4`） |
-| `KIMI_API_KEY` | Kimi / Moonshot AI API密钥（平台地址：[moonshot.ai](https://platform.moonshot.ai)） |
-| `KIMI_CODING_API_KEY` | `kimi-coding`提供者对应的别名密钥，可与`KIMI_API_KEY`同时使用 |
-| `KIMI_BASE_URL` | 覆盖Kimi的基URL（默认值：`https://api.moonshot.ai/v1`） |
-| `KIMI_CN_API_KEY` | Kimi / Moonshot中国区API密钥（平台地址：[moonshot.cn](https://platform.moonshot.cn)） |
-| `ARCEEAI_API_KEY` | Arcee AI API密钥（平台地址：[chat.arcee.ai](https://chat.arcee.ai/)） |
-| `ARCEE_BASE_URL` | 覆盖Arcee的基URL（默认值：`https://api.arcee.ai/api/v1`） |
-| `GMI_API_KEY` | GMI Cloud API密钥（平台地址：[gmicloud.ai](https://www.gmicloud.ai/)） |
-| `GMI_BASE_URL` | 覆盖GMI Cloud的基URL（默认值：`https://api.gmi-serving.com/v1`） |
-| `MINIMAX_API_KEY` | MiniMax API密钥——全球通用接口（平台地址：[minimax.io](https://www.minimax.io)）。**`minimax-oauth`模式不会使用该密钥**（该模式通过浏览器登录即可） |
-| `MINIMAX_BASE_URL` | 覆盖Minimax的基URL（默认值：`https://api.minimax.io/anthropic`——Hermes使用的是Minimax兼容Anthropic Messages格式的接口）。**`minimax-oauth`模式也不会使用该值** |
-| `MINIMAX_CN_API_KEY` | MiniMax API密钥——中国区接口（平台地址：[minimaxi.com](https://www.minimaxi.com)）。**`minimax-oauth`模式不会使用该密钥**（该模式通过浏览器登录即可） |
-| `MINIMAX_CN_BASE_URL` | 覆盖Minimax中国区的基URL（默认值：`https://api.minimaxi.com/anthropic`）。**`minimax-oauth`模式不会使用该值** |
-| `KILOCODE_API_KEY` | Kilo Code API密钥（平台地址：[kilo.ai](https://kilo.ai)） |
-| `KILOCODE_BASE_URL` | 覆盖Kilo Code的基URL（默认值：`https://api.kilo.ai/api/gateway`） |
-| `XIAOMI_API_KEY` | 小米MiMo API密钥（平台地址：[platform.xiaomimimo.com](https://platform.xiaomimimo.com)） |
-| `XIAOMI_BASE_URL` | 覆盖小米MiMo的基URL（默认值：`https://api.xiaomimimo.com/v1`） |
-| `TOKENHUB_API_KEY` | 腾讯TokenHub API密钥（平台地址：[tokenhub.tencentmaas.com](https://tokenhub.tencentmaas.com)） |
-| `TOKENHUB_BASE_URL` | 覆盖腾讯TokenHub的基URL（默认值：`https://tokenhub.tencentmaas.com/v1`） |
-| `AZURE_FOUNDRY_API_KEY` | Microsoft Foundry / Azure OpenAI API密钥（平台地址：[ai.azure.com](https://ai.azure.com/)）。当`model.auth_mode: entra_id`时无需此密钥 |
-| `AZURE_FOUNDRY_BASE_URL` | Microsoft Foundry接口地址（例如，OpenAI风格接口为`https://<resource>.openai.azure.com/openai/v1`，Anthropic风格接口为`https://<resource>.services.ai.azure.com/anthropic`） |
-| `AZURE_ANTHROPIC_KEY` | 用于`provider: anthropic`场景的Azure Anthropic API密钥，且其对应的`base_url`需指向Microsoft Foundry部署的Claude服务——当同时配置了Anthropic和Azure Anthropic时，该密钥可作为`ANTHROPIC_API_KEY`的替代方案 |
-| `AZURE_TENANT_ID` | Entra ID租户ID（用于服务主体流程；当`model.auth_mode: entra_id`时，`azure-identity`会自动识别该值） |
-| `AZURE_CLIENT_ID` | Entra ID客户端ID（可为服务主体、工作负载身份或用户分配的托管身份） |
-| `AZURE_CLIENT_SECRET` | `EnvironmentCredential`所使用的服务主体密钥 |
-| `AZURE_CLIENT_CERTIFICATE_PATH` | 服务主体证书文件路径（可作为`AZURE_CLIENT_SECRET`的替代方案） |
-| `AZURE_FEDERATED_TOKEN_FILE` | AKS工作负载身份/OIDC流程所使用的联合令牌文件路径 |
-| `AZURE_AUTHORITY_HOST` | 主权云授权服务器地址的覆盖值（例如，Azure政府版为`https://login.microsoftonline.us`）。详情请参阅[Azure Foundry指南](/guides/azure-foundry#sovereign-clouds-government-china) |
-| `IDENTITY_ENDPOINT` / `MSI_ENDPOINT` | App Service、Functions及Container Apps所使用的托管身份接口地址；虚拟机通常使用IMDS机制，无需设置这些参数 |
-| `HF_TOKEN` | 用于推理提供者的Hugging Face令牌（可在[Huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)处生成） |
-| `HF_BASE_URL` | 覆盖Hugging Face的基URL（默认值：`https://router.huggingface.co/v1`） |
-| `GOOGLE_API_KEY` | Google AI Studio API密钥（生成地址：[aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)） |
-| `GEMINI_API_KEY` | `GOOGLE_API_KEY`的别名 |
-| `GEMINI_BASE_URL` | 覆盖Google AI Studio的基URL |
-| `ANTHROPIC_API_KEY` | Anthropic控制台API密钥（平台地址：[console.anthropic.com](https://console.anthropic.com/)） |
-| `ANTHROPIC_BASE_URL` | 覆盖Anthropic API的基URL |
-| `ANTHROPIC_TOKEN` | 手动设置的或旧版的Anthropic OAuth/设置令牌覆盖值 |
-| `DASHSCOPE_API_KEY` | 阿里云Qwen模型对应的Qwen Cloud（Alibaba DashScope）API密钥（管理地址：[modelstudio.console.alibabacloud.com](https://modelstudio.console.alibabacloud.com/)） |
-| `DASHSCOPE_BASE_URL` | 自定义的DashScope基URL（默认值：`https://dashscope-intl.aliyuncs.com/compatible-mode/v1`；中国内地地区请使用`https://dashscope.aliyuncs.com/compatible-mode/v1`） |
-| `ALIBABA_CODING_PLAN_API_KEY` | Qwen编程计划API密钥（对应`alibaba-coding-plan`提供者） |
-| `ALIBABA_CODING_PLAN_BASE_URL` | 覆盖Qwen编程计划的基URL |
-| `DEEPSEEK_API_KEY` | 直接访问DeepSeek模型所需的API密钥（平台地址：[platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)） |
-| `DEEPSEEK_BASE_URL` | 自定义的DeepSeek API基URL |
-| `NOVITA_API_KEY` | NovitaAI API密钥——专为模型API、Agent Sandbox及GPU云服务设计的原生AI云平台（密钥管理地址：[novita.ai/settings/key-management](https://novita.ai/settings/key-management)） |
-| `NOVITA_BASE_URL` | 覆盖NovitaAI的基URL（默认值：`https://api.novita.ai/openai/v1`） |
-| `NVIDIA_API_KEY` | NVIDIA NIM API密钥——用于Nemotron及开源模型的接口（生成地址：[build.nvidia.com](https://build.nvidia.com)） |
-| `NVIDIA_BASE_URL` | 覆盖NVIDIA的基URL（默认值：`https://integrate.api.nvidia.com/v1`；如需使用本地NIM接口，可设置为`http://localhost:8000/v1`） |
-| `STEPFUN_API_KEY` | StepFun API密钥——用于Step系列模型的接口（平台地址：[platform.stepfun.com](https://platform.stepfun.com)） |
-| `STEPFUN_BASE_URL` | 覆盖StepFun的基URL（默认值：`https://api.stepfun.com/v1`） |
-| `OLLAMA_API_KEY` | Ollama Cloud API密钥——无需本地GPU即可使用的托管Ollama模型库（密钥管理地址：[ollama.com/settings/keys](https://ollama.com/settings/keys)） |
-| `OLLAMA_BASE_URL` | 覆盖Ollama Cloud的基URL（默认值：`https://ollama.com/v1`） |
-| `XAI_API_KEY` | xAI（Grok）API密钥，支持聊天、文本转语音及网络搜索功能（控制台地址：[console.x.ai](https://console.x.ai/)） |
-| `XAI_BASE_URL` | 覆盖xAI的基URL（默认值：`https://api.x.ai/v1`） |
-| `MISTRAL_API_KEY` | Mistral API密钥，用于Voxtral文本转语音及语音转文本功能（控制台地址：[console.mistral.ai](https://console.mistral.ai)） |
-| `AWS_REGION` | Bedrock推理服务的AWS区域（例如`us-east-1`、`eu-central-1`）。该值由boto3自动读取 |
-| `AWS_PROFILE` | 用于Bedrock身份验证的AWS命名配置文件（会读取`~/.aws/credentials`中的设置）。如未指定该值，则使用boto3默认的凭据链 |
-| `BEDROCK_BASE_URL` | 覆盖Bedrock运行时基URL（默认值：`https://bedrock-runtime.us-east-1.amazonaws.com`；通常无需设置，直接使用`AWS_REGION`即可） |
-| `HERMES_QWEN_BASE_URL` | 覆盖Qwen Portal的基URL（默认值：`https://portal.qwen.ai/v1`） |
-| `OPENCODE_ZEN_API_KEY` | OpenCode Zen API密钥——支持按需使用精选模型的按量付费服务（平台地址：[opencode.ai](https://opencode.ai/auth)） |
-| `OPENCODE_ZEN_BASE_URL` | 覆盖OpenCode Zen的基URL |
-| `OPENCODE_GO_API_KEY` | OpenCode Go API密钥——可按月支付10美元使用开源模型的服务（平台地址：[opencode.ai](https://opencode.ai/auth)） |
-| `OPENCODE_GO_BASE_URL` | 覆盖OpenCode Go的基URL |
-| `CLAUDE_CODE_OAUTH_TOKEN` | 若您手动导出了Claude Code令牌，可在此处显式指定该令牌值 |
-| `HERMES_MODEL` | 在进程层面覆盖模型名称（主要用于cron调度器；常规使用建议通过`config.yaml`配置） |
-| `VOICE_TOOLS_OPENAI_KEY` | 用于OpenAI语音转文本及文本转语音服务的推荐OpenAI API密钥 |
-| `HERMES_LOCAL_STT_COMMAND` | 可选的本地语音转文本命令模板。支持使用 `{input_path}`、`{output_dir}`、`{language}` 和 `{model}` 等占位符 |
-| `HERMES_LOCAL_STT_LANGUAGE` | 传递给`HERMES_LOCAL_STT_COMMAND`的默认语言，或自动检测的本地`whisper` CLI默认语言（默认值：`en`） |
-| `HERMES_HOME` | 覆盖Hermes配置目录的路径（默认值：`~/.hermes`）。该设置还会确定网关PID文件的位置及systemd服务名称，便于多实例同时运行 |
-| `HERMES_GIT_BASH_PATH` | **仅适用于Windows系统**。用于指定终端工具所使用的`bash.exe`路径。可指向任何版本的bash——包括完整版的Git-for-Windows、通过符号链接连接的WSL bash、MSYS2或Cygwin。安装程序会自动将此路径设置为它所配置的PortableGit版本。详情请参阅[Windows（原生）指南](../user-guide/windows-native.md#how-hermes-runs-shell-commands-on-windows) |
-| `HERMES_DISABLE_WINDOWS_UTF8` | **仅适用于Windows系统**。将其设置为`1`可禁用UTF-8标准输入输出模拟层（`configure_windows_stdio()`函数），转而使用控制台的本地代码页。该设置有助于排查编码相关问题；在正常运行时很少需要使用 |
-| `HERMES_KANBAN_HOME` | 覆盖用于存储看板数据（数据库、工作空间及 worker日志）的共享Hermes根目录。如未指定该值，则会回退到`get_default_hermes_root()`函数确定的路径（即所有活跃配置文件的父目录）。该设置适用于测试或特殊部署场景 |
-| `HERMES_KANBAN_BOARD` | 固定当前进程所使用的看板名称。该设置优先级高于`~/.hermes/kanban/current`；调度器会将此值注入worker子进程的环境变量中，从而确保worker无法查看其他看板上的任务。默认值为`default`。有效值格式：小写字母、数字、连字符及下划线组合，长度为1-64个字符 |
-| `HERMES_KANBAN_DB` | 直接指定看板数据库文件的路径——优先级最高，可覆盖`HERMES_KANBAN_BOARD`和`HERMES_KANBAN_HOME`的设置。调度器会将此值注入worker子进程的环境变量中，确保所有profile worker都使用同一数据库 |
-| `HERMES_KANBAN_WORKSPACES_ROOT` | 直接指定看板工作空间的根目录——针对工作空间而言优先级最高，可覆盖`HERMES_KANBAN_HOME`的设置。调度器会将此值注入worker子进程的环境变量中 |
-| `HERMES_KANBAN_DISPATCH_IN_GATEWAY` | 对`kanban.dispatch_in_gateway`参数的运行时覆盖值。将其设置为`0`、`false`、`no`或`off`可阻止网关启动内置的Kanban调度器；任何非空字符串值都会启用该调度器。当有独立的调度器进程负责管理看板时，可使用此设置 |## 提供商认证（OAuth）
-
-对于原生 Anthropic 认证方式，若存在 Claude Code 自带的凭据文件，Hermes 会优先使用这些文件，因为其凭据可以自动刷新。**通过 OAuth 连接 Anthropic 需要购买额外使用额度的 Claude Max 套餐**——Hermes 会以 Claude Code 的身份发起请求，仅能消耗 Max 套餐的额外/超额额度，无法使用基础 Max 配额，且不支持 Claude Pro。若没有 Max 套餐及额外额度，则应使用 API 密钥。虽然 `ANTHROPIC_TOKEN` 等环境变量仍可用于手动覆盖设置，但已不再是 Claude Max 登录的首选方式。
-
-| 变量 | 描述 |
-|------|------|
-| `HERMES_PORTAL_BASE_URL` | 覆盖 Nous Portal URL（用于开发/测试） |
-| `NOUS_INFERENCE_BASE_URL` | 覆盖 Nous 推理 API URL |
-| `HERMES_NOUS_MIN_KEY_TTL_SECONDS` | 代理密钥在重新生成前的最小有效期（默认：1800 秒 = 30 分钟） |
-| `HERMES_NOUS_TIMEOUT_SECONDS` | Nous 凭据/令牌流程的 HTTP 超时时间 |
-| `HERMES_DUMP_REQUESTS` | 将 API 请求载荷输出到日志文件（`true`/`false`） |
-| `HERMES_PREFILL_MESSAGES_FILE` | API 调用时注入的临时预填消息的 JSON 文件路径 |
-| `HERMES_TIMEZONE` | IANA 时区覆盖值（例如 `America/New_York`） |
+| `HERMES_PORTAL_BASE_URL` | 覆盖 Nous Portal 的 URL（用于开发/测试） |
+| `NOUS_INFERENCE_BASE_URL` | 覆盖 Nous 推理 API 的 URL |
+| `HERMES_NOUS_MIN_KEY_TTL_SECONDS` | 定期重新生成代理密钥前的最小有效期（默认值：1800 秒 = 30 分钟） |
+| `HERMES_NOUS_TIMEOUT_SECONDS` | Nous 凭据/令牌获取流程的 HTTP 超时时间 |
+| `HERMES_DUMP_REQUESTS` | 是否将 API 请求内容输出到日志文件中（`true`/`false`） |
+| `HERMES_PREFILL_MESSAGES_FILE` | 包含在 API 调用时注入的临时预填消息的 JSON 文件路径 |
+| `HERMES_TIMEZONE` | IANA 时区设置（例如 `America/New_York`） |
 
 ## 工具 API
 
-| 变量 | 描述 |
-|------|------|
-| `PARALLEL_API_KEY` | 原生 AI 网页搜索服务（[parallel.ai](https://parallel.ai/)） |
-| `FIRECRAWL_API_KEY` | 网页抓取与云浏览器服务（[firecrawl.dev](https://firecrawl.dev/)） |
-| `FIRECRAWL_API_URL` | 自托管实例的自定义 Firecrawl API 接口地址（可选） |
-| `TAVILY_API_KEY` | 用于原生 AI 网页搜索、内容提取与爬取的 Tavily API 密钥（[app.tavily.com](https://app.tavily.com/home)） |
-| `SEARXNG_URL` | 免费自托管网页搜索的 SearXNG 实例地址——无需 API 密钥（[searxng.github.io](https://searxng.github.io/searxng/)） |
-| `TAVILY_BASE_URL` | 覆盖 Tavily API 接口地址。适用于企业代理环境及自托管的 Tavily 兼容搜索后端，格式与 `GROQ_BASE_URL` 相同。 |
-| `EXA_API_KEY` | 用于原生 AI 网页搜索与内容处理的 Exa API 密钥（[exa.ai](https://exa.ai/)） |
-| `BROWSERBASE_API_KEY` | 浏览器自动化工具（[browserbase.com](https://browserbase.com/)） |
-| `BROWSERBASE_PROJECT_ID` | Browserbase 项目编号 |
-| `BROWSER_USE_API_KEY` | Browser Use 云浏览器 API 密钥（[browser-use.com](https://browser-use.com/)） |
-| `FIRECRAWL_BROWSER_TTL` | Firecrawl 浏览器会话的有效期（秒为单位，默认：300 秒） |
-| `BROWSER_CDP_URL` | 本地浏览器的 Chrome DevTools Protocol 地址（通过 `/browser connect` 设置，例如 `ws://localhost:9222`） |
-| `CAMOFOX_URL` | Camofox 本地反检测浏览器地址（默认：`http://localhost:9377`） |
-| `CAMOFOX_USER_ID` | 可选的外部管理的 Camofox 用户编号，用于共享可见会话 |
-| `CAMOFOX_SESSION_KEY` | 为 `CAMOFOX_USER_ID` 创建标签页时使用的可选 Camofox 会话密钥 |
-| `CAMOFOX_ADOPT_EXISTING_TAB` | 设置为 `true` 可在创建新标签页前复用现有的 Camofox 标签页 |
-| `BROWSER_INACTIVITY_TIMEOUT` | 浏览器会话因无操作而自动关闭的超时时间（秒为单位） |
-| `AGENT_BROWSER_ARGS` | 额外的 Chromium 启动参数（以逗号或换行分隔）。当在 root 权限下运行，或处于 AppArmor 限制的受限用户命名空间中（如 Ubuntu 23.10+、DGX Spark、许多容器镜像）时，Hermes 会自动注入 `--no-sandbox,--disable-dev-shm-usage` 参数；仅需手动设置此参数以覆盖或添加其他参数。 |
-| `FAL_KEY` | 图像生成服务（[fal.ai](https://fal.ai/)） |
-| `GROQ_API_KEY` | Groq Whisper 语音转文本 API 密钥（[groq.com](https://groq.com/)） |
-| `ELEVENLABS_API_KEY` | ElevenLabs 高级文本转语音音色（[elevenlabs.io](https://elevenlabs.io/)） |
-| `STT_GROQ_MODEL` | 覆盖 Groq 语音转文本模型（默认：`whisper-large-v3-turbo`） |
-| `GROQ_BASE_URL` | 覆盖 Groq 兼容 OpenAI 的语音转文本接口地址 |
-| `STT_OPENAI_MODEL` | 覆盖 OpenAI 语音转文本模型（默认：`whisper-1`） |
-| `STT_OPENAI_BASE_URL` | 覆盖 OpenAI 兼容的语音转文本接口地址 |
-| `GITHUB_TOKEN` | 用于 Skills Hub 的 GitHub 令牌（可提升 API 调用频率上限及支持技能发布功能） |
-| `HONCHO_API_KEY` | 跨会话用户建模服务（[honcho.dev](https://honcho.dev/)） |
-| `HONCHO_BASE_URL` | 自托管 Honcho 实例的基地址（默认为 Honcho 云服务）。本地实例无需 API 密钥。 |
-| `HINDSIGHT_TIMEOUT` | Hindsight 记忆提供者 API 调用的超时时间（秒为单位，默认：`60` 秒）。若在执行 `/sync` 或 `on_session_switch` 操作时 Hindsight 实例响应缓慢，导致 `errors.log` 中出现超时错误，可提高此值。 |
-| `SUPERMEMORY_API_KEY` | 支持基于语义的长期记忆功能，具备个人资料检索与会话数据导入能力（[supermemory.ai](https://supermemory.ai)） |
-| `DAYTONA_API_KEY` | Daytona 云沙箱服务（[daytona.io](https://daytona.io/)） |
+| Variable | Description |
+|----------|-------------|
+| `PARALLEL_API_KEY` | AI-native web search ([parallel.ai](https://parallel.ai/)) |
+| `FIRECRAWL_API_KEY` | Web scraping and cloud browser ([firecrawl.dev](https://firecrawl.dev/)) |
+| `FIRECRAWL_API_URL` | Custom Firecrawl API endpoint for self-hosted instances (optional) |
+| `TAVILY_API_KEY` | Optional Tavily API key for higher search/extract limits. After selecting Tavily as the web backend, keyless access works without it ([app.tavily.com](https://app.tavily.com/home), [keyless docs](https://docs.tavily.com/documentation/keyless)) |
+| `TAVILY_BASE_URL` | Override the Tavily API endpoint. Useful for corporate proxies and self-hosted Tavily-compatible search backends. Same pattern as `GROQ_BASE_URL`. |
+| `PERPLEXITY_API_KEY` | Perplexity Search API key for the `perplexity` web backend — ranked search results plus query-relevant page snippets for extract ([perplexity.ai/account/api](https://www.perplexity.ai/account/api)) |
+| `PERPLEXITY_BASE_URL` | Override the Perplexity API endpoint (default `https://api.perplexity.ai`) for proxies (optional) |
+| `SEARXNG_URL` | SearXNG instance URL for free self-hosted web search — no API key required ([searxng.github.io](https://searxng.github.io/searxng/)) |
+| `EXA_API_KEY` | Exa API key for AI-native web search and contents ([exa.ai](https://exa.ai/)) |
+| `BRAVE_SEARCH_API_KEY` | Brave Search API subscription token for web search (free tier available) ([brave.com/search/api](https://brave.com/search/api/)) |
+| `BROWSERBASE_API_KEY` | Browser automation ([browserbase.com](https://browserbase.com/)) |
+| `BROWSERBASE_PROJECT_ID` | Browserbase project ID |
+| `BROWSER_USE_API_KEY` | Browser Use cloud browser API key ([browser-use.com](https://browser-use.com/)) |
+| `FIRECRAWL_BROWSER_TTL` | Firecrawl browser session TTL in seconds (default: 300) |
+| `BROWSER_CDP_URL` | Chrome DevTools Protocol URL for local browser (set via `/browser connect`, e.g. `ws://localhost:9222`) |
+| `CAMOFOX_URL` | Camofox local anti-detection browser server address (default: `http://localhost:9377`). Address only — it does not select Camofox as the backend; pick Camofox in `hermes tools` (`browser.cloud_provider: camofox`) |
+| `CAMOFOX_API_KEY` | Optional bearer token sent as Authorization header to a remote/authenticated Camofox server |
+| `CAMOFOX_USER_ID` | Optional externally managed Camofox user ID for shared visible sessions |
+| `CAMOFOX_SESSION_KEY` | Optional Camofox session key used when creating tabs for `CAMOFOX_USER_ID` |
+| `CAMOFOX_ADOPT_EXISTING_TAB` | Set to `true` to reuse an existing Camofox tab before creating a new one |
+| `BROWSER_INACTIVITY_TIMEOUT` | Browser session inactivity timeout in seconds |
+| `AGENT_BROWSER_ARGS` | Extra Chromium launch flags (comma- or newline-separated). Hermes auto-injects `--no-sandbox,--disable-dev-shm-usage` when running as root or on AppArmor-restricted unprivileged user namespaces (Ubuntu 23.10+, DGX Spark, many container images); set this manually only to override or add other flags. |
+| `AGENT_BROWSER_ENGINE` | Local browser engine: `auto` (default — Chromium-family via CDP), `lightpanda` (Browser Use mode spawns `lightpanda serve`; the built-in tools pass `--engine lightpanda` to agent-browser), or `chrome`. Same as `browser.engine` in config.yaml. |
+| `FAL_KEY` | Image generation ([fal.ai](https://fal.ai/)) |
+| `KREA_API_KEY` | Krea API key for Krea 2 image generation ([krea.ai](https://krea.ai/)) |
+| `GROQ_API_KEY` | Groq Whisper STT API key ([groq.com](https://groq.com/)) |
+| `ELEVENLABS_API_KEY` | ElevenLabs premium TTS voices ([elevenlabs.io](https://elevenlabs.io/)) |
+| `PORCUPINE_ACCESS_KEY` | Picovoice Porcupine wake-word engine ([console.picovoice.ai](https://console.picovoice.ai/)) — only for `wake_word.provider: porcupine`; the default openWakeWord and sherpa engines need no key |
+| `STT_GROQ_MODEL` | Override the Groq STT model (default: `whisper-large-v3-turbo`) |
+| `GROQ_BASE_URL` | Override the Groq OpenAI-compatible STT endpoint |
+| `STT_OPENAI_MODEL` | Override the OpenAI STT model (default: `whisper-1`) |
+| `STT_OPENAI_BASE_URL` | Override the OpenAI-compatible STT endpoint |
+| `GITHUB_TOKEN` | GitHub token for Skills Hub (higher API rate limits, skill publish) |
+| `HONCHO_API_KEY` | Cross-session user modeling ([honcho.dev](https://honcho.dev/)) |
+| `HONCHO_BASE_URL` | Base URL for self-hosted Honcho instances (default: Honcho cloud). No API key required for local instances |
+| `HINDSIGHT_API_KEY` | Hindsight API key for graph-aware persistent memory ([hindsight.vectorize.io](https://hindsight.vectorize.io)) |
+| `HINDSIGHT_API_URL` | Base URL for the Hindsight API (default: `https://api.hindsight.vectorize.io`) |
+| `HINDSIGHT_TIMEOUT` | Timeout in seconds for Hindsight memory-provider API calls (default: `60`). Bump this if your Hindsight instance is slow to respond during `/sync` or `on_session_switch` and you're seeing timeouts in `errors.log`. |
+| `MEM0_API_KEY` | Mem0 Platform API key for semantic persistent memory ([app.mem0.ai](https://app.mem0.ai)) |
+| `MEM0_MODE` | Mem0 backend mode: `platform` (default) or `oss` — see [Memory Providers](/user-guide/features/memory-providers) |
+| `MEM0_HOST` | Base URL of a self-hosted Mem0 server (switches the plugin off the Platform API) |
+| `MEM0_USER_ID` | Override the user id Mem0 memories are stored under |
+| `MEM0_AGENT_ID` | Override the agent id Mem0 memories are tagged with |
+| `RETAINDB_API_KEY` | RetainDB API key for persistent memory ([retaindb.com](https://retaindb.com)) |
+| `RETAINDB_BASE_URL` | Base URL for self-hosted RetainDB instances (default: `https://api.retaindb.com`) |
+| `OPENVIKING_API_KEY` | OpenViking API key (leave blank for local dev mode) |
+| `OPENVIKING_ENDPOINT` | OpenViking server URL (default: `http://127.0.0.1:1933`) |
+| `BRV_API_KEY` | ByteRover API key (optional, for cloud sync — local-first by default) ([app.byterover.dev](https://app.byterover.dev)) |
+| `SUPERMEMORY_API_KEY` | Semantic long-term memory with profile recall and session ingest ([supermemory.ai](https://supermemory.ai)) |
+| `DAYTONA_API_KEY` | Daytona cloud sandboxes ([daytona.io](https://daytona.io/)) |
+| `VERCEL_TOKEN` | Vercel Sandbox access token ([vercel.com](https://vercel.com/)) |
+| `VERCEL_PROJECT_ID` | Vercel project ID (required with `VERCEL_TOKEN`) |
+| `VERCEL_TEAM_ID` | Vercel team ID (required with `VERCEL_TOKEN`) |
+| `VERCEL_OIDC_TOKEN` | Vercel short-lived OIDC token (development-only alternative) |
+
+### 技能 API 密钥
+
+特定内置或可选技能所使用的机密信息。仅在使用对应技能时才需要这些密钥。
+
+| 变量名 | 所属技能 | 描述 |
+|--------|----------|------|
+| `NOTION_API_KEY` | `notion` | Notion 集成令牌。 |
+| `LINEAR_API_KEY` | `linear` | Linear 个人 API 密钥。 |
+| `AIRTABLE_API_KEY` | `airtable` | Airtable 个人访问令牌。 |
+| `TENOR_API_KEY` | `gif-search` | 用于 GIF 搜索的 Tenor API 密钥。 |
 
 ### Langfuse 可观测性功能
 
-用于内置插件 [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) 的环境变量。需在 `~/.hermes/.env` 文件中设置这些变量。在它们生效之前，还需先启用该插件（执行 `hermes plugins enable observability/langfuse`，或通过 `hermes plugins` 界面勾选对应选项）。
+内置插件 [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) 所需的环境变量。请在 `~/.hermes/.env` 文件中设置这些变量。此外，在这些设置生效之前，还需先启用该插件（执行命令 `hermes plugins enable observability/langfuse`，或在 `hermes plugins` 界面中勾选对应选项）。
 
 | 变量 | 描述 |
-|------|------|
+|----------|-------------|
 | `HERMES_LANGFUSE_PUBLIC_KEY` | Langfuse 项目的公钥（格式为 `pk-lf-...`），为必填项。 |
 | `HERMES_LANGFUSE_SECRET_KEY` | Langfuse 项目的私钥（格式为 `sk-lf-...`），为必填项。 |
-| `HERMES_LANGFUSE_BASE_URL` | Langfuse 服务器地址（默认：`https://cloud.langfuse.com`），自托管环境可自行设置。 |
-| `HERMES_LANGFUSE_ENV` | 请求追踪中的环境标签（如 `production`、`staging` 等）。 |
-| `HERMES_LANGFUSE_RELEASE` | 请求追踪中的版本标签。 |
-| `HERMES_LANGFUSE_SAMPLE_RATE` | SDK 的采样率，范围为 0.0–1.0（默认：`1.0`）。 |
-| `HERMES_LANGFUSE_MAX_CHARS` | 序列化后的请求载荷每字段的最大字符数（默认：`12000`）。 |
-| `HERMES_LANGFUSE_DEBUG` | 设置为 `true` 可在 `agent.log` 文件中输出更详细的插件日志。 |
-| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_BASE_URL` | 标准的 Langfuse SDK 参数名称。当未设置 `HERMES_LANGFUSE_*` 对应参数时，系统会自动使用这些标准名称作为备选。 |
+| `HERMES_LANGFUSE_BASE_URL` | Langfuse 服务器的 URL（默认值为 `https://cloud.langfuse.com`），用于自托管场景时需自行设置。 |
+| `HERMES_LANGFUSE_ENV` | 接口请求中的环境标签（如 `production`、`staging` 等）。 |
+| `HERMES_LANGFUSE_RELEASE` | 接口请求中的版本标签。 |
+| `HERMES_LANGFUSE_SAMPLE_RATE` | SDK 的采样率，取值范围为 0.0–1.0（默认值为 `1.0`）。 |
+| `HERMES_LANGFUSE_MAX_CHARS` | 序列化后的请求体中每个字段的最大字符数（默认值为 `12000`）。 |
+| `HERMES_LANGFUSE_DEBUG` | 若设置为 `true`，则会在 `agent.log` 文件中输出更详细的插件日志。 |
+| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_BASE_URL` | Langfuse SDK 的标准名称。当对应的 `HERMES_LANGFUSE_*` 变量未被设置时，系统会自动使用这些标准名称作为替代。 |
 
 ### Nous 工具网关
 
-这些变量用于配置付费 Nous 用户或自托管网关部署所使用的[工具网关](/user-guide/features/tool-gateway)。大多数用户无需设置这些参数——网关会通过 `hermes model` 或 `hermes tools` 自动配置。
+这些变量用于配置面向付费 Nous 用户或自托管网关部署的[工具网关](/user-guide/features/tool-gateway)。大多数用户无需手动设置这些参数——网关会通过 `hermes model` 或 `hermes tools` 自动完成配置。
 
 | 变量 | 描述 |
-|------|------|
-| `TOOL_GATEWAY_DOMAIN` | 工具网关路由的基域名（默认：`nousresearch.com`）。 |
-| `TOOL_GATEWAY_SCHEME` | 网关 URL 的协议类型，可选 HTTP 或 HTTPS（默认：`https`）。 |
-| `TOOL_GATEWAY_USER_TOKEN` | 工具网关的认证令牌，通常会自动从 Nous 认证系统中获取。 |
-| `FIRECRAWL_GATEWAY_URL` | 专门用于覆盖 Firecrawl 网关接口地址的参数。 |
+|----------|-------------|
+| `TOOL_GATEWAY_DOMAIN` | Tool Gateway 路由的基准域名（默认值：`nousresearch.com`） |
+| `TOOL_GATEWAY_SCHEME` | 网关 URL 所使用的协议，可选 HTTP 或 HTTPS（默认值：`https`） |
+| `TOOL_GATEWAY_USER_TOKEN` | Tool Gateway 的认证令牌（通常由 Nous 系统自动填充） |
+| `FIRECRAWL_GATEWAY_URL` | 专门用于覆盖 Firecrawl 网关端点的 URL |
 
 ## 终端后端
 
+| Variable | Description |
+|----------|-------------|
+| `TERMINAL_ENV` | Backend: `local`, `docker`, `ssh`, `singularity`, `modal`, `daytona`, `vercel_sandbox` |
+| `HERMES_DOCKER_BINARY` | Override the container binary Hermes shells out to (e.g. `podman`, `/usr/local/bin/docker`). When unset, Hermes auto-discovers `docker` or `podman` on `PATH`. Needed when both are installed and you want the non-default, or when the binary lives outside `PATH`. |
+| `TERMINAL_DOCKER_IMAGE` | Docker image (default: `nikolaik/python-nodejs:python3.11-nodejs20`) |
+| `TERMINAL_DOCKER_FORWARD_ENV` | JSON array of env var names to explicitly forward into Docker terminal sessions. Note: skill-declared `required_environment_variables` are forwarded automatically — you only need this for vars not declared by any skill. |
+| `TERMINAL_DOCKER_VOLUMES` | Additional Docker volume mounts (comma-separated `host:container` pairs) |
+| `TERMINAL_DOCKER_ENV` | JSON object of extra env vars to set inside Docker terminal sessions (e.g. `{"FOO":"bar"}`) |
+| `TERMINAL_DOCKER_EXTRA_ARGS` | JSON array of extra `docker run` arguments (e.g. `["--memory","4g"]`) |
+| `TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE` | Advanced opt-in: mount the launch cwd into Docker `/workspace` (`true`/`false`, default: `false`) |
+| `TERMINAL_SINGULARITY_IMAGE` | Singularity image or `.sif` path |
+| `TERMINAL_MODAL_IMAGE` | Modal container image |
+| `TERMINAL_DAYTONA_IMAGE` | Daytona sandbox image |
+| `TERMINAL_VERCEL_RUNTIME` | Vercel Sandbox runtime (`node24`, `node22`, `python3.13`) |
+| `TERMINAL_TIMEOUT` | Command timeout in seconds |
+| `TERMINAL_LIFETIME_SECONDS` | Max lifetime for terminal sessions in seconds |
+| `TERMINAL_CWD` | Deprecated direct override for gateway/cron terminal sessions. Prefer `terminal.cwd` in `config.yaml`; CLI still uses the launch directory. |
+| `SUDO_PASSWORD` | Enable sudo without interactive prompt |
+
+对于云沙箱后端，数据持久化是以文件系统为基础的。`TERMINAL_LIFETIME_SECONDS`用于控制Hermes何时清理空闲的终端会话，后续重新启动时可能会创建新的沙箱，而不会继续运行原有的进程。
+
+## SSH后端
+
 | 变量 | 描述 |
 |------|------|
-| `TERMINAL_ENV` | 后端类型：`local`、`docker`、`ssh`、`singularity`、`modal`、`daytona`。 |
-| `HERMES_DOCKER_BINARY` | 覆盖 Hermes 调用的容器二进制文件路径（例如 `podman`、`/usr/local/bin/docker`）。若未设置，Hermes 会自动在 `PATH` 中查找 `docker` 或 `podman`。当两者均安装但希望使用非默认版本，或二进制文件不在 `PATH` 路径中时，需手动设置此参数。 |
-| `TERMINAL_DOCKER_IMAGE` | Docker 镜像名称（默认：`nikolaik/python-nodejs:python3.11-nodejs20`）。 |
-| `TERMINAL_DOCKER_FORWARD_ENV` | 需要显式转发到 Docker 终端会话中的环境变量名称的 JSON 数组。注意：技能中声明的 `required_environment_variables` 会自动被转发，此参数仅适用于未被任何技能声明的环境变量。 |
-| `TERMINAL_DOCKER_VOLUMES` | 额外的 Docker 卷挂载配置（以逗号分隔的 `host:container` 对格式）。 |
-| `TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE` | 高级可选功能：将启动目录挂载到 Docker 的 `/workspace` 目录中（`true`/`false`，默认：`false`）。 |
-| `TERMINAL_SINGULARITY_IMAGE` | Singularity 镜像名称或 `.sif` 文件路径。 |
-| `TERMINAL_MODAL_IMAGE` | Modal 容器镜像名称。 |
-| `TERMINAL_DAYTONA_IMAGE` | Daytona 沙箱镜像名称。 |
-| `TERMINAL_TIMEOUT` | 命令执行的超时时间（秒为单位）。 |
-| `TERMINAL_LIFETIME_SECONDS` | 终端会话的最大运行时长（秒为单位）。 |
-| `TERMINAL_CWD` | 已过时的直接覆盖参数，用于网关/定时任务终端会话。建议在 `config.yaml` 中使用 `terminal.cwd` 参数；CLI 仍会使用启动目录作为默认值。 |
-| `SUDO_PASSWORD` | 允许无需交互式提示即可使用 sudo 权限。 |
-
-对于云沙箱后端，数据持久化依赖于文件系统。`TERMINAL_LIFETIME_SECONDS` 参数用于控制 Hermes 在何时清理空闲的终端会话，后续重新启动时可能会创建新的沙箱环境，而非继续运行原有的进程。
-
-## SSH 后端
-
-| 变量 | 描述 |
-|------|------|
-| `TERMINAL_SSH_HOST` | 远程服务器的主机名。 |
-| `TERMINAL_SSH_USER` | SSH 登录用户名。 |
-| `TERMINAL_SSH_PORT` | SSH 端口（默认：22）。 |
-| `TERMINAL_SSH_KEY` | 私钥文件的路径。 |
-| `TERMINAL_SSH_PERSISTENT` | 覆盖 SSH 的持久化 Shell 设置（默认值与 `TERMINAL_PERSISTENT_SHELL` 相同）。 |
+| `TERMINAL_SSH_HOST` | 远程服务器主机名 |
+| `TERMINAL_SSH_USER` | SSH用户名 |
+| `TERMINAL_SSH_PORT` | SSH端口（默认：22） |
+| `TERMINAL_SSH_KEY` | 私钥路径 |
+| `TERMINAL_SSH_PERSISTENT` | 覆盖SSH的持久化Shell设置（默认：遵循`TERMINAL_PERSISTENT_SHELL`的设置） |
 
 ## 容器资源（Docker、Singularity、Modal、Daytona）
 
 | 变量 | 描述 |
 |------|------|
-| `TERMINAL_CONTAINER_CPU` | 容器可使用的 CPU 核心数（默认：1）。 |
-| `TERMINAL_CONTAINER_MEMORY` | 容器可用内存大小（单位：MB，默认：5120 MB）。 |
-| `TERMINAL_CONTAINER_DISK` | 容器可用磁盘空间（单位：MB，默认：51200 MB）。 |
-| `TERMINAL_CONTAINER_PERSISTENT` | 是否在会话之间保持容器文件系统的持久性（默认：`true`）。 |
-| `TERMINAL_SANDBOX_DIR` | 用于存储工作区及临时文件的宿主机目录路径（默认：`~/.hermes/sandboxes/`）。 |
+| `TERMINAL_CONTAINER_CPU` | CPU核心数（默认：1） |
+| `TERMINAL_CONTAINER_MEMORY` | 内存大小，单位为MB（默认：5120） |
+| `TERMINAL_CONTAINER_DISK` | 磁盘空间大小，单位为MB（默认：51200） |
+| `TERMINAL_CONTAINER_PERSISTENT` | 在不同会话之间保持容器文件系统不变（默认：`true`） |
+| `TERMINAL_SANDBOX_DIR` | 用于存储工作区和覆盖文件的宿主机目录（默认：`~/.hermes/sandboxes/`） |
 
-## 持久化 Shell
+## 持久化Shell
+
+| 变量 | 描述 |
+|----------|-------------|
+| `TERMINAL_PERSISTENT_SHELL` | 为非本地后端启用持久化 shell（默认值为 `true`）。也可通过 config.yaml 中的 `terminal.persistent_shell` 参数进行设置。 |
+| `TERMINAL_LOCAL_PERSISTENT` | 为本地后端启用持久化 shell（默认值为 `false`）。 |
+| `TERMINAL_SSH_PERSISTENT` | 覆盖 SSH 后端的持久化 shell 设置（默认值与 `TERMINAL_PERSISTENT_SHELL` 相同）。 |
+
+## 出站代理（沙箱注入式）
+
+这些环境变量不会在主机上设置——当 `proxy.enabled: true` 时，它们会由 [出站代理](../user-guide/egress/iron-proxy.md) 插件注入到 Docker 沙箱中。在本版本中，Docker 是唯一的有线后端。
+
+| Variable | Description |
+|----------|-------------|
+| `HERMES_EGRESS_PROXY` | Set to `1` inside a sandbox when the egress proxy is active. Agent code can check this to know it's running behind a TLS-intercepting proxy. |
+| Provider env vars (`OPENROUTER_API_KEY`, `OPENAI_API_KEY`, …) | Set to opaque proxy tokens, not real upstream secrets, so existing SDKs keep reading the standard env names. iron-proxy swaps those tokens for the real upstream secret at the network boundary. |
+| `HERMES_PROXY_TOKEN_<ENV_NAME>` | Diagnostic alias for each minted provider mapping. E.g. `HERMES_PROXY_TOKEN_OPENROUTER_API_KEY=hermes-proxy-openrouter-…`. Same token value as the standard provider env var. |
+| `HTTPS_PROXY` / `HTTP_PROXY` | `HTTPS_PROXY` points at `http://host.docker.internal:<tunnel_port>` for CONNECT/MITM. `HTTP_PROXY` points at `<tunnel_port + 1>` for plain-HTTP forwarding. |
+| `NO_PROXY` | `127.0.0.1,localhost,::1` so loopback dev servers inside the sandbox bypass the proxy. |
+| `REQUESTS_CA_BUNDLE` / `SSL_CERT_FILE` / `CURL_CA_BUNDLE` / `NODE_EXTRA_CA_CERTS` | Path to the mounted Hermes egress CA cert inside the sandbox (`/etc/ssl/certs/hermes-egress-ca.crt`). Lets the language runtimes trust iron-proxy's MITM-minted leaf certs. |
+| `NODE_OPTIONS` | Appended with `--use-openssl-ca` (your existing flags are preserved) so Node.js routes through the OpenSSL store the other CA-bundle vars control. Narrows the [Node.js asymmetric CA caveat](../user-guide/egress/iron-proxy.md#nodejs-asymmetric-ca-caveat). |
+| `HERMES_IRON_PROXY_NONCE` | Set on the iron-proxy daemon process itself (NOT inside the sandbox). Used by `_pid_alive` to confirm a candidate PID still refers to *our* managed binary across PID recycling. |
+
+当 `proxy.enabled: true` 且守护进程正在运行时，这些参数会由 Docker 终端后端自动设置。您无需自行配置；相关面向操作员的设置项位于 `~/.hermes/config.yaml` 文件的 `proxy:` 部分——详情请参阅[出站代理 → 配置](../user-guide/egress/iron-proxy.md#configuration)。
+
+## 消息传递
+
+| Variable | Description |
+|----------|-------------|
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token (from @BotFather) |
+| `TELEGRAM_ALLOWED_USERS` | Comma-separated user IDs allowed to use the bot (applies to DMs, groups, and forums) |
+| `TELEGRAM_ALLOW_ALL_USERS` | Allow any Telegram user to trigger the bot (dev only). |
+| `TELEGRAM_GROUP_ALLOWED_USERS` | Comma-separated sender user IDs authorized in groups/forums only (does NOT grant DM access). Chat-ID-shaped values (starting with `-`) are still honored as chat IDs for backward compat with pre-#17686 configs, with a deprecation warning. |
+| `TELEGRAM_GROUP_ALLOWED_CHATS` | Comma-separated group/forum chat IDs; any member is authorized |
+| `TELEGRAM_HOME_CHANNEL` | Default Telegram chat/channel for cron delivery |
+| `TELEGRAM_HOME_CHANNEL_NAME` | Display name for the Telegram home channel |
+| `TELEGRAM_CRON_THREAD_ID` | Forum topic ID to receive cron deliveries; overrides `TELEGRAM_HOME_CHANNEL_THREAD_ID` for cron only. Use in topic mode so replies to cron messages open a new session instead of hitting the system lobby (#24409). |
+| `TELEGRAM_WEBHOOK_URL` | Public HTTPS URL for webhook mode (enables webhook instead of polling) |
+| `TELEGRAM_WEBHOOK_PORT` | Local listen port for webhook server (default: `8443`) |
+| `TELEGRAM_WEBHOOK_SECRET` | Secret token Telegram echoes back in each update for verification. **Required whenever `TELEGRAM_WEBHOOK_URL` is set** — the gateway refuses to start without it (GHSA-3vpc-7q5r-276h). Generate with `openssl rand -hex 32`. |
+| `TELEGRAM_REACTIONS` | Enable emoji reactions on messages during processing (default: `false`) |
+| `TELEGRAM_REQUIRE_MENTION` | Require an explicit trigger before responding in Telegram groups. Equivalent to `telegram.require_mention` in `config.yaml`. |
+| `TELEGRAM_MENTION_PATTERNS` | JSON array, newline-separated list, or comma-separated list of regex wake-word patterns accepted when Telegram group mention gating is enabled. Equivalent to `telegram.mention_patterns`. |
+| `TELEGRAM_EXCLUSIVE_BOT_MENTIONS` | When enabled, explicit `@...bot` mentions in Telegram groups route only to the mentioned bot usernames before reply or wake-word fallbacks run. Default: `true`. Equivalent to `telegram.exclusive_bot_mentions`. |
+| `TELEGRAM_BOTS_REQUIRE_MENTION` | When enabled, a message sent by another bot must explicitly `@thisbot` to trigger a response — a quote-reply alone is ignored, which stops two bots from replying to each other forever. Human replies are unaffected. Default: `false`. Equivalent to `telegram.bots_require_mention`. |
+| `TELEGRAM_REPLY_TO_MODE` | Reply-reference behavior: `off`, `first` (default), or `all`. Matches the Discord pattern. |
+| `TELEGRAM_IGNORED_THREADS` | Comma-separated Telegram forum topic/thread IDs where the bot never responds |
+| `TELEGRAM_PROXY` | Proxy URL for Telegram connections — overrides `HTTPS_PROXY`. Supports `http://`, `https://`, `socks5://` |
+| `DISCORD_BOT_TOKEN` | Discord bot token |
+| `DISCORD_ALLOWED_USERS` | Comma-separated Discord user IDs allowed to use the bot |
+| `DISCORD_ALLOW_ALL_USERS` | Allow any Discord user to trigger the bot (dev only). |
+| `DISCORD_ALLOWED_ROLES` | Comma-separated Discord role IDs allowed to use the bot (OR with `DISCORD_ALLOWED_USERS`). Auto-enables the Members intent. Useful when moderation teams churn — role grants propagate automatically. |
+| `DISCORD_ALLOWED_CHANNELS` | Comma-separated Discord channel IDs. When set, the bot only responds in these channels (plus DMs if allowed). Overrides `config.yaml` `discord.allowed_channels`. |
+| `DISCORD_PROXY` | Proxy URL for Discord connections — overrides `HTTPS_PROXY`. Supports `http://`, `https://`, `socks5://` |
+| `DISCORD_HOME_CHANNEL` | Default Discord channel for cron delivery |
+| `DISCORD_HOME_CHANNEL_NAME` | Display name for the Discord home channel |
+| `DISCORD_COMMAND_SYNC_POLICY` | Discord slash-command startup sync policy: `safe` (diff and reconcile), `bulk` (legacy `tree.sync()`), or `off` |
+| `DISCORD_REQUIRE_MENTION` | Require an @mention before responding in server channels |
+| `DISCORD_FREE_RESPONSE_CHANNELS` | Comma-separated channel IDs where mention is not required |
+| `DISCORD_AUTO_THREAD` | Auto-thread long replies when supported |
+| `DISCORD_ALLOW_ANY_ATTACHMENT` | When `true`, accept attachments of any file type (not just the built-in PDF/text/zip/office allowlist). Unknown types are cached and surfaced to the agent as a local path so it can inspect them via `terminal` / `read_file` / `ffprobe`. Default `false`. |
+| `DISCORD_MAX_ATTACHMENT_BYTES` | Maximum bytes per attachment the gateway will cache. Default `33554432` (32 MiB). Set to `0` for no cap (attachments are held in memory while being written). |
+| `DISCORD_REACTIONS` | Enable emoji reactions on messages during processing (default: `true`) |
+| `DISCORD_IGNORED_CHANNELS` | Comma-separated channel IDs where the bot never responds |
+| `DISCORD_NO_THREAD_CHANNELS` | Comma-separated channel IDs where bot responds without auto-threading |
+| `DISCORD_REPLY_TO_MODE` | Reply-reference behavior: `off`, `first` (default), or `all` |
+| `DISCORD_ALLOW_MENTION_EVERYONE` | Allow the bot to ping `@everyone`/`@here` (default: `false`). See [Mention Control](../user-guide/messaging/discord.md#mention-control). |
+| `DISCORD_ALLOW_MENTION_ROLES` | Allow the bot to ping `@role` mentions (default: `false`). |
+| `DISCORD_ALLOW_MENTION_USERS` | Allow the bot to ping individual `@user` mentions (default: `true`). |
+| `DISCORD_ALLOW_MENTION_REPLIED_USER` | Ping the author when replying to their message (default: `true`). |
+| `SLACK_BOT_TOKEN` | Slack bot token (`xoxb-...`) |
+| `SLACK_APP_TOKEN` | Slack app-level token (`xapp-...`, required for Socket Mode) |
+| `SLACK_ALLOWED_USERS` | Comma-separated Slack user IDs |
+| `SLACK_ALLOW_ALL_USERS` | Allow any Slack user to trigger the bot (dev only). |
+| `SLACK_ALLOW_BOTS` | Accept messages from other Slack bots: `none` (default), `mentions`, or `all`. The bot always ignores its own messages. |
+| `SLACK_THREAD_REQUIRE_MENTION` | Require an explicit @mention for Slack thread replies while preserving top-level free-response channels |
+| `SLACK_HOME_CHANNEL` | Default Slack channel for cron delivery |
+| `SLACK_HOME_CHANNEL_NAME` | Display name for the Slack home channel |
+| `GOOGLE_CHAT_PROJECT_ID` | GCP project hosting the Pub/Sub topic (falls back to `GOOGLE_CLOUD_PROJECT`) |
+| `GOOGLE_CHAT_SUBSCRIPTION_NAME` | Full Pub/Sub subscription path, `projects/{proj}/subscriptions/{sub}` (legacy alias: `GOOGLE_CHAT_SUBSCRIPTION`) |
+| `GOOGLE_CHAT_SERVICE_ACCOUNT_JSON` | Path to Service Account JSON, or the JSON inline (falls back to `GOOGLE_APPLICATION_CREDENTIALS`) |
+| `GOOGLE_CHAT_ALLOWED_USERS` | Comma-separated user emails allowed to chat with the bot |
+| `GOOGLE_CHAT_ALLOW_ALL_USERS` | Allow any Google Chat user to trigger the bot (dev only) |
+| `GOOGLE_CHAT_HOME_CHANNEL` | Default space (e.g. `spaces/AAAA...`) for cron delivery |
+| `GOOGLE_CHAT_HOME_CHANNEL_NAME` | Display name for the Google Chat home space |
+| `GOOGLE_CHAT_MAX_MESSAGES` | Pub/Sub FlowControl max in-flight messages (default: `1`) |
+| `GOOGLE_CHAT_MAX_BYTES` | Pub/Sub FlowControl max in-flight bytes (default: `16777216`, 16 MiB) |
+| `GOOGLE_CHAT_BOOTSTRAP_SPACES` | Comma-separated extra space IDs to probe at startup when resolving the bot's own `users/{id}` |
+| `GOOGLE_CHAT_DEBUG_RAW` | Set to any value to log redacted Pub/Sub envelopes at DEBUG level (debugging only) |
+| `GOOGLE_CHAT_HTTP_EVENTS_URL` | Authenticated HTTP endpoint for Chat message events (alternative to Pub/Sub) |
+| `GOOGLE_CHAT_HTTP_EVENTS_AUDIENCE` | Expected audience for Google-signed HTTP event bearer tokens (defaults to `GOOGLE_CHAT_HTTP_EVENTS_URL`) |
+| `GOOGLE_CHAT_HTTP_EVENTS_SERVICE_ACCOUNT_EMAIL` | Expected Google service account email for HTTP event bearer tokens |
+| `WHATSAPP_ENABLED` | Enable the WhatsApp bridge (`true`/`false`) |
+| `WHATSAPP_MODE` | `bot` (separate number) or `self-chat` (message yourself) |
+| `WHATSAPP_ALLOWED_USERS` | Comma-separated phone numbers (with country code, no `+`), or `*` to allow all senders |
+| `WHATSAPP_ALLOW_ALL_USERS` | Allow all WhatsApp senders without an allowlist (`true`/`false`) |
+| `WHATSAPP_HOME_CHANNEL` | Default chat ID for cron / notification delivery. |
+| `WHATSAPP_HOME_CHANNEL_NAME` | Display name for the WhatsApp home channel. |
+| `WHATSAPP_DEBUG` | Log raw message events in the bridge for troubleshooting (`true`/`false`) |
+| `WHATSAPP_CLOUD_PHONE_NUMBER_ID` | Meta Phone Number ID from the WhatsApp Business Cloud API (15–17 digits; **not** the phone number itself) |
+| `WHATSAPP_CLOUD_ACCESS_TOKEN` | Meta access token (starts with `EAA`); temporary tokens expire after 24h, System User tokens are permanent |
+| `WHATSAPP_CLOUD_APP_SECRET` | 32-char hex app secret used to verify inbound webhook signatures |
+| `WHATSAPP_CLOUD_VERIFY_TOKEN` | Shared secret for Meta's webhook verification handshake (auto-generated by the setup wizard) |
+| `WHATSAPP_CLOUD_ALLOWED_USERS` | Comma-separated `wa_id`s (phone numbers with country code, no `+`) allowed to message the bot |
+| `WHATSAPP_CLOUD_ALLOW_ALL_USERS` | Allow all WhatsApp Cloud senders without an allowlist (`true`/`false`) |
+| `WHATSAPP_CLOUD_APP_ID` | Optional Meta App ID (for future analytics integration) |
+| `WHATSAPP_CLOUD_WABA_ID` | Optional WhatsApp Business Account ID (for future analytics integration) |
+| `WHATSAPP_CLOUD_WEBHOOK_HOST` | Interface the inbound webhook server binds to (default `0.0.0.0`) |
+| `WHATSAPP_CLOUD_WEBHOOK_PORT` | Port the inbound webhook server binds to (default `8090`) |
+| `WHATSAPP_CLOUD_WEBHOOK_PATH` | URL path Meta posts inbound messages to (default `/whatsapp/webhook`) |
+| `WHATSAPP_CLOUD_API_VERSION` | Meta Graph API version to call (default `v20.0`) |
+| `WHATSAPP_CLOUD_HOME_CHANNEL` | `wa_id` to use as the bot's home channel (for cron jobs etc.) |
+| `WHATSAPP_CLOUD_DM_POLICY` | DM gating for the Cloud adapter (`open`/`allowlist`/`disabled`); falls back to `WHATSAPP_DM_POLICY` when unset |
+| `WHATSAPP_CLOUD_ALLOW_FROM` | Comma-separated senders allowed when `dm_policy: allowlist` (bare `wa_id`s; Baileys-style JIDs are normalized) |
+| `WHATSAPP_CLOUD_GROUP_POLICY` | Group gating for the Cloud adapter (`open`/`allowlist`/`disabled`); falls back to `WHATSAPP_GROUP_POLICY` when unset |
+| `WHATSAPP_CLOUD_GROUP_ALLOW_FROM` | Comma-separated group chat IDs allowed when `group_policy: allowlist` |
+| `SIGNAL_HTTP_URL` | signal-cli daemon HTTP endpoint (for example `http://127.0.0.1:8080`) |
+| `SIGNAL_ACCOUNT` | Bot phone number in E.164 format |
+| `SIGNAL_ALLOWED_USERS` | Comma-separated E.164 phone numbers or UUIDs |
+| `SIGNAL_GROUP_ALLOWED_USERS` | Comma-separated group IDs, or `*` for all groups |
+| `SIGNAL_HOME_CHANNEL_NAME` | Display name for the Signal home channel |
+| `SIGNAL_IGNORE_STORIES` | Ignore Signal stories/status updates |
+| `SIGNAL_ALLOW_ALL_USERS` | Allow all Signal users without an allowlist |
+| `TWILIO_ACCOUNT_SID` | Twilio Account SID (shared with telephony skill) |
+| `TWILIO_AUTH_TOKEN` | Twilio Auth Token (shared with telephony skill; also used for webhook signature validation) |
+| `TWILIO_PHONE_NUMBER` | Twilio phone number in E.164 format (shared with telephony skill) |
+| `SMS_WEBHOOK_URL` | Public URL for Twilio signature validation — must match the webhook URL in Twilio Console (required) |
+| `SMS_WEBHOOK_PORT` | Webhook listener port for inbound SMS (default: `8080`) |
+| `SMS_WEBHOOK_HOST` | Webhook bind address (default: `127.0.0.1`) |
+| `SMS_INSECURE_NO_SIGNATURE` | Set to `true` to disable Twilio signature validation (local dev only — not for production) |
+| `SMS_ALLOWED_USERS` | Comma-separated E.164 phone numbers allowed to chat |
+| `SMS_ALLOW_ALL_USERS` | Allow all SMS senders without an allowlist |
+| `SMS_HOME_CHANNEL` | Phone number for cron job / notification delivery |
+| `SMS_HOME_CHANNEL_NAME` | Display name for the SMS home channel |
+| `EMAIL_ADDRESS` | Email address for the Email gateway adapter |
+| `EMAIL_PASSWORD` | Password or app password for the email account |
+| `EMAIL_IMAP_HOST` | IMAP hostname for the email adapter |
+| `EMAIL_IMAP_PORT` | IMAP port |
+| `EMAIL_SMTP_HOST` | SMTP hostname for the email adapter |
+| `EMAIL_SMTP_PORT` | SMTP port |
+| `EMAIL_ALLOWED_USERS` | Comma-separated email addresses allowed to message the bot |
+| `EMAIL_HOME_ADDRESS` | Default recipient for proactive email delivery |
+| `EMAIL_HOME_ADDRESS_NAME` | Display name for the email home target |
+| `EMAIL_POLL_INTERVAL` | Email polling interval in seconds |
+| `EMAIL_ALLOW_ALL_USERS` | Allow all inbound email senders |
+| `DINGTALK_CLIENT_ID` | DingTalk bot AppKey from developer portal ([open.dingtalk.com](https://open.dingtalk.com)) |
+| `DINGTALK_CLIENT_SECRET` | DingTalk bot AppSecret from developer portal |
+| `DINGTALK_ALLOWED_USERS` | Comma-separated DingTalk user IDs allowed to message the bot |
+| `DINGTALK_WEBHOOK_URL` | Static robot webhook URL for cross-platform / cron delivery. |
+| `DINGTALK_HOME_CHANNEL` | Default conversation ID for cron / notification delivery. |
+| `DINGTALK_HOME_CHANNEL_NAME` | Display name for the DingTalk home channel. |
+| `FEISHU_APP_ID` | Feishu/Lark bot App ID from [open.feishu.cn](https://open.feishu.cn/) |
+| `FEISHU_APP_SECRET` | Feishu/Lark bot App Secret |
+| `FEISHU_DOMAIN` | `feishu` (China) or `lark` (international). Default: `feishu` |
+| `FEISHU_CONNECTION_MODE` | `websocket` (recommended) or `webhook`. Default: `websocket` |
+| `FEISHU_ENCRYPT_KEY` | Optional encryption key for webhook mode |
+| `FEISHU_VERIFICATION_TOKEN` | Optional verification token for webhook mode |
+| `FEISHU_ALLOWED_USERS` | Comma-separated Feishu user IDs allowed to message the bot |
+| `FEISHU_ALLOW_BOTS` | `none` (default) / `mentions` / `all` — accept inbound messages from other bots. See [bot-to-bot messaging](../user-guide/messaging/feishu.md#bot-to-bot-messaging) |
+| `FEISHU_REQUIRE_MENTION` | `true` (default) / `false` — whether group messages must @mention the bot. Override per-chat via `group_rules.<chat_id>.require_mention`. |
+| `FEISHU_HOME_CHANNEL` | Feishu chat ID for cron delivery and notifications |
+| `FEISHU_HOME_CHANNEL_NAME` | Display name for the Feishu home channel. |
+| `FEISHU_ALLOW_ALL_USERS` | Allow any Feishu user to trigger the bot (dev only). |
+| `WECOM_BOT_ID` | WeCom AI Bot ID from admin console |
+| `WECOM_SECRET` | WeCom AI Bot secret |
+| `WECOM_WEBSOCKET_URL` | Custom WebSocket URL (default: `wss://openws.work.weixin.qq.com`) |
+| `WECOM_ALLOWED_USERS` | Comma-separated WeCom user IDs allowed to message the bot |
+| `WECOM_HOME_CHANNEL` | WeCom chat ID for cron delivery and notifications |
+| `WECOM_CALLBACK_CORP_ID` | WeCom enterprise Corp ID for callback self-built app |
+| `WECOM_CALLBACK_CORP_SECRET` | Corp secret for the self-built app |
+| `WECOM_CALLBACK_AGENT_ID` | Agent ID of the self-built app |
+| `WECOM_CALLBACK_TOKEN` | Callback verification token |
+| `WECOM_CALLBACK_ENCODING_AES_KEY` | AES key for callback encryption |
+| `WECOM_CALLBACK_HOST` | Callback server bind address (default: `0.0.0.0`) |
+| `WECOM_CALLBACK_PORT` | Callback server port (default: `8645`) |
+| `WECOM_CALLBACK_ALLOWED_USERS` | Comma-separated user IDs for allowlist |
+| `WECOM_CALLBACK_ALLOW_ALL_USERS` | Set `true` to allow all users without an allowlist |
+| `WEIXIN_ACCOUNT_ID` | Weixin account ID obtained via QR login through iLink Bot API |
+| `WEIXIN_TOKEN` | Weixin authentication token obtained via QR login through iLink Bot API |
+| `WEIXIN_BASE_URL` | Override Weixin iLink Bot API base URL (default: `https://ilinkai.weixin.qq.com`) |
+| `WEIXIN_CDN_BASE_URL` | Override Weixin CDN base URL for media (default: `https://novac2c.cdn.weixin.qq.com/c2c`) |
+| `WEIXIN_DM_POLICY` | Direct message policy: `open`, `allowlist`, `pairing`, `disabled` (default: `open`) |
+| `WEIXIN_GROUP_POLICY` | Group message policy: `open`, `allowlist`, `disabled` (default: `disabled`) |
+| `WEIXIN_ALLOWED_USERS` | Comma-separated Weixin user IDs allowed to DM the bot |
+| `WEIXIN_GROUP_ALLOWED_USERS` | Comma-separated Weixin **group chat IDs** (not member user IDs) allowed to interact with the bot. The variable name is legacy — it expects group IDs. Only takes effect when iLink actually delivers group events; QR-login iLink bot identities (`...@im.bot`) typically don't receive ordinary WeChat group messages. |
+| `WEIXIN_HOME_CHANNEL` | Weixin chat ID for cron delivery and notifications |
+| `WEIXIN_HOME_CHANNEL_NAME` | Display name for the Weixin home channel |
+| `WEIXIN_ALLOW_ALL_USERS` | Allow all Weixin users without an allowlist (`true`/`false`) |
+| `BLUEBUBBLES_SERVER_URL` | BlueBubbles server URL (e.g. `http://192.168.1.10:1234`) |
+| `BLUEBUBBLES_PASSWORD` | BlueBubbles server password |
+| `BLUEBUBBLES_WEBHOOK_HOST` | Webhook listener bind address (default: `127.0.0.1`) |
+| `BLUEBUBBLES_WEBHOOK_PORT` | Webhook listener port (default: `8645`) |
+| `BLUEBUBBLES_HOME_CHANNEL` | Phone/email for cron/notification delivery |
+| `BLUEBUBBLES_ALLOWED_USERS` | Comma-separated authorized users |
+| `BLUEBUBBLES_ALLOW_ALL_USERS` | Allow all users (`true`/`false`) |
+| `QQ_APP_ID` | QQ Bot App ID from [q.qq.com](https://q.qq.com) |
+| `QQ_CLIENT_SECRET` | QQ Bot App Secret from [q.qq.com](https://q.qq.com) |
+| `QQ_STT_API_KEY` | API key for external STT fallback provider (optional, used when QQ built-in ASR returns no text) |
+| `QQ_STT_BASE_URL` | Base URL for external STT provider (optional) |
+| `QQ_STT_MODEL` | Model name for external STT provider (optional) |
+| `QQ_ALLOWED_USERS` | Comma-separated QQ user openIDs allowed to message the bot |
+| `QQ_GROUP_ALLOWED_USERS` | Comma-separated QQ group IDs for group @-message access |
+| `QQ_ALLOW_ALL_USERS` | Allow all users (`true`/`false`, overrides `QQ_ALLOWED_USERS`) |
+| `QQBOT_HOME_CHANNEL` | QQ user/group openID for cron delivery and notifications |
+| `QQBOT_HOME_CHANNEL_NAME` | Display name for the QQ home channel |
+| `QQ_PORTAL_HOST` | Override the QQ portal host (set to `sandbox.q.qq.com` to route through the sandbox gateway; default: `q.qq.com`). |
+| `QQ_SANDBOX` | Enable QQ sandbox mode for development testing (`true`/`false`) |
+| `MATTERMOST_URL` | Mattermost server URL (e.g. `https://mm.example.com`) |
+| `MATTERMOST_TOKEN` | Bot token or personal access token for Mattermost |
+| `MATTERMOST_ALLOWED_USERS` | Comma-separated Mattermost user IDs allowed to message the bot |
+| `MATTERMOST_ALLOW_ALL_USERS` | Allow any Mattermost user to trigger the bot (dev only). |
+| `MATTERMOST_ALLOWED_CHANNELS` | If set, the bot only responds in these channels (whitelist). |
+| `MATTERMOST_HOME_CHANNEL` | Channel ID for proactive message delivery (cron, notifications) |
+| `MATTERMOST_REQUIRE_MENTION` | Require `@mention` in channels (default: `true`). Set to `false` to respond to all messages. |
+| `MATTERMOST_FREE_RESPONSE_CHANNELS` | Comma-separated channel IDs where bot responds without `@mention` |
+| `MATTERMOST_REPLY_MODE` | Reply style: `thread` (threaded replies) or `off` (flat messages, default) |
+| `MATRIX_HOMESERVER` | Matrix homeserver URL (e.g. `https://matrix.org`) |
+| `MATRIX_ACCESS_TOKEN` | Matrix access token for bot authentication |
+| `MATRIX_USER_ID` | Matrix user ID (e.g. `@hermes:matrix.org`) — required for password login, optional with access token |
+| `MATRIX_PASSWORD` | Matrix password (alternative to access token) |
+| `MATRIX_ALLOWED_USERS` | Comma-separated Matrix user IDs allowed to message the bot (e.g. `@alice:matrix.org`) |
+| `MATRIX_ALLOW_ALL_USERS` | Allow any Matrix user to trigger the bot (dev only). |
+| `MATRIX_HOME_CHANNEL` | Default room ID for cron / notification delivery. |
+| `MATRIX_HOME_CHANNEL_NAME` | Display name for the Matrix home room. |
+| `MATRIX_ALLOWED_ROOMS` | Comma-separated Matrix room IDs allowed to trigger bot responses |
+| `MATRIX_HOME_ROOM` | Room ID for proactive message delivery (e.g. `!abc123:matrix.org`) |
+| `MATRIX_ENCRYPTION` | Enable end-to-end encryption (`true`/`false`, default: `false`) |
+| `MATRIX_E2EE_MODE` | Matrix E2EE behavior: `off`, `optional`, or `required`. Overrides `MATRIX_ENCRYPTION` when set. |
+| `MATRIX_DEVICE_ID` | Stable Matrix device ID for E2EE persistence across restarts (e.g. `HERMES_BOT`). Without this, E2EE keys rotate every startup and historic-room decrypt breaks. |
+| `MATRIX_REACTIONS` | Enable processing-lifecycle emoji reactions on inbound messages (default: `true`). Set to `false` to disable. |
+| `MATRIX_REQUIRE_MENTION` | Require `@mention` in rooms (default: `true`). Set to `false` to respond to all messages. |
+| `MATRIX_FREE_RESPONSE_ROOMS` | Comma-separated room IDs where bot responds without `@mention` |
+| `MATRIX_IGNORE_USER_PATTERNS` | Comma-separated regular expressions for Matrix bridge/appservice ghost user IDs to ignore |
+| `MATRIX_PROCESS_NOTICES` | Process inbound Matrix `m.notice` events (default: `false`) |
+| `MATRIX_SESSION_SCOPE` | Matrix session scope for project rooms: `auto`, `room`, or `thread` (default: `auto`) |
+| `MATRIX_TOOLS_ALLOW_REDACTION` | Allow Matrix message redaction tool execution (default: `false`) |
+| `MATRIX_TOOLS_ALLOW_INVITES` | Allow Matrix invite tool execution (default: `false`) |
+| `MATRIX_TOOLS_ALLOW_ROOM_CREATE` | Allow Matrix room creation tool execution (default: `false`) |
+| `MATRIX_ALLOW_ROOM_MENTIONS` | Allow outbound `@room` mentions to notify all room members (default: `false`) |
+| `MATRIX_AUTO_THREAD` | Auto-create threads for room messages (default: `true`) |
+| `MATRIX_DM_AUTO_THREAD` | Auto-create threads for DM messages in Matrix (default: `false`) |
+| `MATRIX_DM_MENTION_THREADS` | Create a thread when bot is `@mentioned` in a DM (default: `false`) |
+| `MATRIX_APPROVAL_REQUIRE_SENDER` | Require approval/model-picker reactions to come from the original requester when known (default: `true`) |
+| `MATRIX_APPROVAL_TIMEOUT_SECONDS` | Timeout for Matrix reaction approval/model-picker prompts (default: `300`) |
+| `MATRIX_ALLOW_PUBLIC_ROOMS` | Allow Matrix room-creation tools to create public rooms (default: `false`) |
+| `MATRIX_MAX_MEDIA_BYTES` | Maximum Matrix media upload/download size in bytes (default: `104857600`) |
+| `MATRIX_RECOVERY_KEY` | Recovery key for cross-signing verification after device key rotation. Recommended for E2EE setups with cross-signing enabled. |
+| `MATRIX_RECOVERY_KEY_OUTPUT_FILE` | Optional one-time path for a generated Matrix recovery key. Created with mode `0600` and never overwritten. |
+| `HASS_TOKEN` | Home Assistant Long-Lived Access Token (enables HA platform + tools) |
+| `HASS_URL` | Home Assistant URL (default: `http://homeassistant.local:8123`) |
+| `WEBHOOK_ENABLED` | Enable the webhook platform adapter (`true`/`false`) |
+| `WEBHOOK_PORT` | HTTP server port for receiving webhooks (default: `8644`) |
+| `WEBHOOK_SECRET` | Global HMAC secret for webhook signature validation (used as fallback when routes don't specify their own) |
+| `API_SERVER_ENABLED` | Enable the OpenAI-compatible API server (`true`/`false`). Runs alongside other platforms. |
+| `API_SERVER_KEY` | Bearer token for API server authentication. Required whenever the API server is enabled. |
+| `API_SERVER_CORS_ORIGINS` | Comma-separated browser origins allowed to call the API server directly (for example `http://localhost:3000,http://127.0.0.1:3000`). Default: disabled. |
+| `API_SERVER_PORT` | Port for the API server (default: `8642`) |
+| `API_SERVER_HOST` | Host/bind address for the API server (default: `127.0.0.1`). `API_SERVER_KEY` is still required on loopback; use a narrow `API_SERVER_CORS_ORIGINS` allowlist for browser access. |
+| `API_SERVER_MODEL_NAME` | Model name advertised on `/v1/models`. Defaults to the profile name (or `hermes-agent` for the default profile). Useful for multi-user setups where frontends like Open WebUI need distinct model names per connection. |
+| `GATEWAY_PROXY_URL` | URL of a remote Hermes API server to forward messages to ([proxy mode](/user-guide/messaging/matrix#proxy-mode-e2ee-on-macos)). When set, the gateway handles platform I/O only — all agent work is delegated to the remote server. Also configurable via `gateway.proxy_url` in `config.yaml`. |
+| `GATEWAY_PROXY_KEY` | Bearer token for authenticating with the remote API server in proxy mode. Must match `API_SERVER_KEY` on the remote host. |
+| `MESSAGING_CWD` | Deprecated compatibility fallback for gateway working directory. Prefer `terminal.cwd` in `config.yaml`. |
+| `GATEWAY_ALLOWED_USERS` | Comma-separated user IDs allowed across all platforms |
+| `GATEWAY_ALLOW_ALL_USERS` | Allow all users without allowlists (`true`/`false`, default: `false`) |
+
+### Web控制台与Hermes Desktop
+
+用于[Web控制台](/user-guide/features/web-dashboard)的认证，以及实现[Hermes Desktop与远程后端连接](/user-guide/features/web-dashboard#connecting-hermes-desktop-to-a-remote-backend)的认证。遵循仅使用密钥的惯例，凭证应存储在`~/.hermes/.env`文件中；而OAuth的`client_id`则建议设置在`config.yaml`的`dashboard.oauth`字段下（若两者同时设置，则以环境变量中的值为准）。
+
+系统预置了三种控制台认证提供程序。对于远程Hermes Desktop连接或任何面向互联网的控制台，推荐的认证方式是**OAuth（Nous Portal）**——需设置`HERMES_DASHBOARD_OAUTH_CLIENT_ID`（可通过`hermes dashboard register`命令进行配置）。内置的**用户名/密码**认证提供程序（`HERMES_DASHBOARD_BASIC_AUTH_*`）适用于位于可信局域网内或VPN后的后端，是速度最快的选择，但不适合直接暴露在公共互联网上。若需使用自建的身份验证服务，可使用**自托管OIDC**认证提供程序（`HERMES_DASHBOARD_OIDC_*`）。无论采用哪种方式，只要通过非回环地址绑定（即使用`hermes dashboard --host 0.0.0.0`命令），系统就会启用认证机制。更多详情请参阅[Web控制台 → 认证](/user-guide/features/web-dashboard#authentication-gated-mode)。
+
+| Variable | Description |
+|----------|-------------|
+| `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` | Username for the bundled username/password dashboard-auth provider (`plugins/dashboard_auth/basic`). Activates the provider when set together with a password. Overrides `dashboard.basic_auth.username`. |
+| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` | Plaintext password for the basic provider (hashed in-memory at load). Wins over a config `password_hash` so you can rotate via env. Overrides `dashboard.basic_auth.password`. |
+| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` | scrypt password hash for the basic provider (preferred — no plaintext at rest). Compute with `python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`. Overrides `dashboard.basic_auth.password_hash`. |
+| `HERMES_DASHBOARD_BASIC_AUTH_SECRET` | HMAC key (32+ bytes, base64/hex/raw) signing the basic provider's stateless session tokens. Set explicitly so sessions survive restarts / span multiple workers; blank → random per-process (you'll be logged out on every restart). Overrides `dashboard.basic_auth.secret`. |
+| `HERMES_DASHBOARD_BASIC_AUTH_TTL_SECONDS` | Access-token lifetime for the basic provider (default 12h). Overrides `dashboard.basic_auth.session_ttl_seconds`. |
+| `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | OAuth client id (`agent:{instance_id}`) for the gated/public dashboard, activating the Nous (`plugins/dashboard_auth/nous`) provider. Overrides `dashboard.oauth.client_id`. Provision it with `hermes dashboard register`. |
+| `HERMES_DASHBOARD_PUBLIC_URL` | Complete public URL the dashboard is reached at behind a reverse proxy. It controls OAuth callback construction, adds its exact hostname to the HTTP Host/WebSocket Origin guard, and requires the auth gate for non-loopback public hosts even when the backend binds to loopback. Overrides `dashboard.public_url`. |
+| `HERMES_DASHBOARD_OIDC_ISSUER` | OIDC issuer URL for the bundled self-hosted OIDC provider (`plugins/dashboard_auth/self_hosted`). Required to activate it. Overrides `dashboard.oauth.self_hosted.issuer`. |
+| `HERMES_DASHBOARD_OIDC_CLIENT_ID` | Public OIDC client id (authorization-code + PKCE) for the self-hosted OIDC provider. Required to activate it. Overrides `dashboard.oauth.self_hosted.client_id`. |
+| `HERMES_DASHBOARD_OIDC_SCOPES` | Requested OIDC scopes for the self-hosted OIDC provider (default `openid profile email`). Overrides `dashboard.oauth.self_hosted.scopes`. |
+| `HERMES_DESKTOP_REMOTE_URL` | (Desktop side) Base URL of the remote backend, e.g. `http://host:9119`. When set, overrides the in-app Gateway URL; you still sign in from the Gateway settings panel (OAuth redirect or username/password, whichever the backend advertises). |
+| `HERMES_DESKTOP_HERMES` | Desktop backend command override. Used by packagers/Nix or troubleshooting to point Electron at a specific `hermes` executable after backend probing. |
+| `HERMES_DESKTOP_HERMES_ROOT` | Desktop source-checkout override used by `hermes desktop --hermes-root`; checked before the packaged first-launch install or an existing `hermes` on `PATH`. |
+| `HERMES_DESKTOP_IGNORE_EXISTING` | Set to `1` to make Desktop ignore an existing `hermes` on `PATH` during backend resolution. Equivalent to `hermes desktop --ignore-existing`. |
+| `HERMES_DESKTOP_CWD` | Initial project directory for Desktop chat sessions. Set by `hermes desktop --cwd`. |
+| `HERMES_DESKTOP_PYTHON` | Absolute path to a Python interpreter for the backend, checked before Electron auto-resolves one for the source checkout. Used by worktree dev helpers (see [TUI & Desktop from Worktrees](../developer-guide/worktree-ui-dev.md)) to reuse a shared venv. |
+| `HERMES_DESKTOP_DEV_SERVER` | Vite dev-server URL the Electron shell loads instead of the packaged bundle (e.g. `http://127.0.0.1:5174`). Set automatically by `npm run dev`; only relevant when hacking on the app. |
+| `HERMES_DESKTOP_CDP_PORT` | Overrides the Chrome DevTools Protocol port the renderer exposes on `127.0.0.1` for DOM/CSS inspection tooling (default `9222`). Dev-server runs (`npm run dev`, `hgui`) open it automatically; a packaged app never does, and no value here changes that. Set to `off` to disable it on a dev run. Anything that can reach the port can execute code in the renderer. |
+
+### Microsoft Graph（Teams 会议）
+
+用于后续 Teams 会议摘要处理流程的 Microsoft Graph REST 客户端的仅应用级凭据。有关 Azure 平台的操作指南以及所需的精确 API 权限，请参阅[注册 Microsoft Graph 应用](/guides/microsoft-graph-app-registration)。
 
 | 变量 | 描述 |
 |------|------|
-| `TERMINAL_PERSISTENT_SHELL` | 为非本地后端启用持久化 Shell（默认：`true`）。也可通过 `config.yaml` 中的 `terminal.persistent_shell` 参数进行设置。 |
-| `TERMINAL_LOCAL_PERSISTENT` | 为本地后端启用持久化 Shell（默认：`false`）。 |
-| `TERMINAL_SSH_PERSISTENT` | 覆盖 SSH 后端的持久化 Shell 设置（默认值与 `TERMINAL_PERSISTENT_SHELL` 相同）。 |
+| `MSGRAPH_TENANT_ID` | 用于 Graph 应用注册的 Azure AD 租户 ID（目录 GUID）。 |
+| `MSGRAPH_CLIENT_ID` | Azure 应用注册的应用（客户端）ID。 |
+| `MSGRAPH_CLIENT_SECRET` | 应用注册的客户端密钥值。请将其存储在 `~/.hermes/.env` 文件中，并设置权限为 `chmod 600`；需通过 Azure 平台定期更换该密钥。 |
+| `MSGRAPH_SCOPE` | 用于客户端凭据令牌请求的 OAuth2 范围（默认值：`https://graph.microsoft.com/.default`）。 |
+| `MSGRAPH_AUTHORITY_URL` | Microsoft 身份平台授权地址（默认值：`https://login.microsoftonline.com`）。仅在国家/主权云环境中需进行替换（例如 GCC High 地区的地址为 `https://login.microsoftonline.us`）。 |
 
-## 消息传递功能| 变量名 | 描述 |
-|--------|------|
-| `TELEGRAM_BOT_TOKEN` | Telegram机器人令牌（从@BotFather获取） |
-| `TELEGRAM_ALLOWED_USERS` | 允许使用该机器人的用户ID，以逗号分隔（适用于私信、群组及论坛） |
-| `TELEGRAM_GROUP_ALLOWED_USERS` | 仅在群组/论坛中授权的发送者用户ID，以逗号分隔（**不授予私信访问权限**）。为兼容旧版配置（#17686之前），以“-”开头的聊天ID值仍会被视为有效聊天ID，但会发出弃用警告 |
-| `TELEGRAM_GROUP_ALLOWED_CHATS` | 允许发送消息的群组/论坛聊天ID，以逗号分隔；该群组的任何成员均有权发送消息 |
-| `TELEGRAM_HOME_CHANNEL` | 用于定时任务消息推送的默认Telegram聊天频道/频道名称 |
-| `TELEGRAM_HOME_CHANNEL_NAME` | Telegram首页频道的显示名称 |
-| `TELEGRAM_CRON_THREAD_ID` | 用于接收定时任务消息的论坛主题ID；仅针对定时任务，会覆盖`TELEGRAM_HOME_CHANNEL_THREAD_ID`设置。建议在主题模式下使用此参数，这样对定时消息的回复会打开新会话，而不会进入系统大厅（#24409） |
-| `TELEGRAM_WEBHOOK_URL` | Webhook模式的公共HTTPS地址（可替代轮询方式发送消息） |
-| `TELEGRAM_WEBHOOK_PORT` | Webhook服务器的本地监听端口（默认值为`8443`） |
-| `TELEGRAM_WEBHOOK_SECRET` | Telegram在每次消息更新时返回的密钥，用于验证消息真实性。**一旦设置了`TELEGRAM_WEBHOOK_URL`，此参数为必填项**——否则网关将无法启动（GHSA-3vpc-7q5r-276h）。可通过`openssl rand -hex 32`命令生成该密钥 |
-| `TELEGRAM_REACTIONS` | 在处理消息时启用表情符号反应功能（默认值为`false`） |
-| `TELEGRAM_REQUIRE_MENTION` | 在Telegram群组中回复消息前，要求必须明确@提及机器人。相当于`config.yaml`中的`telegram.require_mention`设置 |
-| `TELEGRAM_MENTION_PATTERNS` | 当启用Telegram群组@提及过滤功能时，允许的正则表达式触发词列表，格式可为JSON数组、换行分隔列表或逗号分隔列表。相当于`telegram.mention_patterns`设置 |
-| `TELEGRAM_EXCLUSIVE_BOT_MENTIONS` | 启用后，在Telegram群组中，明确的`@...bot`提及会先被路由到对应的机器人用户名，之后才会执行回复或触发词处理逻辑。默认值为`true`。相当于`telegram.exclusive_bot_mentions`设置 |
-| `TELEGRAM_REPLY_TO_MODE` | 回复时的引用方式：`off`、`first`（默认）或`all`，与Discord的规则一致 |
-| `TELEGRAM_IGNORED_THREADS` | 机器人永远不会回复的Telegram论坛主题/线程ID，以逗号分隔 |
-| `TELEGRAM_PROXY` | 用于连接Telegram的代理URL，可覆盖`HTTPS_PROXY`设置。支持`http://`、`https://`、`socks5://`格式 |
-| `DISCORD_BOT_TOKEN` | Discord机器人令牌 |
-| `DISCORD_ALLOWED_USERS` | 允许使用该机器人的Discord用户ID，以逗号分隔 |
-| `DISCORD_ALLOWED_ROLES` | 允许使用该机器人的Discord角色ID，以逗号分隔（可与`DISCORD_ALLOWED_USERS`同时使用）。此设置会自动启用“成员”意图。当审核团队人员变动时非常有用，因为角色权限变更会自动生效 |
-| `DISCORD_ALLOWED_CHANNELS` | 允许机器人发送消息的Discord频道ID，以逗号分隔。一旦设置，机器人将仅在这些频道（以及允许的私信）中回复消息，会覆盖`config.yaml`中的`discord.allowed_channels`设置 |
-| `DISCORD_PROXY` | 用于连接Discord的代理URL，可覆盖`HTTPS_PROXY`设置。支持`http://`、`https://`、`socks5://`格式 |
-| `DISCORD_HOME_CHANNEL` | 用于定时任务消息推送的默认Discord频道 |
-| `DISCORD_HOME_CHANNEL_NAME` | Discord首页频道的显示名称 |
-| `DISCORD_COMMAND_SYNC_POLICY` | Discord斜杠命令启动同步策略：`safe`（差异对比后再同步）、`bulk`（使用旧版的`tree.sync()`方式）或`off`（关闭同步） |
-| `DISCORD_REQUIRE_MENTION` | 在服务器频道中回复消息前，要求必须进行@提及 |
-| `DISCORD_FREE_RESPONSE_CHANNELS` | 不要求必须@提及即可发送回复的频道ID，以逗号分隔 |
-| `DISCORD_AUTO_THREAD` | 当支持时，自动为长回复创建线程 |
-| `DISCORD_ALLOW_ANY_ATTACHMENT` | 设置为`true`时，允许接收所有类型的附件（不仅限于默认支持的PDF、文本、ZIP、Office文档格式）。未知类型的附件会被缓存，并以本地路径的形式呈现给机器人，以便其通过`terminal`、`read_file`、`ffprobe`等功能进行查看。默认值为`false` |
-| `DISCORD_MAX_ATTACHMENT_BYTES` | 网关缓存的单个附件的最大字节数。默认值为`33554432`（32兆字节）。设置为`0`则表示不设置上限（附件会在写入过程中保留在内存中） |
-| `DISCORD_REACTIONS` | 在处理消息时启用表情符号反应功能（默认值为`true`） |
-| `DISCORD_IGNORED_CHANNELS` | 机器人永远不会回复的Discord频道ID，以逗号分隔 |
-| `DISCORD_NO_THREAD_CHANNELS` | 机器人发送回复时不会自动创建线程的频道ID，以逗号分隔 |
-| `DISCORD_REPLY_TO_MODE` | 回复时的引用方式：`off`、`first`（默认）或`all`，与Discord规则一致 |
-| `DISCORD_ALLOW_MENTION_EVERYONE` | 允许机器人向`@everyone`/`@here`发送消息（默认值为`false`）。详情请参阅[提及控制](../user-guide/messaging/discord.md#mention-control) |
-| `DISCORD_ALLOW_MENTION_ROLES` | 允许机器人接收`@role`格式的提及（默认值为`false`） |
-| `DISCORD_ALLOW_MENTION_USERS` | 允许机器人接收单个`@user`格式的提及（默认值为`true`） |
-| `DISCORD_ALLOW_MENTION_REPLIED_USER` | 回复用户消息时，也向该用户发送回复（默认值为`true`） |
-| `SLACK_BOT_TOKEN` | Slack机器人令牌（格式为`xoxb-...`） |
-| `SLACK_APP_TOKEN` | Slack应用级令牌（格式为`xapp-...`，在Socket模式下为必填项） |
-| `SLACK_ALLOWED_USERS` | 允许使用该机器人的Slack用户ID，以逗号分隔 |
-| `SLACK_HOME_CHANNEL` | 用于定时任务消息推送的默认Slack频道 |
-| `SLACK_HOME_CHANNEL_NAME` | Slack首页频道的显示名称 |
-| `GOOGLE_CHAT_PROJECT_ID` | 托管Pub/Sub主题的GCP项目编号（如需备用，可使用`GOOGLE_CLOUD_PROJECT`） |
-| `GOOGLE_CHAT_SUBSCRIPTION_NAME` | 完整的Pub/Sub订阅路径，格式为`projects/{proj}/subscriptions/{sub}`（旧版别名為`GOOGLE_CHAT_SUBSCRIPTION`） |
-| `GOOGLE_CHAT_SERVICE_ACCOUNT_JSON` | 服务账户JSON文件的路径，或直接在此处填写JSON内容（如需备用，可使用`GOOGLE_APPLICATION_CREDENTIALS`） |
-| `GOOGLE_CHAT_ALLOWED_USERS` | 允许与机器人聊天的用户邮箱地址，以逗号分隔 |
-| `GOOGLE_CHAT_ALLOW_ALL_USERS` | 允许所有Google Chat用户触发机器人功能（仅开发人员可用） |
-| `GOOGLE_CHAT_HOME_CHANNEL` | 用于定时任务消息推送的默认Google Chat空间编号（例如`spaces/AAAA...`） |
-| `GOOGLE_CHAT_HOME_CHANNEL_NAME` | Google Chat首页空间的显示名称 |
-| `GOOGLE_CHAT_MAX_MESSAGES` | Pub/Sub FlowControl机制允许的正在处理中的最大消息数（默认值为`1`） |
-| `GOOGLE_CHAT_MAX_BYTES` | Pub/Sub FlowControl机制允许的正在处理中的最大字节数（默认值为`16777216`，即16兆字节） |
-| `GOOGLE_CHAT_BOOTSTRAP_SPACES` | 启动时用于探测的额外空间编号，以便确定机器人自身的`users/{id}`信息 |### Web控制台与Hermes Desktop
+### Microsoft Graph Webhook 监听器
 
-用于[Web控制台](/user-guide/features/web-dashboard)的认证，以及实现[Hermes Desktop与远程后端连接](/user-guide/features/web-dashboard#connecting-hermes-desktop-to-a-remote-backend)。遵循“仅使用密钥”的原则，凭证应存储在`~/.hermes/.env`文件中；而OAuth的`client_id`则建议设置在`config.yaml`的`dashboard.oauth`字段下（若同时设置，环境变量优先生效）。
-
-系统预置了三种控制台认证提供程序。对于远程Hermes Desktop连接或任何面向互联网的控制台，推荐的提供程序是**OAuth（Nous Portal）**——需设置`HERMES_DASHBOARD_OAUTH_CLIENT_ID`（可通过`hermes dashboard register`命令进行配置）。内置的**用户名/密码**提供程序（`HERMES_DASHBOARD_BASIC_AUTH_*`）适用于位于可信局域网或VPN后的后端，是最快的解决方案，但不适合直接暴露在公共互联网上。若要使用自建的身份验证服务，可使用**自托管OIDC**提供程序（`HERMES_DASHBOARD_OIDC_*`）。无论采用哪种方式，只要设置非回环绑定地址（如`hermes dashboard --host 0.0.0.0`），就会启用认证网关。详情请参阅[Web控制台 → 认证](/user-guide/features/web-dashboard#authentication-gated-mode)。
+用于接收 Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听器。有关设置及安全强化措施，请参阅[Microsoft Graph Webhook 监听器](/user-guide/messaging/msgraph-webhook)。
 
 | 变量 | 描述 |
-|------|------|
-| `HERMES_DASHBOARD_BASIC_AUTH_USERNAME` | 内置用户名/密码认证提供程序（`plugins/dashboard_auth/basic`）的用户名。当该变量与密码一同设置时，即可激活该提供程序，同时会覆盖`dashboard.basic_auth.username`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD` | 该基础认证提供程序的明文密码（加载时会以哈希形式存储在内存中）。其优先级高于配置文件中的`password_hash`字段，因此可通过环境变量方便地更换密码，同时会覆盖`dashboard.basic_auth.password`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` | 该基础认证提供程序的scrypt哈希密码（更推荐，因为不会以明文形式存储）。可通过命令`python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`生成，同时会覆盖`dashboard.basic_auth.password_hash`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_SECRET` | 用于为该基础认证提供程序的无状态会话令牌签名 的HMAC密钥（长度需大于32字节，支持base64、hex或原始格式）。明确设置此值可确保会话在重启后依然有效，或跨多个工作进程使用；若留空，则会为每个进程随机生成密钥（此时每次重启都会导致用户登出），同时会覆盖`dashboard.basic_auth.secret`的值。 |
-| `HERMES_DASHBOARD_BASIC_AUTH_TTL_SECONDS` | 该基础认证提供程序的访问令牌有效期（默认为12小时），同时会覆盖`dashboard.basic_auth.session_ttl_seconds`的值。 |
-| `HERMES_DASHBOARD_OAUTH_CLIENT_ID` | 用于受保护/公共控制台的OAuth客户端ID（格式为`agent:{instance_id}`），可激活Nous提供程序（`plugins/dashboard_auth/nous`），同时会覆盖`dashboard.oauth.client_id`的值。需通过`hermes dashboard register`命令进行配置。 |
-| `HERMES_DASHBOARD_PUBLIC_URL` | 控制台的完整公共URL地址，用于在反向代理后构建OAuth回调地址，同时会覆盖`dashboard.public_url`的值。 |
-| `HERMES_DASHBOARD_OIDC_ISSUER` | 内置自托管OIDC提供程序（`plugins/dashboard_auth/self_hosted`）的OIDC发行方URL，激活该提供程序时必须设置此值，同时会覆盖`dashboard.oauth.self_hosted.issuer`的值。 |
-| `HERMES_DASHBOARD_OIDC_CLIENT_ID` | 自托管OIDC提供程序的公共OIDC客户端ID（支持授权码模式和PKCE机制），激活该提供程序时必须设置此值，同时会覆盖`dashboard.oauth.self_hosted.client_id`的值。 |
-| `HERMES_DASHBOARD_OIDC_SCOPES` | 自托管OIDC提供程序所请求的OIDC作用域（默认为`openid profile email`），同时会覆盖`dashboard.oauth.self_hosted.scopes`的值。 |
-| `HERMES_DESKTOP_REMOTE_URL` | （桌面端）远程后端的基URL地址，例如`http://host:9119`。设置此值后会覆盖应用内的网关URL；用户仍需通过网关设置面板进行登录（可选择OAuth重定向或用户名/密码认证，具体取决于后端支持的认证方式）。 |
-| `HERMES_DESKTOP_HERMES` | 桌面端后端命令的覆盖值，打包工具或Nix环境以及故障排查时使用，用于在探测到后端后指定给Electron进程的特定`hermes`可执行文件路径。 |
-| `HERMES_DESKTOP_HERMES_ROOT` | 桌面端源代码检出路径的覆盖值，由`hermes desktop --hermes-root`命令使用，在首次启动时或系统`PATH`环境中已存在`hermes`可执行文件之前会优先检查此路径。 |
-| `HERMES_DESKTOP_IGNORE_EXISTING` | 设置为`1`时，桌面端在确定后端地址时会忽略系统`PATH`环境中的现有`hermes`可执行文件，功能等同于`hermes desktop --ignore-existing`命令。 |
-| `HERMES_DESKTOP_CWD` | 桌面端聊天会话的初始项目目录，可通过`hermes desktop --cwd`命令进行设置。 |
+|----------|-------------|
+| `MSGRAPH_WEBHOOK_ENABLED` | 启用 `msgraph_webhook` 网关平台（值为 `true`/`1`/`yes`）。 |
+| `MSGRAPH_WEBHOOK_PORT` | 监听器绑定的端口（默认值为 `8646`）。 |
+| `MSGRAPH_WEBHOOK_CLIENT_STATE` | 会在每条通知中重复出现的共享密钥，用于与 `hmac.compare_digest` 进行比对。可通过 `openssl rand -hex 32` 生成该值。 |
+| `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | 以逗号分隔的 Graph 资源路径/模式允许列表（例如 `communications/onlineMeetings,chats/*/messages`）。末尾的 `*` 表示前缀匹配。若该字段为空，则允许所有资源。 |
+| `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | 允许向监听器发送请求的 CIDR 范围，以逗号分隔（例如 `52.96.0.0/14,52.104.0.0/14`）。若该字段为空，则允许所有来源（为默认值）。在正式环境中，建议仅允许 Microsoft Graph 公布的出站访问范围。 |
 
-### Microsoft Graph（Teams会议）
+### Teams 会议摘要推送功能
 
-用于即将推出的Teams会议摘要处理流程中Microsoft Graph REST客户端的仅应用专用凭证。有关Azure门户的操作指南及所需的精确API权限，请参阅[注册Microsoft Graph应用](/guides/microsoft-graph-app-registration)。
+仅当启用了 [`teams_pipeline` 插件](/user-guide/messaging/msgraph-webhook) 时才会使用此功能。相关设置也可通过 `config.yaml` 文件中的 `platforms.teams.extra` 配置——当两者同时设置时，环境变量优先生效。更多详情请参阅 [Microsoft Teams → 会议摘要推送功能](/user-guide/messaging/teams#meeting-summary-delivery-teams-meeting-pipeline)。
 
 | 变量 | 描述 |
-|------|------|
-| `MSGRAPH_TENANT_ID` | Graph应用注册所对应的Azure AD租户ID（即目录GUID）。 |
-| `MSGRAPH_CLIENT_ID` | Azure应用注册对应的应用程序（客户端）ID。 |
-| `MSGRAPH_CLIENT_SECRET` | 该应用注册对应的客户端密钥，应存储在`~/.hermes/.env`文件中，并设置权限为`chmod 600`；需定期通过Azure门户更换此密钥。 |
-| `MSGRAPH_SCOPE` | 用于客户端凭证令牌请求的OAuth2作用域（默认值为`https://graph.microsoft.com/.default`）。 |
-| `MSGRAPH_AUTHORITY_URL` | Microsoft身份平台的服务地址（默认值为`https://login.microsoftonline.com`），仅在国家/主权云环境中需要修改此值（例如GCC High区域需使用`https://login.microsoftonline.us`）。 |
+|----------|-------------|
+| `TEAMS_DELIVERY_MODE` | `graph` 或 `incoming_webhook`。 |
+| `TEAMS_INCOMING_WEBHOOK_URL` | Teams 生成的 webhook URL；当 `TEAMS_DELIVERY_MODE=incoming_webhook` 时为必填项。 |
+| `TEAMS_GRAPH_ACCESS_TOKEN` | 用于 Graph 模式传输的预获取委托访问令牌。通常无需使用——若未设置，该工具会自动回退至 `MSGRAPH_*` 应用凭据。 |
+| `TEAMS_TEAM_ID` | 用于频道传输的目标团队 ID（`graph` 模式）。 |
+| `TEAMS_CHANNEL_ID` | 目标频道 ID（需与 `TEAMS_TEAM_ID` 配合使用）。 |
+| `TEAMS_CHAT_ID` | 目标一对一或群组聊天 ID（在 `graph` 模式中可作为团队+频道的替代选项）。 |
 
-### Microsoft Graph Webhook监听器
+### LINE 消息传递 API
 
-用于接收Graph事件（如Teams会议、日历事件、聊天消息等）的入站变更通知。有关设置及安全强化措施，请参阅[Microsoft Graph Webhook监听器](/user-guide/messaging/msgraph-webhook)。
+由内置的 LINE 平台插件（`plugins/platforms/line/`）所使用。有关完整设置指南，请参阅 [消息网关 → LINE](/user-guide/messaging/line)。
 
-| 变量 | 描述 |
-|------|------|
-| `MSGRAPH_WEBHOOK_ENABLED` | 是否启用`msgraph_webhook`网关平台，取值为`true`、`1`或`yes`。 |
-| `MSGRAPH_WEBHOOK_PORT` | 监听器绑定的端口，默认值为`8646`。 |
-| `MSGRAPH_WEBHOOK_CLIENT_STATE` | Graph会在每条通知中回传的共享密钥，用于通过`hmac.compare_digest`函数进行验证，可通过命令`openssl rand -hex 32`生成该密钥。 |
-| `MSGRAPH_WEBHOOK_ACCEPTED_RESOURCES` | 以逗号分隔的Graph资源路径/模式允许列表（例如`communications/onlineMeetings,chats/*/messages`），末尾的`*`表示前缀匹配，若留空则表示允许所有资源。 |
-| `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | 以逗号分隔的CIDR范围列表，仅允许来自这些范围的请求发送到监听器（例如`52.96.0.0/14,52.104.0.0/14`），若留空则表示允许所有来源（为默认值）。在生产环境中应限制为Microsoft Graph官方公布的出站访问范围。 |
-
-### Teams会议摘要发送
-
-仅当启用了[`teams_pipeline`插件](/user-guide/messaging/msgraph-webhook)时才会使用该功能。相关设置也可通过`config.yaml`文件中的`platforms.teams.extra`字段进行配置——若同时设置了环境变量，则环境变量优先生效。详情请参阅[Microsoft Teams → 会议摘要发送](/user-guide/messaging/teams#meeting-summary-delivery-teams-meeting-pipeline)。
-
-| 变量 | 描述 |
-|------|------|
-| `TEAMS_DELIVERY_MODE` | 发送模式，可选值为`graph`或`incoming_webhook`。 |
-| `TEAMS_INCOMING_WEBHOOK_URL` | Teams生成的Webhook URL地址，当`TEAMS_DELIVERY_MODE`设置为`incoming_webhook`时必需。 |
-| `TEAMS_GRAPH_ACCESS_TOKEN` | 用于Graph数据发送的预获取委托访问令牌，一般情况下并不需要使用；若未设置此值，系统会回退到使用`MSGRAPH_*`系列的应用专用凭证。 |
-| `TEAMS_TEAM_ID` | 用于频道发送的目标团队ID（适用于`graph`模式）。 |
-| `TEAMS_CHANNEL_ID` | 目标频道ID，需与`TEAMS_TEAM_ID`配对使用。 |
-| `TEAMS_CHAT_ID` | 目标一对一或群组聊天的ID（在`graph`模式下可作为团队+频道的替代选项）。 |
-
-### LINE消息API
-
-由内置的LINE平台插件（`plugins/platforms/line/`）所使用。有关完整设置流程，请参阅[消息网关 → LINE](/user-guide/messaging/line)。
-
-| 变量 | 描述 |
-|------|------|
-| `LINE_CHANNEL_ACCESS_TOKEN` | 来自LINE开发者控制台（消息API选项卡）的长期有效频道访问令牌，为必需项。 |
-| `LINE_CHANNEL_SECRET` | 频道密钥，位于基本设置选项卡中，用于通过HMAC-SHA256算法对Webhook签名进行验证，为必需项。 |
-| `LINE_HOST` | Webhook绑定的主机地址，默认值为`0.0.0.0`。 |
-| `LINE_PORT` | Webhook绑定的端口，默认值为`8646`。 |
-| `LINE_PUBLIC_URL` | 公共HTTPS基础URL地址（例如`https://my-tunnel.example.com`），用于发送图片、音频或视频文件——LINE仅接受可通过HTTPS访问的URL地址。 |
-| `LINE_ALLOWED_USERS` | 以逗号分隔的允许向机器人发送私信的用户ID，用户ID前需加上`U`前缀。 |
-| `LINE_ALLOWED_GROUPS` | 以逗号分隔的机器人将回复消息的群组ID，群组ID前需加上`C`前缀。 |
-| `LINE_ALLOWED_ROOMS` | 以逗号分隔的机器人将回复消息的房间ID，房间ID前需加上`R`前缀。 |
-| `LINE_ALLOW_ALL_USERS` | 仅开发人员可使用，表示允许来自任何来源的请求，默认值为`false`。 |
-| `LINE_HOME_CHANNEL` | 当使用`deliver: line`指令通过定时任务发送消息时，默认的目标发送频道。 |
-| `LINE_SLOW_RESPONSE_THRESHOLD` | 在触发慢响应LLM模板按钮的回调之前等待的秒数，默认值为`45`。将此值设置为`0`可禁用该功能，始终强制使用推送式回复。 |
-| `LINE_PENDING_TEXT` | 显示在回调按钮旁边的提示文本。 |
-| `LINE_BUTTON_LABEL` | 回调按钮的显示标签，默认值为`Get answer`。 |
-| `LINE_DELIVERED_TEXT` | 当用户再次点击已发送过的回调消息时显示的回复文本，默认值为`Already replied ✅`。 |
-| `LINE_INTERRUPTED_TEXT` | 当用户点击被标记为 `/stop` 的异常回调按钮时显示的回复文本，默认值为`Run was interrupted before completion.`。 |
+| Variable | Description |
+|----------|-------------|
+| `LINE_CHANNEL_ACCESS_TOKEN` | Long-lived channel access token from the LINE Developers Console (Messaging API tab). Required. |
+| `LINE_CHANNEL_SECRET` | Channel secret (Basic settings tab); used for HMAC-SHA256 webhook signature verification. Required. |
+| `LINE_HOST` | Webhook bind host (default: `0.0.0.0`). |
+| `LINE_PORT` | Webhook bind port (default: `8646`). |
+| `LINE_PUBLIC_URL` | Public HTTPS base URL (e.g. `https://my-tunnel.example.com`). Required for image / audio / video sends — LINE only accepts HTTPS-reachable URLs. |
+| `LINE_ALLOWED_USERS` | Comma-separated user IDs allowed to DM the bot (`U`-prefixed). |
+| `LINE_ALLOWED_GROUPS` | Comma-separated group IDs the bot will respond in (`C`-prefixed). |
+| `LINE_ALLOWED_ROOMS` | Comma-separated room IDs the bot will respond in (`R`-prefixed). |
+| `LINE_ALLOW_ALL_USERS` | Dev-only escape hatch — accepts any source. Default: `false`. |
+| `LINE_HOME_CHANNEL` | Default delivery target for cron jobs with `deliver: line`. |
+| `LINE_SLOW_RESPONSE_THRESHOLD` | Seconds before the slow-LLM Template Buttons postback fires (default: `45`). Set `0` to disable and always Push-fallback. |
+| `LINE_PENDING_TEXT` | Bubble text shown alongside the postback button. |
+| `LINE_BUTTON_LABEL` | Postback button label (default: `Get answer`). |
+| `LINE_DELIVERED_TEXT` | Reply when an already-delivered postback is tapped again (default: `Already replied ✅`). |
+| `LINE_INTERRUPTED_TEXT` | Reply when a `/stop`-orphaned postback button is tapped (default: `Run was interrupted before completion.`). |
+| `LINE_EXPIRED_TEXT` | Reply when a postback button whose cached answer is gone (expired / lost with process state) is tapped (default: `That request has expired — send your message again.`). |
 
 ### ntfy（推送通知）
 
-[ntfy](https://ntfy.sh/)是一款轻量级的基于HTTP的推送通知服务。可通过[ntfy移动应用](https://ntfy.sh/docs/subscribe/phone/)订阅某个主题，向该主题发送消息即可与智能体进行交互。
+[ntfy](https://ntfy.sh/) 是一款轻量级的基于 HTTP 的推送通知服务。您可以通过 [ntfy 移动应用](https://ntfy.sh/docs/subscribe/phone/) 订阅某个主题，然后向该主题发送消息以与 Agent 进行交互。
+
+| 参数 | 说明 |
+|------|------|
+| `NTFY_TOPIC` | 需要订阅的主题（用于接收消息）。为必填项。 |
+| `NTFY_SERVER_URL` | 服务器地址（默认值为 `https://ntfy.sh`）。如需保障隐私，可指定自托管的 ntfy 服务器地址。 |
+| `NTFY_TOKEN` | 可选的认证令牌。支持Bearer令牌（例如 `tk_xyz`），也支持基本认证格式的 `user:pass`。 |
+| `NTFY_PUBLISH_TOPIC` | 用于发送回复的主题（默认值为 `NTFY_TOPIC`）。 |
+| `NTFY_MARKDOWN` | 设置为 `true` 可在回复中添加 `X-Markdown: true` 标头。默认值为 `false`。 |
+| `NTFY_ALLOWED_USERS` | 允许列表（视为用户 ID；在 ntfy 中则对应主题名称）。通常该值与 `NTFY_TOPIC` 相同。 |
+| `NTFY_ALLOW_ALL_USERS` | 仅开发人员可使用——仅在受访问控制的私有主题中才安全。默认值为 `false`。 |
+| `NTFY_HOME_CHANNEL` | 对于使用 `deliver: ntfy` 的定时任务，其默认消息发送目标。 |
+| `NTFY_HOME_CHANNEL_NAME` | 主题通道的显示名称（默认值为主题名称）。 |
+
+在将不受信任的主题用于部署之前，请先参阅 [ntfy 消息传递指南](/user-guide/messaging/ntfy)，尤其是 **身份模型** 部分。
+
+### IRC
+
+用于将 Hermes 连接到 IRC 服务器。无需任何外部依赖。详情请参阅 [IRC 消息传递指南](/user-guide/messaging/irc)。
+
+| 变量 | 描述 |
+|----------|-------------|
+| `IRC_SERVER` | IRC 服务器主机名（例如 `irc.libera.chat`），为必填项。 |
+| `IRC_CHANNEL` | 需要加入的频道（例如 `#hermes`）；多个频道请用逗号分隔，为必填项。 |
+| `IRC_NICKNAME` | 机器人昵称（默认值为 `hermes-bot`），为必填项。 |
+| `IRC_PORT` | 服务器端口（使用 TLS 时默认为 `6697`，不使用 TLS 时为 `6667`）。 |
+| `IRC_USE_TLS` | 是否使用 TLS（取值 `true`/`false`；在端口 `6697` 上默认为 `true`）。 |
+| `IRC_SERVER_PASSWORD` | 用于 `PASS` 命令的服务器密码（可选）。 |
+| `IRC_NICKSERV_PASSWORD` | 连接时自动执行 IDENTIFY 操作所需的 NickServ 密码（可选）。 |
+| `IRC_ALLOWED_USERS` | 允许与机器人交流的昵称列表，各昵称之间用逗号分隔。 |
+| `IRC_ALLOW_ALL_USERS` | 允许频道中的任何用户与机器人交流（仅开发人员使用）。 |
+| `IRC_HOME_CHANNEL` | 用于定时任务执行/通知发送的频道（默认值为 `IRC_CHANNEL`）。 |
+
+### SimpleX
+
+通过本地的 `simplex-chat` 守护进程，将 Hermes 连接到 [SimpleX Chat](https://simplex.chat/) 网络。详情请参阅 [SimpleX 消息传递指南](/user-guide/messaging/simplex)。
+
+| 变量 | 描述 |
+|----------|-------------|
+| `SIMPLEX_WS_URL` | simplex-chat 守护进程的 WebSocket 地址（例如 `ws://127.0.0.1:5225`）。 |
+| `SIMPLEX_ALLOWED_USERS` | 允许与机器人对话的 SimpleX 联系人 ID，以逗号分隔。 |
+| `SIMPLEX_ALLOW_ALL_USERS` | 允许任何联系人都与机器人对话（仅适用于开发者——此选项会禁用白名单机制）。 |
+| `SIMPLEX_AUTO_ACCEPT` | 自动接受来自其他联系人的加入请求（默认值为 `true`）。 |
+| `SIMPLEX_GROUP_ALLOWED` | 机器人应加入的 SimpleX 群组 ID，以逗号分隔；若设置为 `*` 则允许加入任意群组。如未设置，则完全忽略群组消息（这是更安全的默认选项——否则处于群组中的机器人会处理所有成员的消息）。 |
+| `SIMPLEX_HOME_CHANNEL` | 用于定时任务/通知发送的默认联系人/群组 ID。 |
+| `SIMPLEX_HOME_CHANNEL_NAME` | 主通道的显示名称（默认值为该通道的 ID）。 |
+
+### Photon
+
+可通过 Node sidecar 将 Hermes 连接到 [Photon](https://photon.codes/) / Spectrum（iMessage 及其他 Spectrum 平台）。请参阅 [Photon 消息传递指南](/user-guide/messaging/photon)。
+
+| Variable | Description |
+|----------|-------------|
+| `PHOTON_PROJECT_ID` | Spectrum project id (the project's `spectrumProjectId`; set by `hermes photon setup`). |
+| `PHOTON_PROJECT_SECRET` | Project secret paired with the Spectrum project id (set by `hermes photon setup`). |
+| `PHOTON_ALLOWED_USERS` | Comma-separated E.164 phone numbers allowed to talk to the bot. |
+| `PHOTON_ALLOW_ALL_USERS` | Allow any sender to trigger the bot (dev only — disables allowlist). |
+| `PHOTON_REQUIRE_MENTION` | Ignore group-chat messages unless they match a mention wake word (`true`/`false`, default `false`). |
+| `PHOTON_MENTION_PATTERNS` | Mention wake-word regexes for group chats (JSON list or comma/newline-separated; defaults to Hermes wake words). |
+| `PHOTON_HOME_CHANNEL` | Default Photon target for cron / notification delivery: Spectrum space id, DM GUID, or bare E.164 phone number. |
+| `PHOTON_HOME_CHANNEL_NAME` | Human label for the home channel. |
+| `PHOTON_MARKDOWN` | Send agent replies as markdown — iMessage renders it natively, other Spectrum platforms degrade to plain text (`true`/`false`, default `true`). |
+| `PHOTON_REACTIONS` | Tapback 👀/👍/👎 on messages as processing status and route tapbacks on bot messages to the agent (`true`/`false`, default `false`). |
+| `PHOTON_READ_RECEIPTS` | Mark inbound iMessages read after forwarding to Hermes (`true`/`false`, default `true`). |
+| `PHOTON_TELEMETRY` | Enable Spectrum SDK telemetry in the sidecar (`true`/`false`, default `false`; toggle with `hermes photon telemetry on|off`). |
+| `PHOTON_SIDECAR_PORT` | Loopback port for the Node sidecar control + inbound channel (default `8789`). |
+| `PHOTON_SIDECAR_AUTOSTART` | Spawn the Node sidecar on connect (`true`/`false`, default `true`). |
+| `PHOTON_NODE_BIN` | Path to the node binary (default: `shutil.which('node')`). |
+| `PHOTON_DASHBOARD_HOST` | Photon Dashboard API host (default `https://app.photon.codes`). |
+| `PHOTON_SPECTRUM_HOST` | Photon Spectrum API host (default `https://spectrum.photon.codes`). |
+
+### Buzz（Nostr 社区）
 
 | 变量 | 描述 |
 |------|------|
-| `NTFY_TOPIC` | 需要订阅的主题地址（用于接收新消息），为必需项。 |
-| `NTFY_SERVER_URL` | 服务器URL地址，默认值为`https://ntfy.sh`，如需保障隐私，可指向自托管的ntfy服务。 |
-| `NTFY_TOKEN` | 可选的认证令牌，可以是Bearer令牌（格式为`tk_xyz`），也可以是用于基本认证的`user:pass`格式凭证。 |
-| `NTFY_PUBLISH_TOPIC` | 用于发送回复消息的主题地址，默认值为`NTFY_TOPIC`。 |
-| `NTFY_MARKDOWN` | 设置为`true`时，回复消息会附带`X-Markdown: true`头部，允许使用Markdown格式，默认值为`false`。 |
-| `NTFY_ALLOWED_USERS` | 允许发送消息的用户列表，这些值被视为用户ID；在ntfy系统中实际上对应的是主题名称，通常该值与`NTFY_TOPIC`相同。 |
-| `NTFY_ALLOW_ALL_USERS` | 仅开发人员可使用，表示允许向所有用户发送消息，但仅能在访问受控的私有主题中使用，默认值为`false`。 |
-| `NTFY_HOME_CHANNEL` | 当使用`deliver: ntfy`指令通过定时任务发送消息时，默认的目标发送频道。 |
-| `NTFY_HOME_CHANNEL_NAME` | 该默认发送频道的显示名称，通常与主题名称相同。 |
+| `BUZZ_RELAY_URL` | Buzz 社区中继的基址（例如：`https://mycommunity.communities.buzz.xyz`） |
+| `BUZZ_PRIVATE_KEY` | 用于代理 Buzz 身份的 Nostr 私钥（nsec 或十六进制格式）——这是唯一的 Buzz 密钥 |
+| `BUZZ_CREDENTIALS_FILE` | 包含 nsec 格式凭证的 JSON 文件（当未设置 `BUZZ_PRIVATE_KEY` 时作为备用） |
+| `BUZZ_CHANNELS` | 需要关注的频道 UUID，以逗号分隔（默认：所有已加入的频道） |
+| `BUZZ_HOME_CHANNEL` | 用于定时任务/通知发送的频道 UUID（默认为第一个被关注的频道） |
+| `BUZZ_ALLOWED_USERS` | 允许与代理通信的 npubs 或十六进制公钥，以逗号分隔 |
+| `BUZZ_ALLOW_ALL_USERS` | 是否允许任何社区成员与代理通信（`true`/`false`） |
+| `BUZZ_TRANSPORT` | 数据接收方式：`auto`（默认，基于 WebSocket 并支持轮询作为备用）、`websocket` 或 `poll` |
+| `BUZZ_POLL_INTERVAL` | 数据轮询检查的间隔时间（单位：秒，默认值为 `4`） |
+| `BUZZ_AUTH_TAG` | 用于 NIP-42 WebSocket 认证的可选 NIP-OA 所有者认证标签 JSON 文件 |
+| `BUZZ_CLI_PATH` | buzz CLI 可执行文件的路径（默认为 PATH 中的 `buzz`，其次为 `~/bin/buzz`） |
 
-在将不受信任的主题用于生产环境之前，请先仔细阅读[ntfy消息指南](/user-guide/messaging/ntfy)，尤其是**身份模型**相关章节。
+### Microsoft Teams（适配器）
 
-### 高级消息配置调优用于调控外出消息批量处理功能的各平台高级参数。大多数用户无需调整这些设置；系统默认已针对各平台的速率限制进行了优化，从而确保运行流畅。
+此处指的是 Microsoft Teams 平台适配器（Bot Framework / Azure AD），与上文提到的 [Microsoft Graph（Teams 会议）](#microsoft-graph-teams-meetings) 集成不同。详情请参阅 [Teams 消息传递指南](/user-guide/messaging/teams)。
 
-| 参数名 | 描述 |
+| 变量 | 描述 |
+|------|------|
+| `TEAMS_CLIENT_ID` | Azure AD 应用程序（Bot Framework）的客户端 ID。 |
+| `TEAMS_CLIENT_SECRET` | Azure AD 应用程序的客户端密钥。 |
+| `TEAMS_TENANT_ID` | 托管该机器人应用程序的 Azure AD 租户 ID。 |
+| `TEAMS_HOST` | Webhook 绑定主机（默认值：未设置 → 双栈模式，支持 IPv4 和 IPv6 接口）。 |
+| `TEAMS_PORT` | Webhook 监听端口（Bot Framework 默认值为 `3978`）。 |
+| `TEAMS_ALLOWED_USERS` | 允许与机器人交互的 Teams 用户 ID 或 UPN，以逗号分隔。 |
+| `TEAMS_ALLOW_ALL_USERS` | 允许任何 Teams 用户触发该机器人（仅开发人员使用）。 |
+| `TEAMS_HOME_CHANNEL` | 用于定时任务执行或发送通知的默认聊天频道/频道 ID。 |
+| `TEAMS_HOME_CHANNEL_NAME` | Teams 主页频道的显示名称。 |
+
+### Raft
+
+| 变量 | 描述 |
+|------|------|
+| `RAFT_PROFILE` | Raft 代理的配置文件标识符——设置该值后即可自动启用相应适配器。 |
+
+### 高级消息发送调优
+
+针对不同平台提供的高级参数，用于控制外出消息批量发送的频率。大多数用户无需调整这些参数；系统已预设默认值，可在确保流畅体验的同时遵守各平台的速率限制。
+
+| Variable | Description |
+|----------|-------------|
+| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | Grace window before flushing a queued Telegram text chunk (default: `0.6`). |
+| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | Delay between split chunks when a single Telegram message exceeds the length limit (default: `2.0`). |
+| `HERMES_SIMPLEX_TEXT_BATCH_DELAY` | Quiet-period seconds (default: `0.8`) used to concatenate rapid-fire inbound text messages into a single MessageEvent — same pattern as Telegram's text batching. |
+| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | Grace window before flushing queued Telegram media (default: `0.6`). |
+| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | Delay before sending a follow-up after the agent finishes, to avoid racing the last stream chunk. |
+| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | Override the underlying `python-telegram-bot` HTTP timeouts (seconds). |
+| `HERMES_TELEGRAM_INIT_TIMEOUT` | Per-attempt cap (seconds) on the Telegram `initialize()` connect chain during gateway startup, so an unreachable fallback-IP chain can't block startup indefinitely (default: `30`). |
+| `HERMES_TELEGRAM_HTTP_POOL_SIZE` | Max concurrent HTTP connections to the Telegram API. |
+| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | Disable the hard-coded Cloudflare fallback IPs used when DNS fails (`true`/`false`). |
+| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | Grace window before flushing a queued Discord text chunk (default: `0.6`). |
+| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | Delay between split chunks when a Discord message exceeds the length limit (default: `2.0`). |
+| `HERMES_DISCORD_LIVENESS_INTERVAL_SECONDS` | Compatibility/manual override for `discord.websocket_liveness_interval_seconds`. Interval for sampling the active Discord Gateway WebSocket (default: `15`; set to `0` to disable). Prefer the `config.yaml` key. |
+| `HERMES_DISCORD_LIVENESS_FAILURE_THRESHOLD` | Compatibility/manual override for `discord.websocket_liveness_failure_threshold`. Consecutive unhealthy WebSocket samples before forcing a reconnect (default: `2`). Prefer the `config.yaml` key. |
+| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Matrix equivalents of the Telegram batch knobs. |
+| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu batcher tuning — delay, split delay, max chars per message, max messages per batch. |
+| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu media flush delay. |
+| `HERMES_FEISHU_DEDUP_CACHE_SIZE` | Size of the Feishu webhook dedup cache (default: `1024`). |
+| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom batcher tuning. |
+| `HERMES_VISION_DOWNLOAD_TIMEOUT` | Timeout in seconds for downloading an image before handing it to vision models (default: `30`). |
+| `HERMES_VISION_MAX_CONCURRENCY` | Max concurrent image **encode/resize** bursts across the whole process (override for `auxiliary.vision.max_concurrency`; default: host CPU core count, no ceiling). Bounds only the CPU-bound encode step so a video-frame fan-out can't saturate every core and starve the event loop — the LLM calls stay fully concurrent. Values `< 1` are ignored. |
+| `HERMES_RESTART_DRAIN_TIMEOUT` | Gateway: seconds to wait for active runs to drain on `/restart` before forcing the restart (default: `900`). |
+| `HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT` | Per-platform connect timeout during gateway startup and reconnect (seconds; `0`/negative waits indefinitely). Applies to the connect attempt *and* the Discord adapter's ready-wait, so accounts with many slash commands to sync don't get killed mid-startup. Bridged from `gateway.platform_connect_timeout` in `config.yaml` (default `30`); this env var is the manual override and wins if set explicitly. |
+| `HERMES_GATEWAY_BUSY_INPUT_MODE` | Default gateway busy-input behavior: `queue`, `steer`, or `interrupt`. Can be overridden for the active profile with `/busy`. |
+| `HERMES_GATEWAY_BUSY_ACK_ENABLED` | Whether the gateway sends an acknowledgment message (⚡/⏳/⏩) when a user sends input while the agent is busy (default: `true`). Set to `false` to suppress these messages entirely — the input is still queued/steered/interrupts as normal, only the chat reply is silenced. Bridged from `display.busy_ack_enabled` in `config.yaml`. |
+| `HERMES_GATEWAY_NO_SUPERVISE` | Inside the s6-overlay Docker image, opt out of auto-supervision when running `hermes gateway run` and use pre-s6 foreground semantics (no auto-restart, gateway is the container's main process). Truthy values: `1`, `true`, `yes`. Equivalent to the `--no-supervise` CLI flag. No-op outside the s6 image. |
+| `HERMES_GATEWAY_BOOTSTRAP_STATE` | Inside the s6-overlay Docker image, declare the gateway's **initial** supervised state on a fresh volume. On a blank volume there is no persisted `gateway_state.json`, so the boot reconciler registers the `gateway-default` slot but leaves it **down** (it only auto-starts when the last recorded state was `running`). Set this to `running` and the first-boot setup hook seeds `gateway_state.json` *before* the reconciler runs, so the gateway comes up on the very first boot. Only the literal value `running` is honoured. First-boot-only: an existing `gateway_state.json` is never overwritten, so a deliberately-stopped gateway stays stopped across restarts. No-op outside the s6 image. |
+| `GATEWAY_RELAY_URL` | Experimental relay connector WebSocket base URL. When set, the gateway registers the generic `relay` adapter and dials the connector outbound. Mirrors `gateway.relay_url` in `config.yaml`. |
+| `GATEWAY_RELAY_ID` | Relay gateway identifier assigned by `hermes gateway enroll` or managed self-provisioning. Mirrors `gateway.relay_id`. |
+| `GATEWAY_RELAY_SECRET` | Per-gateway relay secret used to authenticate the WebSocket. If this is already configured, managed self-provisioning is skipped. Mirrors `gateway.relay_secret`. |
+| `GATEWAY_RELAY_DELIVERY_KEY` | Connector-issued delivery key retained for relay/passthrough authentication compatibility. Current relay inbound messages arrive on the outbound WebSocket rather than a gateway-side HTTP receiver. |
+| `GATEWAY_RELAY_ENROLL_TOKEN` | Enrollment token consumed by `hermes gateway enroll` when `--token` is not passed explicitly. |
+| `GATEWAY_RELAY_PLATFORM` | Optional platform name advertised in the relay capability descriptor. |
+| `GATEWAY_RELAY_BOT_ID` | Optional bot identifier advertised in the relay capability descriptor. |
+| `GATEWAY_RELAY_ENDPOINT` | Optional gateway endpoint advertised for connector modes that need a callback/passthrough URL; not required for the default WS-only inbound relay path. Mirrors `gateway.relay_endpoint`. |
+| `GATEWAY_RELAY_ROUTE_KEYS` | Comma-separated relay route keys advertised to the connector. Mirrors `gateway.relay_route_keys`. |
+| `HERMES_FILE_MUTATION_VERIFIER` | Enable the per-turn file-mutation verifier footer (default: `true`). When enabled, Hermes appends an advisory listing any `write_file` / `patch` calls that failed during the turn and were not superseded by a successful write. Set to `0`, `false`, `no`, or `off` to suppress. Mirrors `display.file_mutation_verifier` in `config.yaml`; the env var wins when set. |
+| `HERMES_CRON_TIMEOUT` | Inactivity timeout for cron job agent runs in seconds (default: `600`). The agent can run indefinitely while actively calling tools or receiving stream tokens — this only triggers when idle. Set to `0` for unlimited. |
+| `HERMES_CRON_SCRIPT_TIMEOUT` | Timeout for pre-run scripts attached to cron jobs in seconds (default: `3600`). Bounds the script only — skill/agent jobs use the separate `HERMES_CRON_TIMEOUT` inactivity budget. Also configurable via `cron.script_timeout_seconds` in `config.yaml`. |
+| `HERMES_CRON_MEDIA_SEND_TIMEOUT` | Timeout for each media attachment send during cron delivery via a live gateway adapter, in seconds (default: `300`). Raise it if large attachments (long TTS audio, big exports) time out during upload. Also configurable via `cron.media_send_timeout_seconds` in `config.yaml`. |
+| `HERMES_CRON_MAX_PARALLEL` | Max cron jobs run in parallel per tick (default: `4`). |
+
+## NeMo Relay
+
+| 变量 | 描述 |
+|----------|-------------|
+| `HERMES_NEMO_RELAY_PLUGINS_TOML` | 指定 Hermes 核心在全局范围内加载的标准 NeMo Relay `plugins.toml` 文件的路径。若未设置该变量，Hermes 将不会初始化 Relay 中间件、动态插件或导出功能。已被移除的 `HERMES_NEMO_RELAY_ATOF_*` 和 `HERMES_NEMO_RELAY_ATIF_*` 变量将被忽略，应在其对应的配置文件中设置相关参数。详情请参阅 [NeMo Relay 可观测性配置](https://docs.nvidia.com/nemo/relay/configure-plugins/observability/about)。 |
+
+## Agent 行为
+
+| Variable | Description |
+|----------|-------------|
+| `HERMES_MAX_ITERATIONS` | Max tool-calling iterations per conversation (default: 500) |
+| `HERMES_INFERENCE_MODEL` | Override model name at process level (takes priority over `config.yaml` for the session). Also settable via `-m`/`--model` flag. |
+| `HERMES_YOLO_MODE` | Set to `1` to bypass dangerous-command approval prompts. Equivalent to `--yolo`. |
+| `HERMES_ACCEPT_HOOKS` | Auto-approve any unseen shell hooks declared in `config.yaml` without a TTY prompt. Equivalent to `--accept-hooks` or `hooks_auto_accept: true`. |
+| `HERMES_IGNORE_USER_CONFIG` | Skip `~/.hermes/config.yaml` and use built-in defaults (credentials in `.env` still load). Equivalent to `--ignore-user-config`. |
+| `HERMES_IGNORE_RULES` | Skip auto-injection of `AGENTS.md`, `SOUL.md`, `.cursorrules`, memory, and preloaded skills. Equivalent to `--ignore-rules`. |
+| `HERMES_SAFE_MODE` | Troubleshooting mode: disable ALL customizations — skips plugin discovery, MCP server loading, and shell-hook registration. Set automatically by `--safe-mode` (which also sets the two flags above). |
+| `HERMES_TOOL_PROGRESS` | Unsupported since the config-v12 support floor — the variable is ignored. Use `display.tool_progress` in `config.yaml`. |
+| `HERMES_TOOL_PROGRESS_MODE` | Deprecated compatibility variable for tool progress mode (still read by the gateway as a fallback). Prefer `display.tool_progress` in `config.yaml`. |
+| `HERMES_HUMAN_DELAY_MODE` | Response pacing: `off`/`natural`/`custom` |
+| `HERMES_HUMAN_DELAY_MIN_MS` | Custom delay range minimum (ms) |
+| `HERMES_HUMAN_DELAY_MAX_MS` | Custom delay range maximum (ms) |
+| `HERMES_QUIET` | Suppress non-essential output (`true`/`false`) |
+| `CODEX_HOME` | When [Codex app-server runtime](../user-guide/features/codex-app-server-runtime) is enabled, override the directory Codex CLI reads its config + auth from (default: `~/.codex`). Hermes' migration writes the managed block to `<CODEX_HOME>/config.toml`. |
+| `HERMES_KANBAN_TASK` | Set by the kanban dispatcher when spawning a worker (task UUID). Workers and the spawned `hermes-tools` MCP subprocess inherit it so kanban tools gate correctly. Don't set manually. |
+| `HERMES_ACP_SKIP_CONFIGURED_MCP` | Set by an [ACP host](../user-guide/features/acp#host-integration) on the Hermes subprocess it spawns. `1` skips starting the globally configured `config.yaml` MCP servers before the ACP JSON-RPC loop, for hosts that pass the session's MCP servers through `session/new` themselves. Servers supplied by the ACP session are still registered; any other value keeps the default. Don't set manually. |
+| `HERMES_API_TIMEOUT` | LLM API call timeout in seconds (default: `1800`) |
+| `HERMES_API_CALL_STALE_TIMEOUT` | Non-streaming stale-call timeout in seconds (default: `90`). Auto-disabled for local providers when left unset, and may scale upward for very large contexts. Also configurable via `providers.<id>.stale_timeout_seconds` or `providers.<id>.models.<model>.stale_timeout_seconds` in `config.yaml`. |
+| `HERMES_STREAM_READ_TIMEOUT` | Streaming socket read timeout in seconds (default: `120`). Auto-increased to `HERMES_API_TIMEOUT` for local providers. Increase if local LLMs time out during long code generation. |
+| `HERMES_STREAM_STALE_TIMEOUT` | Stale stream detection timeout in seconds (default: `180`). Auto-disabled for local providers. Triggers connection kill if no chunks arrive within this window. |
+| `HERMES_LOCAL_STREAM_STALE_TIMEOUT` | Stale stream ceiling for local providers (Ollama, oMLX, llama-cpp) in seconds (default: `900`). When the base stale timeout is at its default and a local endpoint is detected, this finite ceiling replaces the former infinite disable so a wedged local server eventually trips the detector instead of hanging forever. Also configurable via `agent.local_stream_stale_timeout` in `config.yaml`. |
+| `HERMES_STREAM_RETRIES` | Number of mid-stream reconnect attempts on transient network errors (default: `3`). |
+| `HERMES_STREAM_STALE_GIVEUP` | Cross-turn circuit breaker: after this many consecutive stale kills (streaming or non-streaming) with no completed response, abort each call immediately with an actionable error instead of re-waiting out the stale timeout (default: `5`, `0` disables). Resets on any completed response, `/model` switch, fallback activation, or turn-start primary restore. |
+| `HERMES_AGENT_TIMEOUT` | Gateway inactivity timeout for a running agent in seconds (default: `1800`, 30 minutes). Resets on every tool call and streamed token. Set to `0` to disable. |
+| `HERMES_GATEWAY_MAX_STARTS` | Respawn-storm circuit breaker: maximum gateway (re)starts allowed within the window before an exponential backoff is slept to break the storm (default: `5`, `0` disables). Also configurable via `gateway.respawn_storm.max_starts` in `config.yaml`. |
+| `HERMES_GATEWAY_START_WINDOW_S` | Respawn-storm breaker window in seconds (default: `120`). Also configurable via `gateway.respawn_storm.window_seconds` in `config.yaml`. |
+| `HERMES_AGENT_TIMEOUT_WARNING` | Gateway: send a warning message after this many seconds of inactivity (default: 75% of `HERMES_AGENT_TIMEOUT`). |
+| `HERMES_AGENT_NOTIFY_INTERVAL` | Gateway: interval in seconds between progress notifications on long-running agent turns. |
+| `HERMES_CHECKPOINT_TIMEOUT` | Timeout for filesystem checkpoint creation in seconds (default: `30`). |
+| `HERMES_EXEC_ASK` | Enable execution approval prompts in gateway mode (`true`/`false`) |
+| `HERMES_ENABLE_PROJECT_PLUGINS` | Enable auto-discovery of repo-local plugins from `./.hermes/plugins/` for both the agent loader and the dashboard web server. Accepts the standard truthy set: `1` / `true` / `yes` / `on` (case-insensitive). Everything else — including `0`, `false`, `no`, `off`, and the empty string — is treated as **disabled** (default). Note: as of GHSA-5qr3-c538-wm9j (#29156) the dashboard web server refuses to auto-import a project plugin's Python `api` file even when this var is enabled — project plugins may extend the UI via static JS/CSS but their backend routes are only loaded when moved under `~/.hermes/plugins/`. |
+| `HERMES_PLUGINS_DEBUG` | `1`/`true` to surface verbose plugin-discovery logs on stderr — directories scanned, manifests parsed, skip reasons, and full tracebacks on parse or `register()` failure. Aimed at plugin authors. |
+| `HERMES_BACKGROUND_NOTIFICATIONS` | Background process notification mode in gateway: `concise` (default), `all`, `result`, `error`, `off` |
+| `HERMES_EPHEMERAL_SYSTEM_PROMPT` | Ephemeral system prompt injected at API-call time (never persisted to sessions) |
+| `HERMES_PREFILL_MESSAGES_FILE` | Path to a JSON file of ephemeral prefill messages injected at API-call time. |
+| `HERMES_ALLOW_PRIVATE_URLS` | `true`/`false` — allow tools to fetch localhost/private-network URLs. Off by default in gateway mode. |
+| `HERMES_REDACT_SECRETS` | `true`/`false` — control secret redaction in tool output, logs, and chat responses (default: `true`). |
+| `HERMES_WRITE_SAFE_ROOT` | Optional directory prefix that **hard-blocks** `write_file`/`patch` writes outside the listed roots (no approval prompt). Supports multiple directories separated by `os.pathsep` (`:` on Unix, `;` on Windows). See [HERMES_WRITE_SAFE_ROOT](#hermes_write_safe_root) below. |
+| `HERMES_DISABLE_LAZY_INSTALLS` | Internal bridge var set automatically in the official Docker image to prevent runtime dependency installs into the immutable `/opt/hermes` tree. The user-facing equivalent is `security.allow_lazy_installs: false` in `config.yaml`; do not set this in `.env`. |
+| `HERMES_DISABLE_FILE_STATE_GUARD` | Set to `1` to turn off the "file changed since you read it" guard on `patch`/`write_file`. |
+| `HERMES_BUNDLED_SKILLS` | Comma-separated override for the list of bundled skills loaded at startup. |
+| `HERMES_OPTIONAL_SKILLS` | Comma-separated list of optional-skill names to auto-install on first run. |
+| `HERMES_DEBUG_INTERRUPT` | Set to `1` to log detailed interrupt/cancel tracing to `agent.log`. |
+| `HERMES_DUMP_REQUESTS` | Dump API request payloads to log files (`true`/`false`) |
+| `HERMES_DUMP_REQUEST_STDOUT` | Dump API request payloads to stdout instead of log files. |
+| `HERMES_OAUTH_TRACE` | Set to `1` to log OAuth token exchange and refresh attempts. Includes redacted timing info. |
+| `HERMES_AGENT_HELP_GUIDANCE` | Append additional guidance text to the system prompt for custom deployments. |
+| `HERMES_AGENT_LOGO` | Override the ASCII banner logo at CLI startup. |
+| `DELEGATION_MAX_CONCURRENT_CHILDREN` | Max parallel subagents per `delegate_task` batch (default: `3`, floor of 1, no ceiling). Also configurable via `delegation.max_concurrent_children` in `config.yaml` — the config value takes priority. |
+
+### HERMES_WRITE_SAFE_ROOT {#hermes_write_safe_root}
+
+当设置此变量后，`write_file` 和 `patch` 指令仅能作用于所列目录前缀内的路径。任何位于这些安全目录之外的路径都会**立即被拒绝**——此类写入操作无需经过危险命令审批流程，也不会出现允许用户强制执行的提示。
+
+官方 Docker 镜像将 `HERMES_WRITE_SAFE_ROOT` 和 `HERMES_HOME` 同时设置为 `/opt/data`，以此确保智能体无法脱离已挂载的数据卷进行操作。
+
+**除非您确实希望对写入操作进行沙箱限制，否则请勿将此变量添加到 `~/.hermes/.env` 文件中。** 一个常见的错误是将该变量指向项目目录，却期望智能体能够编辑 `~/.hermes/cron/jobs.json`、`~/.hermes/skills/` 或配置文件下的脚本——这些路径均位于沙箱之外，因此任何针对它们的 `write_file`/`patch` 操作都会因“超出 HERMES_WRITE_SAFE_ROOT 范围”而失败。
+
+若需同时允许保存工作区数据与 Hermes 状态，请列出这两个目录前缀（顺序无关）：
+
+```bash
+export HERMES_WRITE_SAFE_ROOT=/path/to/project:/home/you/.hermes
+```
+
+若要恢复正常的写入功能，请将该变量重置或从 `.env` 文件中删除（但仍受凭据路径禁止列表的限制——详见[文件写入安全机制](../user-guide/security.md#file-write-safety)）。
+
+## 接口参数
+
+| 变量名 | 描述 |
 |--------|------|
-| `HERMES_TELEGRAM_TEXT_BATCH_DELAY_SECONDS` | 打包待发送的 Telegram 文本内容前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当单条 Telegram 消息长度超过限制时，拆分内容之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_TELEGRAM_MEDIA_BATCH_DELAY_SECONDS` | 打包待发送的 Telegram 媒体内容前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_TELEGRAM_FOLLOWUP_GRACE_SECONDS` | 在智能体处理完成后，发送后续消息之前的延迟时间，以避免与最后一批流式数据发生冲突。 |
-| `HERMES_TELEGRAM_HTTP_CONNECT_TIMEOUT` / `_READ_TIMEOUT` / `_WRITE_TIMEOUT` / `_POOL_TIMEOUT` | 覆盖底层的 `python-telegram-bot` HTTP 连接超时时间（单位：秒）。 |
-| `HERMES_TELEGRAM_HTTP_POOL_SIZE` | 连接到 Telegram API 的最大并发 HTTP 连接数。 |
-| `HERMES_TELEGRAM_DISABLE_FALLBACK_IPS` | 禁用在 DNS 解析失败时使用的硬编码 Cloudflare 备用 IP（值：`true`/`false`）。 |
-| `HERMES_DISCORD_TEXT_BATCH_DELAY_SECONDS` | 打包待发送的 Discord 文本内容前的缓冲时间（默认值：`0.6` 秒）。 |
-| `HERMES_DISCORD_TEXT_BATCH_SPLIT_DELAY_SECONDS` | 当 Discord 消息长度超过限制时，拆分内容之间的延迟时间（默认值：`2.0` 秒）。 |
-| `HERMES_DISCORD_LIVENESS_INTERVAL_SECONDS` | 对应 `config.yaml` 中 `discord.liveness_interval_seconds` 的内部参数。用于向 Discord 发送 REST 活性检测请求的间隔时间，该请求可识别位于失效代理或 NAT 后端的“僵尸”客户端（默认值：`60` 秒；设为 `0` 即禁用）。建议优先在 `config.yaml` 中设置 `discord.liveness_interval_seconds`。 |
-| `HERMES_DISCORD_LIVENESS_FAILURE_THRESHOLD` | 对应 `config.yaml` 中 `discord.liveness_failure_threshold` 的内部参数。在连续多次检测失败后强制重新连接 Discord 的阈值（默认值：`3` 次）。建议优先在 `config.yaml` 中设置 `discord.liveness_failure_threshold`。 |
-| `HERMES_MATRIX_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | Telegram 批量处理参数在 Matrix 平台上的对应设置。 |
-| `HERMES_FEISHU_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` / `_MAX_CHARS` / `_MAX_MESSAGES` | Feishu 平台的批量处理参数——包括延迟时间、拆分延迟、单条消息的最大字符数以及每批的最大消息数。 |
-| `HERMES_FEISHU_MEDIA_BATCH_DELAY_SECONDS` | Feishu 媒体内容的发送延迟时间。 |
-| `HERMES_FEISHU_DEDUP_CACHE_SIZE` | Feishu webhook 冗余检测缓存的大小（默认值：`1024`）。 |
-| `HERMES_WECOM_TEXT_BATCH_DELAY_SECONDS` / `_SPLIT_DELAY_SECONDS` | WeCom 平台的批量处理参数。 |
-| `HERMES_VISION_DOWNLOAD_TIMEOUT` | 在将图像传递给视觉模型之前，下载该图像的超时时间（单位：秒，默认值：`30` 秒）。 |
-| `HERMES_RESTART_DRAIN_TIMEOUT` | 网关在接收到 `/restart` 命令后，等待正在运行的任务完成所需的等待时间（默认值：`900` 秒），之后才会强制重启。 |
-| `HERMES_GATEWAY_PLATFORM_CONNECT_TIMEOUT` | 网关启动时针对不同平台的连接超时时间（单位：秒）。 |
-| `HERMES_GATEWAY_BUSY_INPUT_MODE` | 网关在处理任务繁忙时的默认输入处理方式：`queue`、`steer` 或 `interrupt`。可通过 `/busy` 命令针对特定聊天单独设置。 |
-| `HERMES_GATEWAY Busy_ACK_ENABLED` | 当用户在智能体忙碌时发送输入，网关是否发送确认消息（⚡/⏳/⏩）（默认值：`true`）。设为 `false` 可完全隐藏这些消息——输入仍会按常规被排队、引导或中断，仅取消聊天回复的确认提示。该参数源自 `config.yaml` 中的 `display.busy_ack_enabled`。 |
-| `HERMES_GATEWAY_NO_SUPERVISE` | 在 s6-overlay Docker 镜像中，运行 `hermes gateway run` 时取消自动监控功能，采用 s6 之前的前台进程机制（无自动重启，网关为容器的主进程）。有效值为：`1`、`true`、`yes`。相当于 CLI 参数 `--no-supervise`。在 s6 镜像之外此参数无效。 |
-| `HERMES_GATEWAY_BOOTSTRAP_STATE` | 在 s6-overlay Docker 镜像中，用于指定新卷上网关的**初始**监控状态。由于空白卷上不存在持久化的 `gateway_state.json` 文件，因此启动时协调器会注册 `gateway-default` 选项，但将其状态设为**关闭**（仅当上次记录的状态为“运行中”时才会自动启动）。将此参数设为 `running`，则首次启动时的设置钩子会在协调器运行之前生成 `gateway_state.json`，从而使网关在首次启动时就处于运行状态。仅接受字面值 `running`。该功能仅适用于首次启动：已存在的 `gateway_state.json` 文件不会被覆盖，因此故意停止的网关在重启后仍会保持停止状态。在 s6 镜像之外此参数无效。 |
-| `GATEWAY_RELAY_URL` | 实验性的中继连接器 WebSocket 基础地址。设置该参数后，网关会注册通用的 `relay` 适配器，并向外连接该中继。对应 `config.yaml` 中的 `gateway.relay_url`。 |
-| `GATEWAY_RELAY_ID` | 由 `hermes gateway enroll` 指定或通过自主配置管理的中继网关标识符。对应 `gateway.relay_id`。 |
-| `GATEWAY_RELAY_SECRET` | 用于验证 WebSocket 连接的、针对每个网关的专用密钥。如果已配置此参数，则无需进行自主配置管理。对应 `gateway.relay_secret`。 |
-| `GATEWAY_RELAY_DELIVERY_KEY` | 由连接器生成的传递密钥，用于确保中继/直通模式的认证兼容性。当前的中继入站消息是通过 outbound WebSocket 而非网关端的 HTTP 接收器送达的。 |
-| `GATEWAY_RELAY_ENROLL_TOKEN` | 当未明确指定 `--token` 参数时，`hermes gateway enroll` 功能所使用的注册令牌。 |
-| `GATEWAY_RELAY_PLATFORM` | 中继功能描述中可选的平台名称。 |
-| `GATEWAY_RELAY_BOT_ID` | 中继功能描述中可选的机器人标识符。 |
-| `GATEWAY_RELAY_ENDPOINT` | 对于需要回调/直通 URL 的连接器模式，可选的网关端点地址；对于默认的仅支持 WS 的入站中继路径则无需此参数。对应 `gateway.relay_endpoint`。 |
-| `GATEWAY_RELAY_ROUTE_KEYS` | 向连接器声明的、以逗号分隔的中继路由键值对。对应 `gateway.relay_route_keys`。 |
-| `HERMES_FILE_MUTATION_VERIFIER` | 启用每轮对话后的文件变更验证脚注功能（默认值：`true`）。启用后，Hermes 会附加一条提示信息，列出在该轮对话中所有失败且未被后续成功写入操作覆盖的 `write_file`/`patch` 操作。设为 `0`、`false`、`no` 或 `off` 可关闭此功能。对应 `config.yaml` 中的 `display.file_mutation_verifier`；若环境变量已设置，则以环境变量为准。 |
-| `HERMES_CRON_TIMEOUT` | 定时任务智能体运行时的空闲超时时间（单位：秒，默认值：`600` 秒）。只要智能体仍在主动调用工具或接收流式数据，就可以无限期运行——此超时仅在智能体处于空闲状态时触发。设为 `0` 表示无限制。 |
-| `HERMES_CRON_SCRIPT_TIMEOUT` | 附加在定时任务前的预执行脚本的超时时间（单位：秒，默认值：`120` 秒）。对于需要更长时间执行的脚本（例如为防止机器人检测而设置的随机延迟），可对此参数进行覆盖。也可通过 `config.yaml` 中的 `cron.script_timeout_seconds` 进行配置。 |
-| `HERMES_CRON_MAX_PARALLEL` | 每个时间间隔内最多可并行运行的定时任务数量（默认值：`4` 个）。 |
+| `HERMES_TUI` | 当其值为 `1` 时，启动[TUI界面](../user-guide/tui.md)而非传统的命令行界面，效果等同于使用 `--tui` 参数。 |
+| `HERMES_TUI_DIR` | 预置的 `ui-tui/` 目录路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 文件）。发行版和 Nix 可通过此参数跳过首次启动时的 `npm install` 操作。 |
+| `HERMES_TUI_RESUME` | 启动时根据编号恢复特定的 TUI 会话。设置该参数后，执行 `hermes --tui` 命令时会直接继承已存在的会话，而不会新建会话——这有助于在连接中断或终端崩溃后重新接入。 |
+| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或是 6 位十六进制值表示的背景色（例如 `ffffff` 或 `1a1a2e`）。若未设置该参数，Hermes 会通过 `COLORFGBG` 及终端背景色查询自动检测主题；对于未设置 `COLORFGBG` 的终端（如 Ghostty、Warp、iTerm2 等），此参数可覆盖自动检测结果。 |
+| `HERMES_INFERENCE_MODEL` | 不修改 `config.yaml` 文件即可强制指定 `hermes -z` / `hermes chat` 命令使用的模型。需与 `--provider` 参数配合使用。对于需要每次运行时都覆盖默认模型的脚本化工具（如任务扫描器、CI 环境、批量处理程序）而言，此参数非常实用。 |
 
-## 智能体行为| 参数名 | 描述 |
-|--------|------|
-| `HERMES_MAX_ITERATIONS` | 每次对话中调用工具的最大迭代次数（默认值：90） |
-| `HERMES_INFERENCE_MODEL` | 在进程层面指定模型名称（该设置会优先于会话中的 `config.yaml` 配置）。也可通过 `-m`/`--model` 参数进行设置。 |
-| `HERMES_YOLO_MODE` | 设定为 `1` 可绕过危险命令的审批提示。功能等同于 `--yolo`。 |
-| `HERMES_ACCEPT_HOOKS` | 在无终端提示的情况下，自动批准 `config.yaml` 中声明的所有未见过的全局 shell hook。功能等同于 `--accept-hooks` 或 `hooks_auto_accept: true`。 |
-| `HERMES_IGNORE_USER_CONFIG` | 跳过 `~/.hermes/config.yaml` 文件，使用内置默认配置（但 `.env` 文件中的凭证仍会被加载）。功能等同于 `--ignore-user-config`。 |
-| `HERMES_IGNORE_RULES` | 跳过自动注入的 `AGENTS.md`、`SOUL.md`、`.cursorrules` 文件、内存内容以及预加载的技能。功能等同于 `--ignore-rules`。 |
-| `HERMES_SAFE_MODE` | 故障排查模式：禁用所有自定义配置——跳过插件发现和 MCP 服务器加载流程。该模式会由 `--safe-mode` 参数自动启用（同时也会设置上述两个参数）。 |
-| `HERMES_MD_NAMES` | 以逗号分隔的规则文件名列表，系统会自动注入这些文件（默认值：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
-| `HERMES_TOOL_PROGRESS` | 用于显示工具处理进度的过时兼容参数。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
-| `HERMES_TOOL_PROGRESS_MODE` | 用于控制工具进度显示模式的过时兼容参数。建议在 `config.yaml` 中使用 `display.tool_progress` 参数。 |
-| `HERMES_HUMAN_DELAY_MODE` | 响应节奏控制：`off`/`natural`/`custom` |
-| `HERMES_HUMAN_DELAY_MIN_MS` | 自定义延迟的最小值（单位：毫秒） |
-| `HERMES_HUMAN_DELAY_MAX_MS` | 自定义延迟的最大值（单位：毫秒） |
-| `HERMES_QUIET` | 是否抑制非必要输出（`true`/`false`） |
-| `CODEX_HOME` | 当启用 [Codex 应用服务器运行时环境](../user-guide/features/codex-app-server-runtime) 时，用于指定 Codex CLI 读取配置及认证信息的目录路径（默认值：`~/.codex`）。Hermes 的迁移机制会将相关配置写入 `<CODEX_HOME>/config.toml` 文件中。 |
-| `HERMES_KANBAN_TASK` | 由看板调度器在启动工作进程时设置的任务 UUID。各个工作进程以及由此生成的 `hermes-tools` MCP 子进程都会继承该值，以便看板工具能够正确进行权限控制。请勿手动设置此参数。 |
-| `HERMES_API_TIMEOUT` | LLM API 调用的超时时间（单位：秒）（默认值：`1800`） |
-| `HERMES_API_CALL_STALE_TIMEOUT` | 非流式请求的超时时间（单位：秒）（默认值：`90`）。若未设置该参数，本地提供商的此功能将自动关闭；对于上下文规模极大的场景，该超时时间也可能会相应增加。同样可在 `config.yaml` 中通过 `providers.<id>.stale_timeout_seconds` 或 `providers.<id>.models.<model>.stale_timeout_seconds` 参数进行配置。 |
-| `HERMES_STREAM_READ_TIMEOUT` | 流式连接的读取超时时间（单位：秒）（默认值：`120`）。对于本地提供商，该值会自动设置为 `HERMES_API_TIMEOUT`。如果在长时间代码生成过程中出现本地 LLM 超时的情况，可适当增加此值。 |
-| `HERMES_STREAM_STALE_TIMEOUT` | 检测流式连接数据过时的超时时间（单位：秒）（默认值：`180`）。对于本地提供商，此功能将自动关闭。若在该时间内没有新的数据块传入，系统会主动断开连接。 |
-| `HERMES_STREAM_RETRIES` | 遇到短暂网络故障时，在流式连接过程中尝试重新连接的次数（默认值：`3`） |
-| `HERMES_AGENT_TIMEOUT` | 运行中的智能体处于非活跃状态时的超时时间（单位：秒）（默认值：`1800`，即 30 分钟）。每次调用工具或发送流式 token 后，该计时器都会重置。将其设置为 `0` 即可禁用此功能。 |
-| `HERMES_AGENT_TIMEOUT_WARNING` | 当智能体处于非活跃状态达到指定时间后，网关会发送警告信息（默认值：`HERMES_AGENT_TIMEOUT` 的 75%）。 |
-| `HERMES_AGENT_NOTIFY_INTERVAL` | 对于长时间运行的智能体轮次，网关在发送进度通知之间的间隔时间（单位：秒）。 |
-| `HERMES_CHECKPOINT_TIMEOUT` | 创建文件系统检查点的超时时间（单位：秒）（默认值：`30`） |
-| `HERMES_EXEC_ASK` | 在网关模式下是否启用执行操作前的审批提示（`true`/`false`） |
-| `HERMES_ENABLE_PROJECT_PLUGINS` | 是否允许智能体加载器及控制台网页服务器自动发现位于 `./.hermes/plugins/` 目录中的项目级插件。该参数接受所有表示“真”的值：`1` / `true` / `yes` / `on`（不区分大小写）。其余所有值——包括 `0`、`false`、`no`、`off` 以及空字符串——均被视为**禁用**状态（默认值）。注意：从 GHSA-5qr3-c538-wm9j (#29156) 版本开始，即使启用了此参数，控制台网页服务器仍不会自动导入项目插件的 Python `api` 文件——项目插件虽然可以通过静态 JS/CSS 扩展界面功能，但其后台路由仅当被放置在 `~/.hermes/plugins/` 目录下时才会被加载。 |
-| `HERMES_PLUGINS_DEBUG` | 设定为 `1`/`true` 时，会在标准错误流中输出详细的插件发现过程日志——包括扫描的目录、解析的清单文件、跳过某些文件的理由，以及解析或 `register()` 操作失败时的完整堆栈跟踪信息。该功能主要面向插件开发者。 |
-| `HERMES_BACKGROUND_NOTIFICATIONS` | 网关模式下的后台进程通知方式：`all`（默认值）、`result`、`error`、`off` |
-| `HERMES_EPHEMERAL_SYSTEM_PROMPT` | 在调用 API 时注入的临时系统提示语——此类提示语不会被保存到会话中。 |
-| `HERMES_PREFILL_MESSAGES_FILE` | 包含临时预填提示语的 JSON 文件路径，这些提示语会在调用 API 时被注入。 |
-| `HERMES_ALLOW_PRIVATE_URLS` | `true`/`false`——决定是否允许工具访问本地主机或私有网络中的 URL。在网关模式下默认为关闭状态。 |
-| `HERMES_REDACT_SECRETS` | `true`/`false`——控制是否在工具输出、日志及聊天回复中隐藏敏感信息（默认值：`true`）。 |
-| `HERMES_WRITE_SAFE_ROOT` | 用于限制 `write_file`/`patch` 操作的目录前缀；位于该前缀之外的路径将需要额外审批。支持使用 `os.pathsep` 符号分隔多个目录（Unix 系统用 `:`，Windows 系统用 `;`）。 |
-| `HERMES_DISABLE_LAZY_INSTALLS` | 官方 Docker 镜像中会自动设置此内部桥接参数，以防止在不可修改的 `/opt/hermes` 目录树下运行时安装依赖项。在用户配置文件 `config.yaml` 中，对应的参数为 `security.allow_lazy_installs: false`；请勿在 `.env` 文件中设置该参数。 |
-| `HERMES_DISABLE_FILE_STATE_GUARD` | 设定为 `1` 可关闭 `patch`/`write_file` 操作中的“自上次读取后文件已被修改”检测机制。 |
-| `HERMES_CORE_TOOLS` | 用于以逗号分隔的形式覆盖默认的核心工具列表（高级功能，通常无需使用）。 |
-| `HERMES_BUNDLED_SKILLS` | 用于以逗号分隔的形式覆盖启动时自动加载的预装技能列表。 |
-| `HERMES_OPTIONAL_SKILLS` | 以逗号分隔的可选技能名称列表，系统会在首次运行时自动安装这些技能。 |
-| `HERMES_DEBUG_INTERRUPT` | 设定为 `1` 时，会将详细的中断/取消操作流程记录到 `agent.log` 文件中。 |
-| `HERMES_DUMP_REQUESTS` | 是否将 API 请求的完整内容输出到日志文件中（`true`/`false`）。 |
-| `HERMES_dump_REQUEST_STDOUT` | 将 API 请求的完整内容直接输出到标准输出流，而非日志文件。 |
-| `HERMES_OAUTH_TRACE` | 设定为 `1` 时，会记录 OAuth 令牌的交换及刷新操作过程，同时还会包含经过脱敏处理的操作时间信息。 |
-| `HERMES_OAUTH_FILE` | 用于指定存储 OAuth 凭证文件的路径（默认值：`~/.hermes/auth.json`）。 |
-| `HERMES_AGENT_HELP_GUIDANCE` | 为自定义部署场景的系统提示语添加额外的指导文本。 |
-| `HERMES_AGENT_LOGO` | 用于在 CLI 启动时替换默认的 ASCII 标识徽标。 |
-| `DELEGATION_MAX_CONCURRENT_CHILDREN` | 每批 `delegate_task` 请求允许的最大并行子智能体数量（默认值：`3`，下限为 1，无上限）。同样可在 `config.yaml` 中通过 `delegation.max_concurrent_children` 参数进行设置——配置文件中的值具有优先级。 |
+## 会话设置 |
 
-## 界面相关参数
+| 变量 | 描述 |
+|------|------|
+| `HERMES_SESSION_ID` | **会自动导出到Hermes启动的每一个工具子进程**中，包括`terminal`、`execute_code`、持久化shell、Docker/Singularity后端以及委托运行的子代理。该变量由代理自行设置为当前会话ID；从这些工具中调用的用户脚本可读取该值，从而将其输出、遥测数据或副作用与最初的Hermes会话关联起来。**不建议手动设置此变量**——从父shell覆盖该值仅能在代理未运行时生效，且一旦代理开始新的会话，该覆盖值就会被重置。 |
+| `AI_AGENT` | **由CLI及网关入口点设置为`hermes-agent`**（前提是外部框架尚未设置该值），并会被导出到所有终端工具shell中——包括远程后端（如Docker、SSH、Modal、Daytona、Singularity、Vercel）。这是目前用于标识子进程所属代理的通用标准，各类通用工具（例如huggingface_hub的代理检测功能）都会读取该值以判断自身正在AI代理环境下运行。其值与公共代理框架注册表中的Hermes标识一致。请勿手动设置。 |
+| `HERMES_AGENT` | **由CLI及网关入口点设置为`true`**，并会被导出到所有终端工具shell中，以便子进程能够明确识别自己正在Hermes内部运行。请勿手动设置。 |
 
-| 参数名 | 描述 |
-|--------|------|
-| `HERMES_TUI` | 当该参数设置为 `1` 时，将启动 [TUI](../user-guide/tui.md) 界面，而非传统的命令行界面。功能等同于传递 `--tui` 参数。 |
-| `HERMES_TUI_DIR` | 预编译好的 `ui-tui/` 目录的路径（该目录必须包含 `dist/entry.js` 文件以及完整的 `node_modules` 依赖包）。发行版和 Nix 构建工具会使用此路径来跳过首次启动时的 `npm install` 安装步骤。 |
-| `HERMES_TUI_RESUME` | 启动时根据 ID 恢复特定的 TUI 会话。设置该参数后，执行 `hermes --tui` 命令时将不会创建新的会话，而是直接继续使用指定的会话——这在连接中断或终端崩溃后重新连接时非常有用。 |
-| `HERMES_TUI_THEME` | 强制指定 TUI 的颜色主题：`light`、`dark`，或直接输入 6 位十六进制值表示背景色（例如 `ffffff` 或 `1a1a2e`）。若未设置该参数，Hermes 会通过查询 `COLORFGBG` 及终端背景色来自动选择主题；对于那些未设置 `COLORFGBG` 参数的终端（如 Ghostty、Warp、iTerm2 等），此参数可覆盖自动检测的结果。 |
-| `HERMES_INFERENCE_MODEL` | 用于强制指定 `hermes -z` / `hermes chat` 命令所使用的模型，而无需修改 `config.yaml` 文件。该参数需与 `--provider` 参数一起使用。对于需要每次运行时都覆盖默认模型的脚本化调用场景（如自动化扫描工具、CI 环境、批量处理脚本等），此功能非常实用。 |
+## 上下文压缩（仅限config.yaml）
 
-## 会话设置参数
-
-| 参数名 | 描述 |
-|--------|------|
-| `SESSION_IDLE_MINUTES` | 智能体处于非活跃状态达到指定分钟数后，自动重置会话（默认值：1440 分钟，即 24 小时）。 |
-| `SESSION_RESET_HOUR` | 每日会话重置的时间，以 24 小时制表示（默认值：4，即凌晨 4 点）。 |
-| `HERMES_SESSION_ID` | **此参数会自动被嵌入到 Hermes 启动的每一个工具子进程**中——包括 `terminal`、`execute_code`、持久化 shell、Docker/Singularity 后端环境，以及通过委托方式运行的子智能体。智能体会将当前会话 ID 设置为此值；从工具中调用的用户脚本也可以读取该值，从而将其输出结果、监控数据或相关副作用与最初的 Hermes 会话关联起来。**不建议手动设置此参数**——从父终端覆盖该值仅能在非智能体运行模式下生效，且一旦智能体开始新的会话，该覆盖值就会被立即替换。 |
-
-## 上下文压缩功能（仅通过 `config.yaml` 配置）
-
-上下文压缩功能完全通过 `config.yaml` 文件进行配置，不存在对应的环境变量。阈值相关设置位于 `compression:` 块中，而摘要生成模型及提供者则配置在 `auxiliary.compression:` 下。
+上下文压缩功能仅通过 `config.yaml` 文件进行配置，不存在相关的环境变量。阈值设置位于 `compression:` 块中，而摘要生成模型及提供方则归属于 `auxiliary.compression:` 下。
 
 ```yaml
 compression:
@@ -506,28 +902,28 @@ compression:
   protect_last_n: 20         # minimum recent messages to keep uncompressed
 ```
 
-:::info 旧配置迁移
-包含 `compression.summary_model`、`compression.summary_provider` 以及 `compression.summary_base_url` 的旧版配置，在首次加载时会被自动迁移为 `auxiliary.compression.*` 格式。
+:::info 旧版本迁移
+包含 `compression.summary_model`、`compression.summary_provider` 以及 `compression.summary_base_url` 的旧配置，在首次加载时会被自动迁移为 `auxiliary.compression.*` 格式。
 :::
 
 ## 辅助任务覆盖参数
 
 | 参数名 | 描述 |
 |--------|------|
-| `AUXILIARY_VISION_PROVIDER` | 用于视觉任务的提供商覆盖参数 |
-| `AUXILIARY_VISION_MODEL` | 用于视觉任务的模型覆盖参数 |
-| `AUXILIARY_VISION_BASE_URL` | 用于视觉任务的直接 OpenAI 兼容接口地址 |
+| `AUXILIARY_VISION_PROVIDER` | 用于覆盖视觉任务的提供方 |
+| `AUXILIARY_VISION_MODEL` | 用于覆盖视觉任务的模型 |
+| `AUXILIARY_VISION_BASE_URL` | 用于视觉任务的 OpenAI 兼容直接端点地址 |
 | `AUXILIARY_VISION_API_KEY` | 与 `AUXILIARY_VISION_BASE_URL` 配对的 API 密钥 |
-| `AUXILIARY_WEB_EXTRACT_PROVIDER` | 用于网页提取/摘要任务的提供商覆盖参数 |
-| `AUXILIARY_WEB_EXTRACT_MODEL` | 用于网页提取/摘要任务的模型覆盖参数 |
-| `AUXILIARY_WEB_EXTRACT_BASE_URL` | 用于网页提取/摘要任务的直接 OpenAI 兼容接口地址 |
-| `AUXILIARY_WEB_EXTRACT_API_KEY` | 与 `AUXILIARY_WEB_EXTRACT_BASE_URL` 配对的 API 密钥 |
 
-对于特定任务所需的直接接口，Hermes 会使用该任务配置的 API 密钥或 `OPENAI_API_KEY`，而不会重复使用 `OPENROUTER_API_KEY`。
+:::note
+`AUXILIARY_WEB_EXTRACT_*` 系列参数已过时：`web_extract` 功能及浏览器快照不再依赖辅助大型语言模型。长页面和快照的内容会被固定长度截断，完整文本则会存储在磁盘上，以便通过 `read_file` 功能实现分页读取。
+:::
 
-## 备用提供商（仅适用于 config.yaml）
+对于特定任务对应的直接端点，Hermes 会使用该任务配置的 API 密钥或 `OPENAI_API_KEY`，而不会在这些自定义端点上重复使用 `OPENROUTER_API_KEY`。
 
-主模型的备用链配置完全通过 `config.yaml` 完成——不存在相应的环境变量。只需在文件顶部添加一个包含 `provider` 和 `model` 键的 `fallback_providers` 列表，即可在主模型出现故障时实现自动切换。那些提供商设置为 `auto` 的辅助任务，在触发 Hermes 内置的辅助任务发现机制之前，也会先查询此备用链。
+## 备用提供方（仅适用于 config.yaml）
+
+主要模型的备用链配置完全通过 `config.yaml` 完成——不存在相应的环境变量。只需在文件顶部添加一个包含 `provider` 和 `model` 键值的 `fallback_providers` 列表，即可在主模型出现故障时实现自动切换。那些提供方被设置为 `auto` 的辅助任务，在触发 Hermes 内置的辅助发现流程之前，也会先查询此备用链。
 
 ```yaml
 fallback_providers:
@@ -535,23 +931,23 @@ fallback_providers:
     model: anthropic/claude-sonnet-4
 ```
 
-为保持向后兼容性，系统仍会读取旧版的单提供者格式的 `fallback_model` 设置，但新配置应使用 `fallback_providers`。对于特定任务的辅助策略，请在 `config.yaml` 中使用 `auxiliary.<task>.fallback_chain` 选项；目前暂无对应的环境变量。
+为保持向后兼容性，系统仍会读取旧版那种仅基于单一提供者的 `fallback_model` 配置格式，但新配置应使用 `fallback_providers`。如需为特定任务配置辅助策略，请在 `config.yaml` 中使用 `auxiliary.<task>.fallback_chain` 选项；目前暂无对应的环境变量。
 
 详情请参阅 [Fallback Providers](/user-guide/features/fallback-providers) 文档。
 
-## 提供者路由设置（仅适用于 config.yaml）
+## 提供者路由配置（仅限 config.yaml）
 
-这些设置需放在 `~/.hermes/config.yaml` 文件的 `provider_routing` 部分中：
+这些配置需添加到 `~/.hermes/config.yaml` 文件的 `provider_routing` 部分中：
 
 | 键值 | 描述 |
 |-----|-------------|
 | `sort` | 提供者排序规则：`"price"`（默认）、`"throughput"` 或 `"latency"` |
-| `only` | 允许使用的提供者标识列表（例如：`["anthropic", "google"]`） |
-| `ignore` | 应跳过的提供者标识列表 |
-| `order` | 按指定顺序尝试的提供者标识列表 |
+| `only` | 允许使用的提供者标识符列表（例如：`["anthropic", "google"]`） |
+| `ignore` | 应跳过的提供者标识符列表 |
+| `order` | 按指定顺序尝试的提供者标识符列表 |
 | `require_parameters` | 仅使用能支持所有请求参数的提供者（`true`/`false`） |
 | `data_collection` | 设置为 `"allow"`（默认）或 `"deny"`，用于排除会存储数据的提供者 |
 
 :::tip
-建议使用 `hermes config set` 命令来设置环境变量——该命令会自动将它们保存到相应的文件中（敏感信息存入 `.env` 文件，其他内容则存入 `config.yaml`）。
+建议使用 `hermes config set` 命令来设置环境变量——该命令会自动将它们保存到相应的文件中（敏感信息保存为 `.env` 文件，其他配置则保存在 `config.yaml` 中）。
 :::
