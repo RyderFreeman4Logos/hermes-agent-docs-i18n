@@ -1765,6 +1765,7 @@
   - [Middleware](zh/docs/middleware/README.md)
   - [Observability](zh/docs/observability/README.md)
     - [网关监控](zh/docs/observability/monitoring.md)
+    - [NeMo Relay 共享指标功能](zh/docs/observability/relay-shared-metrics.md)
   - [Rfcs]()
     - [研究分析：从Pi和OpenCode中汲取的插件架构经验](zh/docs/rfcs/2026-07-plugin-architecture-lessons-pi-opencode.md)
     - [插件配置与状态桥接](zh/docs/rfcs/plugin-config-state-bridge.md)
