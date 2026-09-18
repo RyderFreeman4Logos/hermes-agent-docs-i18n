@@ -1139,7 +1139,7 @@ website/docs/user-guide/skills/optional/devops/devops-actual-setup.md	590215986a
 website/docs/user-guide/skills/optional/devops/devops-docker-management.md	ee41d6c8933507012602c15120263398fa87d39434bbdf95ff9e6acf1aa9c495
 website/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision.md	f5ecaf4b820ecf527ba06446c1173476cd590ccb452fa2d97c5d86e2f8036c93
 website/docs/user-guide/skills/optional/devops/devops-inference-sh-cli.md	75546727d273ae6c7b91f62a5a715a9d69044421e8099972e8040f5c234bff19
-website/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel.md	231fe09414dc51f85e5833e65686c1162bfc516c4be579ec98022ce51ac58501
+website/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel.md	961b6eabf9b0817dc8b3e503b0793f9e0fef8895b99de1e5d7943e0eaab0bd53
 website/docs/user-guide/skills/optional/devops/devops-setup-wizard-generator.md	c1d7c4d0835c7f4a2f910bfcd50df6ae216a4fcaa172b5c7559ae64e8ed7512a
 website/docs/user-guide/skills/optional/devops/devops-watchers.md	d894662342b229133838e63247fbd7dd04c806995cefcf60cad6dff8d0ce31d6
 website/docs/user-guide/skills/optional/dogfood/dogfood-adversarial-ux-test.md	9982128f8a192d05e6aa06833ef054c1ff5e673854fcb28ca7d4a7306673206c
