@@ -2502,7 +2502,7 @@
         - [sgconfig.yml — 项目配置](zh/optional-skills/software-development/ast-grep/references/sgconfig.md)
         - [YAML 规则参考 —— 原子规则、关系规则、复合规则、转换规则与修复规则](zh/optional-skills/software-development/ast-grep/references/yaml-rules.md)
     - [Code Wiki]()
-      - [Code Wiki 技能](zh/optional-skills/software-development/code-wiki/SKILL.md)
+      - [代码维基技能](zh/optional-skills/software-development/code-wiki/SKILL.md)
       - [Templates](zh/optional-skills/software-development/code-wiki/templates/README.md)
         - [架构](zh/optional-skills/software-development/code-wiki/templates/architecture.md)
         - [入门指南](zh/optional-skills/software-development/code-wiki/templates/getting-started.md)
