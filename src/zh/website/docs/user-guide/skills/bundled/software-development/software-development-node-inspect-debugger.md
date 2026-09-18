@@ -1,60 +1,60 @@
 ---
-title: "Node Inspect Debugger — Debug Node"
+title: "Node Inspect Debugger — Debug Node.js via --inspect + Chrome DevTools Protocol CLI"
 sidebar_label: "Node Inspect Debugger"
-description: "Debug Node"
+description: "Debug Node.js via --inspect + Chrome DevTools Protocol CLI"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Node Inspect 调试器
 
-通过 --inspect + Chrome DevTools Protocol CLI 功能对 Node.js 进行调试。
+通过 --inspect 选项结合 Chrome DevTools Protocol CLI 工具对 Node.js 进行调试。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/software-development/node-inspect-debugger` |
+| 路径 | `skills/software-development\node-inspect-debugger` |
 | 版本 | `1.0.0` |
 | 开发者 | Hermes Agent |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `debugging`、`nodejs`、`node-inspect`、`cdp`、`breakpoints`、`ui-tui` |
-| 相关技能 | [`systematic-debugging`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging)、[`python-debugpy`](/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy)、`debugging-hermes-tui-commands` |
+| 标签 | `调试`, `nodejs`, `node-inspect`, `cdp`, `断点`, `ui-tui` |
+| 相关技能 | [`systematic-debugging`](/docs/user-guide/skills/bundled/software-development/software-development-systematic-debugging), [`python-debugpy`](/docs/user-guide/skills/bundled/software-development/software-development-python-debugpy) |
 
 ## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会依据这些内容执行操作。
 :::
 
 # Node.js Inspect 调试器
 
 ## 概述
 
-当 `console.log` 已无法满足需求时，可通过终端以编程方式调用 Node 内置的 V8 探查工具。该调试器支持设置真正的断点、单步执行/跳过/退出、查看调用栈、导出局部变量/闭包作用域信息，以及在对当前帧进行暂停后评估任意表达式。
+当 `console.log` 已无法满足需求时，可通过终端以编程方式调用 Node 内置的 V8 探查工具。该调试器支持设置真实断点、单步执行/跳过/退出、查看调用栈、导出局部变量/闭包作用域信息，以及在对当前帧进行暂停时评估任意表达式。
 
-您可以选择以下两种工具之一：
+两种工具任选其一即可：
 
-- **`node inspect`** —— 内置工具，无需安装，支持 CLI REPL 模式，适合快速测试。
-- **`ndb` / 通过 `chrome-remote-interface` 实现的 CDP** —— 可从 Node/Python 脚本中调用，适用于需要自动化设置多个断点、在多次运行中收集状态信息，或通过代理循环进行非交互式调试的场景。
+- **`node inspect`** — 内置的、无需安装的 CLI REPL，非常适合快速测试。  
+- **`ndb` / 通过 `chrome-remote-interface` 的 CDP** — 可从 Node/Python 中编写脚本调用；当需要自动化设置多个断点、在多次运行中收集状态，或通过代理循环进行非交互式调试时，此方式更为适用。  
 
-**建议优先使用 `node inspect`**。它始终可用，且 REPL 模式的响应速度很快。
+**建议优先使用 `node inspect`**。它始终可用，且 REPL 的响应速度极快。  
 
 ## 适用场景
 
-- Node 测试失败，需要查看中间状态
-- ui-tui 发生崩溃或行为异常，需要检查 React/Ink 组件在预渲染前的状态
-- tui_gateway 的子进程（如 `_SlashWorker`、PTY 网桥进程）表现异常
-- 需要检查闭包中的某个值，而 `console.log` 无法直接获取（除非进行代码修改）
-- 性能分析：附加到正在运行的进程上，捕获 CPU 使用情况或堆内存快照
+- Node 测试失败，需要查看中间状态  
+- ui-tui 发生崩溃或行为异常，需检查渲染前的 React/Ink 状态  
+- tui_gateway 的子进程（如 `_SlashWorker`、PTY 桥接进程）表现异常  
+- 需要检查闭包中的某个值，而普通 `console.log` 无法直接获取，且无法通过修改代码来解决  
+- 性能分析：附加到正在运行的进程上，以捕获 CPU 使用情况或堆内存快照  
 
-**不推荐用于**：那些 `console.log` 即可在一分钟以内解决的问题。基于断点的调试方式较为繁琐，仅应在能带来显著收益的情况下使用。
+**不推荐用于**：那些用 `console.log` 即可在一分钟内解决的问题。基于断点的调试方式较为繁琐，仅应在确实有必要时使用。  
 
 ## `node inspect` REPL 快速参考
 
-首次启动时会自动暂停在第一行：
+首次启动时会暂停在第一行：
 
 ```bash
 node inspect path/to/script.js
@@ -80,17 +80,17 @@ node --inspect-brk $(which tsx) path/to/script.ts
 | `list(5)` | 显示当前位置周围的 5 行代码 |
 | `watch('expr')` | 每次暂停时计算 expr 的值 |
 | `watchers` | 显示已监控的表达式 |
-| `repl` | 进入当前作用域的 REPL 环境（按 Ctrl+C 可退出 REPL） |
+| `repl` | 进入当前作用域的 REPL 模式（按 Ctrl+C 可退出 REPL） |
 | `exec expr` | 一次性计算表达式的值 |
 | `restart` | 重新启动脚本 |
 | `kill` | 终止脚本运行 |
 | `.exit` | 退出调试器 |
 
-**在 `repl` 子模式中：** 可输入任意 JS 表达式，包括访问局部变量/闭包变量。按 `Ctrl+C` 可返回到 `debug>` 模式。
+**在 `repl` 子模式下：** 可输入任意 JS 表达式，包括访问局部变量/闭包变量。按 `Ctrl+C` 可返回到 `debug>` 模式。
 
 ## 连接到正在运行的进程
 
-当进程已在运行时（例如长期运行的开发服务器或 TUI 网关）：
+当进程已经处于运行状态时（例如长期运行的开发服务器或 TUI 网关）：
 
 ```bash
 # 1. Send SIGUSR1 to enable the inspector on an existing process
@@ -103,7 +103,7 @@ node inspect -p <pid>
 node inspect ws://127.0.0.1:9229/<uuid>
 ```
 
-要从头使用检查器启动一个进程：
+要从头使用 Inspector 启动一个流程：
 
 ```bash
 node --inspect script.js           # listen on 127.0.0.1:9229, keep running
@@ -111,7 +111,7 @@ node --inspect-brk script.js       # listen AND pause on first line
 node --inspect=0.0.0.0:9230 script.js   # custom host:port
 ```
 
-通过 tsx 使用 TypeScript 的情况：
+通过 tsx 使用 TypeScript 时：
 
 ```bash
 node --inspect-brk --import tsx script.ts
@@ -119,9 +119,9 @@ node --inspect-brk --import tsx script.ts
 node --inspect-brk -r tsx/cjs script.ts
 ```
 
-## 基于脚本的 CDP（终端编程方式）
+## 基于脚本的CDP（终端编程方式）
 
-当您需要实现自动化操作——例如设置多个断点、捕获作用域状态或编写可复现的脚本时，可使用 `chrome-remote-interface`：
+当您需要实现自动化操作——例如设置多个断点、捕获作用域状态或编写可复现的操作脚本时，可使用 `chrome-remote-interface`：
 
 ```bash
 npm i -g chrome-remote-interface        # or project-local
@@ -185,7 +185,7 @@ const CDP = require('chrome-remote-interface');
 node /tmp/cdp-debug.js
 ```
 
-关于Hermes的特别说明：`ui-tui/package.json`文件中并未包含`chrome-remote-interface`。若您不想污染项目源码，可将其安装到临时目录中。
+针对 Hermes 的特别说明：`ui-tui/package.json` 中并未包含 `chrome-remote-interface`。如果您不想污染项目文件，可将其安装到临时目录中。
 
 ```bash
 mkdir -p /tmp/cdp-tools && cd /tmp/cdp-tools && npm i chrome-remote-interface
@@ -194,32 +194,32 @@ NODE_PATH=/tmp/cdp-tools/node_modules node /tmp/cdp-debug.js
 
 ## 调试 Hermes ui-tui
 
-该 TUI 是使用 Ink 和 tsx 构建的。常见场景有两种：
+该 TUI 是使用 Ink 和 tsx 构建的。常见有以下两种场景：
 
 ### 在开发模式下调试单个 Ink 组件
 
-在 `ui-tui/package.json` 中已配置了 `npm run dev`（即 `tsx --watch` 命令）。若需直接运行 tsx 进行调试，可添加 `--inspect-brk` 参数：
+`ui-tui/package.json` 文件中已定义了 `npm run dev`（即 `tsx --watch` 命令）。若需直接运行 tsx 进行调试，可添加 `--inspect-brk` 参数：
 
 ```bash
-cd /home/bb/hermes-agent/ui-tui
+cd <hermes-agent-repo>/ui-tui
 npm run build    # produce dist/ once so transpile isn't needed on first load
 node --inspect-brk dist/entry.js
 # In another terminal:
 node inspect -p <node pid>
 ```
 
-接着在 `debug>` 内部：
+接着在 `debug>` 命令下：
 
 ```
 sb('dist/app.js', 220)     # or wherever the suspect render is
 cont
 ```
 
-当程序暂停时，可执行 `repl` 命令来查看 `props`、状态引用、`useInput` 处理函数的值等信息。
+当程序暂停时，可通过 `repl` 命令来查看 `props`、状态引用、`useInput` 处理器的值等信息。
 
 ### 调试正在运行的 `hermes --tui` 程序
 
-TUI 会通过 Python CLI 启动 Node.js。最简便的调试方式如下：
+TUI 会通过 Python CLI 启动 Node 进程。最简便的调试方法为：
 
 ```bash
 # 1. Launch TUI
@@ -236,16 +236,16 @@ curl -s http://127.0.0.1:9229/json/list | jq -r '.[0].webSocketDebuggerUrl'
 node inspect ws://127.0.0.1:9229/<uuid>
 ```
 
-在 TUI 窗口中输入指令可继续推进程序执行；您的调试器可在任意 `sb(...)` 语句处的断点处暂停执行。
+通过 TUI 进行交互（在其实时输入窗口中输入指令）可持续推动程序执行；您的调试器可在任意 `sb(...)` 语句处的断点处暂停执行。
 
 ### 调试 `_SlashWorker` / PTY 子进程
 
-这类进程是基于 Python 编写的，而非 Node，因此应使用 `python-debugpy` 能力进行调试。仅有基于 Node 的部分（如 Ink UI、tui_gateway 客户端，以及 `ui-tui/` 目录下的 tsx-run 测试）才适用该能力。
+这类进程为 Python 编写，而非 Node —— 应使用 `python-debugpy` 技能进行调试。仅有 Node 相关部分（如 Ink UI、tui_gateway 客户端，以及 `ui-tui/` 目录下的 tsx-run 测试）才适用该技能。
 
-## 在调试器下运行 Vitest 测试
+## 在调试器环境下运行 Vitest 测试
 
 ```bash
-cd /home/bb/hermes-agent/ui-tui
+cd <hermes-agent-repo>/ui-tui
 # Run a single test file paused on entry
 node --inspect-brk ./node_modules/vitest/vitest.mjs run --no-file-parallelism src/app/foo.test.tsx
 ```
@@ -279,35 +279,35 @@ require('fs').writeFileSync('/tmp/heap.heapsnapshot', chunks.join(''));
 
 ## 常见问题
 
-1. **TypeScript 源文件中的行号错误。** 断点实际上作用于生成的 JavaScript 文件，而非 `.ts` 文件。解决方案为：(a) 在构建后的 `dist/*.js` 文件中设置断点；或 (b) 启用源映射功能（使用 `node --enable-source-maps`），并通过 `sb('src/app.tsx', N)` 设置断点——但仅适用于支持源映射的 CDP 客户端，`node inspect` CLI 不支持此功能。
+1. **TypeScript 源文件中的行号错误。** 断点实际上作用于生成的 JavaScript 文件，而非 `.ts` 文件。解决方案为：(a) 在编译后的 `dist/*.js` 文件中设置断点；或 (b) 启用源映射功能（使用 `node --enable-source-maps`），并通过 `sb('src/app.tsx', N)` 设置断点——但仅适用于支持源映射的 CDP 客户端，`node inspect` CLI 不支持此功能。
 
-2. **`--inspect` 与 `--inspect-brk` 的区别。** `--inspect` 仅启动调试器而不暂停脚本执行，若在过晚时附加调试器，脚本将会直接跳过第一个断点。当需要在代码运行之前就设置断点时，请使用 `--inspect-brk`。
+2. **`--inspect` 与 `--inspect-brk` 的区别。** `--inspect` 仅启动调试器而不暂停脚本执行，若在过晚时附加调试器，脚本会直接跳过第一个断点。当需要在代码运行之前就设置断点时，请使用 `--inspect-brk`。
 
-3. **端口冲突问题。** 默认端口为 `9229`。如果有多个 Node 进程正在使用该端口进行调试，可指定 `--inspect=0` 以随机选择端口，并通过 `/json/list` 获取实际的端口号：
+3. **端口冲突问题。** 默认端口为 `9229`。如果有多个 Node 进程正在使用该端口进行调试，可指定 `--inspect=0` 以随机选择端口，并通过 `/json/list` 获取实际的端口号。
    ```bash
    curl -s http://127.0.0.1:9229/json/list   # lists all inspectable targets on the host
    ```
 
-4. **子进程**。在父进程上使用`--inspect`选项并不会对其子进程进行检测。若需对所有子进程生效，应使用`NODE_OPTIONS='--inspect-brk' node parent.js`命令；同时需注意，这些子进程需要使用不同的端口（当继承了`NODE_OPTIONS='--inspect'`选项时，Node会自动为每个进程分配递增的端口）。
+4. **子进程。** 在父进程上使用 `--inspect` 选项并不会检测其子进程。若需对所有子进程生效，应使用 `NODE_OPTIONS='--inspect-brk' node parent.js`；需要注意的是，这些子进程需要使用不同的端口（当继承了 `NODE_OPTIONS='--inspect'` 选项时，Node 会自动为每个进程分配递增的端口）。
 
-5. **后台终止**。如果在目标进程处于暂停状态时通过`node inspect`退出程序，目标进程仍会保持暂停状态。此时要么先使用`cont`命令继续执行，要么直接使用`kill`命令终止目标进程。
+5. **后台终止操作。** 如果在目标进程处于暂停状态时通过 `node inspect` 终止当前会话，目标进程仍会保持暂停状态。此时需先调用 `cont` 命令继续执行，或直接对目标进程执行 `kill` 操作。
 
-6. **通过Agent终端运行`node inspect`**。该工具是一个兼容伪终端的REPL环境。在Hermes中，可通过`terminal(pty=true)`或`background=true`结合`process(action='submit', data='...')`来启动它。非伪终端的前台模式仅适用于一次性命令，而不适合交互式调试。
+6. **通过 Agent 终端运行 `node inspect`。** 它是一个兼容伪终端（PTY）的 REPL 环境。在 Hermes 中，可通过 `terminal(pty=true)` 或 `background=true` 结合 `process(action='submit', data='...')` 来启动它。非伪终端的前台模式仅适用于一次性命令，而不适合交互式调试。
 
-7. **安全性**。使用`--inspect=0.0.0.0:9229`选项会暴露代码执行风险。除非处于隔离网络环境中，否则应始终将监听地址设置为默认值`127.0.0.1`。
+7. **安全性。** 使用 `--inspect=0.0.0.0:9229` 选项会带来任意代码执行的风险。除非处于隔离网络环境，否则应始终将监听地址设置为默认值 `127.0.0.1`。
 
 ## 验证清单
 
 设置完调试会话后，请进行以下验证：
 
-- [ ] 执行`curl -s http://127.0.0.1:9229/json/list`命令后，返回的结果确实为预期的目标进程。
-- [ ] 第一个断点能够成功触发（若无法触发，很可能是遗漏了`--inspect-brk`选项，或是在进程执行完毕后才进行连接）。
-- [ ] 暂停时显示的源代码列表为正确的文件（若不一致，则属于源码映射问题，详见注意事项1）。
-- [ ] 在REPL环境中执行`exec process.pid`命令后，返回的进程ID即为原本打算连接的进程ID。
+- [ ] 执行 `curl -s http://127.0.0.1:9229/json/list` 后返回的结果确实为预期的目标进程。
+- [ ] 第一个断点能够成功触发（若未触发，可能是遗漏了 `--inspect-brk` 选项，或是在进程执行完成后才进行调试连接）。
+- [ ] 暂停时显示的源代码列表为正确的文件（若不一致，则可能是源码映射出现问题，参见注意事项1）。
+- [ ] 在 `repl` 环境中执行 `exec process.pid` 后返回的 PID 即为原本打算调试的目标进程 PID。
 
-## 一次性调试方案
+## 一次性命令示例
 
-**“为什么在X行这个变量是未定义的？”**
+**“为什么在 X 行这个变量是未定义的？”**
 ```bash
 node --inspect-brk script.js &
 node inspect -p $!
@@ -320,7 +320,7 @@ repl
 > Object.keys(this)
 ```
 
-“调用此函数的路径是怎样的？”
+**“调用该函数的路径是什么？”**
 ```
 debug> sb('suspectFn')
 debug> cont
@@ -328,7 +328,7 @@ debug> cont
 debug> bt
 ```
 
-**“这个异步链卡住了——问题出在哪儿？”**
+**“这个异步链卡住了——问题出在哪里？”**
 ```
 # Start with --inspect (no -brk), let it run to the hang, then:
 debug> pause
