@@ -2029,6 +2029,7 @@
     - [Tldraw Offline]()
       - [tldraw offline 技能](zh/optional-skills/creative/tldraw-offline/SKILL.md)
     - [Touchdesigner Mcp]()
+      - [TouchDesigner 集成（twozero MCP）](zh/optional-skills/creative/touchdesigner-mcp/SKILL.md)
       - [References]()
         - [3D场景参考](zh/optional-skills/creative/touchdesigner-mcp/references/3d-scene.md)
         - [动画参考](zh/optional-skills/creative/touchdesigner-mcp/references/animation.md)
