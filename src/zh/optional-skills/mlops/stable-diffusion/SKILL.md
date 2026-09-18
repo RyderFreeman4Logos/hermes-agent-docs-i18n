@@ -1,6 +1,6 @@
 ---
-name: stable-diffusion-image-generation
-description: State-of-the-art text-to-image generation with Stable Diffusion models via HuggingFace Diffusers. Use when generating images from text prompts, performing image-to-image translation, inpainting, or building custom diffusion pipelines.
+name: stable-diffusion
+description: Text-to-image generation, inpainting, and img2img.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -14,11 +14,11 @@ metadata:
 
 # Stable Diffusion 图像生成
 
-使用 HuggingFace Diffusers 库通过 Stable Diffusion 生成图像的完整指南。
+本指南介绍如何使用 HuggingFace Diffusers 库通过 Stable Diffusion 生成图像。
 
 ## 何时使用 Stable Diffusion
 
-**以下情况可使用 Stable Diffusion：**
+**以下情况适合使用 Stable Diffusion：**
 - 根据文本描述生成图像
 - 执行图像到图像的转换（风格迁移、图像增强）
 - 修复画布（填充被遮盖的区域）
@@ -32,13 +32,13 @@ metadata:
 - **修复画布**：用符合上下文的内容填充被遮盖区域
 - **ControlNet**：添加空间条件控制（边缘、姿态、深度等）
 - **LoRA 支持**：高效的微调与风格适配功能
-- **多种模型支持**：兼容 SD 1.5、SDXL、SD 3.0 及 Flux 模型
+- **多种模型支持**：兼容 SD 1.5、SDXL、SD 3.0 以及 Flux 模型
 
-**如需替代方案，可考虑：**
-- **DALL-E 3**：无需 GPU 即可通过 API 生成图像
-- **Midjourney**：适合生成具有艺术风格的结果
-- **Imagen**：适用于 Google Cloud 平台
-- **Leonardo.ai**：面向基于网页的创意工作流
+**如需其他替代方案，可考虑：**
+- **DALL-E 3**：适用于无需 GPU 的基于 API 的图像生成
+- **Midjourney**：适合生成具有艺术风格的效果
+- **Imagen**：支持与 Google Cloud 集成
+- **Leonardo.ai**：适用于基于网页的创意工作流
 
 ## 快速入门
 
@@ -72,7 +72,7 @@ image = pipe(
 image.save("output.png")
 ```
 
-### 使用 SDXL（更高质量）
+### 使用 SDXL（更高画质）
 
 ```python
 from diffusers import AutoPipelineForText2Image
@@ -100,7 +100,7 @@ image = pipe(
 
 ### 三大核心组件设计
 
-Diffusers 是基于三个核心组件构建的：
+Diffusers 由三个核心组件构成：
 
 ```
 Pipeline (orchestration)
@@ -127,7 +127,7 @@ Random Noise → [Denoising Loop] ← Scheduler
 
 ### 流水线
 
-流水线用于协调完整的任务工作流：
+流水线用于统筹整个工作流程：
 
 | 流水线名称 | 功能 |
 |----------|------|
@@ -136,19 +136,19 @@ Random Noise → [Denoising Loop] ← Scheduler
 | `StableDiffusion3Pipeline` | 文本生成图像（SD 3.0） |
 | `FluxPipeline` | 文本生成图像（Flux 模型） |
 | `StableDiffusionImg2ImgPipeline` | 图像转图像 |
-| `StableDiffusionInpaintPipeline` | 图像修复 |
+| `StableDiffusionInpaintPipeline` | 修复绘图 |
 
 ### 调度器
 
 调度器用于控制去噪过程：
 
-| 调度器名称 | 步数 | 图像质量 | 适用场景 |
-|-----------|------|----------|----------|
-| `EulerDiscreteScheduler` | 20-50 | 良好 | 默认选择 |
-| `EulerAncestralDiscreteScheduler` | 20-50 | 良好 | 更多变化效果 |
-| `DPMSolverMultistepScheduler` | 15-25 | 极佳 | 快速且高质量 |
-| `DDIMScheduler` | 50-100 | 良好 | 确定性更高 |
-| `LCMScheduler` | 4-8 | 良好 | 速度极快 |
+| 调度器名称 | 步数 | 图像质量 | 典型应用场景 |
+|-----------|------|----------|--------------|
+| `EulerDiscreteScheduler` | 20-50 | 较好 | 默认选择 |
+| `EulerAncestralDiscreteScheduler` | 20-50 | 较好 | 更多的变化效果 |
+| `DPMSolverMultistepScheduler` | 15-25 | 极佳 | 速度快且质量高 |
+| `DDIMScheduler` | 50-100 | 较好 | 具有确定性 |
+| `LCMScheduler` | 4-8 | 较好 | 速度极快 |
 | `UniPCMultistepScheduler` | 15-25 | 极佳 | 收敛速度快 |
 
 ### 更换调度器
@@ -170,7 +170,7 @@ image = pipe(prompt, num_inference_steps=20).images[0]
 ### 核心参数
 
 | 参数 | 默认值 | 描述 |
-|-------|--------|------|
+|------|--------|------|
 | `prompt` | 必填 | 所需图像的文本描述 |
 | `negative_prompt` | 无 | 需要避免出现在图像中的内容 |
 | `num_inference_steps` | 50 | 去噪步数（步数越多，图像质量越高） |
@@ -193,7 +193,7 @@ image = pipe(
 ).images[0]
 ```
 
-### 否定提示词
+### 负面提示词
 
 ```python
 image = pipe(
@@ -226,7 +226,7 @@ image = pipe(
 ).images[0]
 ```
 
-## 修补功能
+## 修复填充功能
 
 填充被遮盖的区域：
 
@@ -252,7 +252,7 @@ result = pipe(
 
 ## ControlNet
 
-添加空间条件控制，实现精准操控：
+通过空间约束实现精准控制：
 
 ```python
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
@@ -282,13 +282,13 @@ image = pipe(
 
 ### 可用的 ControlNets
 
-| ControlNet | 输入类型 | 使用场景 |
+| ControlNet | 输入类型 | 应用场景 |
 |------------|----------|----------|
-| `canny` | 边缘图 | 保留结构 |
-| `openpose` | 姿态骨架 | 人体姿态 |
+| `canny` | 边缘图 | 保留结构特征 |
+| `openpose` | 姿态骨架 | 人物姿态生成 |
 | `depth` | 深度图 | 具有3D感知的生成 |
-| `normal` | 法线图 | 表面细节 |
-| `mlsd` | 线段 | 建筑线条 |
+| `normal` | 法线图 | 表面细节表现 |
+| `mlsd` | 线段 | 建筑线条绘制 |
 | `scribble` | 草图 | 草图转图像 |
 
 ## LoRA 适配器
@@ -358,7 +358,7 @@ pipe.enable_attention_slicing("max")
 pipe.enable_xformers_memory_efficient_attention()
 ```
 
-### 大尺寸图像的VAE切片处理
+### 大尺寸图像的VAE切片功能
 
 ```python
 # Decode latents in tiles for large images
@@ -403,7 +403,7 @@ pipe = DiffusionPipeline.from_pretrained(
 
 ## 批量生成
 
-高效创建多张图像：
+高效地创建多张图像：
 
 ```python
 # Multiple prompts
@@ -490,7 +490,7 @@ pipe.enable_vae_slicing()
 pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
 ```
 
-**黑色/噪点图片：**
+**黑色/噪点图像：**
 ```python
 # Check VAE configuration
 # Use safety checker bypass if needed
