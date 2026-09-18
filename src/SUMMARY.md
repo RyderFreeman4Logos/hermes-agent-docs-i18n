@@ -2184,6 +2184,7 @@
         - [Weights & Biases：机器学习实验跟踪与MLOps工具](zh/optional-skills/mlops/evaluation/weights-and-biases/SKILL.md)
         - [References]()
           - [工件与模型注册表指南](zh/optional-skills/mlops/evaluation/weights-and-biases/references/artifacts.md)
+          - [框架集成指南](zh/optional-skills/mlops/evaluation/weights-and-biases/references/integrations.md)
     - [Faiss]()
       - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
       - [References]()
