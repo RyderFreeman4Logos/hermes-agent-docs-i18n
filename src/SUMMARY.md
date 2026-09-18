@@ -3289,7 +3289,7 @@
             - [Slime Rl Training](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
             - [Stable Diffusion 图像生成](zh/website/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion.md)
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
-            - [TorchTitan：基于 PyTorch 的分布式大语言模型预训练工具](zh/website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md)
+            - [Torchtitan](zh/website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md)
             - [Axolotl](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md)
             - [使用 TRL 进行微调](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md)
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
