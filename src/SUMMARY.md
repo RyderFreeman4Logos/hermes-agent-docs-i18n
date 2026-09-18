@@ -2443,6 +2443,7 @@
         - [机器学习论文写作理念与最佳实践](zh/optional-skills/research/research-paper-writing/references/writing-guide.md)
       - [Templates](zh/optional-skills/research/research-paper-writing/templates/README.md)
         - [Acl](zh/optional-skills/research/research-paper-writing/templates/acl/README.md)
+          - [*ACL会议论文集*相关说明](zh/optional-skills/research/research-paper-writing/templates/acl/formatting.md)
         - [Colm2025](zh/optional-skills/research/research-paper-writing/templates/colm2025/README.md)
     - [Rss Feeds]()
       - [RSS订阅源技能](zh/optional-skills/research/rss-feeds/SKILL.md)
