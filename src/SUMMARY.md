@@ -3039,7 +3039,7 @@
       - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
       - [Egress](zh/website/docs/user-guide/egress/index.md)
       - [Features]()
-        - [ACP 编辑器集成](zh/website/docs/user-guide/features/acp.md)
+        - [ACP主机集成](zh/website/docs/user-guide/features/acp.md)
         - [API服务器](zh/website/docs/user-guide/features/api-server.md)
         - [批量处理](zh/website/docs/user-guide/features/batch-processing.md)
         - [浏览器自动化](zh/website/docs/user-guide/features/browser.md)
