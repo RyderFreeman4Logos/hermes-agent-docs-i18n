@@ -1,61 +1,61 @@
 ---
-title: "Stable Diffusion Image Generation"
-sidebar_label: "Stable Diffusion Image Generation"
-description: "State-of-the-art text-to-image generation with Stable Diffusion models via HuggingFace Diffusers"
+title: "Stable Diffusion — Text-to-image generation, inpainting, and img2img"
+sidebar_label: "Stable Diffusion"
+description: "Text-to-image generation, inpainting, and img2img"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# Stable Diffusion 图像生成
+# Stable Diffusion
 
-通过 HuggingFace Diffusers 库，利用先进的 Stable Diffusion 模型实现文本到图像的生成。适用于根据文本提示生成图像、执行图像间转换、修复缺失区域，或构建自定义的扩散模型工作流。
+文本转图像生成、图像修复以及图像间转换功能。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 可选 — 通过 `hermes skills install official/mlops/stable-diffusion` 安装 |
-| 路径 | `optional-skills/mlops/stable-diffusion` |
+| 路径 | `optional-skills/mlops\stable-diffusion` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `diffusers>=0.30.0`, `transformers>=4.41.0`, `accelerate>=0.31.0`, `torch>=2.0.0` |
 | 支持平台 | linux、macos、windows |
-| 标签 | `图像生成`, `Stable Diffusion`, `Diffusers`, `文本到图像`, `多模态`, `计算机视觉` |
+| 标签 | `图像生成`, `Stable Diffusion`, `Diffusers`, `文本转图像`, `多模态`, `计算机视觉` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用后，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，智能体将看到这些内容作为操作指令。
 :::
 
-# Stable Diffusion 图像生成
+# 使用 Stable Diffusion 进行图像生成
 
-使用 HuggingFace Diffusers 库通过 Stable Diffusion 生成图像的全面指南。
+介绍如何利用 HuggingFace Diffusers 库通过 Stable Diffusion 生成图像。
 
 ## 何时使用 Stable Diffusion
 
-**以下情况可使用 Stable Diffusion：**
+**以下情况适合使用 Stable Diffusion：**
 - 根据文本描述生成图像
 - 执行图像间转换（风格迁移、图像增强）
-- 修复缺失区域（填补被遮盖的区域）
-- 扩展图像边界（将图像内容延伸至边界之外）
+- 图像修复（填充被遮盖的区域）
+- 图像扩展（将图像内容延伸至边界之外）
 - 创建现有图像的变体
 - 构建自定义的图像生成工作流
 
-**核心功能：**
-- **文本到图像**：根据自然语言提示生成图像
-- **图像到图像**：在文本引导下对现有图像进行变换
-- **修复缺失区域**：利用上下文感知能力填补被遮盖区域
-- **ControlNet**：添加空间条件控制（边缘、姿态、深度等）
-- **LoRA 支持**：高效实现模型微调与风格调整
-- **多种模型支持**：兼容 SD 1.5、SDXL、SD 3.0 及 Flux 模型
+**主要功能：**
+- **文本生成图像**：根据自然语言描述生成图片  
+- **图像转图像**：在文字引导下对现有图像进行改造  
+- **图像修复**：用符合上下文的内容填充被遮盖的区域  
+- **ControlNet**：添加空间控制功能（边缘、姿态、深度）  
+- **LoRA支持**：实现高效微调与风格适配  
+- **多种模型支持**：兼容SD 1.5、SDXL、SD 3.0及Flux模型  
 
-**如需替代方案，可考虑：**
-- **DALL-E 3**：无需 GPU 的基于 API 的图像生成工具
-- **Midjourney**：适合生成具有艺术风格的效果
-- **Imagen**：与 Google Cloud 平台深度集成
-- **Leonardo.ai**：适用于基于网页的创意工作流
+**可选替代方案：**  
+- **DALL-E 3**：适用于无需GPU的基于API的图像生成  
+- **Midjourney**：适合生成具有艺术风格的作品  
+- **Imagen**：适用于与Google Cloud集成  
+- **Leonardo.ai**：适合基于网页的创意工作流程  
 
 ## 快速入门
 
@@ -89,7 +89,7 @@ image = pipe(
 image.save("output.png")
 ```
 
-### 使用 SDXL（更高质量）
+### 使用 SDXL（更高画质）
 
 ```python
 from diffusers import AutoPipelineForText2Image
@@ -117,9 +117,7 @@ image = pipe(
 
 ### 三大核心组件设计
 
-Diffusers 是基于三个核心组件构建的：
-
-<!-- ascii-guard-ignore -->
+Diffusers 由三个核心组件构成：
 ```
 Pipeline (orchestration)
 ├── Model (neural networks)
@@ -129,6 +127,8 @@ Pipeline (orchestration)
 └── Scheduler (denoising algorithm)
 ```
 ### 流水线推理流程
+
+需对完整的输入内容进行翻译，不得提前终止处理。
 
 ```
 Text Prompt → Text Encoder → Text Embeddings
@@ -144,7 +144,7 @@ Random Noise → [Denoising Loop] ← Scheduler
 
 ### 流水线
 
-流水线用于协调完整的任务工作流：
+流水线用于统筹整个工作流程：
 
 | 流水线名称 | 功能 |
 |----------|------|
@@ -153,19 +153,19 @@ Random Noise → [Denoising Loop] ← Scheduler
 | `StableDiffusion3Pipeline` | 文本生成图像（SD 3.0） |
 | `FluxPipeline` | 文本生成图像（Flux 模型） |
 | `StableDiffusionImg2ImgPipeline` | 图像转图像 |
-| `StableDiffusionInpaintPipeline` | 图像修复 |
+| `StableDiffusionInpaintPipeline` | 修复绘图 |
 
 ### 调度器
 
 调度器用于控制去噪过程：
 
-| 调度器名称 | 步数 | 图像质量 | 适用场景 |
-|-----------|------|----------|----------|
-| `EulerDiscreteScheduler` | 20-50 | 良好 | 默认选择 |
-| `EulerAncestralDiscreteScheduler` | 20-50 | 良好 | 更多变化效果 |
-| `DPMSolverMultistepScheduler` | 15-25 | 极佳 | 快速且高质量 |
-| `DDIMScheduler` | 50-100 | 良好 | 确定性更高 |
-| `LCMScheduler` | 4-8 | 良好 | 速度极快 |
+| 调度器名称 | 步数 | 图像质量 | 典型应用场景 |
+|-----------|------|----------|--------------|
+| `EulerDiscreteScheduler` | 20-50 | 较好 | 默认选择 |
+| `EulerAncestralDiscreteScheduler` | 20-50 | 较好 | 更多的变化效果 |
+| `DPMSolverMultistepScheduler` | 15-25 | 极佳 | 速度快且质量高 |
+| `DDIMScheduler` | 50-100 | 较好 | 具有确定性 |
+| `LCMScheduler` | 4-8 | 较好 | 速度极快 |
 | `UniPCMultistepScheduler` | 15-25 | 极佳 | 收敛速度快 |
 
 ### 更换调度器
@@ -187,7 +187,7 @@ image = pipe(prompt, num_inference_steps=20).images[0]
 ### 核心参数
 
 | 参数 | 默认值 | 描述 |
-|-------|--------|------|
+|------|--------|------|
 | `prompt` | 必填 | 所需图像的文本描述 |
 | `negative_prompt` | 无 | 需要避免出现在图像中的内容 |
 | `num_inference_steps` | 50 | 去噪步数（步数越多，图像质量越高） |
@@ -210,7 +210,7 @@ image = pipe(
 ).images[0]
 ```
 
-### 否定提示词
+### 负面提示词
 
 ```python
 image = pipe(
@@ -243,7 +243,7 @@ image = pipe(
 ).images[0]
 ```
 
-## 修补功能
+## 修复填充功能
 
 填充被遮盖的区域：
 
@@ -269,7 +269,7 @@ result = pipe(
 
 ## ControlNet
 
-添加空间条件控制，实现精准操控：
+通过空间约束实现精准控制：
 
 ```python
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
@@ -299,13 +299,13 @@ image = pipe(
 
 ### 可用的 ControlNets
 
-| ControlNet | 输入类型 | 使用场景 |
+| ControlNet | 输入类型 | 应用场景 |
 |------------|----------|----------|
-| `canny` | 边缘图 | 保留结构 |
-| `openpose` | 姿态骨架 | 人体姿态 |
+| `canny` | 边缘图 | 保留结构特征 |
+| `openpose` | 姿态骨架 | 人物姿态生成 |
 | `depth` | 深度图 | 具有3D感知的生成 |
-| `normal` | 法线图 | 表面细节 |
-| `mlsd` | 线段 | 建筑线条 |
+| `normal` | 法线图 | 表面细节表现 |
+| `mlsd` | 线段 | 建筑线条绘制 |
 | `scribble` | 草图 | 草图转图像 |
 
 ## LoRA 适配器
@@ -375,7 +375,7 @@ pipe.enable_attention_slicing("max")
 pipe.enable_xformers_memory_efficient_attention()
 ```
 
-### 大尺寸图像的VAE切片处理
+### 大尺寸图像的VAE切片功能
 
 ```python
 # Decode latents in tiles for large images
@@ -420,7 +420,7 @@ pipe = DiffusionPipeline.from_pretrained(
 
 ## 批量生成
 
-高效创建多张图像：
+高效地创建多张图像：
 
 ```python
 # Multiple prompts
@@ -507,7 +507,7 @@ pipe.enable_vae_slicing()
 pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
 ```
 
-**黑色/噪点图片：**
+**黑色/噪点图像：**
 ```python
 # Check VAE configuration
 # Use safety checker bypass if needed
@@ -529,8 +529,8 @@ image = pipe(prompt, num_inference_steps=20).images[0]
 
 ## 参考资料
 
-- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/stable-diffusion/references/advanced-usage.md)** - 自定义流程、微调及部署方法
-- **[故障排除](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/stable-diffusion/references/troubleshooting.md)** - 常见问题与解决方案
+- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\stable-diffusion/references/advanced-usage.md)** - 自定义流程、微调及部署方法
+- **[故障排查](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\stable-diffusion/references/troubleshooting.md)** - 常见问题与解决方案
 
 ## 资源链接
 
