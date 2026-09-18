@@ -2054,6 +2054,7 @@
         - [TouchDesigner 操作符参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/operators.md)
         - [面板与用户界面参考](zh/optional-skills/creative/touchdesigner-mcp/references/panel-ui.md)
         - [粒子参考文档](zh/optional-skills/creative/touchdesigner-mcp/references/particles.md)
+        - [TouchDesigner MCP — 常见问题与经验总结](zh/optional-skills/creative/touchdesigner-mcp/references/pitfalls.md)
         - [后处理效果参考](zh/optional-skills/creative/touchdesigner-mcp/references/postfx.md)
         - [投影映射参考指南](zh/optional-skills/creative/touchdesigner-mcp/references/projection-mapping.md)
         - [TouchDesigner Python API 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/python-api.md)
