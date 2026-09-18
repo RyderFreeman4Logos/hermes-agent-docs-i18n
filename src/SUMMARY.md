@@ -2829,6 +2829,7 @@
     - [Competitor News Monitor]()
       - [竞争对手动态监测工具](zh/skills/research/competitor-news-monitor/SKILL.md)
     - [Grounded Citations]()
+      - [纪实性引用机制](zh/skills/research/grounded-citations/SKILL.md)
       - [References]()
         - [不同输出目标对应的引用格式](zh/skills/research/grounded-citations/references/citation-formats.md)
         - [为何要使用编号的账本ID（研究依据）](zh/skills/research/grounded-citations/references/grounding-rationale.md)
