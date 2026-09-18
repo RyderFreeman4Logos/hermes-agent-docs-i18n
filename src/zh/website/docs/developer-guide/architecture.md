@@ -6,9 +6,9 @@ description: "Hermes Agent internals — major subsystems, execution paths, data
 
 # 架构
 
-本页面是Hermes Agent内部结构的顶层概览图。借助它可快速了解代码库的整体架构，随后可深入查看各子系统的文档以获取具体实现细节。
+本页面是Hermes Agent内部结构的顶层概览图。借助它您可以快速了解代码库的整体架构，随后可深入查看各子系统对应的文档以获取实现细节。
 
-## 系统概述
+## 系统概览
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -40,7 +40,7 @@ description: "Hermes Agent internals — major subsystems, execution paths, data
            ▼                                    ▼
 ┌───────────────────┐              ┌──────────────────────┐
 │ Session Storage   │              │ Tool Backends         │
-│ (SQLite + FTS5)   │              │ Terminal (6 backends) │
+│ (SQLite + FTS5)   │              │ Terminal (7 backends) │
 │ hermes_state.py   │              │ Browser (5 backends)  │
 │ gateway/session.py│              │ Web (4 backends)      │
 └───────────────────┘              │ MCP (dynamic)         │
@@ -52,11 +52,11 @@ description: "Hermes Agent internals — major subsystems, execution paths, data
 
 ```text
 hermes-agent/
-├── run_agent.py              # AIAgent — core conversation loop (large file)
-├── cli.py                    # HermesCLI — interactive terminal UI (large file)
+├── run_agent.py              # AIAgent facade — loop lives in agent/conversation_loop.py + agent/turn_*.py
+├── cli.py                    # HermesCLI facade — mixins in hermes_cli/cli_*_mixin.py
 ├── model_tools.py            # Tool discovery, schema collection, dispatch
 ├── toolsets.py               # Tool groupings and platform presets
-├── hermes_state.py           # SQLite session/state database with FTS5
+├── hermes_state.py           # SQLite session/state database facade (+ hermes_state_*.py siblings)
 ├── hermes_constants.py       # HERMES_HOME, profile-aware paths
 ├── batch_runner.py           # Batch trajectory generation
 │
@@ -76,14 +76,14 @@ hermes-agent/
 │   └── trajectory.py         # Trajectory saving helpers
 │
 ├── hermes_cli/               # CLI subcommands and setup
-│   ├── main.py               # Entry point — all `hermes` subcommands (large file)
+│   ├── main.py               # Entry point — `hermes` subcommands (parsers in subcommands/, main_*.py)
 │   ├── config.py             # DEFAULT_CONFIG, OPTIONAL_ENV_VARS, migration
 │   ├── commands.py           # COMMAND_REGISTRY — central slash command definitions
-│   ├── auth.py               # PROVIDER_REGISTRY, credential resolution
+│   ├── auth.py               # PROVIDER_REGISTRY, credential resolution (+ auth_*.py siblings)
 │   ├── runtime_provider.py   # Provider → api_mode + credentials
 │   ├── models.py             # Model catalog, provider model lists
 │   ├── model_switch.py       # /model command logic (CLI + gateway shared)
-│   ├── setup.py              # Interactive setup wizard (large file)
+│   ├── setup.py              # Interactive setup wizard (+ setup_*.py siblings)
 │   ├── skin_engine.py        # CLI theming engine
 │   ├── skills_config.py      # hermes skills — enable/disable per platform
 │   ├── skills_hub.py         # /skills slash command
@@ -99,17 +99,17 @@ hermes-agent/
 │   ├── process_registry.py   # Background process management
 │   ├── file_tools.py         # read_file, write_file, patch, search_files
 │   ├── web_tools.py          # web_search, web_extract
-│   ├── browser_tool.py       # 10 browser automation tools
+│   ├── browser_tool.py       # Browser automation tools facade (+ browser_tool_*.py siblings)
 │   ├── code_execution_tool.py # execute_code sandbox
 │   ├── delegate_tool.py      # Subagent delegation
-│   ├── mcp_tool.py           # MCP client (large file)
+│   ├── mcp_tool.py           # MCP client facade (+ mcp_tool_*.py siblings)
 │   ├── credential_files.py   # File-based credential passthrough
 │   ├── env_passthrough.py    # Env var passthrough for sandboxes
 │   ├── ansi_strip.py         # ANSI escape stripping
 │   └── environments/         # Terminal backends (local, docker, ssh, modal, daytona, singularity)
 │
 ├── gateway/                  # Messaging platform gateway
-│   ├── run.py                # GatewayRunner — message dispatch (large file)
+│   ├── run.py                # GatewayRunner facade — message dispatch (+ run_*.py siblings)
 │   ├── session.py            # SessionStore — conversation persistence
 │   ├── delivery.py           # Outbound message delivery
 │   ├── pairing.py            # DM pairing authorization
@@ -117,11 +117,13 @@ hermes-agent/
 │   ├── mirror.py             # Cross-session message mirroring
 │   ├── status.py             # Token locks, profile-scoped process tracking
 │   ├── builtin_hooks/        # Extension point for always-registered hooks (none shipped)
-│   └── platforms/            # 20 adapters: telegram, discord, slack, whatsapp,
-│                             #   signal, matrix, mattermost, email, sms,
-│                             #   dingtalk, feishu, wecom, wecom_callback, weixin,
-│                             #   bluebubbles, qqbot, homeassistant, webhook, api_server,
-│                             #   yuanbao
+│   └── platforms/            # Built-in adapters: signal, weixin, bluebubbles,
+│                             #   qqbot, whatsapp_cloud, yuanbao, webhook, api_server
+│
+├── plugins/platforms/        # Bundled platform plugins: telegram, discord, slack,
+│                             #   whatsapp, matrix, mattermost, email, sms, dingtalk,
+│                             #   feishu, wecom, homeassistant, irc, line, teams,
+│                             #   google_chat, buzz, ntfy, photon, raft, simplex
 │
 ├── acp_adapter/              # ACP server (VS Code / Zed / JetBrains)
 ├── cron/                     # Scheduler (jobs.py, scheduler.py)
@@ -174,95 +176,95 @@ Scheduler tick → load due jobs from jobs.json
 
 如果您是代码库的新手：
 
-1. **本页面** — 了解整体架构
-2. **[Agent Loop Internals](./agent-loop.md)** — AIAgent 的工作原理
-3. **[Prompt Assembly](./prompt-assembly.md)** — 系统提示词的构建方式
-4. **[Provider Runtime Resolution](./provider-runtime.md)** — 提供者的选择机制
-5. **[Adding Providers](./adding-providers.md)** — 添加新提供者的实用指南
-6. **[Tools Runtime](./tools-runtime.md)** — 工具注册表、调度机制及运行环境
-7. **[Session Storage](./session-storage.md)** — SQLite 数据结构、FTS5 全文搜索及会话追踪
-8. **[Gateway Internals](./gateway-internals.md)** — 消息平台网关详解
-9. **[Context Compression & Prompt Caching](./context-compression-and-caching.md)** — 上下文压缩与提示词缓存技术
-10. **[ACP Internals](./acp-internals.md)** — IDE 集成功能
+1. **本页面** — 熟悉整体架构
+2. **[Agent Loop 内部机制](./agent-loop.md)** — AIAgent 的工作原理
+3. **[提示词组装](./prompt-assembly.md)** — 系统提示词的构建方法
+4. **[Provider 运行时解析](./provider-runtime.md)** — 提供者的选择机制
+5. **[添加提供者](./adding-providers.md)** — 添加新提供者的实用指南
+6. **[工具运行时](./tools-runtime.md)** — 工具注册表、调度机制及环境管理
+7. **[会话存储](./session-storage.md)** — SQLite 数据结构、FTS5 索引及会话追溯功能
+8. **[网关内部机制](./gateway-internals.md)** — 消息平台网关实现
+9. **[上下文压缩与提示词缓存](./context-compression-and-caching.md)** — 压缩与缓存技术
+10. **[ACP 内部机制](./acp-internals.md)** — IDE 集成方案
 
 ## 主要子系统
 
 ### Agent Loop
 
-同步协调引擎（位于 `run_agent.py` 中的 `AIAgent`）。负责处理提供者选择、提示词构建、工具执行、重试机制、回退策略、回调处理、数据压缩及持久化存储。它为不同的提供者后端提供了三种 API 模式。
+同步调度引擎（由 `run_agent.py` 接口提供，核心逻辑位于 `agent/conversation_loop.py` 和 `agent/turn_*.py` 文件中）。负责处理提供者选择、提示词构建、工具执行、重试机制、备用方案、回调处理、数据压缩及持久化存储等功能。针对不同的提供者后端，支持三种 API 模式。
 
-→ [Agent Loop Internals](./agent-loop.md)
+→ [Agent Loop 内部机制](./agent-loop.md)
 
 ### 提示词系统
 
-贯穿整个对话生命周期的提示词构建与维护机制：
+贯穿整个对话生命周期的提示词构建与维护功能：
 
-- **`system_prompt.py` + `prompt_builder.py`** — 按顺序组装不同层级的系统提示词（`stable` → `context` → `volatile`）：包括身份/工具指引/技能信息、上下文文件，以及内存/个人资料/时间戳相关内容
-- **`prompt_caching.py`** — 应用 Anthropic 的缓存断点机制实现前缀级缓存
-- **`context_compressor.py`** — 当上下文数据量超过阈值时，对中间对话内容进行摘要处理
+- **`system_prompt.py` + `prompt_builder.py`** — 负责按顺序组织系统提示层结构（`stable` → `context` → `volatile`）：身份/工具指引/技能信息、上下文文件，以及内存/配置/时间戳模块。  
+- **`prompt_caching.py`** — 应用 Anthropic 的缓存断点机制来实现前缀内容缓存。  
+- **`context_compressor.py`** — 当上下文长度超过阈值时，自动总结中间对话内容。  
 
-→ [Prompt Assembly](./prompt-assembly.md), [Context Compression & Prompt Caching](./context-compression-and-caching.md)
+→ [提示语组装](./prompt-assembly.md)，[上下文压缩与提示语缓存](./context-compression-and-caching.md)
 
-### 提供者解析模块
+### 提供商解析
 
-被 CLI、网关、cron 任务、ACP 以及各类辅助调用所共享的运行时解析器。它可将 `(provider, model)` 元组映射为 `(api_mode, api_key, base_url)` 的格式。该模块支持 18 种以上的提供者，同时处理 OAuth 认证流程、凭证池管理及别名解析功能。
+这是一个通用的运行时解析器，被 CLI、网关、定时任务、ACP 以及各类辅助调用所使用。它可将 `(provider, model)` 元组映射为 `(api_mode, api_key, base_url)` 的格式，并支持 18 种以上的提供商、OAuth 认证流程、凭证池管理以及别名解析功能。  
 
-→ [Provider Runtime Resolution](./provider-runtime.md)
+→ [提供商运行时解析](./provider-runtime.md)
 
 ### 工具系统
 
-中央工具注册表（位于 `tools/registry.py`），目前已有超过 70 种工具注册在约 28 个工具集中。每个工具文件在导入时会自动完成注册。该注册表负责收集工具的架构信息、处理工具调度、检查工具可用性以及封装错误信息。终端工具支持 6 种运行后端（本地、Docker、SSH、Daytona、Modal、Singularity）。
+拥有中央工具注册表（`tools/registry.py`），目前共注册了来自约 28 组工具集的 70 多种工具。每个工具文件在导入时会自动完成注册。该注册表负责处理工具结构信息的收集、调度、可用性检查以及错误处理。终端工具支持 7 种后端环境（本地、Docker、SSH、Daytona、Modal、Singularity、Vercel Sandbox）。  
 
-→ [Tools Runtime](./tools-runtime.md)
+→ [工具运行时](./tools-runtime.md)
 
 ### 会话持久化
 
-基于 SQLite 的会话存储系统，搭配 FTS5 全文搜索功能。该系统具备会话追踪能力（可记录压缩操作前的父会话与子会话关系）、平台隔离机制，以及带有冲突处理功能的原子级写入功能。
+基于 SQLite 的会话存储系统，配备 FTS5 全文搜索功能。该系统支持会话关联追踪（处理压缩后的父子会话关系）、按平台隔离存储，同时还具备带冲突处理的原子写入能力。  
 
-→ [Session Storage](./session-storage.md)
+→ [会话存储](./session-storage.md)
 
 ### 消息网关
 
-一个长期运行的进程，内置 20 种平台适配器，可实现统一的会话路由、用户授权管理（基于允许列表及私信配对机制）、斜杠命令调度、钩子系统、定时任务触发以及后台维护功能。
+支持长期运行的进程，集成25种以上的平台适配器（内置及捆绑插件），具备统一的会话路由功能、用户授权机制（白名单与私信配对）、斜杠命令分发系统、钩子系统、定时任务调度以及后台维护功能。
 
-→ [Gateway Internals](./gateway-internals.md)
+→ [Gateway 内部机制](./gateway-internals.md)
 
 ### 插件系统
 
-插件共有三种发现途径：`~/.hermes/plugins/`（用户自定义插件）、`.hermes/plugins/`（项目级插件）以及 pip 安装的插件。插件可通过上下文 API 注册工具、钩子函数及 CLI 命令。目前存在两种专用插件类型：内存提供者（位于 `plugins/memory/` 目录）和上下文引擎（位于 `plugins/context_engine/` 目录）。这两种插件均为单选机制，同一时间只能启用其中一个，可通过 `hermes plugins` 命令或 `config.yaml` 文件进行配置。
+提供三种插件发现路径：`~/.hermes/plugins/`（用户级）、`.hermes/plugins/`（项目级）以及 pip 包入口。插件可通过上下文 API 注册工具、钩子函数及 CLI 命令。目前存在两种专用插件类型：内存提供器（`plugins/memory/`）和上下文引擎（`plugins/context_engine/`）。这两种类型均为单选机制，同一时间仅能启用其中一个，可通过 `hermes plugins` 或 `config.yaml` 进行配置。
 
-→ [Plugin Guide](/developer-guide/plugins), [Memory Provider Plugin](./memory-provider-plugin.md)
+→ [插件指南](/developer-guide/plugins)，[内存提供器插件](./memory-provider-plugin.md)
 
-### Cron 定时任务
+### 定时任务调度
 
-属于高级别的智能体任务（而非普通 shell 脚本任务）。Cron 任务以 JSON 格式存储，支持多种调度格式，可附加技能函数与脚本代码，并能发送到任意支持的平台上执行。
+支持作为一等级的智能体任务执行（而非 shell 任务）。任务以 JSON 格式存储，兼容多种调度格式，可附加技能与脚本，并能发送至任意平台。
 
-→ [Cron Internals](./cron-internals.md)
+→ [定时任务内部机制](./cron-internals.md)
 
 ### ACP 集成
 
-通过 stdio/JSON-RPC 接口，将 Hermes 变为 VS Code、Zed 以及 JetBrains 系列编辑器原生的智能体功能。
+通过 stdio/JSON-RPC 接口，将 Hermes 作为编辑器原生的智能体集成到 VS Code、Zed 以及 JetBrains 等工具中。
 
-→ [ACP Internals](./acp-internals.md)
+→ [ACP 内部机制](./acp-internals.md)
 
-### 轨迹数据生成
+### 轨迹生成
 
-从智能体会话中生成 ShareGPT 格式的轨迹数据，用于后续训练数据的创建。
+能够从智能体会话中生成 ShareGPT 格式的轨迹数据，用于训练数据构建。
 
-→ [Trajectories & Training Format](./trajectory-format.md)
+→ [轨迹格式与训练指南](./trajectory-format.md)
 
 ## 设计原则
 
 | 原则 | 实际应用意义 |
-|------|--------------|
-| **提示词稳定性** | 对话过程中系统提示词不会发生变更。除非用户主动执行 `/model` 指令，否则不会触发导致缓存失效的修改。 |
-| **执行过程可观测** | 每次工具调用都会通过回调机制向用户展示执行状态。CLI 界面和网关界面会以进度指示器或聊天消息的形式反馈处理进度。 |
-| **可中断性** | 用户可通过输入指令或发送信号，随时中断 API 调用及工具执行过程。 |
-| **核心逻辑与平台解耦** | 同一个 AIAgent 类既可用于 CLI、网关、ACP、批处理任务，也可用于 API 服务器。不同平台的差异仅体现在入口点上，而非智能体核心逻辑本身。 |
-| **松耦合设计** | 可选子系统（如 MCP、插件、内存提供者、强化学习环境等）均采用注册表模式和检查函数机制进行控制，不存在强制依赖关系。 |
-| **个人资料隔离** | 每个个人资料（通过 `hermes -p <name>` 创建）拥有独立的 HERMES_HOME 目录、配置文件、内存数据、会话记录以及网关进程 ID。多个个人资料可同时运行。 |
+|-----------|----------------|
+| **提示词稳定性** | 对话过程中系统提示词不会发生变化。除非用户主动执行 `/model` 指令，否则不会发生破坏缓存的变更。 |
+| **可观测的执行过程** | 每次工具调用都会通过回调机制向用户展示执行状态。CLI界面和网关会以进度指示器及聊天消息的形式反馈处理进度。 |
+| **可中断性** | 用户可通过输入指令或发送信号，在API调用及工具执行过程中随时中止操作。 |
+| **与平台无关的核心架构** | 一个 AIAgent 类即可同时服务于 CLI、网关、ACP、批处理任务以及 API 服务器。不同平台之间的差异仅体现在入口点上，而非代理本身。 |
+| **松耦合设计** | 可选子系统（如 MCP、插件、内存提供器、强化学习环境等）通过注册表机制和 check_fn 筛选功能进行连接，而非依赖硬编码的绑定关系。 |
+| **配置隔离** | 每个配置文件（`hermes -p <name>`）拥有独立的 HERMES_HOME、配置文件、内存数据、会话记录以及网关进程标识符。多个配置文件可同时运行。 |
 
-## 文件依赖关系链
+## 文件依赖链
 
 ```text
 tools/registry.py  (no deps — imported by all tool files)
