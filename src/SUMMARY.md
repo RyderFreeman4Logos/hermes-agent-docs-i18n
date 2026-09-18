@@ -2187,6 +2187,7 @@
         - [References]()
           - [工件与模型注册表指南](zh/optional-skills/mlops/evaluation/weights-and-biases/references/artifacts.md)
           - [框架集成指南](zh/optional-skills/mlops/evaluation/weights-and-biases/references/integrations.md)
+          - [全面超参数遍历指南](zh/optional-skills/mlops/evaluation/weights-and-biases/references/sweeps.md)
     - [Faiss]()
       - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
       - [References]()
