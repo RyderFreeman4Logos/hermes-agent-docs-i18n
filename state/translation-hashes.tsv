@@ -1194,7 +1194,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md	c0526026a
 website/docs/user-guide/skills/optional/mlops/mlops-guidance.md	703becfc4f53a44dcb0f57fb83d878c4fd027e1b9ec15b25cef6e2f3f5ff5d27
 website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md	fa118f6da52c31a2a18eb124c6acb59220b2182f4af6e8aecfb11b94e1f816df
 website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md	8e15e3c17fcfa6bf9e1ab3e2270877baae06c0f635bcd631634d8256f78e1354
-website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md	34f899bc2d0e54e2cd7867bebc365414129f64381c1e730778839023df78f009
+website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md	3c7a67ae3f6a8ad8fe0c12df8e3f81b710dec50ea1516e45d3ed7decb09f2576
 website/docs/user-guide/skills/optional/mlops/mlops-inference-serving-llms-vllm.md	3936773b80d36f858f76bef46f0d302c0e3ebace4a261623ef52b4ba33a519c1
 website/docs/user-guide/skills/optional/mlops/mlops-instructor.md	6f639c31eab1015dfb9162dc2faab93892eb6d657be711b42947b4592146b1d9
 website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md	3d197cde486d26c161fdc21f03ffba20c67ad321de7f6dfd1d92cf00b7dadf07
