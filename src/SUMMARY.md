@@ -2729,7 +2729,7 @@
         - [设计系统：xAI](zh/skills/creative/popular-web-designs/templates/x.ai.md)
         - [设计系统：Zapier](zh/skills/creative/popular-web-designs/templates/zapier.md)
     - [Songwriting And Ai Music]()
-      - [歌曲创作与AI音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
+      - [歌曲创作与人工智能音乐生成](zh/skills/creative/songwriting-and-ai-music/SKILL.md)
   - [Devops]()
     - [Sdlc Review]()
       - [SDLC 审核技能](zh/skills/devops/sdlc-review/SKILL.md)
