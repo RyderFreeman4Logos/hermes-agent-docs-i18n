@@ -1,46 +1,46 @@
 ---
-title: "Fine Tuning With Trl — TRL: SFT, DPO, PPO, GRPO, reward modeling for LLM RLHF"
-sidebar_label: "Fine Tuning With Trl"
-description: "TRL: SFT, DPO, PPO, GRPO, reward modeling for LLM RLHF"
+title: "Trl Fine Tuning — TRL: SFT, DPO, GRPO, RLOO reward modeling for LLM RLHF"
+sidebar_label: "Trl Fine Tuning"
+description: "TRL: SFT, DPO, GRPO, RLOO reward modeling for LLM RLHF"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# 使用 TRL 进行微调
+# TRL微调
 
-TRL 支持用于大语言模型 RLHF 的 SFT、DPO、PPO、GRPO 以及奖励建模等训练方法。
+TRL：用于大语言模型强化学习对齐的人类偏好训练方法，包括 SFT、DPO、GRPO 以及 RLOO 奖励建模技术。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 可通过 `hermes skills install official/mlops/trl-fine-tuning` 安装 |
-| 路径 | `optional-skills/mlops/training/trl-fine-tuning` |
-| 版本 | `1.0.0` |
+| 来源 | 可选 —— 通过命令 `hermes skills install official/mlops/trl-fine-tuning` 进行安装 |
+| 路径 | `optional-skills/mlops\training\trl-fine-tuning` |
+| 版本 | `1.0.1` |
 | 开发者 | Orchestra Research |
-| 许可证 | MIT |
-| 依赖项 | `trl`, `transformers`, `datasets`, `peft`, `accelerate`, `torch` |
+| 许可协议 | MIT |
+| 依赖项 | `trl`、`transformers`、`datasets`、`peft`、`accelerate`、`torch` |
 | 支持平台 | linux、macos、windows |
-| 标签 | `训练后优化`、`TRL`、`强化学习`、`微调`、`SFT`、`DPO`、`PPO`、`GRPO`、`RLHF`、`偏好对齐`、`HuggingFace` |
+| 标签 | `训练后优化`、`TRL`、`强化学习`、`微调`、`SFT`、`DPO`、`GRPO`、`RLOO`、`RLHF`、`偏好对齐`、`HuggingFace` |
 
-## 参考：完整的 SKILL.md 文件
+## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能激活后，智能体将看到这些内容作为操作指令。
+以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为内容。
 :::
 
-# TRL —— Transformer 强化学习
+# TRL - Transformer强化学习
 
 ## 快速入门
 
-TRL 提供了多种训练后优化方法，用于使语言模型更符合人类偏好。
+TRL 提供了一系列训练后优化方法，用于使语言模型更符合人类偏好。
 
 **安装方式**：
 ```bash
 pip install trl transformers datasets peft accelerate
 ```
 
-**监督式微调**（指令微调）：
+**监督微调**（指令微调）：
 ```python
 from trl import SFTTrainer
 
@@ -67,9 +67,12 @@ trainer.train()
 
 ## 常见工作流程
 
-### 工作流程 1：完整的 RLHF 流水线（SFT → 奖励模型 → PPO）
+### 工作流程 1：完整的 RLHF 流水线（SFT → 奖励模型 → RLOO）
 
-从基础模型到符合人类偏好模型的完整流程。
+从基础模型到符合人类偏好的模型的完整流程。
+
+> **注意（TRL 1.x 版本）：** PPO 已从 TRL 中**移除**——`PPOTrainer`、`PPOConfig` 以及 `python -m trl.scripts.ppo` 均不再存在。目前 TRL 仍提供在线 RL 训练器：
+> **RLOO**（`RLOOTrainer` / `trl rloo`）是最接近奖励模型驱动型 RLHF 流水线的直接替代方案，而**GRPO**（`GRPOTrainer` / `trl grpo`，见工作流程 3）则是更节省内存的替代选项。下述步骤将使用 RLOO。
 
 复制此清单：
 
@@ -77,7 +80,7 @@ trainer.train()
 RLHF Training:
 - [ ] Step 1: Supervised fine-tuning (SFT)
 - [ ] Step 2: Train reward model
-- [ ] Step 3: PPO reinforcement learning
+- [ ] Step 3: RLOO reinforcement learning
 - [ ] Step 4: Evaluate aligned model
 ```
 
@@ -112,7 +115,7 @@ trainer = SFTTrainer(
     model=model,
     args=training_args,
     train_dataset=dataset,
-    tokenizer=tokenizer
+    processing_class=tokenizer
 )
 trainer.train()
 trainer.save_model()
@@ -155,28 +158,54 @@ trainer.train()
 trainer.save_model()
 ```
 
-**步骤 3：PPO 强化学习**
+**第3步：RLOO强化学习**
 
-利用奖励模型优化策略：
+利用奖励模型对策略进行优化。在TRL 1.x版本中已移除PPO算法；此时应使用RLOO命令行工具（`trl rloo`），并通过`--reward_model_name_or_path`参数传入已训练好的奖励模型。
 
 ```bash
-python -m trl.scripts.ppo \
+trl rloo \
     --model_name_or_path Qwen2.5-0.5B-SFT \
-    --reward_model_path Qwen2.5-0.5B-Reward \
+    --reward_model_name_or_path Qwen2.5-0.5B-Reward \
     --dataset_name trl-internal-testing/descriptiveness-sentiment-trl-style \
-    --output_dir Qwen2.5-0.5B-PPO \
+    --output_dir Qwen2.5-0.5B-RLOO \
     --learning_rate 3e-6 \
     --per_device_train_batch_size 64 \
-    --total_episodes 10000
+    --num_generations 4
 ```
 
-**第4步：评估**
+对应的 Python 实现（`RLOOTrainer` / `RLOOConfig`）：
+```python
+from trl import RLOOTrainer, RLOOConfig
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+reward_model = AutoModelForSequenceClassification.from_pretrained(
+    "Qwen2.5-0.5B-Reward", num_labels=1
+)
+
+config = RLOOConfig(
+    output_dir="Qwen2.5-0.5B-RLOO",
+    per_device_train_batch_size=64,
+    learning_rate=3e-6,
+    num_generations=4,
+)
+
+trainer = RLOOTrainer(
+    model="Qwen2.5-0.5B-SFT",
+    reward_funcs=reward_model,   # a reward model (or a callable reward function)
+    args=config,
+    train_dataset=dataset,       # prompt-only dataset
+    processing_class=tokenizer,
+)
+trainer.train()
+```
+
+**第4步：进行评估**
 
 ```python
 from transformers import pipeline
 
 # Load aligned model
-generator = pipeline("text-generation", model="Qwen2.5-0.5B-PPO")
+generator = pipeline("text-generation", model="Qwen2.5-0.5B-RLOO")
 
 # Test
 prompt = "Explain quantum computing to a 10-year-old"
@@ -184,7 +213,7 @@ output = generator(prompt, max_length=200)[0]["generated_text"]
 print(output)
 ```
 
-### 工作流程 2：基于 DPO 的简单偏好对齐
+### 工作流 2：基于 DPO 的简单偏好对齐
 
 无需奖励模型即可实现模型与偏好的对齐。
 
@@ -235,7 +264,7 @@ config = DPOConfig(
 )
 ```
 
-**步骤 3：使用 DPOTrainer 进行训练**
+**第3步：使用DPOTrainer进行训练**
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -266,11 +295,11 @@ trl dpo \
     --beta 0.1
 ```
 
-### 工作流程 3：基于 GRPO 的低内存在线强化学习
+### 工作流 3：基于 GRPO 的低内存在线强化学习
 
 以极低的内存占用实现强化学习训练。
 
-如需了解关于 GRPO 的深入指导——包括奖励函数设计、关键的训练要点（损失行为、模式崩溃问题及参数调优方法），以及高级的多阶段训练策略，请参阅 **[references/grpo-training.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/references/grpo-training.md)**。可用于实际生产的训练脚本位于 **[templates/basic_grpo_training.py](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/templates/basic_grpo_training.py)**。
+如需了解关于 GRPO 的深入指导——包括奖励函数设计、关键的训练要点（损失行为、模式崩溃问题及参数调优方法），以及高级的多阶段训练策略，请参阅 **[references/grpo-training.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/grpo-training.md)**。可用于实际生产的训练脚本位于 **[templates/basic_grpo_training.py](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/templates/basic_grpo_training.py)**。
 
 复制此检查清单：
 
@@ -332,7 +361,7 @@ config = GRPOConfig(
 )
 ```
 
-**第3步：使用GRPOTrainer进行模型训练**
+**步骤 3：使用 GRPOTrainer 进行训练**
 
 ```python
 from datasets import load_dataset
@@ -364,19 +393,19 @@ trl grpo \
 
 **适合使用 TRL 的情况：**
 - 需要使模型符合人类偏好
-- 已拥有偏好数据（选择/拒绝的样本对）
-- 希望使用强化学习算法（PPO、GRPO）
-- 需要进行奖励模型训练
+- 拥有偏好数据（选择/拒绝对）
+- 希望使用强化学习方法（RLOO、GRPO）
+- 需要训练奖励模型
 - 执行完整的 RLHF 流水线
 
 **方法选择指南：**
-- **SFT**：拥有提示词与回复对应样本，仅需实现基础指令遵循功能
-- **DPO**：已有偏好数据，希望进行简单对齐（无需奖励模型）
-- **PPO**：已构建奖励模型，需对强化学习过程实现最大程度控制
-- **GRPO**：内存资源受限，希望进行在线强化学习
-- **奖励模型**：正在搭建 RLHF 流水线，需要对生成内容进行评分
+- **SFT**：拥有提示词与回复对，仅需基础指令遵循能力
+- **DPO**：拥有偏好数据，希望实现简单对齐（无需奖励模型）
+- **RLOO**：已拥有奖励模型，希望进行在线强化学习（基于奖励模型的 RLHF 方案；在 TRL 1.x 版本中已移除 PPO）
+- **GRPO**：内存资源受限，但希望使用带有奖励函数的在线强化学习
+- **奖励模型**：正在构建 RLHF 流水线，需要对生成内容进行评分
 
-**可选择的其他方案：**
+**建议改用替代方案的情况：**
 - **HuggingFace Trainer**：无需强化学习的基础微调工具
 - **Axolotl**：基于 YAML 的训练配置工具
 - **LitGPT**：用于教学目的的轻量级微调工具
@@ -395,12 +424,12 @@ config = DPOConfig(
 )
 ```
 
-或者可以使用渐变检查点技术：
+或者使用梯度检查点技术：
 ```python
 model.gradient_checkpointing_enable()
 ```
 
-**问题：对齐质量较差**
+**问题：对齐质量不佳**
 
 调整 beta 参数：
 ```python
@@ -421,57 +450,59 @@ config = RewardConfig(
 )
 ```
 
-需确保偏好数据集中有明确的胜出项：
+请确保偏好设置数据集中有明确的胜出选项：
 ```python
 # Verify dataset
 print(dataset[0])
 # Should have clear chosen > rejected
 ```
 
-**问题：PPO训练不稳定**
+**问题：在线强化学习（RLOO/GRPO）训练不稳定**
 
-调整KL系数：
+请调整KL/β正则化参数，使其更接近参考策略的值：
 ```python
-config = PPOConfig(
-    kl_coef=0.1,  # Increase from 0.05
-    cliprange=0.1  # Reduce from 0.2
+from trl import RLOOConfig
+
+config = RLOOConfig(
+    beta=0.05,          # KL coefficient toward the reference model (increase for stability)
+    num_generations=4,  # more samples per prompt = lower-variance advantage estimates
 )
 ```
 
 ## 高级主题
 
-**SFT训练指南**：有关数据集格式、对话模板、打包策略以及多GPU训练的相关内容，请参阅 [references/sft-training.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/references/sft-training.md)。
+**SFT训练指南**：有关数据集格式、对话模板、打包策略以及多GPU训练的相关内容，请参阅 [references/sft-training.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/sft-training.md)。
 
-**DPO变体**：关于IPO、cDPO、RPO以及其他DPO损失函数，以及相应的推荐超参数，可查看 [references/dpo-variants.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/references/dpo-variants.md)。
+**DPO变体**：关于IPO、cDPO、RPO以及其他DPO损失函数，以及相应的推荐超参数信息，请查看 [references/dpo-variants.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/dpo-variants.md)。
 
-**奖励建模**：涉及结果奖励与过程奖励的区分、Bradley-Terry损失函数以及奖励模型评估方法，详见 [references/reward-modeling.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/references/reward-modeling.md)。
+**奖励建模**：涉及结果奖励与过程奖励的区分、Bradley-Terry损失函数以及奖励模型评估方法的内容，请参阅 [references/reward-modeling.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/reward-modeling.md)。
 
-**在线强化学习方法**：PPO、GRPO、RLOO以及OnlineDPO等方法的详细配置信息，请参考 [references/online-rl.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/references/online-rl.md)。
+**在线强化学习方法**：包含PPO、GRPO、RLOO和OnlineDPO等方法的详细配置信息，请查阅 [references/online-rl.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/online-rl.md)。
 
-**GRPO深度解析**：本文将深入探讨专家级GRPO应用技巧，包括奖励函数设计理念、训练过程中的问题分析（如损失值上升原因、模式崩溃检测方法）、超参数调优策略、多阶段训练流程以及故障排查方法。可直接使用的生产级模板见 [templates/basic_grpo_training.py](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/training/trl-fine-tuning/templates/basic_grpo_training.py)。
+**GRPO 深入解析**：如需了解专业级的 GRPO 实践方案，可参阅 [references/grpo-training.md](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/references/grpo-training.md)，内容包括奖励函数设计理念、训练技巧（损失值上升的原因、模式崩溃检测方法）、超参数调优、多阶段训练策略以及故障排查指南。可直接使用的生产级模板见 [templates/basic_grpo_training.py](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\training\trl-fine-tuning/templates/basic_grpo_training.py)。
 
 ## 硬件要求
 
-- **GPU**：NVIDIA显卡（需支持CUDA）
-- **VRAM内存**：取决于所选模型与训练方法
-  - SFT 7B模型：16GB（使用LoRA技术时）
-  - DPO 7B模型：24GB（用于存储参考模型）
-  - PPO 7B模型：40GB（需同时存储策略模型与奖励模型）
-  - GRPO 7B模型：24GB（内存效率更高）
-- **多GPU支持**：可通过`accelerate`库实现
-- **混合精度训练**：推荐使用BF16格式（适用于A100/H100显卡）
+- **GPU**：NVIDIA 显卡（需支持 CUDA）
+- **VRAM**：需求取决于模型类型与训练方法
+  - SFT 7B 模型：16GB（搭配 LoRA 技术）
+  - DPO 7B 模型：24GB（用于存储参考模型）
+  - RLOO 7B 模型：40GB（需存储策略模型与奖励模型）
+  - GRPO 7B 模型：24GB（内存占用更低）
+- **多 GPU 支持**：可通过 `accelerate` 库实现
+- **混合精度训练**：推荐使用 BF16 精度（适用于 A100/H100 显卡）
 
 **内存优化建议**：
-- 所有训练方法均建议采用LoRA/QLoRA技术
+- 所有训练方法均建议采用 LoRA/QLoRA 技术
 - 启用梯度检查点功能
-- 采用较小的批量大小并结合梯度累积技术
+- 通过梯度累积方式降低批量大小
 
 ## 参考资源
 
 - 文档文档：https://huggingface.co/docs/trl/
-- GitHub仓库：https://github.com/huggingface/trl
+- GitHub 仓库：https://github.com/huggingface/trl
 - 相关论文：
   - 《通过人类反馈训练语言模型以遵循指令》（InstructGPT，2022年）
-  - 《直接偏好优化：你的语言模型其实是一个奖励模型》（DPO，2023年）
+  - 《直接偏好优化：你的语言模型其实是个奖励模型》（DPO，2023年）
   - 《群体相对策略优化》（GRPO，2024年）
 - 示例代码：https://github.com/huggingface/trl/tree/main/examples/scripts

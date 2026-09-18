@@ -3332,7 +3332,7 @@
             - [Tensorrt Llm](zh/website/docs/user-guide/skills/optional/mlops/mlops-tensorrt-llm.md)
             - [Torchtitan](zh/website/docs/user-guide/skills/optional/mlops/mlops-torchtitan.md)
             - [Axolotl](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-axolotl.md)
-            - [使用 TRL 进行微调](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md)
+            - [TRL微调](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-trl-fine-tuning.md)
             - [Unsloth](zh/website/docs/user-guide/skills/optional/mlops/mlops-training-unsloth.md)
             - [Whisper](zh/website/docs/user-guide/skills/optional/mlops/mlops-whisper.md)
           - [Payments]()
