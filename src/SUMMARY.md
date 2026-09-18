@@ -2767,6 +2767,7 @@
         - [设计系统：Sentry](zh/skills/creative/popular-web-designs/templates/sentry.md)
         - [设计系统：SpaceX](zh/skills/creative/popular-web-designs/templates/spacex.md)
         - [设计系统：Spotify](zh/skills/creative/popular-web-designs/templates/spotify.md)
+        - [设计系统：Stripe](zh/skills/creative/popular-web-designs/templates/stripe.md)
         - [设计系统：Supabase](zh/skills/creative/popular-web-designs/templates/supabase.md)
         - [设计系统：Superhuman](zh/skills/creative/popular-web-designs/templates/superhuman.md)
         - [设计系统：Together AI](zh/skills/creative/popular-web-designs/templates/together.ai.md)
