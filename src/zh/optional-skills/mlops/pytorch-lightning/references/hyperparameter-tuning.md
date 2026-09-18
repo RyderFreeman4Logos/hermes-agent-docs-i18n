@@ -2,7 +2,7 @@
 
 ## 与调优框架的集成
 
-Lightning 能够与主流的超参数调优库实现无缝集成。
+Lightning 能够与各类流行的超参数调优库实现无缝集成。
 
 ### 1. Ray Tune 集成
 
@@ -158,7 +158,7 @@ import optuna
 
 # Shared database for distributed optimization
 storage = optuna.storages.RDBStorage(
-    url='postgresql://user:pass@localhost/optuna'
+    url='postgresql://user@localhost/optuna'  # password via ~/.pgpass or PGPASSWORD
 )
 
 study = optuna.create_study(
@@ -172,7 +172,7 @@ study = optuna.create_study(
 study.optimize(objective, n_trials=50)
 ```
 
-### 3. Weights & Biases (WandB) 测试方案
+### 3. Weights & Biases (WandB) 参数扫描
 
 **安装**：
 ```bash
@@ -387,12 +387,12 @@ analysis = tune.run(
 ```
 
 **工作原理**：
-- 启动64次试验
-- 过完10个训练周期后，淘汰表现最差的50%（剩余32次试验）
-- 过完20个训练周期后，再次淘汰表现最差的50%（剩余16次试验）
-- 过完40个训练周期后，继续淘汰表现最差的50%（剩余8次试验）
-- 过完80个训练周期后，再度淘汰表现最差的50%（剩余4次试验）
-- 将剩余的4次试验运行至结束（共计100个训练周期）
+- 启动 64 次试验
+- 运行 10 个周期后，淘汰表现最差的 50%（剩余 32 次试验）
+- 运行 20 个周期后，再次淘汰表现最差的 50%（剩余 16 次试验）
+- 运行 40 个周期后，继续淘汰表现最差的 50%（剩余 8 次试验）
+- 运行 80 个周期后，再度淘汰表现最差的 50%（剩余 4 次试验）
+- 将剩余的 4 次试验运行至结束（总计 100 个周期）
 
 ### 2. 贝叶斯优化
 
@@ -514,9 +514,9 @@ def train_fn(config):
 
 ## 常见问题
 
-### 问题：试用版本内存不足
+### 问题：测试实例内存不足
 
-**解决方案**：减少同时运行的试用任务数量或批次大小
+**解决方案**：减少同时运行的测试实例数量或批次大小
 ```python
 analysis = tune.run(
     train_fn,
@@ -539,7 +539,7 @@ scheduler = ASHAScheduler(
 )
 ```
 
-### 问题：无法复现最佳测试结果
+### 问题：无法复现最佳试验结果
 
 **解决方案**：在训练函数中设置种子值
 ```python
