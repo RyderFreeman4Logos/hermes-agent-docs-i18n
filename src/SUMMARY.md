@@ -2992,7 +2992,7 @@
     - [Getting Started]()
       - [安装](zh/website/docs/getting-started/installation.md)
       - [学习路径](zh/website/docs/getting-started/learning-path.md)
-      - [Nix 与 NixOS 配置](zh/website/docs/getting-started/nix-setup.md)
+      - [Nix 与 NixOS 配置指南](zh/website/docs/getting-started/nix-setup.md)
       - [平台支持情况](zh/website/docs/getting-started/platform-support.md)
       - [Hermes Agent 快速入门指南](zh/website/docs/getting-started/quickstart.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
