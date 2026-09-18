@@ -1158,6 +1158,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md	aee3e8f9748f6e
 website/docs/user-guide/skills/optional/mlops/mlops-chroma.md	b8f416854e00bdd99dadb3e064fc0680fde4569616587393693973a94d645204
 website/docs/user-guide/skills/optional/mlops/mlops-clip.md	67a40f61af3ec1cc26b4537916a48fcc5357a8abe38ef5162430abda46f30a21
 website/docs/user-guide/skills/optional/mlops/mlops-evaluation-evaluating-llms-harness.md	27a6aa8509ad810519d1982817c5f921e0e9203da8aff3513866f5eee250d948
+website/docs/user-guide/skills/optional/mlops/mlops-evaluation-weights-and-biases.md	cee4db3d39279b4539fcde26dc008e7371d7268a10d88493d79cff2c1670866d
 website/docs/user-guide/skills/optional/mlops/mlops-faiss.md	9fb5b79afc0c06f3b106c9a8feeb552cc75efa5ed982461fba3371704bc70c2a
 website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md	c0526026a7f092b0b447bf429ac0690d8177a59ba135a4e0449819e7002296c6
 website/docs/user-guide/skills/optional/mlops/mlops-guidance.md	cfc47f8e75e1348a4f1f973ea20ebc452a5d0bd57ce03cc3f733998f116f8e6f
