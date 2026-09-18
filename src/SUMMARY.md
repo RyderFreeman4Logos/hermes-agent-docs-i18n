@@ -2864,6 +2864,7 @@
         - [将 GitHub Issue 转换为经过测试的 PR](zh/skills/software-development/github/references/issue-to-pr.md)
         - [GitHub 问题管理](zh/skills/software-development/github/references/issues.md)
         - [GitHub Pull Request 工作流程](zh/skills/software-development/github/references/pr-workflow.md)
+        - [GitHub 仓库管理](zh/skills/software-development/github/references/repo-management.md)
         - [输出模板说明](zh/skills/software-development/github/references/review-output-template.md)
       - [Templates]()
         - [Bug Report](zh/skills/software-development/github/templates/bug-report.md)
