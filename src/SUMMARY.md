@@ -2166,6 +2166,7 @@
     - [Evaluation]()
       - [Description](zh/optional-skills/mlops/evaluation/DESCRIPTION.md)
       - [Evaluating Llms Harness]()
+        - [lm-evaluation-harness - 大语言模型基准测试工具](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/SKILL.md)
         - [References]()
           - [API评估](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/api-evaluation.md)
           - [基准测试指南](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/benchmark-guide.md)
