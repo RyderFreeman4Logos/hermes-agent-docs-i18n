@@ -1,81 +1,79 @@
 # 工具矩阵——各角色的技能与工具集
 
-该矩阵将各类角色类型与其应`始终加载`的Hermes技能以及所需工具集对应起来。仅列出公共hermes-agent仓库中已包含的技能（位于`skills/`或`optional-skills/`目录下）。外部API和CLI通过终端工具集调用，因此不会出现在`always_load`列表中。
+该矩阵将各类角色原型与其应`始终加载`的Hermes技能以及所需工具集对应起来。仅列出公共hermes-agent仓库中已包含的技能（位于`skills/`或`optional-skills/`目录下）。外部API和CLI通过终端工具集调用，因此不会出现在`always_load`列表中。
 
 ## 与视频制作相关的Hermes技能
 
 ### 视觉/渲染技能（`hermes-agent/skills/creative/`）
 
-| 技能 | 功能说明 | 最适合的场景 |
-|------|----------|--------------|
-| `ascii-video` | 用于生成ASCII艺术视频的完整流程——支持生成式创作、音频驱动效果以及视频转ASCII功能 | 适用于ASCII/终端/复古像素风格内容的渲染；可作为ASCII项目的“摄影师” |
-| `ascii-art` | 生成静态ASCII艺术 | 适合负责设计ASCII风格画面的概念艺术家；也可作为ASCII渲染器的辅助工具 |
-| `manim-video` | Manim CE动画引擎——用于制作数学、算法类内容，以及类似3Blue1Brown风格的讲解视频 | 适用于数学公式、算法流程及技术概念的可视化渲染 |
-| `p5js` | p5.js编程语言——可创建生成艺术、着色器效果、交互式内容及3D图形 | 适用于生成艺术、粒子系统、自然运动效果以及网页画布类内容的渲染 |
-| `comfyui` | 通过ComfyUI工作流生成图像、视频和音频（包括图像转图像、图像转视频等功能） | 适用于图像生成、视频生成或作为AI生成内容的全能渲染工具 |
-| `touchdesigner-mcp` | 控制正在运行的TouchDesigner实例——可创建实时视觉效果、音频驱动的装置艺术作品及视频艺术家作品 | 适用于实时/音频驱动型内容的渲染；装置艺术创作；现场表演场景 |
-| `blender-mcp` *(可选)* | 通过MCP控制Blender 4.3及以上版本——支持3D建模、动画制作及渲染 | 适用于3D场景、真实感环境及角色动画的渲染 |
-| `pixel-art` | 使用特定时代配色方案（如NES、Game Boy、PICO-8风格）制作像素艺术 | 适用于复古游戏风格的渲染；也可作为像素风格画面的概念艺术家工具 |
-| `baoyu-comic` | 生成知识类漫画（用于教育、传记或教程场景） | 适用于以漫画形式呈现叙事内容的渲染；可作为分镜形式的讲解工具 |
-| `baoyu-infographic` | 生成信息图表 | 适用于数据驱动型讲解场景的渲染 |
-| `meme-generation` *(可选)* | 通过在模板上叠加文字来生成迷因图片 | 适用于讽刺或社交类内容的创作；也可用于生成迷因风格静态图片 |
+| Skill | What it does | Best fit for |
+|-------|--------------|--------------|
+| `ascii-video` | Production pipeline for ASCII art video — generative, audio-reactive, video-to-ASCII | Renderer for ASCII / terminal / retro pixel content; cinematographer for ASCII projects |
+| `ascii-art` | Static ASCII art generation | Concept artist for ASCII style frames; secondary tool for ASCII renderer |
+| `manim-video` | Manim CE animations — math, algorithms, 3Blue1Brown-style explainers | Renderer for math, algorithm walkthroughs, technical concept explainers |
+| `p5js` | p5.js sketches — generative art, shaders, interactive, 3D | Renderer for generative art, particle systems, organic motion, web-canvas content |
+| `comfyui` | Generate images, video, audio with ComfyUI workflows (image-to-image, image-to-video, etc.) | image-generator, image-to-video-generator, or general renderer for AI-generated content |
+| `touchdesigner-mcp` | Control a running TouchDesigner instance — real-time visuals, audio-reactive installation art, VJ | Renderer for real-time/audio-reactive content; installation art; live performance |
+| `pixel-art` | Pixel art with era palettes (NES, Game Boy, PICO-8) | Renderer for retro game aesthetic; concept artist for pixel-style frames |
+| `baoyu-comic` | Knowledge-comic generation (educational, biography, tutorial) | Renderer for comic-style narrative; explainer in panel form |
+| `baoyu-infographic` | Infographic generation | Renderer for data-driven explainer scenes |
+| `meme-generation` *(optional)* | Generate meme images by overlaying text on templates | Generator for satirical/social content; meme-style stills |
 
-### 设计/前期制作技能（`hermes-agent/skills/creative/`）
+### 设计/预生产技能（`hermes-agent/skills/creative/`）
 
-| 技能 | 功能说明 | 最适合的场景 |
-|------|----------|--------------|
-| `claude-design` | 设计一次性使用的HTML文档（如登录页、演示文稿或原型页面） | 适用于为产品视频设计风格画面；也可用于UI元素较多的内容的分镜绘制 |
-| `design-md` | 设计Markdown格式的文档 | 适用于负责记录视觉设计规范的概念艺术家 |
-| `popular-web-designs` | 提供流行网页设计的参考范例 | 适用于概念艺术家；在需要匹配特定UI风格时也可作为“摄影师”辅助工具 |
-| `sketch` | 快速生成用于对比的HTML原型（2-3种设计版本） | 适用于探索不同设计方向的概念艺术家；也可用于UI流程的分镜绘制 |
-| `excalidraw` | 生成类似Excalidraw风格的手绘图表 | 适用于分镜绘制；也可作为草图风格画面的概念艺术家工具 |
-| `architecture-diagram` | 绘制软件架构图 | 适用于技术类内容的分镜绘制；也可用于讲解系统结构的场景 |
-| `concept-diagrams` *(可选)* | 生成扁平化、极简风格的SVG图表（适用于数学、物理、化学、解剖学等领域的教学可视化） | 适用于需要简洁教育性图表的讲解场景的渲染/分镜工具 |
-| `pretext` | 撰写数学或科学类内容 | 适用于负责撰写技术讲解文本的作者或“摄影师” |
-| `creative-ideation` | 在约束条件下进行项目创意构思 | 适用于在任务要求模糊需要明确框架时的导演或“摄影师” |
-| `humanizer` | 去除文本中的AI痕迹，增添真实语气 | 适用于脚本或旁白文案的后期处理，避免出现明显的AI特征 |
-
+| 技能 | 功能说明 | 最适合的应用场景 |
+|-------|----------|------------------|
+| `claude-design` | 设计单次使用的 HTML 文件（落地页、演示文稿、原型等） | 用于制作产品视频风格画面的概念设计师；处理界面复杂的素材的故事板绘制者 |
+| `design-md` | 设计 Markdown 文档 | 负责记录视觉规范的场景概念设计师 |
+| `popular-web-designs` | 提供热门网页设计的参考模板 | 需要匹配特定 UI 风格的概念设计师或摄影师 |
+| `sketch` | 生成简易的 HTML 原型（2-3 种设计版本以供对比） | 探索设计方向的概念设计师；规划 UI 流程的故事板绘制者 |
+| `excalidraw` | 生成类似 Excalidraw 风格的手绘图表 | 用于制作故事板；需要草图风格画面的概念设计师 |
+| `architecture-diagram` | 绘制软件架构图 | 用于技术类内容的故事板绘制者；讲解系统功能的场景设计者 |
+| `concept-diagrams` *(可选)* | 平面化、极简风格的 SVG 图表（适用于教育类可视化内容，如物理、化学、数学、解剖学等主题） | 需要简洁教育类图表来辅助讲解的场景的渲染师或故事板绘制者 |
+| `pretext` | 撰写数学/科学类内容 | 负责撰写技术讲解类内容的作者或摄影师 |
+| `creative-ideation` | 在约束条件下进行项目创意构思 | 面对开放性需求且需要明确框架的导演或摄影师 |
+| `humanizer` | 去除文本中的 AI 特有表达，增添真实人文气息 | 用于后期处理文本的作者或文案撰写人，以避免脚本和语音稿中出现 AI 特有的表述风格 |
 ### 音频/媒体技能（`hermes-agent/skills/creative/` + `skills/media/`）
 
-| 技能 | 功能说明 | 最适合的场景 |
-|------|----------|--------------|
-| `songwriting-and-ai-music` | 歌曲创作技巧 + Suno提示词模板 | 适用于通过Suno委托制作音乐时的音乐监制 |
-| `heartmula` | 开源音乐生成工具（遵循Apache-2.0许可，功能类似Suno） | 适用于无需外部API即可定制音乐的音乐监制 |
-| `songsee` | 分析音频文件的频谱图以及梅尔频谱、色度谱和MFCC参数 | 适用于音乐监制分析音轨；音效设计师根据节奏设计音效；混音师可视化混音效果 |
-| `spotify` | 控制Spotify平台——播放、搜索、创建播放列表及管理播放列表 | 适用于音乐监制寻找现有音乐素材；也可用于参考研究 |
-| `youtube-content` | 获取视频字幕并转换为章节、摘要或帖子内容 | 适用于纪录片剪辑、内容改编以及制作讲解类视频时的资料收集 |
-| `gif-search` | 搜索现有的GIF图片 | 适用于编辑人员或概念艺术家寻找参考素材 |
-| `gifs` | GIF相关工具集 | 适用于负责处理GIF输出文件的后期制作人员 |
+| 技能名称 | 功能描述 | 最适合的应用场景 |
+|---------|----------|------------------|
+| `songwriting-and-ai-music` | 歌曲创作技巧 + Suno提示词模板 | 通过Suno委托制作音乐时的音乐监制 |
+| `heartmula` | 开源音乐生成工具（Apache-2.0许可，类似Suno） | 不依赖外部API、需定制音乐的音乐监制 |
+| `songsee` | 提供音频文件的频谱图以及梅尔频谱/色度图/MFCC参数 | 音乐监制分析曲目；音效设计师根据节奏设计音效；混音师可视化混音效果 |
+| `spotify` | 控制Spotify功能——播放、搜索、创建播放列表、管理歌单 | 音乐监制查找现有曲目；进行参考资料研究 |
+| `youtube-content` | 获取视频字幕，并将其转换为章节结构/摘要/文章内容 | 纪录片剪辑、内容改编、制作说明类内容时的资料收集 |
+| `gif-search` | 搜索现有GIF图片 | 编辑人员/概念设计师寻找参考素材 |
+| `gifs` | GIF处理工具 | 负责制作GIF成品的后期处理师 |
 
-### 看板工作流基础设施
+### 看板系统架构
 
-看板插件会自动将基础的流程编排指导嵌入到每个工作节点的系统提示词中——包括`kanban_create`的分发模式、任务交接生命周期，以及针对流程协调者的“分解而非直接执行”原则。无需额外加载看板相关技能，因为这些指导始终对看板类型的工作节点有效。
+看板插件会自动将基础的流程编排指导嵌入到每个工作节点的系统提示词中——包括`kanban_create`的分支处理模式、任务承接/移交的生命周期，以及针对流程协调者的“拆分任务而非直接执行”原则。无需额外加载任何看板技能，看板任务的处理人员始终能获得这些指导。
 
 ## 外部工具（通过终端工具集调用）
 
-这些并非Hermes技能，而是各角色配置文件会调用的外部CLI或API。它们不会出现在`always_load`列表中，而是由对应角色的终端命令直接调用。
+这些并非 Hermes 技能，而是配置文件所调用的外部 CLI 工具或 API。它们不会出现在 `always_load` 列表中，而是由对应角色直接执行终端命令来调用。
 
-| 工具 | 功能说明 | 使用该工具的角色类型 |
-|------|----------|----------------------|
-| `ffmpeg` | 视频/音频的编码、拼接及多路复用处理 | 渲染器、编辑器、音频混音师、后期制作人员 |
-| `ffprobe` | 分析媒体文件信息 | 所有需要处理媒体文件的角色类型 |
-| Whisper（CLI或API） | 语音转文本功能，用于生成字幕 | 字幕生成工具 |
-| 文本转图像API（FAL / Replicate / OpenAI / Midjourney） | 生成静态图片 | 图像生成工具（可作为本地`comfyui`的替代方案） |
-| 图像转视频API（Runway / Kling / Luma / Pika） | 将静态图片转化为动画视频 | 视频生成工具 |
-| 文本转语音API（ElevenLabs / OpenAI TTS等） | 生成旁白音频 | 语音合成工具 |
-| Suno API或网页界面 | 用于歌曲创作（需与`songwriting-and-ai-music`技能配合使用） | 音乐监制 |
-| Remotion CLI（`npx remotion render`） | 基于React技术的动态图形制作工具 | 动态图形渲染工具 |
-| Manim CE（`manim`） | 基于数学公式的动画渲染（由`manim-video`技能的配方驱动） | Manim动画渲染工具 |
-| Blender（`blender -b`） | 3D渲染功能（可作为`blender-mcp`的替代方案） | 3D渲染工具 |
+| 工具 | 功能 | 使用该工具的配置文件 |
+|------|------|----------------------|
+| `ffmpeg` | 视频/音频编码、拼接、复用 | renderer、editor、audio-mixer、masterer |
+| `ffprobe` | 检查媒体文件信息 | 所有涉及媒体处理的配置文件 |
+| Whisper（CLI 或 API） | 语音转文字以生成字幕 | captioner |
+| 文本转图像 API（FAL / Replicate / OpenAI / Midjourney） | 生成静态图片 | image-generator（作为本地 `comfyui` 的替代方案） |
+| 图像转视频 API（Runway / Kling / Luma / Pika） | 为静态图片添加动画效果 | image-to-video-generator |
+| 文本转语音 API（ElevenLabs / OpenAI TTS 等） | 生成旁白音频 | voice-talent |
+| Suno API 或网页版 | 曲目编排（与 `songwriting-and-ai-music` 配合使用） | music-supervisor |
+| Remotion CLI（`npx remotion render`） | 基于 React 的动态图形制作 | renderer-motion-graphics |
+| Manim CE（`manim`） | 数学动画渲染（由 `manim-video` 技能的脚本驱动） | renderer-manim |
+| Blender（`blender -b`） | 3D 渲染（无界面脚本模式） | renderer-3d |
 
-## Hermes内置的媒体审阅工具
+## Hermes 内置的媒体审阅工具
 
-这些是Hermes的原生工具——无需通过终端调用，而是通过专门的工具集直接使用。可通过在角色配置文件中添加相应工具集来为特定角色启用这些功能。
+这些是 Hermes 自带的工具——并非通过终端调用，而是通过其专用的工具集来使用。只需将相应的工具集添加到配置文件中，即可在特定配置文件下启用这些工具。
 
-| 工具 | 工具集 | 功能说明 | 使用该工具的角色类型 |
-|------|---------|----------|----------------------|
-| `video_analyze` | `video`（可选——需通过`hermes tools enable video`命令启用） | 原生视频理解能力——可直接将完整视频片段发送给多模态大语言模型（通过OpenRouter连接Gemini模型）进行审阅，无需逐帧提取。支持mp4、webm、mov、avi、mkv格式，文件大小上限为50 MB。默认模型为`AUXILIARY_VIDEO_MODEL`，若该模型不可用则回退至`AUXILIARY_VISION_MODEL`。 | 审阅员、摄影师、编辑 |
-| `vision_analyze` | `vision`（核心功能——默认已启用） | 图像/帧分析功能——可用于审阅静态图片、缩略图及导出的帧画面。所有角色类型均可直接使用该功能，无需额外启用。 | 审阅员、摄影师、概念艺术家 |
+| 工具 | 工具集 | 功能说明 | 使用该工具的角色 |
+|------|---------|----------|----------------|
+| `video_analyze` | `video`（可选——需通过 `hermes tools enable video` 启用） | 原生视频理解功能——无需提取帧，即可将完整视频片段发送至多模态大语言模型（通过 OpenRouter 连接 Gemini）进行分析。支持 mp4、webm、mov、avi、mkv 格式，文件大小上限为 50 MB。模型优先使用 `AUXILIARY_VIDEO_MODEL` 环境变量指定的模型，若未指定则回退至 `AUXILIARY_VISION_MODEL`。 | 审核员、摄影师、剪辑师 |
+| `vision_analyze` | `vision`（核心功能——默认启用） | 图像/帧分析功能——可用于查看静态图片、缩略图及导出的帧。所有角色无需额外配置即可直接使用该功能。 | 审核员、摄影师、概念艺术家 |
 
 ## 各角色的标准工具集配置
 
@@ -103,7 +101,7 @@ skills:
 
 无需终端——创作者根本不需要它。
 
-### 概念艺术家
+### 概念艺术家角色
 
 请完整翻译输入内容，切勿提前终止。
 
@@ -124,7 +122,7 @@ skills:
     # - design-md           (text-based design docs)
 ```
 
-### 故事板绘制工具
+### 分镜编辑器
 
 ```yaml
 toolsets:
@@ -154,7 +152,6 @@ skills:
     # - manim-video            (math/explainer)
     # - p5js                   (generative)
     # - comfyui                (AI-generated visuals)
-    # - blender-mcp            (3D)
     # - touchdesigner-mcp      (real-time/installation)
 ```
 
@@ -173,15 +170,14 @@ skills:
     # - p5js                      (renderer-p5js)
     # - comfyui                   (renderer-comfyui — img/video AI gen)
     # - touchdesigner-mcp         (renderer-touchdesigner)
-    # - blender-mcp               (renderer-3d)
     # - pixel-art                 (renderer-pixel)
     # - baoyu-comic               (renderer-comic)
     # - meme-generation           (renderer-meme)
 ```
 
-对于外部 API 渲染器（如使用 Runway 的图像转视频生成器、使用 ElevenLabs 的语音合成服务，以及使用 Remotion 的动态图形渲染器），`always_load` 参数的值为空——这类工具的工作流程由 API 驱动，仅需 API 密钥加上终端命令即可（即便如此，看板系统仍会自动注入相关指引）。
+对于基于外部 API 的渲染工具（如使用 Runway 的图像转视频生成器、使用 ElevenLabs 的语音合成服务，以及使用 Remotion 的动态图形渲染工具），`always_load` 参数的值为空——这类工具的操作完全由 API 驱动，只需 API 密钥加上终端命令即可（此时仍会自动注入看板相关指引）。
 
-而对于多技能渲染器配置（这种情况较为少见，通常为每种技能单独设置一个版本会更清晰），则可在每次调用 `kanban_create` 时使用 `--skill <name>` 参数来指定该特定任务应加载哪项技能。
+而对于多技能渲染配置（这种情况较为少见，通常为每种技能单独设置一个版本会更清晰），可在每次调用 `kanban_create` 时使用 `--skill <name>` 参数来指定该特定任务应加载哪种技能。
 
 ```yaml
 toolsets:
@@ -199,7 +195,7 @@ env_required:
   - ELEVENLABS_API_KEY      # or OPENAI_API_KEY for TTS
 ```
 
-如果用户的环境中已本地安装了ComfyUI，那么`comfyui`技能便可以完全替代外部图像生成API（成本更低、控制力更强，同时还支持自定义的图像转视频工作流）。
+如果用户的系统中已本地安装了ComfyUI，那么`comfyui`技能便可以完全替代外部图像生成API（成本更低、控制力更强，同时还支持自定义的图像转视频工作流）。
 
 ### music-supervisor
 
@@ -232,11 +228,11 @@ skills:
   always_load: []
 ```
 
-这些功能大多由ffmpeg驱动，无需特殊技能（每个任务处理节点都会自动注入看板操作指南）。对于字幕生成器，需在SOUL.md文件中添加Whisper调用相关配置。
+这些功能大多由ffmpeg驱动，无需特殊技能（每个任务处理节点都会自动注入看板操作指南）。对于字幕生成器，需在SOUL.md文件中添加Whisper调用示例。
 
 ### 审核员/品牌合规专员
 
-请完整翻译输入内容，切勿提前终止。
+请完整翻译输入内容，不得提前终止。
 
 ```yaml
 toolsets:
@@ -251,32 +247,32 @@ skills:
 
 ## API密钥要求
 
-在项目初始化阶段需妥善管理这些密钥。初始化脚本应在启动相关功能之前，检查`${HERMES_HOME:-~/.hermes}/.env`文件（或macOS钥匙串）中是否包含所有必需的密钥。
+在项目初始化阶段需注意这些要求。初始化脚本应在启动相关功能之前，检查`${HERMES_HOME:-~/.hermes}/.env`文件（或macOS钥匙串）中是否包含所有必需的密钥。
 
-| 服务名称 | 环境变量名 | 使用场景 |
-|---------|---------|---------|
+| 服务名称 | 环境变量名 | 使用该密钥的功能 |
+|---------|---------|------------------|
 | ElevenLabs | `ELEVENLABS_API_KEY` | 语音生成功能 |
 | OpenAI | `OPENAI_API_KEY` | 图像生成器（DALL-E）、语音生成功能（文本转语音） |
-| OpenRouter | `OPENROUTER_API_KEY` | 审核员、摄像师、剪辑师功能（`video_analyze`功能会通过`AUXILIARY_VIDEO_MODEL`路由至OpenRouter） |
-| FAL | `FAL_KEY` | 图像生成器（FAL流式模型） |
+| OpenRouter | `OPENROUTER_API_KEY` | 审核员、摄影师、剪辑师相关功能（`video_analyze`功能会通过`AUXILIARY_VIDEO_MODEL`路由至OpenRouter） |
+| FAL | `FAL_KEY` | 图像生成器（FAL流程模型） |
 | Replicate | `REPLICATE_API_TOKEN` | 图像生成器（备用服务提供商） |
-| Runway | `RUNWAY_API_KEY` | 图像转视频生成器 |
-| Kling | `KLING_API_KEY` | 图像转视频生成器（备用选项） |
-| Luma | `LUMA_API_KEY` | 图像转视频生成器（备用选项） |
+| Runway | `RUNWAY_API_KEY` | 图像转视频生成功能 |
+| Kling | `KLING_API_KEY` | 图像转视频生成功能（备用选项） |
+| Luma | `LUMA_API_KEY` | 图像转视频生成功能（备用选项） |
 | Suno | `SUNO_API_KEY` | 音乐管理功能（与`songwriting-and-ai-music`技能搭配使用） |
 | Spotify | `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` | 音乐管理功能（与`spotify`技能搭配使用） |
 | Anthropic | `ANTHROPIC_API_KEY` | 所有Hermes账号（Claude模型） |
 
-如果发现缺少某项密钥，应提示用户添加。密钥的存储优先级为：macOS钥匙串 → `${HERMES_HOME:-~/.hermes}/.env`文件 → 环境变量。
+如果缺少某项密钥，系统会提示用户补充。密钥的存储优先级为：macOS钥匙串 → `${HERMES_HOME:-~/.hermes}/.env`文件 → 环境变量。
 
 ## 技能版本锁定
 
-如需使用特定版本的技能，可通过任务级别的`--skill <名称>=<版本>`参数进行指定。默认情况下将使用已安装的最新版本。
+如需使用特定版本的技能，可通过任务级别的`--skill <名称>=<版本>`参数来指定。默认情况下将使用已安装的最新版本。
 
 ## 向矩阵中添加新技能
 
-当有新的Hermes公开视频技能发布时：
+当有新的 Hermes 公开视频技能发布时：
 
-1. 在本文件顶部的相应表格中添加一行记录
-2. 如果该技能需要专用渲染器版本，还需在`role-archetypes.md`文件中补充相关内容
-3. 更新`examples.md`文件中对应风格的相关示例
+1. 在本文件顶部的对应表格中添加一行记录；
+2. 如果该技能需要专门的渲染器版本，则需在 `role-archetypes.md` 文件中进行补充；
+3. 同时更新 `examples.md` 中与该技能相关的各风格示例。
