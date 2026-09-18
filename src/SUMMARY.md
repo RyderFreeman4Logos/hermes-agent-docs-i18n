@@ -3268,6 +3268,7 @@
             - [Sketch](zh/website/docs/user-guide/skills/optional/creative/creative-sketch.md)
             - [社交媒体内容日历](zh/website/docs/user-guide/skills/optional/creative/creative-social-media-content-calendar.md)
             - [Tldraw 离线功能](zh/website/docs/user-guide/skills/optional/creative/creative-tldraw-offline.md)
+            - [Touchdesigner Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-touchdesigner-mcp.md)
             - [Unreal Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-unreal-mcp.md)
           - [Data Science]()
             - [Jupyter Notebook](zh/website/docs/user-guide/skills/optional/data-science/data-science-jupyter-notebook.md)
