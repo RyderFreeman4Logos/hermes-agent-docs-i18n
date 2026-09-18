@@ -2013,6 +2013,7 @@
       - [References]()
         - [命名调色板](zh/optional-skills/creative/pixel-art/references/palettes.md)
     - [Pretext]()
+      - [Pretext创意演示](zh/optional-skills/creative/pretext/SKILL.md)
       - [References]()
         - [前提模式](zh/optional-skills/creative/pretext/references/patterns.md)
     - [Simple English]()
