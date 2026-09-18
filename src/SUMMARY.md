@@ -2450,6 +2450,7 @@
         - [实验设计模式](zh/optional-skills/research/research-paper-writing/references/experiment-patterns.md)
         - [机器学习/人工智能研究中的人工评估指南](zh/optional-skills/research/research-paper-writing/references/human-evaluation.md)
         - [超出实证机器学习的论文类型](zh/optional-skills/research/research-paper-writing/references/paper-types.md)
+        - [第5阶段：论文撰写（完整流程）](zh/optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md)
         - [审稿人指南与评估标准](zh/optional-skills/research/research-paper-writing/references/reviewer-guidelines.md)
         - [参考文献](zh/optional-skills/research/research-paper-writing/references/sources.md)
         - [机器学习论文写作理念与最佳实践](zh/optional-skills/research/research-paper-writing/references/writing-guide.md)
