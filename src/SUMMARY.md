@@ -2246,6 +2246,7 @@
       - [Huggingface Hub]()
         - [Hugging Face CLI (`hf`) 参考指南](zh/optional-skills/mlops/models/huggingface-hub/SKILL.md)
       - [Segment Anything Model]()
+        - [Segment Anything Model（SAM）](zh/optional-skills/mlops/models/segment-anything-model/SKILL.md)
         - [References]()
           - [Segment Anything 故障排除指南](zh/optional-skills/mlops/models/segment-anything-model/references/troubleshooting.md)
     - [Nemo Curator]()
