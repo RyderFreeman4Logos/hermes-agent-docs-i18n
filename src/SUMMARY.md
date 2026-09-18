@@ -3049,6 +3049,7 @@
       - [从其他 Agent 导入](zh/website/docs/user-guide/import-from-other-agents.md)
       - [本地模型](zh/website/docs/user-guide/local-models.md)
       - [受管理作用域](zh/website/docs/user-guide/managed-scope.md)
+      - [将桌面端与多个 Hermes 实例连接](zh/website/docs/user-guide/multi-connection-desktop.md)
       - [同时运行多个网关](zh/website/docs/user-guide/multi-profile-gateways.md)
       - [配置分发：共享完整代理](zh/website/docs/user-guide/profile-distributions.md)
       - [配置文件：运行多个 Agent](zh/website/docs/user-guide/profiles.md)
