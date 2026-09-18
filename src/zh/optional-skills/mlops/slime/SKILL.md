@@ -1,6 +1,6 @@
 ---
-name: slime-rl-training
-description: Provides guidance for LLM post-training with RL using slime, a Megatron+SGLang framework. Use when training GLM models, implementing custom data generation workflows, or needing tight Megatron-LM integration for RL scaling.
+name: slime
+description: RL post-training for LLMs with Megatron and SGLang.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -14,25 +14,25 @@ metadata:
 
 # slime：用于强化学习规模扩展的LLM训练后框架
 
-slime是由清华大学THUDM团队开发的LLM训练后框架，为GLM-4.5、GLM-4.6及GLM-4.7模型提供了技术支持。该框架将用于训练的Megatron-LM技术与用于高效批量生成模型的SGLang技术相结合。
+slime是由清华大学THUDM团队开发的LLM训练后框架，为GLM-4.5、GLM-4.6及GLM-4.7等模型提供了技术支持。该框架将用于训练的Megatron-LM技术与用于高效模型部署生成的SGLang技术相连接。
 
 ## 何时使用slime
 
 **在以下情况下可选择slime：**
 - 需要结合Megatron-LM的训练功能与SGLang的推理能力
 - 需要具备灵活数据缓冲区的自定义数据生成工作流
-- 需要训练GLM、Qwen3、DeepSeek V3或Llama 3模型
-- 需要兼具研究级功能与生产环境稳定性的框架（背靠Z.ai支持）
+- 需要训练GLM、Qwen3、DeepSeek V3或Llama 3等模型
+- 需要兼具研究级功能与生产环境支持（由Z.ai提供保障）的框架
 
 **在以下情况下可考虑其他替代方案：**
 - 需要企业级稳定性功能 → 使用**miles**
 - 需要灵活更换后端技术 → 使用**verl**
 - 需要PyTorch原生的抽象层功能 → 使用**torchforge**
 
-## 核心功能
+## 核心特性
 
 - **训练功能**：支持全并行度的Megatron-LM训练（TP、PP、DP、SP模式）
-- **批量生成功能**：基于SGLang的高效批量生成技术，并配备路由器机制
+- **模型部署**：基于SGLang的高效生成技术，并配有路由器功能
 - **数据缓冲区**：提供灵活的提示词管理及样本存储功能
 - **支持的模型**：GLM-4.x系列、Qwen3、DeepSeek V3/R1、Llama 3
 
@@ -66,7 +66,7 @@ docker run --rm --gpus all --ipc=host --shm-size=16g \
 cd /root/slime && pip install -e . --no-deps
 ```
 
-### 来源端
+### 来源内容
 
 ```bash
 git clone https://github.com/THUDM/slime.git
@@ -98,12 +98,12 @@ python train.py \
 
 ## 工作流 1：标准 GRPO 训练
 
-此工作流用于训练具备群体相对优势的推理模型。
+该工作流用于训练具有群体相对优势的推理模型。
 
 ### 前提条件清单
 - [ ] 已安装 Docker 环境或 Megatron-LM + SGLang
 - [ ] 模型检查点（HuggingFace 或 Megatron 格式）
-- [ ] JSONL 格式的训练数据
+- [ ] 以 JSONL 格式提供的训练数据
 
 ### 第 1 步：准备数据
 
@@ -113,7 +113,7 @@ python train.py \
 {"prompt": "Solve: 3x = 12", "label": "x = 4"}
 ```
 
-或者以聊天格式进行：
+或者以聊天格式输入：
 ```python
 {
     "prompt": [
@@ -172,9 +172,9 @@ python train.py \
 通过并行执行推理与训练操作，利用异步模式提升处理效率。
 
 ### 适用场景
-- 生成时间较长的大型模型
+- 模型规模较大且生成时间较长
 - 同步模式下GPU空闲时间较多
-- 拥有足够内存用于缓冲数据
+- 存储足够内存用于数据缓冲
 
 ### 启动异步训练
 
@@ -189,7 +189,7 @@ python train_async.py \
     ${MODEL_ARGS[@]}
 ```
 
-### 异步任务专用参数
+### 异步操作专用参数
 
 ```bash
 --async-buffer-size 4        # Number of rollouts to buffer
@@ -198,7 +198,7 @@ python train_async.py \
 
 ## 工作流 3：多轮智能体训练
 
-此工作流适用于需要具备工具使用能力或多步骤推理能力的智能体训练。
+此工作流适用于需要工具使用能力或多步骤推理能力的智能体训练。
 
 ### 先决条件
 - [ ] 用于实现多轮逻辑的自定义生成函数
@@ -248,9 +248,9 @@ python train.py \
 
 ## 配置参考
 
-### 三种参数类别
+### 三种参数类型
 
-Slime 使用三种类型的参数：
+Slime 支持三种类型的参数：
 
 **1. Megatron 参数**（直接传递）：
 ```bash
@@ -292,7 +292,7 @@ Slime 使用三种类型的参数：
 --kl-loss-coef 0.001
 ```
 
-### 关键约束条件
+### 核心限制条件
 
 ```
 rollout_batch_size × n_samples_per_prompt = global_batch_size × num_steps_per_rollout
@@ -304,7 +304,7 @@ rollout_batch_size × n_samples_per_prompt = global_batch_size × num_steps_per_
 
 ## 数据缓冲系统
 
-Slime 的数据缓冲功能可实现灵活的数据管理：
+slime 的数据缓冲功能可实现灵活的数据管理：
 
 ### 基本数据源
 
@@ -339,7 +339,7 @@ class RolloutDataSourceWithBuffer(RolloutDataSource):
 
 ### 问题：SGLang 引擎崩溃
 
-**症状**：推理引擎在训练过程中突然停止运行
+**症状**：推理引擎在训练过程中突然终止运行
 
 **解决方案**：
 ```bash
@@ -355,7 +355,7 @@ class RolloutDataSourceWithBuffer(RolloutDataSource):
 
 ### 问题：权重同步超时
 
-**症状**：部署完成后训练进程挂起
+**症状**：模型部署完成后训练进程卡住
 
 **解决方案**：
 ```bash
@@ -366,7 +366,7 @@ class RolloutDataSourceWithBuffer(RolloutDataSource):
 --colocate
 ```
 
-### 问题：训练过程中出现内存不足
+### 问题：训练过程中出现内存溢出
 
 **症状**：在反向传播阶段出现 CUDA 内存不足的情况
 
@@ -409,7 +409,7 @@ class RolloutDataSourceWithBuffer(RolloutDataSource):
 
 ---
 
-## 进阶主题
+## 高级主题
 
 ### 共享部署模式
 
@@ -454,5 +454,5 @@ class CustomRewardModel:
 - **文档**：https://thudm.github.io/slime/
 - **GitHub 仓库**：https://github.com/THUDM/slime
 - **博客文章**：https://lmsys.org/blog/2025-07-09-slime/
-- **示例代码**：请查看 `examples/` 目录，其中包含 14 个以上可运行的示例。
+- **示例代码**：请查看 `examples/` 目录，其中包含14个以上可直接运行的示例。
 
