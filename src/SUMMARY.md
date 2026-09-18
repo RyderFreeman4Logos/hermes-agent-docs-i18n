@@ -2480,6 +2480,7 @@
         - [常见陷阱——导致模式失效的原因及解决方案](zh/optional-skills/software-development/ast-grep/references/pitfalls.md)
         - [模板集——按语言分类的复制粘贴模板](zh/optional-skills/software-development/ast-grep/references/recipes.md)
         - [sgconfig.yml — 项目配置](zh/optional-skills/software-development/ast-grep/references/sgconfig.md)
+        - [YAML 规则参考 —— 原子规则、关系规则、复合规则、转换规则与修复规则](zh/optional-skills/software-development/ast-grep/references/yaml-rules.md)
     - [Code Wiki]()
       - [Code Wiki 技能](zh/optional-skills/software-development/code-wiki/SKILL.md)
       - [Templates](zh/optional-skills/software-development/code-wiki/templates/README.md)
