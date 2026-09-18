@@ -1158,7 +1158,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md	8e15e
 website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md	34f899bc2d0e54e2cd7867bebc365414129f64381c1e730778839023df78f009
 website/docs/user-guide/skills/optional/mlops/mlops-inference-serving-llms-vllm.md	3936773b80d36f858f76bef46f0d302c0e3ebace4a261623ef52b4ba33a519c1
 website/docs/user-guide/skills/optional/mlops/mlops-instructor.md	0083295b4e5ef02abcccb128e567efd27ec34daad02e6b4545c6b9b42cebae6f
-website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md	f57ccc7951bcdc3025ee7ab4aff45c5a3da4a2f4e6a1fba570a5df27e62399ec
+website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md	3d197cde486d26c161fdc21f03ffba20c67ad321de7f6dfd1d92cf00b7dadf07
 website/docs/user-guide/skills/optional/mlops/mlops-llava.md	b45db903c7383a41427fc2fcfe950263870e39fb3cd811523e80e01fdd1bab59
 website/docs/user-guide/skills/optional/mlops/mlops-modal.md	487080679fb2a0419b111b358b0b38232200bf7b8cbf72e327c04152237f72d6
 website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md	1362aff2e6bfb7ec1af1240b00d2f922b03db0d844b07a50fb75ff096981dfea

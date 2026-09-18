@@ -3288,7 +3288,7 @@
             - [Outlines](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md)
             - [提供 Llms Vllm 服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-serving-llms-vllm.md)
             - [Instructor](zh/website/docs/user-guide/skills/optional/mlops/mlops-instructor.md)
-            - [Lambda Labs GPU 云服务](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
+            - [Lambda Labs](zh/website/docs/user-guide/skills/optional/mlops/mlops-lambda-labs.md)
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
             - [Modal](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
             - [Huggingface Hub](zh/website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md)
