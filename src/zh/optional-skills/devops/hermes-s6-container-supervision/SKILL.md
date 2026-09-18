@@ -1,6 +1,6 @@
 ---
 name: hermes-s6-container-supervision
-description: Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent Docker image — adding new services, debugging profile gateways, understanding the Architecture B main-program pattern.
+description: Modify or debug s6 services in the Hermes Docker image.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
@@ -9,19 +9,19 @@ environments: [s6]
 metadata:
   hermes:
     tags: [docker, s6, supervision, gateway, profiles]
-    related_skills: [hermes-agent, hermes-agent-dev]
+    related_skills: [hermes-agent]
 ---
 
 # Hermes s6-overlay 容器监控功能
 
 ## 何时使用此功能
 
-在以下场景中可使用该功能：
-- 在 Hermes Docker 镜像中添加或删除静态服务（即那些需要在每个容器启动时都进行监控的服务，例如控制面板）；
-- 排查为何按配置文件划分的网关无法启动、重启失败，或在执行 `docker restart` 后仍无法正常运行；
-- 了解为何容器的 CMD 命令为 `/opt/hermes/docker/main-wrapper.sh`，以及如何将前置短横线格式的参数传递给用户程序；
-- 修改 `cont-init.d` 启动脚本（如 UID 重映射、卷初始化、配置文件同步）；
-- 更改按配置文件划分的网关所使用的运行脚本（第 4 阶段）。
+在以下场景中可加载此功能：
+- 在 Hermes Docker 镜像中添加或删除静态服务（即那些需要在每个容器启动时都进行监控的服务，例如控制面板）
+- 排查为何特定配置文件的网关无法启动、重启失败，或在执行 `docker restart` 后仍无法正常运行
+- 了解为何容器的 CMD 命令为 `/opt/hermes/docker/main-wrapper.sh`，以及如何将前置参数传递给用户程序
+- 修改 `cont-init.d` 启动脚本（用户 ID 重映射、卷初始化、配置文件同步）
+- 更改特定配置文件网关的运行脚本内容（第 4 阶段）
 
 如果您只是运行 Hermes Agent 并希望使用 Docker，建议参阅 `website/docs/user-guide/docker.md` 文档。
 
@@ -61,33 +61,33 @@ metadata:
 
 ## 核心文件
 
-| 路径 | 功能 |
+| Path | Role |
 |---|---|
-| `Dockerfile` | 实现 s6-overlay 安装、cont-init.d 配置绑定，以及设置 `ENTRYPOINT ["/init", "/opt/hermes/docker/main-wrapper.sh"]` |
-| `docker/stage2-hook.sh` | 执行“旧版入口点逻辑”——包括 UID 重映射、文件所有权修改、初始化操作以及技能同步。该脚本以 cont-init.d/01-hermes-setup 的身份运行。 |
-| `docker/cont-init.d/02-reconcile-profiles` | 每次容器启动时调用 `hermes_cli.container_boot`，从持久化存储中恢复配置文件网关槽位信息。 |
-| `docker/main-wrapper.sh` | 容器的 CMD 文件。它负责传递用户输入的参数，通过 `s6-setuidgid` 调用 hermes 程序，随后执行用户指定的程序。 |
-| `docker/s6-rc.d/main-hermes/run` | 仅执行 `sleep infinity` 操作——该操作的存在确保 s6-rc 用户环境有效；主 hermes 程序以 CMD 方式运行，而非作为受监控服务运行。 |
-| `docker/s6-rc.d/dashboard/run` | 条件触发型服务——除非 `HERMES_DASHBOARD` 的值为真，否则会执行 `exec sleep infinity`。 |
-| `docker/entrypoint.sh` | 兼容旧版本的过渡脚本，用于调用 stage2 钩子函数。那些硬编码了旧版入口点路径的外部脚本仍可正常使用。 |
-| `hermes_cli/service_manager.py` | 包含 `S6ServiceManager` 类，提供 `register_profile_gateway`、`unregister_profile_gateway`、`start/stop/restart/is_running`、`list_profile_gateways` 等功能。 |
-| `hermes_cli/container_boot.py` | 包含 `reconcile_profile_gateways()` 函数，用于遍历持久化配置文件、重新生成 s6 槽位，并在 `container-boot.log` 中记录相关日志。 |
-| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | 当程序在容器中运行时，该函数会拦截 `hermes gateway start/stop/restart` 指令，并将其转发给 s6 系统处理。 |
+| `Dockerfile` | s6-overlay install + cont-init.d wiring + `ENTRYPOINT ["/opt/hermes/docker/entrypoint-dispatch.sh"]` |
+| `docker/entrypoint-dispatch.sh` | PID-1 dispatcher: exec's `/init` + main-wrapper when the image owns PID 1; on wrapped runtimes (Fly Machines, `docker run --init`) falls back to stage2-hook + main-wrapper directly, restoring the s6 helper PATH first (#38349). |
+| `docker/stage2-hook.sh` | The "old entrypoint logic" — UID remap, chown, seed, skills sync. Runs as cont-init.d/01-hermes-setup. |
+| `docker/cont-init.d/02-reconcile-profiles` | Calls `hermes_cli.container_boot` on every boot to restore profile gateway slots from the persistent volume. |
+| `docker/main-wrapper.sh` | The container's CMD. Routes user args, drops to hermes via `s6-setuidgid`, exec's the chosen program. |
+| `docker/s6-rc.d/main-hermes/run` | No-op `sleep infinity` — slot exists so the s6-rc user bundle is valid; main hermes runs as the CMD, not as a supervised service. |
+| `docker/s6-rc.d/dashboard/run` | Conditional service — `exec sleep infinity` unless `HERMES_DASHBOARD` is truthy. |
+| `docker/entrypoint.sh` | Back-compat shim that `exec`s the stage2 hook. External scripts that hard-coded the old entrypoint path still work. |
+| `hermes_cli/service_manager.py` | `S6ServiceManager`: `register_profile_gateway`, `unregister_profile_gateway`, `start/stop/restart/is_running`, `list_profile_gateways`. |
+| `hermes_cli/container_boot.py` | `reconcile_profile_gateways()` — walks persistent profiles, regenerates s6 slots, emits `container-boot.log`. |
+| `hermes_cli/gateway.py::_dispatch_via_service_manager_if_s6` | Intercepts `hermes gateway start/stop/restart` and routes to s6 when running in a container. |
 
 ## 为何选择架构 B（以 CMD 作为主程序，而非由 s6 监控）
 
-最初的计划（v1–v3）是将主 hermes 程序作为受 s6-rc 监控的服务来运行。但 s6-overlay v3 的两项机制阻碍了这一方案的实施：
+最初的计划（v1–v3）要求将 hermes 主进程作为受 s6-rc 监控的服务来运行。但两个真正的 s6-overlay v3 机制阻碍了这一方案的实现：
 
-1. **cont-init.d 脚本无法接收 CMD 参数**——因此 stage2 钩子无法解析 `docker run <image> chat -q "hi"` 这类命令，从而无法为后续的 `run` 脚本设置 `HERMES_ARGS` 参数。
-2. **`/run/s6/basedir/bin/halt` 不会传递写入 `/run/s6-linux-init-container-results/exitcode` 的退出码**。无论如何，容器始终以 143（SIGTERM）代码退出。s6 的创建者 skarnet 在 [issue #477](https://github.com/just-containers/s6-overlay/issues/477) 中也证实了这一点：_“如果希望容器正常关闭，要么让 CMD 程序自行退出，要么在没有 CMD 的情况下，手动设置所需的容器退出码后再调用 halt 函数”_。
+1. **cont-init.d 脚本无法接收 CMD 参数**——因此 stage2 钩子程序无法解析 `docker run <image> chat -q "hi"` 这样的命令，进而为相应的 `run` 脚本设置 `HERMES_ARGS`。
+2. **`/run/s6/basedir/bin/halt` 不会传递写入到 `/run/s6-linux-init-container-results/exitcode` 中的退出码**。无论怎样，容器始终以 143（SIGTERM）码退出。这一情况已得到 s6 的创建者 skarnet 在 [问题 #477](https://github.com/just-containers/s6-overlay/issues/477) 中的确认：_“如果希望容器正常关闭，要么让 CMD 命令自身返回退出码，要么在没有 CMD 的情况下，手动设置所需的容器退出码后再调用 halt 命令”_。
+因此，我们通过调度器采用 `s6-overlay-native CMD` 模式：设置 `ENTRYPOINT ["/opt/hermes/docker/entrypoint-dispatch.sh"]`，该调度器会在进程 ID 为 1 时执行 `/init /opt/hermes/docker/main-wrapper.sh "$@"`。该封装脚本会自动添加到用户参数的前面——这样一来，`docker run <image> --version` 命令就会变为 `/init main-wrapper.sh --version`，而 `--version` 参数便不会被 `/init` 所使用的 POSIX shell 拦截。封装脚本会通过 `s6-setuidgid` 将控制权移交给 hermes，随后再执行用户指定的程序。该程序的退出码即为容器的退出码，这与使用 tini 之前的行为完全一致。当入口点并非进程 ID 1 时（如 Fly Machines 或使用 `docker run --init` 的情况），调度器会完全跳过 `/init` 步骤（否则会因“只能以进程 ID 1 运行”而报错），恢复 s6 相关的路径设置，执行 `stage2-hook.sh`，并直接启动 `main-wrapper.sh`——此时该路径上不会有任何受监控的服务（参见 #38349）。
 
-因此，我们采用了 s6-overlay 原生的 CMD 模式：`ENTRYPOINT ["/init", "/opt/hermes/docker/main-wrapper.sh"]`。/init 会自动在用户输入的参数前添加该包装脚本——这样一来，`docker run <image> --version` 这类命令就会被转换为 `/init main-wrapper.sh --version`，而 `--version` 参数不会被 /init 的 POSIX shell 拦截。该包装脚本通过 `s6-setuidgid` 调用 hermes 程序，随后执行用户指定的程序。该程序的退出码将成为容器的最终退出码，这与 s6 之前的 tini 架构的行为完全一致。
-
-相应的权衡是：在 s6 环境下，主 hermes 程序不会受到监控。这一行为与它在 tini（即 s6 之前的镜像）环境中的表现完全相同。唯一新增的保障机制是对仪表板功能的监控——而位于 `/run/service/` 目录下的各配置文件网关则享有完整的监控功能。
+相应的权衡是：在 s6 环境下，主 hermes 进程处于无监控状态，这与它在 tini 环境下的行为一致（tini 是 s6 之前的镜像）。唯一的**新**保障在于控制台层面的监控功能——而位于 `/run/service/` 目录下的按配置文件划分的网关则享有完全的监控支持。
 
 ## 快速操作指南
 
-### 验证运行中的容器中 PID 1 是否为 s6 进程
+### 验证运行中的容器中进程 ID 1 是否为 s6
 
 ```sh
 docker exec <c> sh -c 'cat /proc/1/comm; readlink /proc/1/exe'
@@ -122,15 +122,15 @@ docker exec <c> tail -n 50 /opt/data/logs/container-boot.log
 
 ### 添加新的静态服务
 
-1. 创建文件 `docker/s6-rc.d/<name>/type`，内容为 `longrun\n`；同时创建文件 `docker/s6-rc.d/<name>/run`（内容应为 `#!/command/with-contenv sh` 加上 `# shellcheck shell=sh`）。
-2. 在服务运行脚本的开头使用命令 `s6-setuidgid hermes` 将权限设置为用户态（除非您确实需要以 root 权限运行）。
-3. 创建空文件 `docker/s6-rc.d/<name>/dependencies.d/base`，以便该服务能够等待基础包的加载。
-4. 创建空文件 `docker/s6-rc.d/user/contents.d/<name>`，以便该服务能够加入用户相关包组。
-5. Dockerfile 中的 `COPY docker/s6-rc.d/` 指令会自动处理这些文件——无需其他修改。
+1. 创建 `docker/s6-rc.d/<名称>/type` 文件，内容为 `longrun\n`；同时创建 `docker/s6-rc.d/<名称>/run` 文件（内容应为 `#!/command/with-contenv sh` 加上 `# shellcheck shell=sh`）。
+2. 在运行脚本的开头通过 `s6-setuidgid hermes` 命令将其权限设置为 hermes 用户（除非确实需要 root 权限）。
+3. 创建空的 `docker/s6-rc.d/<名称>/dependencies.d/base` 文件，以便该服务能够等待基础资源包准备就绪。
+4. 创建空的 `docker/s6-rc.d/user/contents.d/<名称>` 文件，以便该服务能够加入用户相关资源包。
+5. Dockerfile 中的 `COPY docker/s6-rc.d/` 指令会自动加载这些文件——无需其他修改。
 
-### 更改针对不同配置文件的网关运行命令
+### 修改针对不同配置文件的网关运行命令
 
-请编辑 `hermes_cli/service_manager.py` 文件中的 `S6ServiceManager._render_run_script` 函数。在系统启动时进行服务同步的过程中，`hermes_cli/container_boot.py::_register_service` 也会调用该函数，因此它是配置信息的唯一来源。同时，请更新 `tests/hermes_cli/test_service_manager.py::test_s6_register_creates_service_dir_and_triggers_scan` 测试文件中的相应断言。
+编辑 `hermes_cli/service_manager.py` 文件中的 `S6ServiceManager._render_run_script` 函数。在系统启动时进行服务同步时，`hermes_cli/container_boot.py::_register_service` 也会调用该函数，因此它是配置的唯一权威来源。请同时更新 `tests/hermes_cli/test_service_manager.py::test_s6_register_creates_service_dir_and_triggers_scan` 测试文件中的相应断言。
 
 ### 运行 Docker 测试套件
 
@@ -140,39 +140,39 @@ HERMES_TEST_IMAGE=hermes-agent-harness:latest scripts/run_tests.sh tests/docker/
 # Expect 19 passed, 0 xfailed against the s6 image
 ```
 
-该测试 harness 位于 `tests/docker/` 目录中，当未安装 Docker 时会自动跳过。每个测试的超时时间已被延长至 180 秒（详见 `tests/docker/conftest.py`）。
+该测试框架位于 `tests/docker/` 目录中，当无法使用 Docker 时将跳过相关测试。每个测试的超时时间已被延长至 180 秒（详见 `tests/docker/conftest.py`）。
 
 ## 常见问题
 
 ### 使用 `docker exec` 时出现“命令未找到”的错误
 
-`s6-overlay` 会将其二进制文件放置在 `/command/` 目录中，但该路径仅对监督树启动的进程有效——即服务、cont-init.d 和 main-wrapper.sh。执行 `docker exec <c> s6-svstat …` 时会因“命令未找到”而失败；此时应始终使用绝对路径 `/command/s6-svstat`。Hermes 可以正常运行，是因为 Dockerfile 将 `/opt/hermes/.venv/bin` 添加到了运行时的 `ENV PATH` 环境变量中。
+`s6-overlay` 会将其二进制文件放置在 `/command/` 目录中，但该路径仅对监控树中启动的进程有效——即服务、cont-init.d 脚本以及 main-wrapper.sh。执行 `docker exec <c> s6-svstat …` 时会因“命令未找到”而失败；应始终使用绝对路径 `/command/s6-svstat`。而 `hermes` 可以正常运行，是因为 Dockerfile 将 `/opt/hermes/.venv/bin` 添加到了运行时的 `ENV PATH` 环境变量中。
 
-### Profile 目录的所有权问题
+### 配置文件目录的所有权问题
 
-cont-init 重置工具以 hermes 用户身份运行（见 `02-reconcile-profiles` 中的 `s6-setuidgid hermes`）。如果某个 Profile 目录最终由 root 所有（例如因默认以 root 身份执行了 `docker exec <c> hermes profile create …`），则重置工具将无法读取 SOUL.md 文件，并引发 `PermissionError` 错误。解决办法：`stage2-hook.sh` 会在**每次**系统启动时，以幂等方式将 `$HERMES_HOME/profiles` 目录的所有权转移给 hermes 用户。请勿删除该脚本块。
+cont-init 协调器是以 hermes 用户身份运行的（在 `02-reconcile-profiles` 脚本中使用了 `s6-setuidgid hermes` 命令）。如果某个配置文件目录最终由 root 用户拥有（例如因默认以 root 权限执行了 `docker exec <c> hermes profile create …` 命令），则协调器将无法读取 SOUL.md 文件，并引发 `PermissionError` 错误。解决方案：`stage2-hook.sh` 脚本会在**每次**系统启动时，以幂等方式将 `$HERMES_HOME/profiles` 目录的所有权移交给 hermes 用户。请勿删除该脚本中的相关代码。
 
-### 通过 `docker exec` 创建的文件归 root 所有
+### 通过 `docker exec` 创建的文件属于 root 所有
 
-`docker exec` 的默认运行用户为 root。要么显式传递 `--user hermes` 参数，要么等待下一次启动时由 stage2 脚本处理所有权转移。切勿以 root 身份手动在 `$HERMES_HOME/profiles/<name>/` 目录下创建文件——虽然下一次重置操作会处理这些文件，但正在进行的操作仍可能因权限问题失败。
+`docker exec` 命令默认以 root 权限执行。要么显式指定 `--user hermes` 参数，要么等待下一次启动时由 stage2 脚本处理权限变更。请勿手动以 root 权限在 `$HERMES_HOME/profiles/<name>/` 目录下创建文件——虽然下一次协调操作会处理这些文件，但正在进行的操作仍可能因权限问题而失败。
 
 ### 服务槽存在，但 s6-svstat 显示“s6-supervise 未运行”
 
-服务目录位于 tmpfs 上，因此在容器重启时会被清空。这可能是由于 cont-init 重置工具尚未运行（在 `docker restart` 后稍等片刻即可），或是该工具执行失败了。可查看 `docker logs <c> | grep '02-reconcile'` 来确认情况。
+服务目录存储在tmpfs上，因此在容器重启时会被清空。可能是cont-init协调器尚未运行（请在执行`docker restart`后稍等片刻），或者其运行失败了。可以查看`docker logs <c> | grep '02-reconcile'`来确认情况。
 
-### Gateway 启动后立即退出（svstat 中显示“down (exitcode 1)”）
+### 网关启动后立即退出（在svstat中显示为“down (exitcode 1)”）
 
-很可能是该 Profile 未配置模型或认证信息。服务槽本身是正确的，问题出在 Gateway 未被正确配置。首先应运行 `hermes -p <profile> setup` 命令。s6 监控器会不断尝试重启它，这是预期行为——一旦配置问题得到解决，下一次尝试就会成功，Gateway 也会保持运行状态。
+很可能是该配置文件中没有设置模型或认证相关参数。服务槽位是正确的，问题出在网关本身未经过正确配置。请先运行`hermes -p <profile> setup`命令。s6监管进程会不断尝试重启它，这正是预期的行为——一旦配置问题得到解决，下一次重启就会成功并保持运行状态。
 
-### 重置工具跳过了某个 Profile
+### 协调器跳过了某个配置文件
 
-该重置工具以 **是否存在 `SOUL.md` 文件** 作为判断“真实 Profile”的依据。执行 `hermes profile create` 命令时总会自动创建该文件。如果某个 Profile 目录中不存在 SOUL.md 文件（可能是误删的目录、恢复不完整或正处于备份过程中），重置工具会故意跳过它。如需重新处理该 Profile，可添加一个空的 `SOUL.md` 文件。
+协调器以**是否存在`SOUL.md`文件**作为判断“真实配置文件”的依据。`hermes profile create`命令在创建配置时总会自动生成该文件。如果某个配置目录中不存在`SOUL.md`文件（可能是异常目录、恢复不完整或正在备份中），协调器会故意跳过该目录。如需重新处理该目录，可添加一个`SOUL.md`文件（即使内容为空也可）。
 
-### “出错了，容器以 143 号代码退出！”
+### “救命，容器以143号代码退出！”
 
-请检查是否有程序调用了 `s6-svscanctl -t` 或 `/run/s6/basedir/bin/halt` 命令——这两个命令都会触发 /init 进入第三阶段关闭流程，但会返回 143（SIGTERM 信号）而非预期的正常退出码。这是从架构版本 A 向版本 B 过渡时出现的现象。若希望容器以正常的退出码关闭，必须让 CMD 脚本（即 main-wrapper.sh）正常执行结束；切勿试图通过结束脚本来强制控制退出。
+请检查是否有程序调用了`s6-svscanctl -t`或 `/run/s6/basedir/bin/halt`命令——这两种命令都会触发/init进入第三阶段关闭流程，但会返回143（SIGTERM信号）而非预期的正常退出码。这是从架构版本A向版本B过渡时的现象。若希望容器以正常的退出码关闭，必须让CMD脚本（即main-wrapper.sh）正常执行结束；切勿试图通过结束脚本来强制控制退出。
 
 ## 相关技能
 
-- `hermes-agent-dev`：用于浏览 Hermès Agent 的整体代码库
-- `hermes-tool-quirks`：针对 Hermes 工具的特殊解决方案（如 sed/grep 等命令的使用技巧）——在调试 s6 组件与 Hermès 内置工具的交互时可用该技能。
+- `hermes-agent-dev`：用于浏览Hermes Agent的整个代码库。  
+- `hermes-tool-quirks`：针对Hermes Tool的特定解决方案（如sed/grep等工具）——在调试s6堆栈与Hermes内置工具之间的交互时使用。
