@@ -6,29 +6,29 @@ description: "Ready-to-use automation blueprints — scheduled tasks, GitHub eve
 
 # 自动化蓝图
 
-这里提供了常见自动化场景的蓝图模板，可直接复制使用。每个蓝图均采用 Hermes 内置的 [cron 计时调度器](/user-guide/features/cron) 实现基于时间的触发，同时通过 [Webhook 平台](/user-guide/messaging/webhooks) 支持事件驱动的触发方式。
+这里提供了常见自动化场景的蓝图模板，可直接复制使用。每个蓝图均采用 Hermes 内置的 [cron 计时调度器](/user-guide/features/cron)作为基于时间的触发机制，同时结合 [Webhook 平台](/user-guide/messaging/webhooks)实现事件驱动的触发方式。
 
-所有蓝图均适用于**任意模型**，无需绑定到特定的服务提供商。
+所有蓝图均支持与**任意模型**配合使用，无需绑定特定服务提供商。
 
 如需查看采用表单形式而非 cron 语法的参数化蓝图，请参阅 [自动化蓝图目录](/reference/automation-blueprints-catalog)。
 
 :::提示 三种触发类型
 | 触发方式 | 触发条件 | 使用工具 |
-|---------|----------|----------|
+|---------|---------|----------|
 | **定时触发** | 按固定间隔运行（每小时、每夜、每周） | `cronjob` 工具或 `/cron` 命令 |
-| **GitHub 事件触发** | 当有 PR 创建、代码推送、问题提交或 CI 测试结果时触发 | Webhook 平台（`hermes webhook subscribe`） |
-| **API 调用触发** | 外部服务向您的端点发送 JSON 数据时触发 | Webhook 平台（通过 config.yaml 路由配置或 `hermes webhook subscribe`） |
+| **GitHub 事件触发** | 当有 PR 创建、代码推送、问题提交或 CI 测试结果产生时触发 | Webhook 平台（`hermes webhook subscribe`） |
+| **API 调用触发** | 外部服务向您的接口发送 JSON 数据时触发 | Webhook 平台（通过 config.yaml 配置路由或 `hermes webhook subscribe`） |
 
-以上三种触发方式均支持将结果发送至 Telegram、Discord、Slack、短信、邮件、GitHub 评论或本地文件。
+以上三种触发方式均支持将结果发送至 Telegram、Discord、Slack、短信、电子邮件、GitHub 评论或本地文件。
 :::
 
 ---
 
 ## 开发工作流程
 
-### 每夜待办事项分类处理
+### 每夜任务清单筛选
 
-每晚对新增问题进行标记、优先级排序并生成汇总信息，随后将摘要发布到团队频道中。
+每晚对新增问题进行标记、优先级排序并汇总，然后将摘要发送至团队频道。
 
 **触发方式：** 定时触发（每夜）
 
@@ -49,11 +49,11 @@ Format as a clean digest. If no new issues, respond with [SILENT]." \
   --deliver telegram
 ```
 
-### 自动代码审查功能
+### 自动 PR 代码审查
 
-在每个拉取请求创建时自动进行审查，并直接在对应请求上发布审查意见。
+在每个拉取请求创建时自动进行审查，并直接在 PR 上发布审查意见。
 
-**触发方式：** GitHub Webhook
+**触发方式：** GitHub webhook
 
 **选项 A — 动态订阅（CLI）：**
 
@@ -76,7 +76,7 @@ Review for:
 - Missing tests for new behavior
 
 Post a concise review. If the PR is a trivial docs/typo change, say so briefly." \
-  --skill github-code-review \
+  --skills github-code-review \
   --deliver github_comment
 ```
 
@@ -106,11 +106,11 @@ platforms:
             pr_number: "{pull_request.number}"
 ```
 
-接下来在 GitHub 中操作：**设置 → Webhooks → 添加 Webhook**，然后填写以下参数：Payload URL 为 `http://your-server:8644/webhooks/github-pr-review`，内容类型选择 `application/json`，密钥设置为 `github-webhook-secret`，事件类型选择 **Pull requests**。
+接着在 GitHub 中操作：**设置 → Webhooks → 添加 Webhook**，随后填写以下参数：Payload URL 为 `http://your-server:8644/webhooks/github-pr-review`，内容类型选择 `application/json`，密钥设置为 `github-webhook-secret`，事件类型选为 **Pull requests**。
 
-### 文档偏离检测
+### 文档偏差检测
 
-系统会每周扫描已合并的 Pull Request，以识别那些需要更新文档的 API 变更。
+系统会每周扫描已合并的 Pull Request，识别出需要更新文档的 API 变更。
 
 **触发方式：** 定时扫描（每周一次）
 
@@ -195,7 +195,7 @@ curl -X POST http://your-server:8644/webhooks/deploy-verify \
 
 ### 警报分类处理
 
-通过将监控警报与最近的变更信息关联起来，从而制定相应的应对方案。该功能支持 Datadog、PagerDuty、Grafana，以及任何能够发送 JSON 数据的警报系统。
+通过将监控警报与近期变更信息关联起来，从而制定相应的应对措施。该功能支持 Datadog、PagerDuty、Grafana，以及任何能够发送 JSON 数据的警报系统。
 
 **触发方式：** API 调用（Webhook）
 
@@ -222,9 +222,9 @@ Be concise. This goes to the on-call channel." \
 
 ### 运行时间监控器
 
-每30分钟检查一次终端节点，仅在出现故障时发送通知。
+每30分钟检查一次端点，仅在检测到服务异常时发送通知。
 
-**触发条件：** 定时任务（每30分钟一次）
+**触发机制：** 定时触发（每30分钟一次）
 
 ```python title="~/.hermes/scripts/check-uptime.py"
 import urllib.request, json, time
@@ -266,11 +266,11 @@ hermes cron create "every 30m" \
 
 ## 研究与情报分析
 
-### 竞品代码库监测工具
+### 竞品代码库监控工具
 
-持续监控竞品的代码库，发现值得关注的 Pull Request、新功能以及架构决策。
+持续追踪竞品的代码库，发现有趣的 Pull Request、新功能以及架构决策。
 
-**触发方式：** 定时任务（每日执行）
+**触发方式：** 定时（每日）
 
 ```bash
 hermes cron create "0 8 * * *" \
@@ -301,9 +301,9 @@ If there are findings, organize by repo with brief analysis of each item." \
 
 ### AI新闻摘要
 
-每周汇总人工智能/机器学习领域最新进展。
+每周精选的AI/机器学习领域发展动态汇总。
 
-**触发条件：** 定时任务（每周执行一次）
+**触发机制：** 定时推送（每周一次）
 
 ```bash
 hermes cron create "0 9 * * 1" \
@@ -324,7 +324,7 @@ Keep each item to 1-2 sentences. Include links. Total under 600 words." \
   --deliver telegram
 ```
 
-### 带备注的论文摘要功能
+### 带注释的论文摘要功能
 
 每日扫描 arXiv 并将摘要保存至您的笔记系统中。
 
@@ -344,7 +344,7 @@ hermes cron create "0 8 * * *" \
 
 自动为新创建的问题添加标签并作出响应。
 
-**触发条件：** GitHub webhook
+**触发条件：** GitHub Webhook
 
 ```bash
 hermes webhook subscribe github-issues \
@@ -369,9 +369,9 @@ If this is a label or assignment change, respond with [SILENT]." \
 
 ### CI失败分析
 
-用于分析CI构建失败的原因，并在相关PR中生成诊断报告。
+用于分析CI构建失败原因，并在相关PR中生成诊断报告。
 
-**触发方式：** GitHub webhook
+**触发条件：** GitHub webhook
 
 ```yaml
 # config.yaml route
@@ -404,7 +404,7 @@ platforms:
 
 ### 在不同仓库之间自动同步端口变更
 
-当某个仓库中的 Pull Request 被合并时，自动将相应的变更同步到另一个仓库中。
+当某个仓库中的拉取请求被合并时，系统会自动将相应的变更同步到另一个仓库中。
 
 **触发方式：** GitHub Webhook
 
@@ -426,7 +426,7 @@ If action is 'closed' and pull_request.merged is true:
 5. Reference the original PR in the new PR description
 
 If action is not 'closed' or not merged, respond with [SILENT]." \
-  --skill github-pr-workflow \
+  --skills github-pr-workflow \
   --deliver log
 ```
 
@@ -434,7 +434,7 @@ If action is not 'closed' or not merged, respond with [SILENT]." \
 
 ### Stripe支付监控
 
-追踪支付事件并获取失败情况的汇总信息。
+实时追踪支付事件，并获取失败情况的汇总信息。
 
 **触发方式：** API调用（Webhook）
 
@@ -487,7 +487,7 @@ Deliver as a clean, scannable message." \
 
 ### 安全审计流程
 
-通过整合多种技能，实现每周全面的安全审查。
+通过整合多种技能，实现全面的每周安全审查。
 
 **触发条件：** 定时任务（每周执行）
 
@@ -513,9 +513,9 @@ If nothing found, report a clean bill of health." \
 
 ### 内容处理流程
 
-按照既定计划开展内容的研究、撰写与准备工作。
+按照预定计划进行内容的研究、撰写与准备。
 
-**触发条件：** 计划时间（每周）
+**触发条件：** 时间表（每周）
 
 ```bash
 hermes cron create "0 10 * * 3" \
@@ -537,44 +537,44 @@ Keep the outline to ~300 words. This is a starting point, not a finished post." 
 
 ## 快速参考指南
 
-### Cron 计时表达式语法
+### Cron 计划语法
 
 | 表达式 | 含义 |
 |---------|------|
-| `every 30m` | 每 30 分钟执行一次 |
-| `every 2h` | 每 2 小时执行一次 |
-| `0 2 * * *` | 每天凌晨 2:00 执行 |
-| `0 9 * * 1` | 每周一上午 9:00 执行 |
-| `0 9 * * 1-5` | 工作日每周日上午 9:00 执行 |
-| `0 3 * * 0` | 每周日凌晨 3:00 执行 |
-| `0 */6 * * *` | 每 6 小时执行一次 |
+| `every 30m` | 每30分钟执行一次 |
+| `every 2h` | 每2小时执行一次 |
+| `0 2 * * *` | 每天凌晨2:00执行 |
+| `0 9 * * 1` | 每周一上午9:00执行 |
+| `0 9 * * 1-5` | 工作日每天上午9:00执行 |
+| `0 3 * * 0` | 每周日凌晨3:00执行 |
+| `0 */6 * * *` | 每6小时执行一次 |
 
 ### 交付目标
 
-| 目标类型 | 标识参数 | 备注 |
-|----------|---------|-------|
+| 目标 | 标志 | 备注 |
+|------|------|-------|
 | 同一聊天窗口 | `--deliver origin` | 默认值——将结果发送至任务创建处 |
 | 本地文件 | `--deliver local` | 仅保存输出结果，不发送通知 |
 | Telegram | `--deliver telegram` | 发送到主频道，或使用 `telegram:CHAT_ID` 指定特定频道 |
 | Discord | `--deliver discord` | 发送到主频道，或使用 `discord:CHANNEL_ID` 指定特定频道 |
 | Slack | `--deliver slack` | 发送到主频道 |
 | SMS | `--deliver sms:+15551234567` | 直接发送至手机号码 |
-| 特定主题帖 | `--deliver telegram:-100123:456` | 发送到 Telegram 论坛的特定主题帖 |
+| 特定主题帖 | `--deliver telegram:-100123:456` | 发送到Telegram的特定主题帖 |
 
 ### Webhook 模板变量
 
-| 变量名 | 描述 |
-|--------|-------|
-| `{pull_request.title}` | Pull Request 的标题 |
-| `{issue.number}` | Issue 的编号 |
+| 变量 | 描述 |
+|------|-------|
+| `{pull_request.title}` | Pull Request的标题 |
+| `{issue.number}` | Issue的编号 |
 | `{repository.full_name}` | 仓库地址，格式为 `owner/repo` |
-| `{action}` | 事件类型（如新建、关闭等） |
-| `{__raw__}` | 完整的 JSON 数据内容（长度超过 4000 字符时会被截断） |
-| `{sender.login}` | 触发该事件的 GitHub 用户账号 |
+| `{action}` | 事件类型（如创建、关闭等） |
+| `{__raw__}` | 完整的JSON数据内容（最多显示4000个字符） |
+| `{sender.login}` | 触发该事件的GitHub用户账号 |
 
 ### [SILENT] 模式
 
-当 Cron 任务的响应中包含 `[SILENT]` 时，将不会发送任何通知。此模式可用于在无需通知的运行场景下避免消息刷屏：
+当Cron任务的响应中包含 `[SILENT]` 时，将不会发送任何通知。此模式可用于在无需通知的静默运行场景中避免消息干扰。
 
 ```
 If nothing noteworthy happened, respond with [SILENT].
