@@ -2745,6 +2745,7 @@
         - [设计系统：Revolut](zh/skills/creative/popular-web-designs/templates/revolut.md)
         - [设计系统：Runway](zh/skills/creative/popular-web-designs/templates/runwayml.md)
         - [设计系统：Sanity](zh/skills/creative/popular-web-designs/templates/sanity.md)
+        - [设计系统：Sentry](zh/skills/creative/popular-web-designs/templates/sentry.md)
         - [设计系统：SpaceX](zh/skills/creative/popular-web-designs/templates/spacex.md)
         - [设计系统：Spotify](zh/skills/creative/popular-web-designs/templates/spotify.md)
         - [设计系统：Supabase](zh/skills/creative/popular-web-designs/templates/supabase.md)
