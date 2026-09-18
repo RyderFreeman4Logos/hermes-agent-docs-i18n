@@ -3310,6 +3310,7 @@
             - [Llava](zh/website/docs/user-guide/skills/optional/mlops/mlops-llava.md)
             - [Modal](zh/website/docs/user-guide/skills/optional/mlops/mlops-modal.md)
             - [Huggingface Hub](zh/website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md)
+            - [Segment Anything 模型](zh/website/docs/user-guide/skills/optional/mlops/mlops-models-segment-anything-model.md)
             - [Nemo Curator](zh/website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md)
             - [Obliteratus](zh/website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md)
             - [PEFT](zh/website/docs/user-guide/skills/optional/mlops/mlops-peft.md)
