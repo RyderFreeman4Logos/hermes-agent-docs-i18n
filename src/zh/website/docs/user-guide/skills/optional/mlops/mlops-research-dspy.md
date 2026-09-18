@@ -14,11 +14,11 @@ DSPy：声明式语言模型编程工具，可自动优化提示词，并支持 
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/mlops/dspy` 安装 |
-| 路径 | `optional-skills/mlops/research/dspy` |
+| 来源 | 可选 —— 通过 `hermes skills install official/mlops/dspy` 命令安装 |
+| 路径 | `optional-skills/mlops\research\dspy` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可证 | MIT |
+| 许可协议 | MIT |
 | 依赖项 | `dspy`、`openai`、`anthropic` |
 | 支持平台 | linux、macos、windows |
 | 标签 | `提示词工程`、`DSPy`、`声明式编程`、`RAG`、`智能体`、`提示词优化`、`语言模型编程`、`斯坦福自然语言处理`、`自动优化`、`模块化人工智能` |
@@ -26,18 +26,18 @@ DSPy：声明式语言模型编程工具，可自动优化提示词，并支持 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将看到这些指令作为操作指南。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将看到这些内容作为操作指令。
 :::
 
 # DSPy：声明式语言模型编程
 
 ## 何时使用此技能
 
-在以下场景中可使用 DSPy：
+在以下情况下可使用 DSPy：
 - **构建包含多个组件和工作流的复杂人工智能系统**
-- **采用声明式方式对语言模型进行编程**，而非依赖手工编写提示词
+- **采用声明式方式对语言模型进行编程**，而非依赖手动提示词工程
 - **利用数据驱动方法自动优化提示词**
-- **创建易于维护且具备良好可移植性的模块化人工智能流程**
+- **创建可维护且易于移植的模块化人工智能流程**
 - **借助优化工具系统性地提升模型输出质量**
 - **构建可靠性更高的 RAG 系统、智能体或分类器**
 
@@ -83,7 +83,7 @@ response = qa(question="What is the capital of France?")
 print(response.answer)  # "Paris"
 ```
 
-### 思维链推理机制
+### 思维链推理功能
 
 ```python
 import dspy
@@ -109,7 +109,7 @@ print(response.answer)     # "3"
 
 ### 1. 签名
 
-签名用于定义人工智能任务的结构（输入 → 输出）：
+签名用于定义 AI 任务的结构（输入 → 输出）：
 
 ```python
 # Inline signature (simple)
@@ -124,9 +124,9 @@ class Summarize(dspy.Signature):
 summarizer = dspy.ChainOfThought(Summarize)
 ```
 
-**何时使用相应方式：**
-- **内联模式**：适用于快速原型设计及简单任务
-- **类模式**：适合处理复杂任务、类型提示以及生成更完善的文档
+**各模式的适用场景：**
+- **内联模式**：适用于快速原型设计及简单任务。
+- **类模式**：适合处理复杂任务、类型提示以及生成更完善的文档。
 
 ### 2. 模块
 
@@ -207,7 +207,7 @@ optimized_qa = optimizer.compile(qa, trainset=trainset)
 # Now optimized_qa performs better!
 ```
 
-#### MIPRO（最重要的提示词优化功能）
+#### MIPRO（最重要提示词优化功能）
 通过迭代方式持续优化提示词：
 
 ```python
@@ -424,7 +424,7 @@ class ConsistentQA(dspy.Module):
         return dspy.Prediction(answer=most_common)
 ```
 
-### 模式4：带重排的检索
+### 模式 4：带重排的检索
 
 ```python
 class RerankedRAG(dspy.Module):
@@ -585,12 +585,12 @@ for call in dspy.settings.trace:
 
 **何时选择 DSPy：**
 - 您拥有训练数据或能够生成训练数据
-- 需要对提示进行系统化的优化
+- 需要对提示进行系统性的优化
 - 正在构建复杂的多阶段系统
-- 希望针对不同的大型语言模型进行优化
+- 希望在不同大型语言模型之间实现优化
 
 **何时选择其他方案：**
-- 快速开发原型（手动提示法）
+- 快速原型开发（手动提示法）
 - 使用现有工具构建简单流程（LangChain）
 - 需要自定义优化逻辑
 
@@ -598,9 +598,9 @@ for call in dspy.settings.trace:
 
 - **文档**：https://dspy.ai
 - **GitHub 仓库**：https://github.com/stanfordnlp/dspy（拥有 22k 多个星标）
-- **Discord 社群**：https://discord.gg/XCGy2WDCQB
+- **Discord 社区**：https://discord.gg/XCGy2WDCQB
 - **Twitter 账号**：@DSPyOSS
-- **相关论文**：《DSPy：将声明式大型语言模型调用编译为自我优化管道》
+- **相关论文**：《DSPy：将声明式语言模型调用编译为可自我优化的流程》
 
 ## 相关内容
 
