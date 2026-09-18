@@ -1,21 +1,21 @@
 ---
-title: "Docker Management"
+title: "Docker Management — Manage Docker containers, images, volumes, and Compose"
 sidebar_label: "Docker Management"
-description: "Manage Docker containers, images, volumes, networks, and Compose stacks — lifecycle ops, debugging, cleanup, and Dockerfile optimization"
+description: "Manage Docker containers, images, volumes, and Compose"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Docker 管理
 
-使用标准的 Docker CLI 命令来管理 Docker 容器、镜像、卷、网络以及 Compose 集群——涵盖生命周期操作、故障排查、清理工作以及 Dockerfile 优化。
+使用标准的 Docker CLI 命令来管理 Docker 容器、镜像、卷以及 Compose 配置。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 —— 通过 `hermes skills install official/devops/docker-management` 安装 |
-| 路径 | `optional-skills/devops/docker-management` |
+| 来源 | 可选 — 通过 `hermes skills install official/devops/docker-management` 安装 |
+| 路径 | `optional-skills/devops\docker-management` |
 | 版本 | `1.0.0` |
 | 创建者 | sprmn24 |
 | 许可证 | MIT |
@@ -25,28 +25,28 @@ description: "Manage Docker containers, images, volumes, networks, and Compose s
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，代理程序将依据此内容执行操作。
 :::
 
 # Docker 管理
 
-利用标准的 Docker CLI 命令来管理 Docker 容器、镜像、卷、网络以及 Compose 集群。除 Docker 本身外无需其他额外依赖。
+利用标准的 Docker CLI 命令来管理 Docker 容器、镜像、卷、网络以及 Compose 集群。除 Docker 本身外无需其他依赖项。
 
 ## 适用场景
 
-- 运行、停止、重启、删除或检查容器
-- 构建、拉取、推送、标记或清理 Docker 镜像
-- 使用 Docker Compose 管理多服务集群
+- 启动、停止、重启、删除或检查容器
+- 构建、拉取、推送、标记 Docker 镜像或清理旧镜像
+- 使用 Docker Compose 管理多服务架构
 - 管理卷或网络配置
-- 排查崩溃的容器或分析日志
-- 检查 Docker 磁盘使用情况并释放空间
+- 调试崩溃的容器或分析日志
+- 查看 Docker 磁盘使用情况并释放空间
 - 审查或优化 Dockerfile
 
 ## 先决条件
 
-- 已安装并正在运行的 Docker Engine
-- 用户已被添加到 `docker` 组中（或使用 `sudo` 权限）
-- Docker Compose v2（随现代 Docker 安装包一同提供）
+- 已安装并正在运行的 Docker 引擎
+- 用户已加入 `docker` 组（或使用 `sudo` 权限）
+- Docker Compose v2（现代 Docker 安装版本已内置）
 
 快速检查：
 
@@ -58,8 +58,8 @@ docker --version && docker compose version
 
 | 操作 | 命令 |
 |------|---------|
-| 运行容器（后台模式） | `docker run -d --name NAME IMAGE` |
-| 停止并删除容器 | `docker stop NAME && docker rm NAME` |
+| 运行容器（后台） | `docker run -d --name NAME IMAGE` |
+| 停止并删除 | `docker stop NAME && docker rm NAME` |
 | 查看日志（实时跟踪） | `docker logs --tail 50 -f NAME` |
 | 进入容器终端 | `docker exec -it NAME /bin/sh` |
 | 列出所有容器 | `docker ps -a` |
@@ -69,17 +69,17 @@ docker --version && docker compose version
 | 查看磁盘使用情况 | `docker system df` |
 | 清理无用资源 | `docker image prune && docker container prune` |
 
-## 操作流程
+## 操作步骤
 
 ### 1. 确定所属领域
 
 首先判断请求属于以下哪个范畴：
 
 - **容器生命周期管理** → 运行、停止、启动、重启、删除、暂停/取消暂停
-- **容器交互操作** → 执行命令、复制文件、查看日志、检查状态、获取统计信息
-- **镜像管理** → 构建、拉取、推送、标记标签、删除镜像、保存/加载镜像
-- **Docker Compose 管理** → 启动、停止、列出服务、查看日志、执行命令、构建配置、修改配置
-- **卷与网络管理** → 创建、检查、删除、清理无用资源、连接网络
+- **容器交互操作** → 进入容器终端、复制文件、查看日志、检查状态、获取统计信息
+- **镜像管理** → 构建镜像、拉取镜像、推送镜像、标记标签、删除镜像、保存/加载镜像
+- **Docker Compose 管理** → 启动服务、停止服务、列出服务、查看日志、进入容器终端、构建镜像、配置文件管理
+- **卷与网络管理** → 创建卷/网络、检查状态、删除卷/网络、清理无用资源、连接卷/网络
 - **故障排查** → 日志分析、退出码检查、资源问题处理
 
 ### 2. 容器操作
@@ -106,7 +106,7 @@ docker run -it --rm ubuntu:22.04 /bin/bash
 docker run -d --memory=512m --cpus=1.5 --restart=unless-stopped --name app my-app
 ```
 
-常用标志：`-d` 表示分离模式，`-it` 表示交互式终端模式，`--rm` 表示自动移除容器，`-p` 用于指定端口（格式为：主机地址:容器端口），`-e` 用于设置环境变量，`-v` 用于挂载卷，`--name` 用于指定容器名称，`--restart` 用于设置重启策略。
+常用标志：`-d` 表示分离模式，`-it` 表示交互式终端模式，`--rm` 表示自动删除容器，`-p` 用于指定端口（主机:容器），`-e` 用于设置环境变量，`-v` 用于挂载卷，`--name` 用于指定容器名称，`--restart` 用于设置重启策略。
 
 **管理正在运行的容器：**
 
@@ -194,7 +194,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgres://user:pass@db:5432/mydb
+      # Password comes from the POSTGRES_PASSWORD secret, not the URL
+      - DATABASE_URL=postgres://mydb_user@db:5432/mydb
     depends_on:
       db:
         condition: service_healthy
@@ -239,7 +240,7 @@ docker network prune                   # remove unused networks
 
 ### 6. 磁盘使用情况与清理
 
-在开始清理之前，请务必先进行诊断分析：
+在开始清理之前，请务必先进行诊断：
 
 ```bash
 # Check what's using space
@@ -263,35 +264,35 @@ docker system prune -a --volumes       # EVERYTHING — named volumes too
 ## 常见问题
 
 | 问题 | 原因 | 解决方案 |
-|------|------|----------|
+|---------|------|----------|
 | 容器立即退出 | 主进程已结束或崩溃 | 查看 `docker logs NAME`，尝试使用 `docker run -it --entrypoint /bin/sh IMAGE` 启动容器 |
 | “端口已被占用” | 有其他进程正在使用该端口 | 使用 `docker ps` 或 `lsof -i :PORT` 查找占用端口的进程 |
 | “设备空间不足” | Docker 存储空间已满 | 先执行 `docker system df` 查看情况，再针对性地进行清理 |
-| 无法连接到容器 | 应用程序在容器内绑定到 127.0.0.1 地址 | 应程序需绑定到 `0.0.0.0`，请检查 `-p` 参数的映射设置 |
+| 无法连接到容器 | 应用程序在容器内绑定到 127.0.0.1 地址 | 应将绑定地址改为 `0.0.0.0`，并检查 `-p` 参数的映射设置 |
 | 卷访问被拒绝 | 主机与容器的 UID/GID 不匹配 | 使用 `--user $(id -u):$(id -g)` 参数指定用户身份，或修正权限设置 |
 | Compose 服务之间无法通信 | 网络配置或服务名称有误 | 服务会以服务名称作为主机名，需检查 `docker compose config` 的配置内容 |
-| 构建缓存失效 | Dockerfile 中的层顺序错误 | 将更改频率较低的层放在前面（先将依赖项放入，再放源代码） |
+| 构建缓存功能失效 | Dockerfile 中的层顺序错误 | 将更改频率较低的层放在前面（先将依赖项层放入，再放源代码层） |
 | 镜像体积过大 | 未使用多阶段构建，也未添加 `.dockerignore` 文件 | 采用多阶段构建方式，并添加 `.dockerignore` 文件 |
 
 ## 结果验证
 
-执行任何 Docker 操作后，都需验证结果是否正确：
+执行任何 Docker 操作后，都应验证操作结果是否正确：
 
-- **容器已启动？** → 使用 `docker ps` 查看，状态应为“Up”
-- **日志是否正常？** → 使用 `docker logs --tail 20 NAME` 查看，确保没有错误信息
-- **端口是否可访问？** → 使用 `curl -s http://localhost:PORT` 或 `docker port NAME` 进行测试
-- **镜像是否已构建？** → 使用 `docker images | grep TAG` 查看
-- **Compose 集群状态是否正常？** → 使用 `docker compose ps` 查看，所有服务状态应为“running”或“healthy”
-- **存储空间是否已释放？** → 使用 `docker system df` 对比操作前后的存储使用情况
+- **容器已启动？** → 使用 `docker ps` 命令检查，状态应为“Up”  
+- **日志是否正常？** → 运行 `docker logs --tail 20 NAME`，确保无错误信息  
+- **端口可访问吗？** → 使用 `curl -s http://localhost:PORT` 或 `docker port NAME` 进行测试  
+- **镜像已构建？** → 通过 `docker images | grep TAG` 查看对应标签的镜像是否存在  
+- **Compose 集群运行正常？** → 执行 `docker compose ps`，所有服务状态应为“running”或“healthy”  
+- **磁盘空间是否充足？** → 使用 `docker system df` 查看磁盘使用情况，并对比构建前后数据  
 
 ## Dockerfile 优化建议
 
-在审查或创建 Dockerfile 时，可参考以下优化措施：
+在审查或编写 Dockerfile 时，可参考以下优化方法：
 
-1. **采用多阶段构建** —— 将构建环境与运行环境分离，从而减小最终镜像的体积
-2. **合理排列层顺序** —— 先放置依赖项，再放源代码，避免更改导致缓存层失效
-3. **合并 RUN 命令** —— 减少层数量，进而缩小镜像体积
-4. **使用 `.dockerignore` 文件** —— 排除 `node_modules`、`.git`、`__pycache__` 等文件
-5. **锁定基础镜像版本** —— 使用具体版本号，如 `node:20-alpine`，而非 `node:latest`
-6. **以非 root 用户身份运行** —— 添加 `USER` 指令以提高安全性
-7. **选择轻量级基础镜像** —— 例如使用 `python:3.12-slim` 而非 `python:3.12`
+1. **多阶段构建** — 将构建环境与运行环境分离，从而减小最终镜像体积  
+2. **层顺序调整** — 先放置依赖项，再放源代码，避免更改导致缓存层失效  
+3. **合并 RUN 命令** — 减少镜像层数量，进而缩小镜像大小  
+4. **使用 .dockerignore 文件** — 排除 `node_modules`、`.git`、`__pycache__` 等文件  
+5. **锁定基础镜像版本** — 选择具体版本如 `node:20-alpine`，而非通用的 `node:latest`  
+6. **以非根用户运行** — 添加 `USER` 指令以提高安全性  
+7. **选用轻量级基础镜像** — 选择如 `python:3.12-slim` 而非完整版本的 `python:3.12`
