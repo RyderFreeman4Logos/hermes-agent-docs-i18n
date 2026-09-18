@@ -1,59 +1,58 @@
 ---
-title: "Peft Fine Tuning — Parameter-efficient fine-tuning for LLMs using LoRA, QLoRA, and 25+ methods"
-sidebar_label: "Peft Fine Tuning"
-description: "Parameter-efficient fine-tuning for LLMs using LoRA, QLoRA, and 25+ methods"
+title: "Peft — Fine-tune large LLMs with LoRA on limited GPU memory"
+sidebar_label: "Peft"
+description: "Fine-tune large LLMs with LoRA on limited GPU memory"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# PEFT 微调技术
+# PEFT
 
-一种基于 LoRA、QLoRA 以及 25 种以上方法的参数高效型大语言模型微调方案。当需要在 GPU 内存有限的条件下微调 70 亿参数规模的大型模型、仅需训练不到 1% 的参数且希望尽可能降低精度损失，或实现多适配器服务时，均可选用此技术。该功能集成了 HuggingFace 官方库，可与 transformers 生态系统无缝配合使用。
+在有限的 GPU 内存条件下，利用 LoRA 技术对大型大语言模型进行微调。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/mlops/peft` 命令安装 |
-| 路径 | `optional-skills/mlops/peft` |
+| 来源 | 可选 —— 通过 `hermes skills install official/mlops/peft` 命令安装 |
+| 路径 | `optional-skills/mlops\peft` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
 | 许可协议 | MIT |
 | 依赖项 | `peft>=0.13.0`, `transformers>=4.45.0`, `torch>=2.0.0`, `bitsandbytes>=0.43.0` |
 | 支持平台 | linux、macos、windows |
-| 标签 | `微调`, `PEFT`, `LoRA`, `QLoRA`, `参数高效型`, `适配器`, `低秩`, `内存优化`, `多适配器` |
+| 标签 | `Fine-Tuning`、`PEFT`、`LoRA`、`QLoRA`、`参数高效`、`适配器`、`低秩`、`内存优化`、`多适配器` |
 
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行相应操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为此内容。
 :::
 
-# PEFT（参数高效型微调）
+# PEFT（参数高效微调）
 
-通过运用 LoRA、QLoRA 以及 25 种以上的适配器技术，仅需训练不到 1% 的模型参数即可完成大语言模型的微调。
+通过 LoRA、QLoRA 以及 25 种以上的适配器方法，仅训练不到 1% 的模型参数即可对大语言模型进行微调。
 
-## 何时使用 PEFT 技术
+## 何时使用 PEFT
 
-**适合使用 PEFT/LoRA 的场景：**
-- 在消费级 GPU（如 RTX 4090、A100）上微调 70 亿参数规模的大模型
-- 需要训练的参数占比低于 1%（6MB 的适配器文件体积远小于 14GB 的完整模型）
+**在以下情况下使用 PEFT/LoRA：**
+- 在消费级 GPU（如 RTX 4090、A100）上对 7B 至 70B 规模的模型进行微调
+- 需要训练的参数占比低于 1%（适配器大小仅为 6MB，而完整模型的参数量高达 14GB）
 - 希望通过多种任务专用适配器实现快速迭代
-- 基于同一基础模型部署多个微调后的版本
+- 基于同一个基础模型部署多个微调后的版本
 
-**适合使用 QLoRA（PEFT + 量化技术）的场景：**
-- 在单块 24GB 容量的 GPU 上微调 700 亿参数规模的大模型
-- 内存资源是主要限制因素
-- 愿意接受约 5% 的精度损失以换取更低的计算成本
-
-**何时应选择全量微调方式：**
-- 微调参数量较小的模型（小于 10 亿参数）
-- 需要最高精度且拥有充足的计算资源
-- 模型应用场景发生显著变化，必须更新所有模型权重
+**在以下情况下使用 QLoRA（PEFT + 量化技术）：**
+- 在单块 24GB 容量的 GPU 上对 70B 规模的模型进行微调
+- 内存是主要的限制因素
+- 可以接受与完整微调相比约 5% 的质量损失
+**在以下情况下，请使用全量微调：**
+- 训练参数量较小的模型（<10亿参数）
+- 需要最高质量且具备充足的计算资源
+- 领域差异较大，必须更新所有权重
 
 ## 快速入门
 
-### 安装步骤
+### 安装
 
 ```bash
 # Basic installation
@@ -168,17 +167,17 @@ model = get_peft_model(model, lora_config)
 # 70B model now fits on single 24GB GPU!
 ```
 
-## LoRA参数选择
+## LoRA 参数选择
 
 ### Rank（秩）——容量与效率的平衡
 
-| 秩数 | 可训练参数量 | 内存占用 | 质量水平 | 典型应用场景 |
+| 秩数 | 可训练参数量 | 内存占用 | 效果质量 | 典型应用场景 |
 |------|--------------|----------|---------|--------------|
-| 4 | 约300万 | 极低 | 较低 | 简单任务、原型开发 |
-| **8** | 约700万 | 低 | 良好 | **推荐的首选值** |
-| **16** | 约1400万 | 中等 | 更优 | **通用微调场景** |
-| 32 | 约2700万 | 较高 | 高 | 复杂任务 |
-| 64 | 约5400万 | 高 | 最高 | 领域适配、700亿参数模型 |
+| 4 | 约 300 万 | 极低 | 较差 | 简单任务、原型开发 |
+| **8** | 约 700 万 | 低 | 良好 | **推荐的首选值** |
+| **16** | 约 1400 万 | 中等 | 更佳 | **通用微调场景** |
+| 32 | 约 2700 万 | 较高 | 高 | 复杂任务 |
+| 64 | 约 5400 万 | 高 | 最高 | 领域适配、700 亿参数模型 |
 
 ### Alpha（lora_alpha）——缩放因子
 
@@ -275,9 +274,9 @@ with model.disable_adapter():
 | IA3 | 0.01% | 几乎无 | 最快 | 少样本适配 |
 | 前缀调优 | 0.1% | 低 | 中等 | 生成内容控制 |
 | 提示词调优 | 0.001% | 几乎无 | 快 | 简单任务适配 |
-| P-Tuning v2 | 0.1% | 低 | 中等 | 自然语言理解任务 |
+| P-Tuning v2 | 0.1% | 低 | 中等 | NLU任务 |
 
-### IA3（参数极少）
+### IA3（参数量极少）
 
 ```python
 from peft import IA3Config
@@ -322,7 +321,7 @@ trainer = SFTTrainer(
 trainer.train()
 ```
 
-### 使用 Axolotl（YAML 配置）
+### 使用 Axolotl（YAML 配置文件）
 
 ```yaml
 # axolotl config.yaml
@@ -338,7 +337,7 @@ lora_target_modules:
 lora_target_linear: true  # Target all linear layers
 ```
 
-### 使用 vLLM（推理模式）
+### 使用 vLLM 进行推理
 
 ```python
 from vllm import LLM
@@ -358,7 +357,7 @@ outputs = llm.generate(
 
 ### 内存占用（Llama 3.1 8B）
 
-| 方法 | GPU内存占用 | 可训练参数量 |
+| 方法 | GPU内存 | 可训练参数量 |
 |--------|-----------|--------------|
 | 全量微调 | 60+ GB | 8B（100%） |
 | LoRA r=16 | 18 GB | 14M（0.17%） |
@@ -367,8 +366,8 @@ outputs = llm.generate(
 
 ### 训练速度（A100 80GB）
 
-| 方法 | 每秒处理Token数 | 相较于全量微调的速度倍数 |
-|--------|----------------|--------------------------|
+| 方法 | 每秒处理Token数 | 相较于全量微调的速度 |
+|--------|----------------|----------------------|
 | 全量微调 | 2,500 | 1倍 |
 | LoRA | 3,200 | 1.3倍 |
 | QLoRA | 2,100 | 0.84倍 |
@@ -432,16 +431,16 @@ TrainingArguments(learning_rate=1e-4)
 
 1. **初始值设为 r=8-16**，若效果不佳可再提高该数值  
 2. **以 alpha = 2 * rank 作为起始参数**  
-3. **为获得最佳质量与效率，建议使用注意力机制与多层感知机层**  
-4. **开启梯度检查点功能**以节省内存  
-5. **频繁保存适配器文件**（文件体积小，便于回滚）  
-6. **在合并前使用保留数据集进行评估**  
-7. **在消费级硬件上处理 70B 及以上规模的模型时，建议采用 QLoRA 方案**  
+3. **为获得最佳的质量与效率平衡，建议使用注意力机制与多层感知机层**  
+4. **启用梯度检查点技术**以节省内存  
+5. **频繁保存适配器文件**（体积小，便于回滚）  
+6. **在合并模型前，务必在保留数据集上进行测试**  
+7. **在消费级硬件上处理 70B 及以上规模的模型时，建议使用 QLoRA**  
 
 ## 参考资料
 
-- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/peft/references/advanced-usage.md)** - DoRA、LoftQ、秩稳定化技术及自定义模块  
-- **[故障排查](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops/peft/references/troubleshooting.md)** - 常见错误、调试方法及优化技巧  
+- **[高级用法](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\peft/references/advanced-usage.md)** - DoRA、LoftQ、排名稳定技术及自定义模块  
+- **[故障排除](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/mlops\peft/references/troubleshooting.md)** - 常见错误、调试方法及优化技巧  
 
 ## 资源链接
 
@@ -449,4 +448,4 @@ TrainingArguments(learning_rate=1e-4)
 - **官方文档**：https://huggingface.co/docs/peft  
 - **LoRA 相关论文**：arXiv:2106.09685  
 - **QLoRA 相关论文**：arXiv:2305.14314  
-- **模型库**：https://huggingface.co/models?library=peft
+- **模型列表**：https://huggingface.co/models?library=peft

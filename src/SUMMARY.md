@@ -3294,7 +3294,7 @@
             - [Huggingface Hub](zh/website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md)
             - [Nemo Curator](zh/website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md)
             - [Obliteratus](zh/website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md)
-            - [PEFT 微调技术](zh/website/docs/user-guide/skills/optional/mlops/mlops-peft.md)
+            - [PEFT](zh/website/docs/user-guide/skills/optional/mlops/mlops-peft.md)
             - [Pinecone](zh/website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md)
             - [Pytorch Fsdp](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-fsdp.md)
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)

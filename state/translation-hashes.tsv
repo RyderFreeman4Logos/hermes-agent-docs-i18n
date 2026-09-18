@@ -1164,7 +1164,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-modal.md	487080679fb2a0419b1
 website/docs/user-guide/skills/optional/mlops/mlops-models-huggingface-hub.md	1362aff2e6bfb7ec1af1240b00d2f922b03db0d844b07a50fb75ff096981dfea
 website/docs/user-guide/skills/optional/mlops/mlops-nemo-curator.md	52df19a79e9aef662f43b4d3f2f47ade03da49918eb8e2aaf60ffe177d108b71
 website/docs/user-guide/skills/optional/mlops/mlops-obliteratus.md	a95378b96bd21e1f6dedb819fe0a6be89a86fee8fe5c05408a4ff16ddf62b83e
-website/docs/user-guide/skills/optional/mlops/mlops-peft.md	da081fab3cf9ed645bc0234eb554a09618c28dd248b3c1bcd2833c321ff207ad
+website/docs/user-guide/skills/optional/mlops/mlops-peft.md	e894cb0ed012b88392e00a5b93c93d89992b6796d4ee4cc9ab479eb46f5ae5de
 website/docs/user-guide/skills/optional/mlops/mlops-pinecone.md	51c546afbcf6a4102be624a6cc8c89f67f937e3d36d2e5046aad4ede81767077
 website/docs/user-guide/skills/optional/mlops/mlops-pytorch-fsdp.md	8b3c1d3b4d4fc88ab6402507b533919066093685cb5d45e2187e7323b5c167a0
 website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md	3b3f615ec5e58f4892ba9eca39fdb3840886184da0f938ed72ead83dbedb9f03
