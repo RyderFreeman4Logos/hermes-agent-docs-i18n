@@ -3366,6 +3366,7 @@
           - [Social Media]()
             - [Reddit 阅读功能](zh/website/docs/user-guide/skills/optional/social-media/social-media-reddit-reading.md)
           - [Software Development]()
+            - [Ast Grep](zh/website/docs/user-guide/skills/optional/software-development/software-development-ast-grep.md)
             - [Code Wiki](zh/website/docs/user-guide/skills/optional/software-development/software-development-code-wiki.md)
             - [Grill Me](zh/website/docs/user-guide/skills/optional/software-development/software-development-grill-me.md)
             - [REST GraphQL 调试](zh/website/docs/user-guide/skills/optional/software-development/software-development-rest-graphql-debug.md)
