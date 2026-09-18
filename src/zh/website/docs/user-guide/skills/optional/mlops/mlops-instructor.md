@@ -1,24 +1,24 @@
 ---
-title: "Instructor"
+title: "Instructor — Structured LLM outputs validated with Pydantic"
 sidebar_label: "Instructor"
-description: "Extract structured data from LLM responses with Pydantic validation, retry failed extractions automatically, parse complex JSON with type safety, and stream ..."
+description: "Structured LLM outputs validated with Pydantic"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Instructor
 
-借助 Pydantic 进行验证，从大语言模型响应中提取结构化数据；自动重试失败的提取操作；以类型安全的方式解析复杂的 JSON 数据；并通过经过实战检验的结构化输出库 Instructor 实现部分结果的流式处理。
+基于 Pydantic 对结构化大语言模型输出进行验证。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/mlops/instructor` 安装 |
-| 路径 | `optional-skills/mlops/instructor` |
+| 来源 | 可选 —— 通过 `hermes skills install official/mlops/instructor` 安装 |
+| 路径 | `optional-skills/mlops\instructor` |
 | 版本 | `1.0.0` |
 | 开发者 | Orchestra Research |
-| 许可协议 | MIT |
+| 许可证 | MIT |
 | 依赖项 | `instructor`, `pydantic`, `openai`, `anthropic` |
 | 支持平台 | linux、macos、windows |
 | 标签 | `提示词工程`, `Instructor`, `结构化输出`, `Pydantic`, `数据提取`, `JSON解析`, `类型安全`, `验证`, `流式处理`, `OpenAI`, `Anthropic` |
@@ -26,22 +26,22 @@ description: "Extract structured data from LLM responses with Pydantic validatio
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为内容。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用时，智能体看到的指令即为此内容。
 :::
 
-# Instructor：大语言模型的结构化输出功能
+# Instructor：结构化大语言模型输出
 
 ## 何时使用此技能
 
-在以下场景中可使用 Instructor：
-- **可靠地**从大语言模型响应中提取结构化数据
-- 自动根据 Pydantic 模式对输出结果进行验证
-- 具备自动错误处理机制，可重试失败的提取操作
-- 以类型安全与验证功能解析复杂的 JSON 数据
-- 实现部分结果的流式输出，以便实时处理
-- 支持多种大语言模型服务提供商，且接口风格统一
+在需要以下功能时，请使用 Instructor：
+- **可靠地从大语言模型响应中提取结构化数据**
+- **自动根据 Pydantic 模式验证输出结果**
+- **通过自动错误处理机制重试失败的提取操作**
+- **在保证类型安全与验证的前提下解析复杂 JSON**
+- **以流式方式输出部分结果，实现实时处理**
+- **通过统一的 API 支持多种大语言模型服务提供商**
 
-**GitHub 星标数**：15,000+ | **实战检验次数**：100,000+ 次
+**GitHub 星标数**：15,000+ | **经实际验证**：100,000+ 名开发者使用
 
 ## 安装方式
 
@@ -206,7 +206,7 @@ print(review.sentiment)  # Sentiment.POSITIVE
 
 ### 2. 验证机制
 
-Pydantic会自动对大语言模型的输出结果进行验证。若验证失败，Instructor将会重新尝试处理。
+Pydantic会自动对大语言模型的输出结果进行验证。若验证失败，Instructor会自动重新尝试。
 
 #### 内置验证器
 
@@ -271,7 +271,7 @@ class DateRange(BaseModel):
 
 ### 3. 自动重试机制
 
-当验证失败时，Hermes Agent会自动进行重试，并向大语言模型提供错误反馈。
+当验证失败时，Hermes Agent会自动进行重试，并向大型语言模型提供错误反馈。
 
 ```python
 # Retries up to 3 times if validation fails
@@ -293,7 +293,7 @@ user = client.messages.create(
 
 **工作原理：**
 1. 大语言模型生成输出内容
-2. Pydantic进行验证
+2. Pydantic进行格式验证
 3. 若验证失败：将错误信息反馈给大语言模型
 4. 大语言模型根据错误提示重新尝试生成内容
 5. 重复上述步骤，直至达到最大重试次数
@@ -437,7 +437,7 @@ company = client.messages.create(
 )
 ```
 
-### 模式 2：分类任务
+### 模式2：分类任务
 
 ```python
 class Category(str, Enum):
@@ -674,7 +674,7 @@ class Product(BaseModel):
     price: float = Field(description="Price in USD, without currency symbol")
 ```
 
-### 2. 采用恰当的验证方式
+### 2. 采用适当的验证方式
 
 ```python
 # ✅ Good: Constrain values
@@ -723,7 +723,7 @@ class PartialData(BaseModel):
 # LLM only needs to provide required_field
 ```
 
-## 与其他方案的对比
+## 与其他工具的对比
 
 | 功能特性 | Instructor | 手动 JSON 方式 | LangChain | DSPy |
 |---------|------------|-------------|-----------|------|
@@ -731,7 +731,7 @@ class PartialData(BaseModel):
 | 自动验证 | ✅ 支持 | ❌ 不支持 | ❌ 不支持 | ⚠️ 有限支持 |
 | 自动重试 | ✅ 支持 | ❌ 不支持 | ❌ 不支持 | ✅ 支持 |
 | 流式处理 | ✅ 支持 | ❌ 不支持 | ✅ 支持 | ❌ 不支持 |
-| 多提供程序支持 | ✅ 支持 | ⚠️ 需手动配置 | ✅ 支持 | ✅ 支持 |
+| 多提供者支持 | ✅ 支持 | ⚠️ 需手动配置 | ✅ 支持 | ✅ 支持 |
 | 学习曲线 | 较低 | 较低 | 中等 | 较高 |
 
 **何时选择 Instructor：**
@@ -740,20 +740,20 @@ class PartialData(BaseModel):
 - 需要自动重试功能
 - 正在构建数据提取系统
 
-**何时选择其他方案：**
-- 使用 DSPy：需要提示词优化功能
-- 使用 LangChain：正在构建复杂的任务链
-- 使用手动 JSON 方式：进行简单的一次性数据提取操作
+**何时选择其他工具：**
+- DSPy：需要提示词优化功能
+- LangChain：用于构建复杂的任务链
+- 手动 JSON 方式：适用于简单的一次性数据提取任务
 
 ## 相关资源
 
 - **文档**：https://python.useinstructor.com
 - **GitHub 仓库**：https://github.com/jxnl/instructor（星标数超 1.5 万）
-- **示例指南**：https://python.useinstructor.com/examples
+- **使用指南**：https://python.useinstructor.com/examples
 - **Discord 社区**：可获取社区支持
 
-## 相关链接
+## 相关内容
 
 - `references/validation.md` - 高级验证模式
-- `references/providers.md` - 各提供程序的特定配置
+- `references/providers.md` - 各提供者的特定配置方式
 - `references/examples.md` - 实际应用案例
