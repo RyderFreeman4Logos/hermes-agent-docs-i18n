@@ -2517,7 +2517,7 @@
     - [Grill Me]()
       - [Grill Me](zh/optional-skills/software-development/grill-me/SKILL.md)
     - [Rest Graphql Debug]()
-      - [API测试与调试](zh/optional-skills/software-development/rest-graphql-debug/SKILL.md)
+      - [API 测试与调试](zh/optional-skills/software-development/rest-graphql-debug/SKILL.md)
     - [Subagent Driven Development]()
       - [子代理驱动开发](zh/optional-skills/software-development/subagent-driven-development/SKILL.md)
       - [References]()
