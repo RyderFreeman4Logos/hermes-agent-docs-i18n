@@ -2155,7 +2155,7 @@
   - [Migration]()
     - [Description](zh/optional-skills/migration/DESCRIPTION.md)
     - [Openclaw Migration]()
-      - [OpenClaw → Hermes 迁移](zh/optional-skills/migration/openclaw-migration/SKILL.md)
+      - [OpenClaw -> Hermes 迁移](zh/optional-skills/migration/openclaw-migration/SKILL.md)
   - [Mlops]()
     - [Accelerate]()
       - [HuggingFace Accelerate – 统一分布式训练框架](zh/optional-skills/mlops/accelerate/SKILL.md)
