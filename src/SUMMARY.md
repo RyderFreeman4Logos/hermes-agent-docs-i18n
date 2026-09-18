@@ -2485,6 +2485,7 @@
       - [Reddit 阅读技能](zh/optional-skills/social-media/reddit-reading/SKILL.md)
   - [Software Development]()
     - [Ast Grep]()
+      - [ast-grep](zh/optional-skills/software-development/ast-grep/SKILL.md)
       - [References]()
         - [CLI 参考 — `sg` / `ast-grep`](zh/optional-skills/software-development/ast-grep/references/cli.md)
         - [安装 ast-grep](zh/optional-skills/software-development/ast-grep/references/install.md)
