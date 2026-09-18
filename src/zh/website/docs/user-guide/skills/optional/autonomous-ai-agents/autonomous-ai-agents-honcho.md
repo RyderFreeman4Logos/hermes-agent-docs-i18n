@@ -1,21 +1,21 @@
 ---
-title: "Honcho"
+title: "Honcho — Configure and troubleshoot Honcho memory for Hermes"
 sidebar_label: "Honcho"
-description: "Configure and use Honcho memory with Hermes -- cross-session user modeling, multi-profile peer isolation, observation config, dialectic reasoning, session su..."
+description: "Configure and troubleshoot Honcho memory for Hermes"
 ---
 
-{/* 此页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Honcho
 
-通过 Hermes 配置并使用 Honcho 内存功能——可实现跨会话用户建模、多配置文件同级节点隔离、观测配置管理、辩证推理、会话摘要生成以及上下文预算管控。在搭建 Honcho 环境、排查内存相关问题、使用 Honcho 同级节点管理不同配置文件，或调整观测、回忆及辩证推理参数时，均可使用此功能。
+用于配置及排查 Hermes 中的 Honcho 内存相关问题。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选——通过 `hermes skills install official/autonomous-ai-agents/honcho` 安装 |
-| 路径 | `optional-skills/autonomous-ai-agents/honcho` |
+| 来源 | 可选 — 通过 `hermes skills install official/autonomous-ai-agents/honcho` 安装 |
+| 路径 | `optional-skills/autonomous-ai-agents\honcho` |
 | 版本 | `2.0.0` |
 | 开发者 | Hermes Agent |
 | 许可协议 | MIT |
@@ -23,35 +23,35 @@ description: "Configure and use Honcho memory with Hermes -- cross-session user 
 | 标签 | `Honcho`、`Memory`、`Profiles`、`Observation`、`Dialectic`、`User-Modeling`、`Session-Summary` |
 | 相关技能 | [`hermes-agent`](/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，智能体将看到这些内容作为操作指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，智能体看到的指令即为此内容。
 :::
 
-# Hermes 版 Honcho 内存功能
+# Hermes 的 Honcho 内存功能
 
-Honcho 提供了专为人工智能设计的跨会话用户建模能力。它能够跨多次对话识别用户身份，同时为每个 Hermes 配置文件分配独立的同级节点标识，却又能呈现统一的用户视图。
+Honcho 提供了基于人工智能的跨会话用户建模功能。它能够跨多次对话识别用户身份，为每个 Hermes 用户档案赋予独立的身份标识，同时实现统一的用户视图。
 
 ## 适用场景
 
-- 搭建 Honcho 环境（云端或自托管）
-- 排查内存功能异常或同级节点同步问题
-- 构建多配置文件架构，让每个智能体拥有独立的 Honcho 同级节点
-- 调整观测、回忆、辩证推理深度或数据写入频率等参数
+- 部署 Honcho（云部署或自托管）
+- 解决内存功能失效/节点无法同步的问题
+- 构建多配置文件环境，使每个 Agent 都拥有独立的 Honcho 节点
+- 调整观察频率、召回率、推理深度或写入频率等参数
 - 了解五种 Honcho 工具的功能及其适用场景
-- 配置上下文预算及会话摘要注入功能
+- 配置上下文额度与会话摘要注入功能
 
-## 设置方法
+## 部署指南
 
-### 云端版本（app.honcho.dev）
+### 云部署（app.honcho.dev）
 
 ```bash
 hermes memory setup honcho
 # select "cloud", paste API key from https://app.honcho.dev
 ```
 
-### 自托管模式
+### 自主托管模式
 
 ```bash
 hermes memory setup honcho
@@ -70,44 +70,44 @@ hermes honcho status    # shows resolved config, connection test, peer info
 
 ### 基础上下文注入
 
-当 Honcho 在系统提示语中注入上下文时（处于“混合模式”或“上下文检索模式”下），它会按以下顺序构建基础上下文模块：
+当 Honcho 将上下文注入系统提示词中（在“混合模式”或“上下文检索模式”下），它会按以下顺序构建基础上下文模块：
 
-1. **会话摘要**——对当前会话内容的简短总结（置于最前端，以便模型快速保持对话连贯性）
-2. **用户画像**——Honcho 经过分析后形成的用户模型（包括偏好、事实及行为模式等信息）
-3. **AI 对等体卡片**——该 Hermes 配置文件中 AI 对等体的身份标识
+1. **会话摘要**——当前会话的简短概要（置于最前端，以便模型快速保持对话连贯性）
+2. **用户画像**——Honcho 所积累的关于该用户的模型信息（包括偏好、事实及行为模式）
+3. **AI 对等体卡片**——该 Hermes 配置下 AI 对等体的身份标识
 
-若存在历史会话，会话摘要会在每个对话轮次开始时由 Honcho 自动生成。这样无需重复展示完整历史记录，即可让模型快速进入工作状态。
+若存在之前的会话，会话摘要会在每个对话轮次开始时由 Honcho 自动生成。这样无需重新回放完整历史记录，即可让模型快速进入工作状态。
 
-### 冷启动/热启动提示语选择
+### 冷启动/热启动提示词选择
 
-Honcho 会自动在两种提示策略之间进行切换：
+Honcho 会自动在两种提示词策略之间进行选择：
 
-| 条件 | 策略 | 功能说明 |
+| 条件 | 策略 | 具体操作 |
 |------|------|----------|
-| 无历史会话或用户画像为空 | **冷启动** | 使用简化的引导提示语，跳过摘要注入环节，促使模型主动了解用户信息 |
-| 已存在用户画像和/或会话历史 | **热启动** | 完整注入基础上下文（按摘要→用户画像→AI 对等体卡片的顺序），生成更丰富的系统提示语 |
+| 无先前会话或用户画像为空 | **冷启动** | 使用简短的引导提示词；跳过摘要注入，促使模型主动了解用户 |
+| 已存在用户画像和/或会话历史 | **热启动** | 完整注入基础上下文（从摘要到用户画像再到对等体卡片）；生成更丰富的系统提示词 |
 
-无需手动配置此功能——系统会根据会话状态自动选择合适策略。
+无需手动配置此功能——系统会根据会话状态自动选择相应策略。
 
 ### 对等体机制
 
-Honcho 将对话视为**对等体**之间的交互。每个会话中，Hermes 会创建两个对等体：
+Honcho 将对话视为**对等体**之间的交互。Hermes 会在每个会话中创建两个对等体：
 
-- **用户对等体**（`peerName`）：代表人类用户。Honcho 通过分析用户发送的消息来构建其用户画像。
-- **AI 对等体**（`aiPeer`）：代表当前的 Hermes 实例。每个配置文件都会拥有独立的 AI 对等体，从而使智能体能够形成各自的独立认知。
+- **用户对等体**（`peerName`）：代表人类用户。Honcho会根据观察到的消息构建该用户的表征。
+- **AI对等体**（`aiPeer`）：代表当前的Hermes实例。每个配置文件都会对应一个独立的AI对等体，从而使智能体能够形成各自的独立认知。
 
-### 观测功能
+### 观察功能
 
-每个对等体都包含两个观测开关，用于控制 Honcho 应该学习哪些信息：
+每个对等体都包含两个观察开关，用于控制Honcho从哪些方面获取信息：
 
 | 开关 | 功能说明 |
 |------|----------|
-| `observeMe` | 观测该对等体自身发送的消息（用于构建自我画像） |
-| `observeOthers` | 观测其他对等体发送的消息（用于建立跨对等体间的理解） |
+| `observeMe` | 观察该对等体自身的消息（用于构建自我表征） |
+| `observeOthers` | 观察其他对等体的消息（用于建立跨对等体间的理解） |
 
-默认情况下，四个开关均为**开启**状态（实现完全的双向观测）。
+默认设置：四个开关均为**开启**状态（实现完全的双向观察）。
 
-可在 `honcho.json` 文件中为每个对等体单独配置这些参数：
+可在 `honcho.json` 文件中为每个对等体单独配置这些选项：
 
 ```json
 {
@@ -118,66 +118,66 @@ Honcho 将对话视为**对等体**之间的交互。每个会话中，Hermes �
 }
 ```
 
-或者使用简写预设：
+或者使用简写的预设配置：
 
-| 预设 | 用户 | AI | 使用场景 |
+| 预设值 | 用户 | AI | 适用场景 |
 |--------|------|----|----------|
-| `"directional"`（默认） | 我：开启，他人：开启 | 我：开启，他人：开启 | 多智能体模式，完整记忆保留 |
-| `"unified"` | 我：开启，他人：关闭 | 我：关闭，他人：开启 | 单智能体模式，仅用户建模 |
+| `"directional"`（默认） | 我：开启，他人：开启 | 我：开启，他人：开启 | 多智能体模式，完整内存访问 |
+| `"unified"` | 我：开启，他人：关闭 | 我：关闭，他人：开启 | 单智能体模式，仅用户模型 |
 
 在 [Honcho 控制面板](https://app.honcho.dev) 中进行的设置会在会话启动时同步回来——服务器端配置优先于本地默认设置。
 
 ### 会话
 
-会话是消息和观察结果存储的作用范围。策略选项如下：
+会话决定了消息和观测数据存储的范围。可用策略如下：
 
-| 策略 | 行为 |
-|--------|------|
+| 策略 | 行为方式 |
+|--------|----------|
 | `per-directory`（默认） | 每个工作目录对应一个会话 |
 | `per-repo` | 每个 Git 仓库根目录对应一个会话 |
-| `per-session` | 每次运行 Hermes 都创建新的 Honcho 会话 |
+| `per-session` | 每次运行 Hermes 都会创建新的 Honcho 会话 |
 | `global` | 所有目录共享同一个会话 |
 
-可手动覆盖：`hermes honcho map my-project-name`
+可手动覆盖配置：`hermes honcho map my-project-name`
 
 ### 回忆模式
 
 智能体访问 Honcho 内存的方式：
 
-| 模式 | 是否自动注入上下文？ | 是否可用工具？ | 使用场景 |
+| 模式 | 是否自动注入上下文？ | 是否提供工具功能？ | 适用场景 |
 |------|---------------------|-----------------|----------|
-| `hybrid`（默认） | 是 | 是 | 由智能体决定何时使用工具而非自动上下文 |
+| `hybrid`（默认） | 是 | 是 | 智能体可自行决定是使用工具还是自动上下文 |
 | `context` | 是 | 否（隐藏） | 流量消耗极低，无需调用工具 |
-| `tools` | 否 | 是 | 智能体可自主控制所有内存访问 |
+| `tools` | 否 | 是 | 智能体可完全自主控制对内存的访问 |
 
 ## 三个相互独立的调节参数
 
-Honcho 的辩证推理行为由三个独立维度控制。调整其中一个参数不会影响其他参数：
+Honcho 的辩证行为由三个独立维度控制。分别调整这些参数不会相互影响：
 
 ### 频率（何时）
 
-控制辩证推理与上下文调用**发生的频率**。
+控制辩证逻辑调用和上下文调用的**频率**。
 
-| 参数键 | 默认值 | 描述 |
+| 键值 | 默认值 | 描述 |
 |-----|---------|-------------|
-| `contextCadence` | `1` | 上下文 API 调用之间的最小轮次间隔 |
-| `dialecticCadence` | `2` | 辩证推理 API 调用之间的最小轮次间隔，建议值为 1–5 |
-| `injectionFrequency` | `every-turn` | 基础上下文注入方式为 `every-turn` 或 `first-turn` |
+| `contextCadence` | `1` | 每次调用上下文 API 之间的最小轮次间隔 |
+| `dialecticCadence` | `2` | 每次调用辩证式 API 之间的最小轮次间隔，推荐值为 1–5 |
+| `injectionFrequency` | `every-turn` | 基础上下文注入的频率，可选值为 `every-turn` 或 `first-turn` |
 
-较高的频率值意味着辩证推理 LLM 的调用频率会降低。`dialecticCadence: 2` 表示每隔一轮才触发一次辩证推理；设置为 `1` 则每轮都会触发。
+较高的间隔值意味着辩证式大语言模型被调用的频率更低。例如，将 `dialecticCadence` 设置为 `2` 表示引擎每隔一轮才调用一次；而设置为 `1` 则表示每轮都会调用。
 
-### 深度（多少轮）
+### 推理深度（轮数）
 
-控制 Honcho 对每个查询执行**多少轮**辩证推理。
+用于控制 Honcho 对每个查询执行多少轮辩证式推理。
 
-| 参数键 | 默认值 | 范围 | 描述 |
+| 键值 | 默认值 | 范围 | 描述 |
 |-----|---------|-------|-------------|
-| `dialecticDepth` | `1` | 1-3 | 每个查询的辩证推理轮数 |
-| `dialecticDepthLevels` | -- | 数组 | 可选参数，用于为每轮设置不同的深度级别（见下文） |
+| `dialecticDepth` | `1` | 1-3 | 每个查询的辩证式推理轮数 |
+| `dialecticDepthLevels` | -- | 数组 | 可选参数，用于为每一轮单独设置不同的推理层级（见下文） |
 
-`dialecticDepth: 2` 表示 Honcho 会执行两轮辩证推理。第一轮生成初步答案，第二轮则对其进一步优化。
+当 `dialecticDepth` 设置为 `2` 时，Honcho 会进行两轮辩证式推理。第一轮生成初步答案，第二轮则对答案进行优化。
 
-`dialecticDepthLevels` 允许您分别为每一轮设置独立的推理深度：
+`dialecticDepthLevels` 允许您分别为每一轮独立设置推理层级：
 
 ```json
 {
@@ -186,38 +186,38 @@ Honcho 的辩证推理行为由三个独立维度控制。调整其中一个参�
 }
 ```
 
-如果未指定 `dialecticDepthLevels`，则各轮推理将采用基于 `dialecticReasoningLevel`（即基础级别）计算出的**按比例分配的深度层级**：
+如果省略 `dialecticDepthLevels`，则轮次将使用基于 `dialecticReasoningLevel`（即基础值）计算出的**按比例分配的层级**：
 
-| 深度层级 | 迭代次数 |
-|---------|----------|
+| 深度 | 轮次层级 |
+|-------|-----------|
 | 1 | [基础] |
-| 2 | [最小, 基础] |
-| 3 | [最小, 基础, 低] |
+| 2 | [最小，基础] |
+| 3 | [最小，基础，低] |
 
-这样一来，前几轮的推理成本较低，而最终合成阶段则会使用最大深度。
+这种方式能在早期轮次保持较低成本，同时在最终合成阶段使用最大深度。
 
-**会话启动时的深度设置。**在第一步输入之前，会话启动预热阶段会在后台执行完整配置的 `dialecticDepth` 次数。在对新的智能体进行单次迭代预热时，通常只能得到较为简略的输出——而多迭代预热则会在用户发出指令前完成多次审核/对齐流程。第一步会直接使用预热结果；如果预热未能及时完成，第一步则会回退为带有时间限制的同步调用。
+**会话启动时的深度设置。** 会话启动前的预热阶段会在第1轮之前在后台运行完整配置的 `dialecticDepth`。在对冷启动的合作伙伴进行单轮预热时，通常只能得到较为简略的输出——而多轮深度预温则会在用户发言之前就完成审核/对齐流程。第1轮会直接使用预热结果；如果预热未能及时完成，第1轮则会回退为带有时间限制的同步调用。
 
-### 级别（难度强度）
+### 级别（难度）
 
 用于控制每轮辩证推理的**强度**。
 
-| 参数键 | 默认值 | 描述 |
-|-------|--------|------|
-| `dialecticReasoningLevel` | `low` | 可选值为 `minimal`、`low`、`medium`、`high`、`max` |
-| `dialecticDynamic` | `true` | 当设置为 `true` 时，模型可以将 `reasoning_level` 参数传递给 `honcho_reasoning`，从而覆盖每次调用的默认设置。设置为 `false` 时，则始终使用 `dialecticReasoningLevel`，模型设置的参数将被忽略 |
+| 键值 | 默认值 | 描述 |
+|-----|---------|-----------|
+| `dialecticReasoningLevel` | `low` | `minimal`、`low`、`medium`、`high`、`max` |
+| `dialecticDynamic` | `true` | 当设置为 `true` 时，模型可将 `reasoning_level` 传递给 `honcho_reasoning`，从而覆盖每次调用的默认设置。`false` 表示始终使用 `dialecticReasoningLevel`，模型设置的覆盖将被忽略 |
 
-更高的级别能够生成更丰富的合成结果，但会在 Honcho 后端消耗更多计算资源。
+更高的级别能生成更丰富的合成结果，但会在 Honcho 后端消耗更多令牌。
 
 ## 多配置文件设置
 
-每个 Hermes 配置文件都会拥有独立的 Honcho AI 智能体，同时共享同一个工作空间（用户上下文）。这意味着：
+每个 Hermes 配置文件拥有独立的 Honcho AI 对象，同时共享相同的工作空间（用户上下文）。这意味着：
 
-- 所有配置文件看到的都是相同的用户信息
-- 每个配置文件会构建属于自己的 AI 身份及观察结果
-- 一个配置文件生成的结论可通过共享工作空间被其他配置文件查看
+- 所有配置文件均显示相同的用户信息呈现方式  
+- 每个配置文件会构建独立的 AI 身份及观测数据  
+- 由某个配置文件生成的结论可通过共享工作空间被其他配置文件查看  
 
-### 创建带有 Honcho 智能体的配置文件
+### 使用 Honcho 同伴功能创建配置文件
 
 ```bash
 hermes profile create coder --clone
@@ -228,7 +228,7 @@ hermes profile create coder --clone
 1. 在 `honcho.json` 文件中创建一个 `hermes.coder` 主机配置块；
 2. 设置 `aiPeer: "coder"`（即对应的配置文件名称）；
 3. 沿用默认值设置 `workspace`、`peerName`、`writeFrequency`、`recallMode` 等参数；
-4. 立即在 Honcho 中创建该对应节点，确保在接收第一条消息之前该节点就已存在。
+4. 立即在 Honcho 中创建该对应节点，确保在接收第一条消息之前它就已经存在。
 
 ### 补充现有配置文件
 
@@ -238,7 +238,7 @@ hermes honcho sync    # creates host blocks for all profiles that don't have one
 
 ### 每个配置文件的独立设置
 
-可覆盖主机块中的任何配置项：
+可覆盖主机块中的任何设置：
 
 ```json
 {
@@ -258,37 +258,37 @@ hermes honcho sync    # creates host blocks for all profiles that don't have one
 
 ## 工具
 
-该智能体拥有 5 个双向 Honcho 工具（在“上下文回忆”模式下会隐藏）：
+该智能体拥有 5 个双向的 Honcho 工具（在“上下文回溯”模式下会隐藏）：
 
 | 工具 | 是否调用 LLM？ | 成本 | 适用场景 |
-|------|-------------|------|----------|
-| `honcho_profile` | 否 | 极低 | 对话开始时快速获取事实概览，或快速查询姓名/角色/偏好设置 |
-| `honcho_search` | 否 | 低 | 获取特定的历史事实以便自行推理——仅返回原始内容，不进行整合 |
-| `honcho_context` | 否 | 低 | 完整的会话上下文快照：摘要、信息呈现形式、对方卡片以及最新消息 |
-| `honcho_reasoning` | 是 | 中高 | 由 Honcho 的辩证推理引擎将自然语言问题转化为可处理的形式 | 
-| `honcho_conclude` | 否 | 极低 | 编写或删除持久性结论；若需 AI 自我认知，可传入 `peer: "ai"` |
+|------|--------------|------|----------|
+| `honcho_profile` | 否 | 极低 | 在对话开始时快速获取事实概览，或快速查询名称、角色及偏好设置 |
+| `honcho_search` | 否 | 低 | 获取特定的历史事实以便自行推理——仅返回原始内容，不进行综合处理 |
+| `honcho_context` | 否 | 低 | 获取完整的会话上下文快照：摘要、对方信息展示、卡片内容以及最新消息 |
+| `honcho_reasoning` | 是 | 中高 | 由 Honcho 的辩证引擎生成的自然语言问题 |
+| `honcho_conclude` | 否 | 极低 | 编写或删除持久性事实；若需 AI 自我认知，可传入 `peer: "ai"` 参数 |
 
 ### `honcho_profile`
-读取或更新对方卡片——即精心整理的关键信息（姓名、角色、偏好、沟通风格）。如需更新，请传入 `card: [...]`；如仅需读取则无需传入该参数。此操作不会调用 LLM。
+读取或更新对方信息卡片——其中包含精心整理的关键信息（名称、角色、偏好及沟通风格）。如需更新信息，请传入 `card: [...]` 参数；如仅需读取则无需传入该参数。此操作不会调用 LLM。
 
 ### `honcho_search`
-在存储的上下文中对特定对方进行语义搜索。返回按相关性排序的原始内容片段，不进行整合处理。默认长度为 800 个标记，最大为 2000 个。当您需要特定的历史事实以便自行推理而非获取整合后的答案时，此工具非常适用。
+在存储的上下文中对特定对象进行语义搜索。返回按相关性排序的原始内容片段，不进行综合处理。默认返回 800 个标记，最多 2000 个。当您需要特定的历史事实以便自行推理而非获取综合答案时，此工具非常有用。
 
 ### `honcho_context`
-来自 Honcho 的完整会话上下文快照——包括会话摘要、对方信息呈现形式、对方卡片以及最新消息。此操作不会调用 LLM。当您希望一次性查看 Honcho 对当前会话及对方的全部了解时，可使用此工具。
+获取来自 Honcho 的完整会话上下文快照——包括会话摘要、对方信息展示、卡片内容以及最新消息。此操作不会调用 LLM。当您希望一次性查看 Honcho 所掌握的关于当前会话及对方的全部信息时，可使用此工具。
 
 ### `honcho_reasoning`
-由 Honcho 的辩证推理引擎回答自然语言问题（在 Honcho 的后端调用 LLM）。成本较高，但输出质量更好。可通过传入 `reasoning_level` 参数控制推理深度：`minimal`（快速/低成本）→ `low` → `medium` → `high` → `max`（深入全面）。若不传入该参数，则使用默认设置（`low`）。此工具可用于深入理解用户的模式、目标或当前状态。
+通过 Honcho 的辩证推理引擎（在 Honcho 后端调用大型语言模型）来回答自然语言问题。该方式成本较高，但输出质量更优。可通过传递 `reasoning_level` 参数控制推理深度：`minimal`（快速/低成本）→ `low` → `medium` → `high` → `max`（全面深入）。若不指定该参数，则使用默认值 `low`。此功能用于深入理解用户的习惯、目标或当前状态。
 
 ### `honcho_conclude`
-编写或删除关于某方的持久性结论。如需创建结论，请传入 `conclusion: "..."`；如需删除结论（用于移除个人身份信息——Honcho 会逐步自动修正错误的结论，因此仅当涉及个人敏感信息时才需要手动删除），请传入 `delete_id: "..."`。必须恰好传入这两个参数中的一个。
+用于创建或删除关于某个对象的持久性结论。如需创建结论，可传递 `conclusion: "..."` 参数；如需删除结论（尤其是涉及个人身份信息时——Honcho 会逐步自动修正错误的结论，因此仅当涉及敏感信息时才需手动删除），则需传递 `delete_id: "..."` 参数。必须仅选择这两个参数中的一个使用。
 
-### 双向对方目标指定
+### 双向对象定位功能
 
-这 5 个工具均支持可选的 `peer` 参数：
-- `peer: "user"`（默认值）——针对用户方对方操作
-- `peer: "ai"` ——针对当前配置文件中的 AI 对方操作
-- `peer: "<explicit-id>"` ——工作空间中的任意对方 ID
+上述 5 种工具均支持可选的 `peer` 参数：
+- `peer: "user"`（默认值）——针对用户对象操作
+- `peer: "ai"` ——针对当前配置文件中的 AI 对象操作
+- `peer: "<explicit-id>"` ——工作空间中的任意对象 ID
 
 示例：
 ```
@@ -313,7 +313,7 @@ honcho_conclude delete_id="abc123"    # PII removal
 3. If deep synthesis needed → honcho_reasoning  (LLM call, use sparingly)
 ```
 
-请勿在每个对话轮次都调用 `honcho_reasoning` 函数。自动注入机制已能负责持续更新上下文，只有当基础上下文无法提供所需的信息，且确实需要通过推理工具生成综合见解时，才应使用该功能。
+请勿在每个对话轮次都调用 `honcho_reasoning` 函数。自动注入机制已能负责持续更新上下文，仅当基础上下文无法提供所需的信息，且确实需要通过推理工具生成综合见解时，才应使用该功能。
 
 ### 当用户要求记住某些内容时
 
@@ -321,8 +321,8 @@ honcho_conclude delete_id="abc123"    # PII removal
 honcho_conclude conclusion="<specific, actionable fact>"
 ```
 
-优秀结论示例：“更倾向于使用代码示例而非文字说明”，“截至2026年4月仍在从事Rust异步项目开发”  
-较差结论示例：“用户提到了Rust”（过于模糊），“用户似乎具备技术背景”（该信息已体现在用户画像中）
+良好结论示例：“更倾向于提供代码示例而非文字说明”，“截至2026年4月仍在从事Rust异步项目开发”  
+不良结论示例：“用户提到了Rust”（过于模糊），“用户似乎具备技术背景”（这一信息已在初始描述中体现）
 
 ```
 honcho_search query="<topic>"       → fast, no LLM, good for specific facts
@@ -332,22 +332,113 @@ honcho_reasoning query="<question>"  → synthesized answer, use when search isn
 
 ### 何时使用 `peer: "ai"` 
 
-可使用 AI 对等体功能来构建并查询智能体自身的自我认知信息：
-- `honcho_conclude conclusion="I tend to be verbose when explaining architecture" peer="ai"` —— 自我修正
-- `honcho_reasoning query="How do I typically handle ambiguous requests?" peer="ai"` —— 自我审计
+可使用 AI 对等体功能来构建并查询智能体自身的自我认知：
+- `honcho_conclude conclusion="我在解释架构时往往话较多" peer="ai"` —— 自我修正
+- `honcho_reasoning query="我通常如何处理含义模糊的请求？" peer="ai"` —— 自我审计
 - `honcho_profile peer="ai"` —— 查看自身的身份信息
 
 ### 何时不应调用工具 
 
-在 `hybrid` 和 `context` 模式下，基础上下文（用户描述 + 身份卡 + 会话摘要）会在每一轮对话开始前自动注入。无需重复获取已注入的内容。仅在以下情况才需调用工具：
-- 需要基础上下文所不具备的信息
+在 `hybrid` 和 `context` 模式下，基础上下文（用户描述 + 身份卡片 + 会话摘要）会在每一轮对话开始前自动注入。无需重新获取已注入的内容。仅在以下情况才需调用工具：
+- 需要注入的上下文中没有所需信息
 - 用户明确要求你调取或检查记忆内容
-- 需要针对新内容撰写结论时
+- 需要针对新信息撰写结论时
 
-### 节奏控制意识 
+### 调用频率控制 
 
-在工具端使用的 `honcho_reasoning` 功能与自动注入的推理过程成本相同。在明确调用工具之后，自动注入的节奏会重新开始计算——从而避免在同一轮对话中重复计费。
+在工具端使用 `honcho_reasoning` 的成本与自动注入机制相同。在明确调用工具之后，自动注入的频率会重置——从而避免在同一轮对话中重复计费。
 
 ## 配置参考 
 
-配置文件位置：`$
+配置文件路径：` $HERMES_HOME/honcho.json`（针对特定配置文件）或 `~/.honcho/config.json`（全局配置）。
+
+### 主要设置项
+
+| 键值 | 默认值 | 描述 |
+|-----|---------|-------------|
+| `apiKey` | -- | API密钥（[获取方式](https://app.honcho.dev)） |
+| `baseUrl` | -- | 自托管Honcho的基URL |
+| `peerName` | -- | 用户对等体标识 |
+| `aiPeer` | host key | AI对等体标识 |
+| `workspace` | host key | 共享工作空间ID |
+| `recallMode` | `hybrid` | 可选值为`hybrid`、`context`或`tools` |
+| `observation` | all on | 各对等体的`observeMe`/`observeOthers`开关状态 |
+| `writeFrequency` | `async` | 可选值为`async`、`turn`、`session`或整数N |
+| `sessionStrategy` | `per-directory` | 可选值为`per-directory`、`per-repo`、`per-session`或`global` |
+| `messageMaxChars` | `25000` | 每条消息的最大字符数（超出时会分块传输） |
+
+### 辩证推理设置
+
+| 键值 | 默认值 | 描述 |
+|-----|---------|-------------|
+| `dialecticReasoningLevel` | `low` | 可选值为`minimal`、`low`、`medium`、`high`、`max` |
+| `dialecticDynamic` | `true` | 根据查询复杂度自动调整推理强度。设为`false`则表示保持固定级别 |
+| `dialecticDepth` | `1` | 每次查询的辩证推理轮数（1-3轮） |
+| `dialecticDepthLevels` | -- | 可选值，用于指定每轮的推理强度等级，例如`["low", "high"]` |
+| `dialecticMaxInputChars` | `10000` | 辩证推理查询输入的最大字符数 |
+
+### 上下文预算与注入机制
+
+| 键值 | 默认值 | 描述 |
+|-----|---------|-------------|
+| `contextTokens` | 无上限 | 基础上下文注入内容（摘要 + 表示形式 + 卡片）的总字符数上限。该参数为可选限制——若省略则保持无上限，设置为整数则可限定注入大小。 |
+| `injectionFrequency` | `every-turn` | 可选值为 `every-turn` 或 `first-turn`。 |
+| `contextCadence` | `1` | 每次调用上下文 API 之间的最小轮次间隔。 |
+| `dialecticCadence` | `2` | 每次调用辩证式 LLM 之间的最小轮次间隔（推荐值为 1–5）。 |
+
+`contextTokens` 的限额会在内容注入时进行校验。如果会话中的摘要、表示形式及卡片内容总和超过该限额，Honcho 会首先截断摘要，再截断表示形式，而保留卡片内容。此举可避免在长会话中出现上下文过度膨胀的问题。
+
+### 内存上下文净化
+
+为防止提示注入及内容格式错误，Honcho 会在注入前对 `memory-context` 块进行净化处理：
+
+- 移除用户生成的结论中的 XML/HTML 标签；
+- 规范化空白字符与控制字符；
+- 截断长度超过 `messageMaxChars` 的单个结论；
+- 转义可能破坏系统提示结构的分隔符序列。
+
+此机制可解决那些包含标记或特殊字符的原始用户结论可能损坏注入上下文块的特殊情况。
+
+## 故障排除
+
+### “未配置 Honcho”
+运行命令 `hermes honcho setup`，并确保 `~/.hermes/config.yaml` 文件中包含 `memory.provider: honcho` 这一配置项。
+
+### 会话之间内存无法持久化
+请运行 `hermes honcho status` 检查设置，确保 `saveMessages: true` 且 `writeFrequency` 不设置为 `session`（该模式仅在会话退出时才写入数据）。
+
+### Profile 无法获取独立节点
+创建 Profile 时请使用 `--clone` 参数：`hermes profile create <name> --clone`。对于已存在的 Profile，则需执行 `hermes honcho sync`。
+
+### 仪表板中的观测结果未同步更新
+每次会话启动时，观测配置都会从服务器同步而来。在 Honcho UI 中修改设置后，请重新启动新会话。
+
+### 消息被截断
+长度超过 `messageMaxChars`（默认为 25,000 字符）的消息会自动分割，并添加 `[continued]` 标记。如果该问题频繁出现，请检查是否是工具输出或技能内容导致消息体积过大。
+
+### 上下文注入量过大
+若出现上下文预算超限的警告，请降低 `contextTokens` 值或减少 `dialecticDepth` 设置。当预算紧张时，会首先截断会话摘要内容。
+
+### 会话摘要缺失
+生成会话摘要需要当前 Honcho 会话中至少有过一次对话历史。在冷启动状态（全新会话且无历史记录）下，系统会省略摘要部分，转而使用冷启动提示策略。
+
+## CLI 命令
+
+| 命令 | 描述 |
+|---------|-------------|
+| `hermes honcho setup` | 交互式设置向导（云环境/本地环境、身份认证、监控功能、回溯机制、会话管理） |
+| `hermes honcho status` | 显示已配置的参数、连接测试结果以及当前激活配置文件的节点信息 |
+| `hermes honcho enable` | 为当前激活配置文件启用 Honcho 功能（如需则创建主机块） |
+| `hermes honcho disable` | 禁用当前激活配置文件的 Honcho 功能 |
+| `hermes honcho peer` | 显示或更新节点名称（支持参数：`--user <name>`、`--ai <name>`、`--reasoning <level>`） |
+| `hermes honcho peers` | 显示所有配置文件中的节点身份信息 |
+| `hermes honcho mode` | 显示或设置回溯模式（可选值：`hybrid`、`context`、`tools`） |
+| `hermes honcho tokens` | 显示或设置令牌配额（支持参数：`--context <N>`、`--dialectic <N>`） |
+| `hermes honcho sessions` | 列出已知的目录与会话名称之间的映射关系 |
+| `hermes honcho map <name>` | 将当前工作目录映射为 Honcho 会话名称 |
+| `hermes honcho identity` | 设置 AI 节点身份，或同时显示两种节点表示形式 |
+| `hermes honcho sync` | 为所有尚未创建主机块的 Hermes 配置文件生成主机块 |
+| `hermes honcho migrate` | 从 OpenClaw 原生内存架构逐步迁移至 Hermes + Honcho 架构的指南 |
+| `hermes memory setup` | 通用内存提供程序选择器（选择 “honcho” 即会运行相同的设置向导） |
+| `hermes memory status` | 显示当前使用的内存提供程序及其配置信息 |
+| `hermes memory off` | 禁用外部内存提供程序 |
