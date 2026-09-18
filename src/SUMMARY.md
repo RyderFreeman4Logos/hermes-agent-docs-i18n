@@ -2028,6 +2028,7 @@
         - [3D场景参考](zh/optional-skills/creative/touchdesigner-mcp/references/3d-scene.md)
         - [动画参考](zh/optional-skills/creative/touchdesigner-mcp/references/animation.md)
         - [基于音频的响应式参考方案](zh/optional-skills/creative/touchdesigner-mcp/references/audio-reactive.md)
+        - [基于DAT的脚本编写参考](zh/optional-skills/creative/touchdesigner-mcp/references/dat-scripting.md)
         - [外部数据引用](zh/optional-skills/creative/touchdesigner-mcp/references/external-data.md)
         - [Geometry COMP 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/geometry-comp.md)
         - [GLSL 参考手册](zh/optional-skills/creative/touchdesigner-mcp/references/glsl.md)
