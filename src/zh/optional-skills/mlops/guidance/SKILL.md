@@ -1,7 +1,7 @@
 ---
 name: guidance
-description: Control LLM output with regex and grammars, guarantee valid JSON/XML/code generation, enforce structured formats, and build multi-step workflows with Guidance - Microsoft Research's constrained generation framework
-version: 1.0.0
+description: Constrain LLM output with grammars; guarantee valid JSON.
+version: 1.0.1
 author: Orchestra Research
 license: MIT
 dependencies: [guidance, transformers]
@@ -17,12 +17,12 @@ metadata:
 ## 何时使用此功能
 
 当您需要实现以下目标时，可使用指导功能：
-- **利用正则表达式或语法规则控制大语言模型的输出格式**
+- 使用正则表达式或语法规则**控制大语言模型的输出格式**
 - **确保生成有效的 JSON/XML/代码内容**
-- **相比传统提示方式降低响应延迟**
-- **强制采用结构化格式**（日期、邮箱、编号等）
-- **借助 Python 风格的控制流构建多步骤工作流程**
-- **通过语法约束避免无效输出**
+- 相较于传统提示方式，**降低响应延迟**
+- **强制采用结构化格式**（日期、电子邮件地址、编号等）
+- 基于 Python 风格的流程控制来**构建多步骤工作流**
+- 通过语法约束**避免无效输出**
 
 **GitHub 星标数**：18,000+ | **来源**：微软研究院
 
@@ -53,13 +53,15 @@ result = lm + "The capital of France is " + gen("capital", max_tokens=5)
 print(result["capital"])  # "Paris"
 ```
 
-### 集成 Anthropic Claude
+### 与本地模型的聊天模式
+
+> **要实现约束功能，必须能够访问本地模型。** 正则表达式、`select()`函数以及基于语法的约束生成功能仅支持本地后端（如`Transformers`、`LlamaCpp`）。而远程API后端（如`OpenAI`及Azure相关版本）仅支持无约束的`gen()`/聊天功能——它们无法实施基于token级别的约束。guidance 0.3.x版本中不存在`models.Anthropic`类。
 
 ```python
 from guidance import models, gen, system, user, assistant
 
-# Configure Claude
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+# Local model (supports constrained generation)
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 # Use context managers for chat format
 with system():
@@ -81,7 +83,7 @@ with assistant():
 ```python
 from guidance import system, user, assistant, gen
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 # System message
 with system():
@@ -112,7 +114,7 @@ print(lm["response"])
 ```python
 from guidance import models, gen
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 # Constrain to valid email format
 lm += "Email: " + gen("email", regex=r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
@@ -129,15 +131,15 @@ print(lm["date"])   # Guaranteed YYYY-MM-DD format
 
 **工作原理：**
 - 正则表达式在分词层面被转换为语法结构
-- 在生成过程中会过滤掉无效的分词
-- 模型仅能输出符合规则的响应内容
+- 生成过程中会过滤掉无效的分词
+- 模型仅能输出符合规则的响应
 
 #### 选择约束条件
 
 ```python
 from guidance import models, gen, select
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 # Constrain to specific choices
 lm += "Sentiment: " + select(["positive", "negative", "neutral"], name="sentiment")
@@ -156,7 +158,7 @@ print(lm["answer"])     # One of: A, B, C, or D
 
 该功能可自动“修复”提示词与生成内容之间的令牌边界问题。
 
-**问题：** 分词处理会形成不自然的边界。
+**问题：** 令牌化处理会生成不自然的边界。
 
 ```python
 # Without token healing
@@ -171,7 +173,7 @@ prompt = "The capital of France is "
 ```python
 from guidance import models, gen
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 # Token healing enabled by default
 lm += "The capital of France is " + gen("capital", max_tokens=5)
@@ -181,30 +183,32 @@ lm += "The capital of France is " + gen("capital", max_tokens=5)
 **优势：**  
 - 自然的文本分界  
 - 无尴尬的间距问题  
-- 更出色的模型性能（能够识别自然的标记序列）  
+- 更佳的模型性能（能够识别自然的标记序列）  
 
 ### 4. 基于语法的生成  
 
-利用上下文无关语法来定义复杂结构。
+通过组合语法函数来定义复杂结构。当前的指南中并未涉及 `grammar=` 格式的模板字符串——建议通过可组合的函数来构建语法，或使用 `guidance.json()` 来处理 JSON 格式的内容。
 
 ```python
 from guidance import models, gen
+from guidance import json as gen_json
+from pydantic import BaseModel, Field
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
-# JSON grammar (simplified)
-json_grammar = """
-{
-    "name": <gen name regex="[A-Za-z ]+" max_tokens=20>,
-    "age": <gen age regex="[0-9]+" max_tokens=3>,
-    "email": <gen email regex="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" max_tokens=50>
-}
-"""
+# JSON via a Pydantic schema (guidance.json compiles the schema to a grammar)
+class Person(BaseModel):
+    name: str = Field(pattern=r"[A-Za-z ]+")
+    age: int
+    email: str = Field(pattern=r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
 
-# Generate valid JSON
-lm += gen("person", grammar=json_grammar)
+lm += gen_json(name="person", schema=Person)
 
-print(lm["person"])  # Guaranteed valid JSON structure
+print(lm["person"])  # Guaranteed valid JSON matching the schema
+
+# Or compose grammar functions directly:
+grammar = "name=" + gen("name", regex=r"[A-Za-z ]+") + " age=" + gen("age", regex=r"[0-9]+")
+lm += grammar
 ```
 
 **应用场景：**
@@ -215,7 +219,7 @@ print(lm["person"])  # Guaranteed valid JSON structure
 
 ### 5. 指导函数
 
-通过 `@guidance` 装饰器创建可重复使用的生成模式。
+通过 `@guidance` 装饰器创建可复用的生成模式。
 
 ```python
 from guidance import guidance, gen, models
@@ -228,7 +232,7 @@ def generate_person(lm):
     return lm
 
 # Use the function
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 lm = generate_person(lm)
 
 print(lm["name"])
@@ -266,27 +270,21 @@ def react_agent(lm, question, tools, max_rounds=5):
 
 ## 后端配置
 
-### Anthropic Claude
+### OpenAI（远程——仅支持无限制模式）
+
+> 远程 API 后端不支持受限生成功能（如正则表达式/选择项/语法限制）；
+> 仅适用于普通聊天或 `gen()` 功能。如需实现约束条件，应使用本地后端。
 
 ```python
 from guidance import models
 
-lm = models.Anthropic(
-    model="claude-sonnet-4-5-20250929",
-    api_key="your-api-key"  # Or set ANTHROPIC_API_KEY env var
-)
-```
-
-### OpenAI
-
-```python
 lm = models.OpenAI(
     model="gpt-4o-mini",
     api_key="your-api-key"  # Or set OPENAI_API_KEY env var
 )
 ```
 
-### 本地模型（Transformer架构）
+### 本地模型（Transformer）
 
 ```python
 from guidance.models import Transformers
@@ -316,7 +314,7 @@ lm = LlamaCpp(
 ```python
 from guidance import models, gen, system, user, assistant
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 with system():
     lm += "You generate valid JSON."
@@ -334,12 +332,12 @@ with assistant():
 print(lm)  # Valid JSON guaranteed
 ```
 
-### 模式 2：分类任务
+### 模式2：分类任务
 
 ```python
 from guidance import models, gen, select
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 
 text = "This product is amazing! I love it."
 
@@ -370,7 +368,7 @@ def chain_of_thought(lm, question):
 
     return lm
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 lm = chain_of_thought(lm, "What is 15% of 200?")
 
 print(lm["answer"])
@@ -412,7 +410,7 @@ def react_agent(lm, question):
 
     return lm
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 lm = react_agent(lm, "What is 25 * 4 + 10?")
 print(lm["answer"])
 ```
@@ -443,7 +441,7 @@ def extract_entities(lm, text):
 
 text = "Tim Cook announced at Apple Park on 2024-09-15 in Cupertino."
 
-lm = models.Anthropic("claude-sonnet-4-5-20250929")
+lm = models.Transformers("microsoft/Phi-4-mini-instruct")
 lm = extract_entities(lm, text)
 
 print(f"Person: {lm['person']}")
@@ -526,20 +524,20 @@ lm += gen("name", regex=r"^(John|Jane)$", max_tokens=10)
 | 语法支持 | ✅ 基于CFG | ❌ 不支持 | ✅ 基于CFG | ✅ 基于CFG |
 | Pydantic验证 | ❌ 不支持 | ✅ 支持 | ✅ 支持 | ❌ 不支持 |
 | 令牌修复功能 | ✅ 支持 | ❌ 不支持 | ✅ 支持 | ❌ 不支持 |
-| 本地模型支持 | ✅ 支持 | ⚠️ 功能有限 | ✅ 支持 | ✅ 支持 |
-| API模型支持 | ✅ 支持 | ✅ 支持 | ⚠️ 功能有限 | ✅ 支持 |
+| 本地模型 | ✅ 支持 | ⚠️ 功能有限 | ✅ 支持 | ✅ 支持 |
+| API模型 | ✅ 支持 | ✅ 支持 | ⚠️ 功能有限 | ✅ 支持 |
 | Python风格语法 | ✅ 支持 | ✅ 支持 | ✅ 支持 | ❌ 类SQL语法 |
 | 学习曲线 | 较低 | 较低 | 中等 | 较高 |
 
 **何时选择 Guidance：**
 - 需要正则表达式或语法限制
 - 需要令牌修复功能
-- 需要构建包含控制流的复杂工作流
+- 需要构建带有控制流的复杂工作流
 - 使用本地模型（如Transformers、llama.cpp）
 - 偏好Python风格的语法
 
 **何时选择其他方案：**
-- Instructor：需要支持Pydantic验证及自动重试功能
+- Instructor：需要具备自动重试功能的Pydantic验证
 - Outlines：需要JSON模式验证
 - LMQL：偏好声明式查询语法
 
@@ -548,29 +546,29 @@ lm += gen("name", regex=r"^(John|Jane)$", max_tokens=10)
 **延迟降低：**
 - 对于有约束的输出，其速度比传统提示方式快30-50%
 - 令牌修复功能可减少不必要的重新生成
-- 语法限制能有效避免无效令牌的产生
+- 语法限制能有效避免无效令牌的生成
 
 **内存占用：**
-- 相较于无约束生成模式，内存开销极低
+- 相较于无约束生成方式，内存开销极低
 - 语法规则会在首次使用后进行缓存
 - 推理时能高效过滤令牌
 
 **令牌效率：**
-- 避免因无效输出而浪费令牌
-- 无需重复尝试循环
-| 能直接生成有效结果 |
+- 避免在无效输出上浪费令牌
+- 无需重复尝试的循环
+| 直接获得有效输出 |
 
-## 相关资源
+## 资源链接
 
-- **文档**：https://guidance.readthedocs.io
-- **GitHub仓库**：https://github.com/guidance-ai/guidance（星标数超1.8万）
-- **示例笔记本**：https://github.com/guidance-ai/guidance/tree/main/notebooks
-- **Discord社区**：提供用户支持
+- **文档**：https://guidance.readthedocs.io  
+- **GitHub 仓库**：https://github.com/guidance-ai/guidance（星标数超过 18,000 个）  
+- **笔记本示例**：https://github.com/guidance-ai/guidance/tree/main/notebooks  
+- **Discord 社区**：可获取社区支持  
 
-## 相关参考
+## 相关内容
 
-- `references/constraints.md` - 详尽的正则表达式及语法模式说明
-- `references/backends.md` - 各后端特定的配置选项
-- `references/examples.md` - 可直接用于生产环境的示例代码
+- `references/constraints.md` —— 详尽的正则表达式与语法模式说明  
+- `references/backends.md` —— 各后端特有的配置指南  
+- `references/examples.md` —— 可直接用于实际项目的示例代码
 
 
