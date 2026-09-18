@@ -2768,6 +2768,7 @@
     - [Airtable]()
       - [Airtable — 基础库、表格与记录](zh/skills/productivity/airtable/SKILL.md)
     - [Box]()
+      - [Box](zh/skills/productivity/box/SKILL.md)
       - [References]()
         - [批量操作](zh/skills/productivity/box/references/bulk-operations.md)
         - [Box CLI 使用指南](zh/skills/productivity/box/references/cli-guide.md)
