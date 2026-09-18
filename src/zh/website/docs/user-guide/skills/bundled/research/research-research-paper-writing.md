@@ -8,7 +8,7 @@ description: "Write ML papers for NeurIPS/ICML/ICLR: design→submit"
 
 # 研究论文撰写
 
-协助完成面向 NeurIPS/ICML/ICLR 的机器学习论文撰写：从设计到投稿的全流程服务。
+帮助用户为 NeurIPS/ICML/ICLR 等会议撰写机器学习论文：从设计到投稿全程支持。
 
 ## 技能元数据
 
@@ -22,22 +22,19 @@ description: "Write ML papers for NeurIPS/ICML/ICLR: design→submit"
 | 依赖项 | `semanticscholar`, `arxiv`, `habanero`, `requests`, `scipy`, `numpy`, `matplotlib`, `SciencePlots` |
 | 支持平台 | linux, macos |
 | 标签 | `研究`, `论文撰写`, `实验设计`, `机器学习`, `人工智能`, `NeurIPS`, `ICML`, `ICLR`, `ACL`, `AAAI`, `COLM`, `LaTeX`, `引用管理`, `统计分析` |
-| 相关技能 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv), `ml-paper-writing`, [`subagent-driven-development`](/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development), [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan) |
+| 相关技能 | [`arxiv`](/docs/user-guide/skills/bundled/research/research-arxiv), [`subagent-driven-development`](/docs/user-guide/skills/optional/software-development/software-development-subagent-driven-development), `plan`（即内置的 `/plan` 命令） |
 
 ## 参考：完整 SKILL.md 内容
 
 :::info
-以下为 Hermes 在触发该技能时加载的完整技能定义。当该技能处于激活状态时，智能体将依据此内容执行相应操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。技能启用后，智能体将依据此内容执行相应操作。
 :::
 
 # 研究论文撰写全流程
 
-专为面向 **NeurIPS、ICML、ICLR、ACL、AAAI 以及 COLM** 发表而设计的端到端机器学习/人工智能研究论文生成流程。该技能覆盖了整个研究生命周期：实验设计、执行、监控、分析、论文撰写、审稿、修改以及投稿。
+专为面向 **NeurIPS、ICML、ICLR、ACL、AAAI 和 COLM** 等会议发表而设计的端到端机器学习/人工智能研究论文撰写流程。该技能覆盖了从实验设计、执行与监控、数据分析，到论文撰写、审稿、修改直至最终投稿的完整研究生命周期。
 
-这**并非线性流程**，而是一个循环迭代的过程——实验结果会触发新的实验，审稿意见又会促使进一步分析。智能体需能够处理这些反馈循环。
-
-<!-- ascii-guard-ignore -->
-<!-- ascii-guard-ignore -->
+这并非**线性的处理流程**，而是一个循环迭代的过程。实验结果会触发新的实验，审核反馈又会引发进一步的分析。智能体必须能够处理这些反馈循环。
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    RESEARCH PAPER PIPELINE                  │
@@ -57,52 +54,52 @@ description: "Write ML papers for NeurIPS/ICML/ICLR: design→submit"
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
-## 何时使用该技能
+## 何时使用此技能
 
 在以下情况下可使用此技能：
 - 基于现有代码库或创意**启动新的研究论文撰写**
 - **设计并执行实验**以支撑论文中的论点
-- **撰写或修改**研究论文的任意部分
-- 为向特定会议或研讨会**提交论文做准备**
+- **撰写或修改**研究论文的任何部分
+- 为向特定会议或研讨会**提交论文**做准备
 - 通过补充实验或修改内容来**回应审稿意见**
 - 在不同会议格式之间**转换论文**
-- 撰写**非实证类论文**——理论篇、综述篇、基准测试篇或立场声明篇（参见[超越实证机器学习的论文类型](#paper-types-beyond-empirical-ml)）
+- 撰写**非实证类论文**——如理论论文、综述论文、基准测试论文或立场声明（详见[超越实证机器学习的论文类型](#paper-types-beyond-empirical-ml)）
 - 为自然语言处理、人机交互或对齐研究**设计人工评估方案**
-- 准备**论文被接收后的交付物**——海报、演讲材料、代码发布版本
+- 准备**论文被接收后的交付物**——如海报、演讲材料或代码发布
 
 ## 核心理念
 
-1. **主动出击**。提供完整的初稿，而非仅抛出问题。科学家们十分忙碌——先给出他们能够直接回应的具体内容，再逐步优化。
-2. **绝不编造引用**。人工智能生成的引用错误率约为40%。务必通过编程方式获取引用信息。将无法核实的引用标记为 `[CITATION NEEDED]`。
-3. **论文是故事，而非实验集合**。每篇论文都需用一句话清晰阐述其核心贡献。若无法做到这一点，则说明论文尚未准备好。
-4. **实验需服务于论点**。每个实验都必须明确说明其所支持的论点。绝不能进行与论文整体论述无关的实验。
-5. **尽早提交，频繁提交**。每次完成一组实验、每次更新论文初稿，都应附带描述性注释后进行提交。Git日志就是实验的历史记录。
+1. **主动出击。** 提供完整的初稿，而非问题。科学家们十分忙碌——请先给出他们能够直接回应的具体内容，再逐步优化。
+2. **绝不要编造引用信息。** 人工智能生成的引用错误率约为40%。务必通过编程方式获取引用信息。对于无法核实的引用，请标注为 `[CITATION NEEDED]`。
+3. **论文即故事，而非实验集合。** 每篇论文都需用一句话清晰阐述其核心贡献。若无法做到这一点，说明该论文尚未成熟。
+4. **实验应为论点服务。** 每项实验都必须明确指出其所支持的论点。切勿进行与论文整体论述无关的实验。
+5. **尽早提交，频繁提交。** 每完成一批实验，或每次更新论文初稿，都应使用描述性信息进行提交。Git日志便是实验的历史记录。
 
 ### 主动性与协作
 
 **默认原则：主动出击。先撰写初稿，再基于初稿提出问题。**
 
-| 自信度等级 | 应采取的行动 |
-|------------|--------------|
-| **高**（代码库结构清晰，贡献点明确） | 撰写完整初稿，提交后根据反馈进行优化 |
-| **中**（存在部分模糊之处） | 撰写初稿并标明不确定的内容，继续推进 |
+| 自信度等级 | 应对措施 |
+|------------|----------|
+| **高**（代码库结构清晰，贡献点明确） | 撰写完整初稿并提交，根据反馈进行优化 |
+| **中**（存在部分模糊之处） | 撰写初稿时标明不确定的内容，随后继续完善 |
 | **低**（存在重大未知因素） | 通过 `clarify` 提出1-2个针对性问题，之后再撰写初稿 |
 
-| 章节 | 是否可自主撰写初稿 | 是否需在初稿中标记问题 |
-|------|-------------------|--------------------------|
-| 摘要 | 是 | “将贡献点表述为X——如需调整请告知” |
-| 引言 | 是 | “强调了问题Y——如有错误请修正” |
-| 方法部分 | 是 | “已包含A、B、C等细节——请补充缺失内容” |
-| 实验部分 | 是 | “突出了1、2、3这些结果——如需调整顺序请告知” |
-| 相关工作部分 | 是 | “已引用X、Y、Z这些论文——请补充我遗漏的文献” |
+| 章节 | 是否自动起草？ | 标记为草稿 |
+|---------|-------------------|------------|
+| 摘要 | 是 | “将贡献框架定义为X——如有需要可进行调整” |
+| 引言 | 是 | “强调了问题Y——如不正确请予以修正” |
+| 方法 | 是 | “包含了A、B、C等细节——补充缺失的内容” |
+| 实验部分 | 是 | “突出了1、2、3这些结果——如需可重新排序” |
+| 相关工作 | 是 | “引用了X、Y、Z这些论文——如我有遗漏请补充” |
 
-**仅在以下情况才暂停推进并等待输入**：目标会议不明确、存在多种相互矛盾的表述、实验结果似乎不完整，或收到明确要求先进行审阅的情况。
+**仅在以下情况才需要输入框**：目标发表平台不明确、存在多种相互矛盾的表述、实验结果似乎不完整，或收到明确要求先进行审阅时。
 
 ---
 
 ## 第0阶段：项目准备
 
-**目标**：搭建工作环境，了解现有研究，明确论文的贡献点。
+**目标**：搭建工作环境、了解现有研究、明确本次贡献点。
 
 ### 步骤0.1：探索代码库
 
@@ -142,7 +139,7 @@ git remote add origin <repo-url>
 git checkout -b paper-draft  # or main
 ```
 
-**Git 使用规范**：每批完成后的实验数据都需通过提交操作进行保存，并附上描述性说明。示例如下：
+**Git 使用规范**：每批完成后的实验数据都需通过提交操作进行保存，并附上描述性信息。示例如下：
 ```
 Add Monte Carlo constrained results (5 runs, Sonnet 4.6, policy memo task)
 Add Haiku baseline comparison: autoreason vs refinement baselines at cheap model tier
@@ -150,12 +147,12 @@ Add Haiku baseline comparison: autoreason vs refinement baselines at cheap model
 
 ### 步骤 0.4：明确贡献点
 
-在开始撰写任何内容之前，先清晰阐述以下三点：
-- **核心贡献是什么**：这篇论文究竟带来了什么独特的价值？
-- **依据是什么**：有哪些证据可以支撑这一观点？
-- **为何重要**：为什么读者应该关注它？
+在开始撰写之前，先清晰阐述以下内容：
+- **核心贡献是什么**：本文究竟带来了哪一项独特贡献？
+- **依据何在**：有哪些证据可以支撑这一观点？
+- **为何重要**：读者为何应该关注此内容？
 
-> 可向科研人员提出如下建议：“据我理解，本文的主要贡献在于：[一句话概括]。关键研究结果为[Y]。这样的表述是否符合您的预期？”
+> 可向科研人员提出如下建议：“据我理解，本文的主要贡献可概括为：[一句话]。关键研究结果为[Y]。这样的表述是否符合您的预期？”
 
 ### 步骤 0.5：制定待办清单
 
@@ -174,7 +171,7 @@ Research Paper TODO:
 - [ ] Submission prep
 ```
 
-请在整个项目中统一更新此内容。它将作为跨会话的持久化状态保存下来。
+请在整个项目中统一更新此内容。它将作为跨会话的持久状态存在。
 
 ### 步骤 0.6：估算计算预算
 
@@ -188,7 +185,7 @@ Compute Budget Checklist:
 - [ ] Total budget ceiling and contingency (add 30-50% for reruns)
 ```
 
-在实验运行过程中实时追踪实际支出情况：
+在实验运行过程中追踪实际支出情况：
 ```python
 # Simple cost tracker pattern
 import json, os
@@ -209,19 +206,19 @@ def log_cost(experiment: str, model: str, input_tokens: int, output_tokens: int,
         f.write(json.dumps(entry) + "\n")
 ```
 
-**预算紧张时**：在开展全面测试之前，先进行小规模试点实验（使用1-2个样本及部分任务）。在调试流程时可选用成本较低的模型，最终运行时再切换为目标模型。
+**预算紧张时**：在开展大规模测试之前，先进行试点实验（使用1-2个样本及部分任务）。在调试流程时可使用成本较低的模型，最终运行时再切换为目标模型。
 
-### 步骤0.7：多作者协作
+### 步骤 0.7：多作者协作
 
-大多数论文的作者数量为3至10人。建议尽早确定协作流程：
+大多数论文的作者数量为3至10人。建议尽早制定协作流程：
 
 | 协作流程 | 工具 | 适用场景 |
 |----------|------|----------|
-| **Overleaf** | 基于浏览器的工具 | 多位作者需同时编辑，且团队没有Git使用经验 |
+| **Overleaf** | 基于浏览器的工具 | 多位作者需同时编辑，且没有Git使用经验 |
 | **Git + LaTeX** | 配备`.gitignore`规则用于管理辅助文件的`git` | 技术团队，需要基于分支的代码审查功能 |
-| **Overleaf + Git同步** | Overleaf高级版 | 结合两者的优势——支持实时协作并保留版本历史记录 |
+| **Overleaf + Git同步** | Overleaf高级版 | 结合两者优势——支持实时协作并保留版本历史记录 |
 
-**章节负责制**：为每个章节指定一名主要作者，其他成员仅可发表评论，不得直接修改内容。这样可以避免合并冲突及风格不一致的问题。
+**章节负责制**：为每个章节指定一名主要作者，其他成员仅可评论，不得直接修改内容。这样能有效避免合并冲突和风格不一致的问题。
 
 ```
 Author Coordination Checklist:
@@ -255,9 +252,9 @@ grep -r "arxiv\|doi\|cite" --include="*.md" --include="*.bib" --include="*.py"
 find . -name "*.bib"
 ```
 
-### 步骤 1.2：搜索相关研究
+### 第 1.2 步：搜索相关研究
 
-**加载 `arxiv` 技能**以实现结构化论文检索：调用 `skill_view("arxiv")`。该技能支持通过 arXiv REST API 进行搜索，还能提供 Semantic Scholar 的引文图谱、作者资料以及 BibTeX 格式生成功能。
+为结构化查找论文，请**加载 `arxiv` 技能**：`skill_view("arxiv")`。该技能可支持通过 arXiv REST API 进行搜索、获取 Semantic Scholar 的引用关系图、作者简介以及生成 BibTeX 格式。
 
 如需进行广泛检索，可使用 `web_search`；若要获取特定论文，则可使用 `web_extract`：
 
@@ -285,9 +282,9 @@ Search queries:
 claude mcp add exa -- npx -y mcp-remote "https://mcp.exa.ai/mcp"
 ```
 
-### 步骤 1.2b：深入搜索（先广度后深度）
+### 第1.2b步：深入搜索（先广度后深度）
 
-单纯的单一轮查询往往难以发现重要的相关研究成果。建议采用受深度研究流程启发的迭代式“先广度后深度”搜索策略：
+单纯的平面搜索（仅进行一轮查询）往往无法发现重要的相关研究。建议采用受深度研究流程启发的迭代式**先广度后深度**策略：
 
 ```
 Iterative Literature Search:
@@ -314,9 +311,9 @@ Round 3 (Targeted): Fill specific gaps
 
 **何时停止搜索**：如果某一轮次返回的论文中有超过80%已存在于您的收藏中，说明搜索已达到饱和状态。通常2-3轮即可完成目标，而对于综述类论文，则可能需要4-5轮。
 
-**针对基于智能体的工作流**：可通过`delegate_task`函数并行处理每一轮的查询任务。收集所有结果后进行去重处理，再根据汇总到的信息生成下一轮的查询条件。
+**针对基于智能体的工作流**：可通过`delegate_task`功能并行委托每一轮次的查询任务。收集结果后进行去重处理，再结合这些信息生成下一轮的查询条件。
 
-### 第1.3步：验证每条引用
+### 步骤1.3：验证每条引用
 
 **绝不可凭记忆生成BibTeX格式，必须通过编程方式获取。**
 
@@ -345,64 +342,64 @@ def doi_to_bibtex(doi: str) -> str:
     return response.text
 ```
 
-如果您无法验证某条引用：
+如果无法验证某条引用：
 
 ```latex
 \cite{PLACEHOLDER_author2024_verify_this}  % TODO: Verify this citation exists
 ```
 
-**务必告知科研人员**：“我已将[X]个引用标记为需要核实的占位符。”
+**务必告知科研人员**：“我已将[X]处引用标记为需要核实的占位符。”
 
-如需完整的API文档及`CitationManager`类的全部内容，请参阅[references/citation-workflow.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/citation-workflow.md)。
+如需查看完整的API文档及`CitationManager`类的全部实现，可参阅[references/citation-workflow.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/citation-workflow.md)。
 
-### 步骤1.4：整理相关研究
+### 第1.4步：整理相关研究
 
-按方法论对论文进行分组，而非逐篇处理：
+应按方法论对论文进行归类，而非逐篇处理：
 
-**正确示例**：“有一类研究采用了X的假设[refs]，而我们选择Y的假设是因为……”
-**错误示例**：“Smith等人提出了X。Jones等人提出了Y。我们将两者结合起来使用。”
+**正确示例**：“有一系列研究采用了X的假设[refs]，而我们采用Y的假设，原因是……”
+**错误示例**：“Smith等人提出了X。Jones等人提出了Y。我们将两者结合使用。”
 
 ---
 
-## 第二阶段：实验设计
+## 第2阶段：实验设计
 
-**目标**：设计能够直接支撑论文论点的实验。每个实验都必须回答一个具体问题。
+**目标**：设计能够直接支撑论文论点的实验。每个实验都必须针对一个具体问题展开。
 
-### 步骤2.1：将论点与实验对应起来
+### 第2.1步：将论点与实验对应起来
 
 建立明确的映射关系：
 
 | 论点 | 实验 | 预期证据 |
 |-------|-----------|-------------------|
 | “我们的方法优于基准方法” | 主要对比实验（表1） | 胜率、统计显著性 |
-| “在性能较弱的模型上效果更显著” | 模型规模扩展研究 | 单调提升曲线 |
-| “收敛需要特定的约束条件” | 有约束与无约束对比 | 收敛速度比较 |
+| “在较弱模型上效果更显著” | 模型规模扩展研究 | 单调提升曲线 |
+| “收敛需要范围约束” | 有约束与无约束条件对比 | 收敛速度比较 |
 
 **规则**：如果某个实验无法对应到任何论点，则不应执行该实验。
 
-### 步骤2.2：设计基准方法
+### 第2.2步：设计基准方法
 
-出色的基准方法往往是决定论文能否被接受的关键。审稿人会询问：“他们有没有与X进行对比？”
+强大的基准方法往往是决定论文能否被接受的关键。审稿人往往会询问：“他们是否与X进行了对比？”
 
 常见的基准方法类别：
-- **朴素基准**：最简单的可行方案
-- **强基准**：目前已知的最优方法
-- **消融基准**：去掉你方法中的一个组件后的版本
-- **计算资源匹配基准**：相同计算预算但分配方式不同的版本
+- **朴素基线**：最简单的实现方式  
+- **强基线**：目前最为成熟的现有方法  
+- **消融基线**：在您的方法中移除某一组件后的版本  
+- **计算资源匹配基线**：保持相同的计算预算，但调整资源分配方式  
 
-### 步骤2.3：明确评估方案
+### 2.3步：定义评估方案  
 
-在开始任何实验之前，需明确以下内容：
-- **指标**：要测量的内容及方向符号（数值越高/越低越好）
-- **结果聚合方式**：如何将多次运行/任务的结果合并
-- **统计检验方法**：用于判断显著性的测试类型
-- **样本量**：需要进行的运行次数/问题数量/任务数量
+在开始任何实验之前，需明确以下内容：  
+- **指标**：需要测量的内容以及方向性符号（数值越高/越低越好）  
+- **聚合方式**：如何将多次运行或任务的结果进行整合  
+- **统计检验**：用于判定结果显著性的检验方法  
+- **样本量**：需要进行的运行、问题或任务的数量  
 
-### 步骤2.4：编写实验脚本
+### 2.4步：编写实验脚本  
 
-参考成功的研究流程中的模式进行编写：
+参考成功的研究流程中的以下规范：  
 
-**逐步保存数据**——在每一步之后保存结果，以便在系统崩溃时恢复数据：
+**逐步保存**——在每一步之后保存结果，以便在出现故障时能够恢复数据：
 ```python
 # Save after each problem/task
 result_path = f"results/{task}/{strategy}/result.json"
@@ -413,7 +410,7 @@ with open(result_path, 'w') as f:
     json.dump(result, f, indent=2)
 ```
 
-**工件保留**——保存所有中间输出结果：
+**工件保存**——存储所有中间输出结果：
 ```
 results/<experiment>/
   <task>/
@@ -435,26 +432,26 @@ analyze_results.py             # Statistical analysis
 make_charts.py                 # Visualization
 ```
 
-如需了解完整的设计模式、定时监控以及错误恢复方案，请参阅 [references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md)。
+如需了解完整的设计模式、定时监控以及错误恢复机制，请参阅 [references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md)。
 
 ### 第 2.5 步：设计人工评估（如适用）
 
-许多自然语言处理、人机交互以及对齐相关的研究论文都需要以人工评估作为主要或补充证据。在开展自动化实验之前就应做好此项设计——因为人工评估往往需要更长的准备时间（如伦理委员会审批、标注员招募等）。
+许多自然语言处理、人机交互以及对齐相关的研究论文都需要以人工评估作为主要或补充证据。在开展自动化实验之前就应先规划好人工评估环节——因为人工评估往往需要更长的准备时间（如获得伦理委员会批准、招募评估员等）。
 
 **何时需要进行人工评估：**
-- 自动化指标无法反映您关注的核心要素（流畅性、实用性、安全性）
-- 您的研究成果侧重于面向人类的质量指标（可读性、用户偏好、信任度）
+- 自动化指标无法体现您关注的关键要素（流畅性、实用性、安全性）
+- 您的研究成果侧重于面向用户的品质（可读性、用户偏好、信任度）
 - 在自然语言处理领域的重要会议（如 ACL、EMNLP）上，审稿人通常要求对生成式任务进行人工评估
 
 **关键设计决策：**
 
 | 决策项 | 可选方案 | 建议 |
 |--------|----------|------|
-| **标注员类型** | 专家、众包工作者、最终用户 | 根据研究需求选择合适的标注员类型 |
-| **评分方式** | 利克特量表（1-5 分）、成对比较、排序 | 对于大语言模型的输出，成对比较法比利克特量表更可靠 |
-| **样本量** | 每位标注员的评估数量及总评估项数 | 可通过功效分析确定，建议至少有 100 个评估项，由 3 名以上标注员完成 |
-| **一致性指标** | 科恩卡帕值、克里彭多夫阿尔法值、ICC 值 | 当标注员人数超过 2 人时使用克里彭多夫阿尔法值；同时需报告原始的一致性数值 |
-| **平台选择** | Prolific、MTurk、内部团队 | 追求高质量评估可选择 Prolific；追求大规模评估可使用 MTurk；需要领域专业知识的评估可交由内部团队完成 |
+| **评估员类型** | 专家、众包工作者、最终用户 | 根据研究需求选择合适的类型 |
+| **评估方式** | 利克特量表（1-5 分）、成对比较、排序 | 对于大型语言模型生成的文本，成对比较比利克特量表更可靠 |
+| **样本量** | 每位评估员的评估数量及总评估项数 | 可通过功效分析确定，建议至少 100 个评估项，由 3 名及以上评估员完成 |
+| **一致性指标** | 科恩卡帕值、克里彭多夫阿尔法值、ICC 值 | 当评估员超过 2 名时使用克里彭多夫阿尔法值；同时需报告原始的一致性数据 |
+| **平台选择** | Prolific、MTurk、内部团队 | 追求高质量评估可选 Prolific；大规模评估可使用 MTurk；需要领域专业知识的评估可交由内部团队完成 |
 
 **标注指南检查清单：**
 ```
@@ -468,13 +465,13 @@ make_charts.py                 # Visualization
 ```
 
 **报告要求**（审核人员需检查以下所有内容）：
-- 注释员的数量及其资质
-- 使用特定指标和数值计算的注释员间一致性
-- 报酬详情（金额、预估时薪）
-- 注释界面描述或截图（附于文档末尾）
-- 总注释时长
+- 注解员人数及其资质
+- 使用特定指标和数值计算的注解员间一致性
+- 报酬详情（金额、预计时薪）
+- 注解界面描述或截图（见附录）
+- 总注解时长
 
-如需包含针对人工评估数据的统计检验方法、众包质量控制模式以及机构审查委员会相关指导的完整指南，请参阅 [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md)。
+如需包含针对人工评估数据的统计检验方法、众包质量控制策略以及机构审查委员会相关指导的完整指南，请参阅 [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md)。
 
 ---
 
@@ -491,11 +488,11 @@ nohup python run_experiment.py --config config.yaml > logs/experiment_01.log 2>&
 echo $!  # Record the PID
 ```
 
-**并行执行**：可同时运行多个独立的实验，但需注意 API 的调用频率限制。同一 API 上同时进行的实验数量超过 4 个时，会导致所有实验的运行速度变慢。
+**并行执行**：可同时运行多个独立的实验，但需注意 API 的调用频率限制。同一 API 上同时进行的实验数量超过 4 个时，会降低所有实验的运行速度。
 
 ### 第 3.2 步：设置监控（Cron 表达式）
 
-对于需要长时间运行的实验，应设置定期的状态检查。Cron 表达式应遵循以下格式：
+对于需要长时间运行的实验，应设置定期状态检查。Cron 表达式应遵循以下格式：
 
 ```
 Monitor Prompt Template:
@@ -508,7 +505,7 @@ Monitor Prompt Template:
 7. Answer the key analytical question for this experiment
 ```
 
-**静默模式**：如果自上次检查以来没有发生变化，则回复 `[SILENT]` 以隐藏对用户的通知。仅在有新变化时才进行报告。
+**静默模式**：如果自上次检查以来没有发生变化，则回复 `[SILENT]` 以抑制对用户的通知。仅在有新变化时才进行报告。
 
 ### 第 3.3 步：处理故障
 
@@ -517,15 +514,15 @@ Monitor Prompt Template:
 | 故障类型 | 检测方式 | 恢复方法 |
 |---------|-----------|----------|
 | API 速率限制/额度耗尽 | 日志中出现 402/429 错误 | 等待片刻后重新运行（脚本会跳过已完成的工作） |
-| 进程崩溃 | 进程 PID 失踪，结果不完整 | 从上一个检查点重新运行 |
+| 进程崩溃 | PID 失效，结果不完整 | 从上一个检查点重新运行 |
 | 复杂问题超时 | 进程卡住，无日志进度更新 | 终止进程并跳过该任务，在结果中记录说明 |
-| 模型 ID 错误 | 日志中出现模型名称相关的错误 | 更正 ID 后重新运行 |
+| 模型 ID 错误 | 错误信息中提到错误的模型名称 | 更正 ID 后重新运行 |
 
-**要点**：脚本应始终检查是否存在已有结果，并跳过已完成的工作。这样既能确保重新运行的安全性，又能提高效率。
+**关键点**：脚本应始终检查现有结果并跳过已完成的工作。这样既能保证重新运行的安全性，又能提升效率。
 
 ### 第 3.4 步：提交已完成的结果
 
-在每个实验批次完成后：
+在每批实验完成后：
 
 ```bash
 git add -A
@@ -535,7 +532,7 @@ git push
 
 ### 第 3.5 步：维护实验日志
 
-Git 提交记录了所发生的一切，但无法体现**探索路径**——即根据已有经验做出的下一步尝试决策。因此，建议维护一份结构化的实验日志，用以记录这一探索路径。
+Git 提交记录可以追踪所发生的一切，但却无法呈现**探索路径**——即根据已获得的经验来决定下一步该尝试什么的内容。因此，应维护一份结构化的实验日志，以便完整记录这一探索路径。
 
 ```json
 // experiment_journal.jsonl — append one entry per experiment attempt
@@ -555,28 +552,15 @@ Git 提交记录了所发生的一切，但无法体现**探索路径**——即
 }
 ```
 
-**为何要使用日志而非仅依赖 Git？** Git 用于追踪文件的变化，而日志则用于记录思考过程：为何尝试了某种方法 X、从中获得了哪些经验，以及这些经验对后续实验有何启示。在撰写论文时，这样的记录对于“方法”部分（如“我们观察到了 X，这促使我们提出了 Y”）以及如实报告失败情况具有不可替代的价值。
+**为何要使用日志而非仅依赖 Git？** Git 用于追踪文件更改，而日志则用于记录决策过程：为何尝试了某种方法、从中获得了哪些经验，以及这些经验对后续实验有何启示。在撰写论文时，这样的记录对于“方法”部分（如“我们观察到了 X，这促使我们采用了 Y 方法”）以及如实报告失败案例而言具有不可替代的价值。
 
-**选择最佳路径**：当日志显示出分支结构（exp_001 → exp_002a、exp_002b、exp_003）时，应挑选最能支撑论文论点的路径。将那些无法继续推进的分支作为消融实验或负面结果记录在附录中。
+**选择最佳路径**：当日志显示出分支结构（exp_001 → exp_002a、exp_002b、exp_003）时，应挑选最能支撑论文论点的路径。可将那些无果可循的分支作为对比实验或负面结果记录在附录中。
 
-**为每个实验保存代码快照**：每次运行实验后，都复制对应的脚本文件。
+**为每个实验保存代码快照**：每次运行实验后，都复制相应的脚本文件。
 ```bash
 cp experiment.py results/exp_003/experiment_snapshot.py
 ```
-即便后续对代码进行修改，该机制也能确保结果的一致性。
-
----
-
-## 第四阶段：结果分析
-
-**目标**：提取分析结果、计算统计数据，并明确核心问题所在。
-
-### 步骤 4.1：汇总结果
-
-编写分析脚本，实现以下功能：
-1. 加载批次处理中的所有结果文件
-2. 计算每项任务的指标以及总体汇总指标
-3. 生成汇总表格
+这样一来，即便后续对代码进行修改，也能实现完全一致的复现效果。
 
 ```python
 # Standard analysis pattern
@@ -596,56 +580,56 @@ for strategy, tasks in results.items():
     print(f"{strategy}: mean={np.mean(scores):.1f}, std={np.std(scores):.1f}")
 ```
 
-### 第4.2步：统计显著性分析
+### 第 4.2 步：统计显著性分析
 
 务必计算以下内容：
 - **误差条**：标准差或标准误，需明确说明使用哪种
-- **置信区间**：关键结果需给出95%置信区间
-- **成对检验**：用于比较两种方法的McNemar检验
-- **效应量**：用于衡量实际意义程度的Cohen’s d或h值
+- **置信区间**：关键结果的 95% 置信区间
+- **成对检验**：用于比较两种方法的 McNemar 检验
+- **效应量**：用于衡量实际意义程度的 Cohen’s d 或 Cohen’s h
 
-有关McNemar检验、自举法置信区间以及Cohen’s h值的完整实现方式，请参阅[references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md)文档。
+有关 McNemar 检验、自助法置信区间以及 Cohen’s h 的完整实现方式，请参阅 [references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md) 文档。
 
-### 第4.3步：明确研究核心内容
+### 第 4.3 步：明确研究核心内容
 
 分析完成后，需明确回答以下问题：
-1. **主要研究发现是什么？** 用一句话概括。
-2. **有什么让你感到意外？** 出乎意料的结果往往能造就最优秀的论文。
-3. **哪些实验失败了？** 失败的实验往往能提供最有价值的信息。如实报告失败情况能提升论文质量。
+1. **主要发现是什么？** 用一句话概括。
+2. **有什么让你感到意外？** 出乎意料的结果往往能构成最优秀的论文。
+3. **哪些实验失败了？** 失败的实验往往能提供最多启示。如实报告失败情况有助于提升论文质量。
 4. **还需要进行哪些后续实验？** 研究结果常常会引发新的问题。
 
-#### 如何处理阴性或无效结果
+#### 处理阴性或无效结果
 
-当假设错误或研究结果不明确时，你有三种选择：
+当假设不成立或研究结果无显著性时，你有三种选择：
 
-| 情况 | 应对措施 | 适合发表的会议/期刊 |
-|------|----------|---------------------|
-| 假设错误，但分析“原因”具有价值 | 围绕对原因的分析来构建论文结构 | NeurIPS、ICML（前提是分析严谨） |
-| 方法虽未优于基准方法，但“揭示了新现象” | 将研究贡献定位为对现象的理解与分析 | ICLR（重视理论理解）、各类研讨会论文 |
-| 对热门观点得到明确的阴性结果 | 将其整理成文——领域内其他研究者需要了解这些信息 | NeurIPS数据集与基准测试会议、TMLR、各类研讨会 |
-| 结果不明确，无法形成清晰的研究故事 | 调整方向——开展不同的实验或重新构思研究框架 | 不要强行撰写本不存在的论文 |
+| 情境 | 应对措施 | 适合发表的会议/平台 |
+|------|----------|-------------------|
+| 假设错误，但能阐明**原因** | 围绕对原因的分析来撰写论文 | NeurIPS、ICML（若分析严谨） |
+| 方法虽未超越基准，但**揭示了新见解** | 将贡献重点定位为理解与分析 | ICLR（重视理论理解）、研讨会论文 |
+| 对热门观点得到明确否定性结果 | 将其整理成文——领域内人士需要了解这些信息 | NeurIPS数据集与基准测试会议、TMLR、各类研讨会 |
+| 结果模棱两可，缺乏清晰结论 | 调整策略——开展不同实验或重新构思研究方向 | 不要强行撰写本不该存在的论文 |
 
-**如何撰写阴性结果论文：**
-- 首先说明学术界当前的观点，以及为何需要对这些观点进行验证
-- 详细描述严谨的研究方法（必须逻辑严密——审稿人会对此进行严格审查）
-- 用统计证据清晰呈现无效结果
-- 分析预期结果未能出现的原因
-- 讨论该结果对领域发展的意义
+**如何撰写否定性结果论文：**
+- 首先阐述学界当前的观点以及为何需要对其进行验证
+- 详细说明严谨的研究方法（必须无懈可击——审稿人会更加严格审查）
+- 用统计证据清晰呈现零结果
+- 分析**为何**预期结果并未出现
+- 讨论该结果对领域发展的影响
 
-**明确欢迎阴性结果的会议/期刊**：NeurIPS（数据集与基准测试分会场）、TMLR、《机器学习可复现性挑战》以及各大会议的研讨会。部分研讨会还专门征集阴性结果论文。
+**明确欢迎提交否定性结果的会议/平台**：NeurIPS（数据集与基准测试分会场）、TMLR、ML可复现性挑战赛，以及各大会议举办的研讨会。部分研讨会还会专门征集否定性结果研究。
 
 ### 第4.4步：制作图表
 
-**图表设计**：
-- 所有绘图均应使用矢量图形格式（PDF）：`plt.savefig('fig.pdf')`
-- 选择对色盲人群友好的配色方案，如Okabe-Ito或Paul Tol方案
-- 图表标题需独立完整——读者无需阅读正文即可理解图表内容
-- 图表内不要添加标题——标题功能由图注承担
+**图表**：
+- 所有绘图均使用矢量图形（PDF格式）：`plt.savefig('fig.pdf')`
+- 选择对色盲友好的配色方案（Okabe-Ito或Paul Tol）
+- 添加独立于正文的图注——读者无需阅读正文即可理解图表内容
+- 图表内不应出现标题——图注承担此功能
 
-**表格设计**：
-- 使用`booktabs` LaTeX包格式化表格
-- 每项指标的最佳值需用粗体标出
-- 添加方向符号（表示“更高/更低更好”的含义）
+**表格**：
+- 使用 `booktabs` LaTeX 宏包  
+- 将各项指标的最佳数值以粗体标出  
+- 加入方向符号（数值越高/越低表示越好）  
 - 保持小数位数一致
 
 ```latex
@@ -665,14 +649,14 @@ Baseline & 85.2 & 45ms \\
 | 情况 | 后续操作 |
 |-----------|----------|
 | 核心论点得到支持，且结果具有显著性 | 进入第5阶段（撰写） |
-| 结果尚不明确，需要更多数据 | 回到第2阶段（设计） |
+| 结果尚无定论，需要更多数据 | 回到第2阶段（设计） |
 | 出现意外发现，提示新的研究方向 | 回到第2阶段（设计） |
 | 缺少某个消融实验，审稿人会要求补充 | 先完成该实验，再进入第5阶段 |
 | 所有实验均已完成，但部分实验失败 | 记录失败情况，然后进入第5阶段 |
 
-### 第4.6步：撰写实验日志（通往报告的桥梁）
+### 第4.6步：撰写实验日志（为正文写作做准备）
 
-在开始撰写论文之前，需先创建一份结构化的实验日志，用于将实验结果转化为文字描述。这是连接实验与论文内容的最重要纽带——若没有这份日志，撰写工具就不得不从原始结果文件中重新梳理研究过程。
+在开始撰写论文之前，需先创建一份结构化的实验日志，用于将实验结果转化为文字描述。它是连接实验数据与论文正文的最为重要的纽带——若没有这份日志，写作智能体就不得不从原始结果文件中重新梳理研究内容。
 
 请按照以下结构创建 `experiment_log.md` 文件：
 
@@ -709,32 +693,32 @@ Baseline & 85.2 & 45ms \\
 - [Anything the results raised that the paper should address]
 ```
 
-**为何这很重要**：在撰写初稿时，智能体（或被委托的子智能体）可以同时加载 `experiment_log.md` 与 LaTeX 模板，从而基于实际实验结果生成初稿。若没有这一桥梁，写作智能体就必须解析原始的 JSON/CSV 文件并自行推断内容——而这正是导致数据失真或错误报告的常见原因。
+**为何如此重要**：在撰写初稿时，智能体（或被委派的子智能体）可以同时加载 `experiment_log.md` 与 LaTeX 模板，从而基于实际实验结果生成初稿。若没有这一桥梁，写作智能体就不得不解析原始的 JSON/CSV 文件并自行推断内容——而这正是导致数据失真或报告错误的高发原因。
 
-**Git 使用规范**：请将该日志文件与其描述的结果一起提交。
+**Git 使用规范**：将此日志文件与其描述的结果一起提交。
 
 ---
 
 ## 逐步优化：策略选择
 
-此流程中的任何输出——论文初稿、实验脚本、分析报告——均可通过迭代方式不断优化。Autoreason 研究提供了实证依据，说明每种优化策略在何种情况下有效，又在何种情况下失效。请参考本节内容选择合适的策略。
+该流程中的任何输出——论文初稿、实验脚本、分析报告——均可通过迭代方式不断优化。自动推理研究为各类优化策略的适用场景与失效条件提供了实证依据。请参考本节内容选择合适的优化方法。
 
 ### 快速决策表
 
-| 您的情况 | 推荐策略 | 原因 |
-|-----------|----------|------|
-| 中等水平模型 + 有限任务 | **Autoreason** | 此时生成能力与自我评估能力之间的差距最大，基准方法能有效削弱模型输出的缺陷。 |
-| 中等水平模型 + 开放式任务 | 带有范围限制的 **Autoreason** | 通过添加固定事实、结构或交付要求来限定优化空间。 |
-| 最先进模型 + 有限任务 | **Autoreason** | 即使是最高端的模型，在有限任务中也仍有 2/3 的成功率。 |
-| 最先进模型 + 开放式任务 | **批判与修改** 或 **单次处理** | 此时优先让模型自行评估，因为其自我评估能力已足够出色。 |
-| 具体技术任务（如系统设计） | **批判与修改** | 直接的“发现问题-修正问题”循环效率更高。 |
-| 填充模板类任务（仅需正确结构） | **单次处理** 或 **保守策略** | 决策空间极小，迭代无法带来额外价值。 |
-| 包含测试用例的代码 | **Autoreason（代码变体）** | 先分析代码失败的原因，再针对性修复，恢复率为 62%，而传统方法仅为 43%。 |
-| 非常弱的模型（如 Llama 8B 级别） | **单次处理** | 模型能力太弱，无法生成多种可行方案，应优先提升生成质量。 |
+| 您的应用场景 | 推荐策略 | 原因 |
+|---------------|----------|-----|
+| 中等性能模型 + 有约束的任务 | **Autoreason** | 此类场景最能发挥其优势。模型的生成能力与自我评估能力之间的差距最大，基准方法能有效优化那些表现较差的模型输出。 |
+| 中等性能模型 + 无约束的任务 | 带有范围限制的 **Autoreason** | 通过设定固定事实、结构或输出要求，限定改进空间。 |
+| 最先进模型 + 有约束的任务 | **Autoreason** | 即使使用最先进的模型，在有约束的任务中也能在2/3的情况下取得最佳效果。 |
+| 最先进模型 + 无约束的任务 | **Critique-and-revise** 或 **Single pass** | 此类场景下Autoreason表现最差，因为模型自身的自我评估能力已经足够出色。 |
+| 具体技术任务（如系统设计） | **Critique-and-revise** | 直接的“发现问题-修复问题”循环效率更高。 |
+| 填写模板类任务（仅需一个正确结构） | **Single pass** 或 **Conservative** | 决策空间极小，迭代不会带来额外价值。 |
+| 包含测试用例的代码 | **Autoreason (code variant)** | 先对代码失败的原因进行结构化分析，再加以修复。其修复成功率可达62%，而其他方法仅为43%。 |
+| 性能极弱的模型（如Llama 8B级别） | **Single pass** | 这类模型能力太弱，无法生成多种候选方案，应优先提升代码的生成质量。 |
 
-### 生成能力与自我评估能力的差距
+### 生成能力与自我评估能力之间的差距
 
-**核心观点**：Autoreason 的价值取决于模型在内容生成能力与自我评估能力之间的差距大小。
+**核心观点**：Autoreason的价值取决于模型在内容生成能力与自我评估能力之间的差距大小。
 ```
 Model Tier        │ Generation │ Self-Eval │ Gap    │ Autoreason Value
 ──────────────────┼────────────┼───────────┼────────┼─────────────────
@@ -744,798 +728,61 @@ Mid (Gemini Flash)│ Decent     │ Moderate  │ Large  │ High — wins 2/3
 Strong (Sonnet 4) │ Good       │ Decent    │ Medium │ Moderate — wins 3/5
 Frontier (S4.6)   │ Excellent  │ Good      │ Small  │ Only with constraints
 ```
-<!-- ascii-guard-ignore-end -->
+这种差距是结构性的，而非暂时的。随着成本下降，如今的先进模型明日便可能沦为中等水平，但那个最佳平衡点始终存在，只是位置会发生变化。
 
-这种差距是结构性的，而非暂时的。随着成本下降，如今的“前沿技术”明日便可能沦为“中端水平”。最优解虽然会不断变化，但永远不会消失。
+### 自动推理循环（概述）
 
-### 自推理循环（概要）
-
-每次迭代都会由全新的独立智能体生成三个候选方案：
+每次迭代都会从全新的独立智能体中生成三个候选方案：
 
 1. **批评者** → 找出现有方案A的问题（不提供修复方案）
-2. **作者B** → 根据批评意见对A进行修改
-3. **合成器** → 合并A和B的成果（标签随机分配）
-4. **评审小组** → 3名盲审的链式推理评审员通过博尔达计分法对A、B及AB组合进行评分
-5. **收敛判定** → 若A在连续k=2次迭代中胜出，则流程结束
+2. **作者B** → 根据批评意见对方案A进行修改
+3. **合成器** → 合并方案A和B（标签随机分配）
+4. **评审小组** → 3名盲评的链式思维评审员通过博尔达计数法对A、B及AB组合进行评分
+5. **收敛判定** → 若方案A在连续k=2次迭代中均胜出，则流程结束
 
 **关键参数：**
-- k=2次收敛判定（k=1则过早收敛，k=3则成本过高且无法提升质量）
-- 始终使用链式推理评审员（可使收敛速度提升3倍）
+- k=2次迭代即视为收敛（k=1则收敛过早，k=3则成本过高且无法提升质量）
+- 始终使用3名链式思维评审员（可加快3倍收敛速度）
 - 作者的随机温度值为0.8，评审员的为0.3
-- 保守的平局处理规则：现有方案在平局中获胜
-- 每个角色均为全新的智能体，彼此之间没有共享上下文
+- 保守的平局处理规则：若出现平局，则保留原有方案
+- 每个角色均为独立的智能体，彼此之间不共享上下文信息
 
-### 应用于论文初稿撰写
+### 在论文初稿优化中的应用
 
-通过自推理功能优化论文本身时：
-- **为批评者提供真实依据**：实际的实验数据、结果JSON文件及统计输出。若缺乏这些信息，模型可能会编造虚假的消融实验和假置信区间。
-- **至少使用3名评审智能体**：如果某个评审解析器出现故障，不会产生噪声——反而会完全阻碍流程的正常进行。
-- **明确限定修改范围**：应指定“解决这些具体缺陷”，而非笼统地要求“改进论文”。
+通过自动推理功能对论文本身进行优化时：
+- **为批评者提供真实依据**：包括实际的实验数据、结果JSON文件以及统计输出。若缺乏这些信息，模型就会编造虚假的消融实验和伪造的置信区间。
+- **至少使用3名评审智能体**：若某个评审智能体的解析功能出现故障，不会仅产生噪声，而是会完全阻碍系统达到平衡状态。
+- **明确限定修改范围**：应指定“针对这些具体缺陷进行改进”，而非笼统地要求“提升论文质量”。
 
-### 失败模式
+### 失效模式
 
 | 失败类型 | 检测方式 | 解决方案 |
-|---------|----------|----------|
-| 无法收敛（A从未胜出） | 连续20次以上迭代后A的得分提升仍低于15% | 为任务添加更明确的范围约束 |
-| 合成结果出现偏差 | 文字量无限制增长 | 对结构及最终输出结果进行限制 |
-| 性能退化至单次迭代水平 | 基线模型的得分高于迭代后的结果 | 改为单次迭代模式；可能是模型能力不足 |
-| 过拟合（代码领域） | 公开测试中通过率很高，但私有测试中表现不佳 | 采用结构化分析方法，而非仅依赖测试反馈 |
-| 评审智能体故障 | 解析失败导致评审小组人数少于3人 | 在继续之前先修复解析器 |
+|---------|-----------|---------|
+| 无法收敛（A从未获胜） | 连续20次以上迭代后A的胜率仍低于15% | 为任务添加范围约束 |
+| 合成偏差 | 单词数量无限制增长 | 对结构与输出结果设置限制 |
+| 单次迭代性能下降 | 基线分数高于迭代后的输出结果 | 改为单次迭代模式；可能是模型强度不足 |
+| 过拟合（代码） | 公开测试通过率高，但私有测试通过率低 | 除测试反馈外，还需使用结构化分析方法 |
+| 评分工具故障 | 解析错误导致评审小组人数少于3人 | 继续之前需先修复解析器 |
 
-如需查看完整的提示词、博尔达计分规则、模型选择指南、范围约束设计模式以及计算资源预算参考信息，请参阅[references/autoreason-methodology.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/autoreason-methodology.md)。
+如需完整的提示词、Borda评分规则、模型选择指南、范围约束设计模式以及计算预算参考信息，请参阅 [references/autoreason-methodology.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/autoreason-methodology.md)。
 
 ---
 
-## 第5阶段：论文撰写
+## 第5阶段：论文初稿撰写
 
-**目标**：撰写一篇完整且可投稿的论文。
+完整的初稿撰写流程（各章节顺序、LaTeX框架、图表规范、摘要与引言中的公式格式、相关研究部分的定位等）均记载在 `references/phase5-paper-drafting.md` 中——进入该阶段后请使用 `read_file` 函数加载该文件。同时可结合 `references/writing-guide.md` 了解正文层面的风格规范。
 
-### 大型项目的上下文管理
+## 第6阶段：自我审阅与修改
 
-一个包含50多个实验文件、多个结果目录以及大量文献笔记的论文项目，其上下文窗口很容易被占满。需主动采取管理措施：
+**目标**：在提交前模拟评审流程，尽早发现不足之处。
 
-**每个撰写任务应加载到上下文的内容：**
+### 步骤6.1：模拟评审（集成模式）
 
-| 撰写任务 | 应加载至上下文的内容 | 不应加载的内容 |
-|-----------|----------------------|----------------|
-| 撰写引言部分 | `experiment_log.md`、研究贡献说明，以及5-10篇最相关的论文摘要 | 原始结果JSON文件、完整的实验脚本、所有文献笔记 |
-| 撰写方法部分 | 实验配置、伪代码、架构描述 | 原始日志文件、其他实验的结果 |
-| 撰写结果部分 | `experiment_log.md`、结果汇总表、图表列表 | 完整的分析脚本、中间数据 |
-| 撰写相关研究部分 | 已整理好的引用笔记（步骤1.4的输出）、.bib文件 | 实验文件、原始PDF文档 |
-| 修订迭代阶段 | 完整的论文初稿、审稿人提出的具体问题 | 其他所有内容 |
+从多个角度生成评审意见。自动化研究流程（尤其是 SakanaAI 的 AI-Scientist 工具）带来的重要启示是：**通过元评审员进行集成式评审，所能产生的反馈意见比仅进行一次评审要精准得多。**
 
-**管理原则：**
-- **`experiment_log.md`是主要的上下文桥梁**——它汇总了撰写所需的所有信息，而无需加载原始数据文件（详见步骤4.6）
-- 分配任务时每次仅加载一个部分的上下文。负责撰写方法部分的子智能体无需了解文献综述内容。
-- **进行总结而非直接包含原始文件**。对于200行的结果JSON文件，只需加载10行的汇总表；对于50页长的相关研究论文，只需加载5句话的摘要以及你对其相关性的2行点评。
-- **针对非常大的项目**：可创建一个`context/`目录，存放预先压缩好的内容摘要：
-  ```
-  context/
-    contribution.md          # 1 sentence
-    experiment_summary.md    # Key results table (from experiment_log.md)
-    literature_map.md        # Organized citation notes
-    figure_inventory.md      # List of figures with descriptions
-  ```
+**第一步：生成 N 份独立的评审意见**（N=3-5）
 
-### 叙事原则
-
-**最核心的洞察**：你的论文并非一系列实验的堆砌——而是一个由证据支撑、具有明确贡献的故事。
-
-所有优秀的机器学习论文都围绕 Neel Nanda 所说的“叙事”展开：一个简短、严谨、基于证据的技术故事，其中必须包含读者关心的核心观点。
-
-**三大支柱（在引言部分结束时必须清晰明确）：**
-
-| 支柱 | 描述 | 验证方法 |
-|------|------|----------|
-| **是什么** | 1-3个具体的创新性论点 | 能用一句话概括它们吗？ |
-| **为什么** | 严谨的实证证据 | 实验是否证明了你的假设优于其他替代方案？ |
-| **有何意义** | 为何读者应关注此研究 | 它是否与领域内公认的问题相关？ |
-
-**如果无法用一句话概括你的贡献，那就还称不上是一篇论文。**
-
-### 这一指导原则的来源
-
-该技能整合了在顶级学术期刊上发表过多篇论文的研究人员所提出的写作理念。这一写作理念框架最初由 [Orchestra Research](https://github.com/orchestra-research) 以 `ml-paper-writing` 技能的形式整理而成。
-
-| 来源 | 核心贡献 | 链接 |
-|------|----------|------|
-| **Neel Nanda**（Google DeepMind） | 叙事原则、What/Why/So What 框架 | [如何撰写机器学习论文](https://www.alignmentforum.org/posts/eJGptPbbFPZGLpjsp/highly-opinionated-advice-on-how-to-write-ml-papers) |
-| **Sebastian Farquhar**（DeepMind） | 五句话摘要公式 | [如何撰写机器学习论文](https://sebastianfarquhar.com/on-research/2024/11/04/how_to_write_ml_papers/) |
-| **Gopen & Swan** | 读者预期七原则 | [科学写作的科学](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf) |
-| **Zachary Lipton** | 词汇选择、避免含糊表述 | [科学写作的启发式方法](https://www.approximatelycorrect.com/2018/01/29/heuristics-technical-scientific-writing-machine-learning-perspective/) |
-| **Jacob Steinhardt**（UC Berkeley） | 精确性、统一术语使用 | [写作技巧](https://bounded-regret.ghost.io/) |
-| **Ethan Perez**（Anthropic） | 微观层面的清晰度提升技巧 | [简易论文写作技巧](https://ethanperez.net/easy-paper-writing-tips/) |
-| **Andrej Karpathy** | 聚焦单一核心贡献 | 多篇演讲内容 |
-
-**如需深入了解以上任何内容，可参考：**
-- [references/writing-guide.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/writing-guide.md) —— 包含示例的详细解释
-- [references/sources.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/sources.md) —— 完整参考文献列表
-
-### 时间分配建议
-
-在以下各部分大致分配**相等的时间**：
-1. 摘要
-2. 引言
-3. 图表
-4. 其余所有内容合计
-
-**原因是什么？** 大多数审稿人在阅读到方法部分之前就已经形成了初步判断。读者的阅读顺序通常是：标题 → 摘要 → 引言 → 图表 → 可能再阅读其余部分。
-
-### 写作工作流程
-
-```
-Paper Writing Checklist:
-- [ ] Step 1: Define the one-sentence contribution
-- [ ] Step 2: Draft Figure 1 (core idea or most compelling result)
-- [ ] Step 3: Draft abstract (5-sentence formula)
-- [ ] Step 4: Draft introduction (1-1.5 pages max)
-- [ ] Step 5: Draft methods
-- [ ] Step 6: Draft experiments & results
-- [ ] Step 7: Draft related work
-- [ ] Step 8: Draft conclusion & discussion
-- [ ] Step 9: Draft limitations (REQUIRED by all venues)
-- [ ] Step 10: Plan appendix (proofs, extra experiments, details)
-- [ ] Step 11: Complete paper checklist
-- [ ] Step 12: Final review
-```
-
-### 两轮润色法
-
-在使用 AI 智能体撰写文档时，可采用**两轮润色法**（该方法在 SakanaAI 的 AI-Scientist 工作流中已被证明非常有效）：
-
-**第一轮——逐节撰写并立即润色：**
-针对每个章节，先完成整篇草稿的撰写，随后立即在相同上下文中进行润色。这样能在内容尚新鲜时及时发现局部问题，如表达清晰度、行文流畅性以及内容完整性等方面的缺陷。
-
-**第二轮——结合整篇文档背景进行全局润色：**
-在所有章节都撰写完成后，以整篇文档的视角重新审视每一节。此步骤有助于发现跨章节的问题，例如内容重复、术语不一致、叙事逻辑不连贯，以及某些章节承诺的内容与另一章节未能实现的情况之间的矛盾。
-
-```
-Second-pass refinement prompt (per section):
-"Review the [SECTION] in the context of the complete paper.
-- Does it fit with the rest of the paper? Are there redundancies with other sections?
-- Is terminology consistent with Introduction and Methods?
-- Can anything be cut without weakening the message?
-- Does the narrative flow from the previous section and into the next?
-Make minimal, targeted edits. Do not rewrite from scratch."
-```
-
-### LaTeX错误检查清单
-
-请在每个优化提示中附上此清单。这些是大型语言模型在编写LaTeX时最常出现的错误：
-
-```
-LaTeX Quality Checklist (verify after every edit):
-- [ ] No unenclosed math symbols ($ signs balanced)
-- [ ] Only reference figures/tables that exist (\ref matches \label)
-- [ ] No fabricated citations (\cite matches entries in .bib)
-- [ ] Every \begin{env} has matching \end{env} (especially figure, table, algorithm)
-- [ ] No HTML contamination (</end{figure}> instead of \end{figure})
-- [ ] No unescaped underscores outside math mode (use \_ in text)
-- [ ] No duplicate \label definitions
-- [ ] No duplicate section headers
-- [ ] Numbers in text match actual experimental results
-- [ ] All figures have captions and labels
-- [ ] No overly long lines that cause overfull hbox warnings
-```
-
-### 第5.0步：标题
-
-标题是论文中被阅读最多的部分，它决定了是否有人会继续点击查看摘要。
-
-**优秀的标题**：
-- 直接说明研究贡献或发现：“Autoreason：迭代式大语言模型优化何时有效以及为何失败”
-- 突出令人惊讶的结果：“扩展数据受限的语言模型”（暗示该方法可行）
-- 明确方法名称及其功能：“DPO：语言模型的直接偏好优化”
-
-**糟糕的标题**：
-- 过于笼统：“一种改进语言模型输出的方法”
-- 过长：字数超过15词
-- 全是专业术语：“迭代式随机策略优化的渐近收敛性”（这类标题对谁有意义？）
-
-**撰写规则**：
-- 如果有自定义方法名称，请务必包含（便于引用）
-- 置入1-2个审稿人常用的关键词
-- 尽量避免使用冒号，除非前后两部分都有实际含义
-- 进行测试：仅通过标题，审稿人能否了解该研究的领域及其贡献？
-
-### 第5.1步：摘要（五句结构公式）
-
-出自DeepMind的Sebastian Farquhar：
-
-```
-1. What you achieved: "We introduce...", "We prove...", "We demonstrate..."
-2. Why this is hard and important
-3. How you do it (with specialist keywords for discoverability)
-4. What evidence you have
-5. Your most remarkable number/result
-```
-
-**删除**诸如“大型语言模型已取得显著成就……”这类泛化的开头语。
-
-### 第5.2步：图1
-
-图1是除摘要之外，大多数读者最先关注的第二个内容。应在撰写引言之前先草拟它——这能迫使你明确核心思想。
-
-| 图1类型 | 适用场景 | 示例 |
-|---------|----------|------|
-| **方法示意图** | 新架构或新流程 | 用TikZ绘制的系统结构图 |
-| **结果预览图** | 一个突出的结果即可说明全部要点 | 柱状图：展示“本方法与基准方法的对比”，并清晰显示差距 |
-| **问题示意图** | 问题本身不易理解时使用 | 展示问题出现前后的状态，以体现你解决的问题 |
-| **概念性图表** | 抽象的贡献需要可视化支撑时使用 | 方法特性的2×2矩阵图 |
-
-**规则**：仅凭图1本身就应能让人理解其含义。图注应足以传达核心思想。使用颜色要有目的性——切勿仅为装饰。
-
-### 第5.3步：引言（最多1-1.5页）
-
-必须包含以下内容：
-- 明确的问题陈述
-- 简要的方法概述
-- 2-4项贡献列表（每项最多1-2行，采用双栏格式）
-- 方法部分应从第2-3页开始
-
-### 第5.4步：方法部分
-
-为便于复现，需提供：
-- 方法的概念性概要或伪代码
-- 所有超参数的清单
-- 足以用于复现的架构细节
-- 需明确说明最终的设计决策；实验部分再介绍各种消融实验
-
-### 第5.5步：实验与结果
-
-对于每个实验，需明确说明：
-- **该实验支持何种论点**
-- 它与主要贡献之间的关联
-- 需观察的内容：“蓝线显示了X，这证明了Y”
-
-要求包括：
-- 带有计算方法的误差条（标准差与标准误）
-- 超参数的搜索范围
-- 计算基础设施信息（GPU类型、总计算时长）
-- 种子设置方法
-
-### 第5.6步：相关工作
-
-应按方法论而非单篇论文的顺序进行组织。需大量引用相关文献——审稿人很可能也撰写过相关论文。
-
-### 第5.7步：局限性分析（必填）
-
-所有重要会议都要求此项内容。诚实的态度有助于：
-- 审稿人被要求不要因作者诚实地承认局限性而扣分
-- 通过提前指出缺陷来避免后续批评
-- 解释为何这些局限性不会动摇核心论点
-
-### 第5.8步：结论与讨论
-
-**结论部分**（必填，0.5-1页）：
-- 用一句话重述贡献内容（表述方式需与摘要不同）
-- 用2-3句话总结关键发现（不要以列表形式）
-- 讨论意义：这对该领域有何影响？
-- 后续工作：列出2-3项具体的下一步计划（避免使用“我们将在未来工作中解决X”这类模糊表述）
-
-**讨论部分**（可选，有时与结论合并）：
-- 超出直接结果的更广泛意义
-- 与其他子领域的关联
-- 对该方法何时有效、何时无效的客观评估
-- 实际部署时的考虑因素
-
-**切勿**在结论部分引入新的结果或论点。
-
-### 第5.9步：附录编写策略
-
-所有重要会议都允许使用无限数量的附录，且附录对于实现研究复现至关重要。附录结构如下：
-
-| 附录章节 | 内容 |
-|---------|------|
-| **证明与推导** | 过于冗长的完整证明。正文中可仅陈述定理，并注明“证明见附录A” |
-| **额外实验** | 消融实验、性能变化曲线、各数据集的详细分析、超参数敏感性分析 |
-| **实现细节** | 完整的超参数表、训练细节、硬件规格、随机种子信息 |
-| **数据集文档** | 数据收集过程、标注指南、许可协议、预处理步骤 |
-| **提示词与模板** | 所使用的具体提示词（针对基于LLM的方法）、评估模板 |
-| **人工评估相关内容** | 标注界面截图、给标注人员的指导说明、伦理审查委员会相关文件 |
-| **其他图表** | 各任务的详细分析结果、行为轨迹可视化图、失败案例示例 |
-
-**规则**：
-- 正文必须具备自含性——审稿人无需阅读附录
-- 绝不能将关键证据仅放在附录中
-- 需进行交叉引用，例如“完整结果见表5（附录B）”，而不仅仅是“参见附录”
-- 应使用`\appendix`命令，然后依次使用`\section{A: Proofs}`等格式
-
-### 页面篇幅管理
-
-当超出页数限制时：
-
-| 缩减策略 | 节省的页数 | 风险 |
-|---------|-----------|------|
-| 将证明内容移至附录 | 0.5-2页 | 低——这是常规做法 |
-| 精简相关工作描述 | 0.5-1页 | 中——可能会遗漏重要引用 |
-| 合并表格与子图 | 0.25-0.5页 | 低——通常能提升可读性 |
-| 适度使用`\vspace{-Xpt}`命令 | 0.1-0.3页 | 若调整得当风险较低，否则可能影响排版 |
-| 删除定性示例 | 0.5-1页 | 中——审稿人通常喜欢示例内容 |
-| 缩小图表尺寸 | 0.25-0.5页 | 风险较高——图表仍需保持可读性 |
-
-**切勿**：缩小字体大小、更改页边距、删除必填部分（如局限性分析、更广泛的影响分析），或对正文使用`\small`/`\footnotesize`格式。
-
-### 第5.10步：伦理与更广泛影响声明
-
-目前大多数会议都要求或强烈建议提交伦理/更广泛影响声明。这并非套话——审稿人会仔细阅读，若发现伦理问题可能会直接导致论文被拒收。
-
-**应包含的内容**：
-
-| 组件 | 内容 | 要求提交的会议 |
-|-------|------|--------------|
-| **积极的社会影响** | 你的工作如何造福社会 | NeurIPS、ICML |
-| **潜在的负面影响** | 滥用风险、双重用途问题、失效情况 | NeurIPS、ICML |
-| **公平性与偏见** | 你的方法或数据是否存在已知偏见？ | 所有会议（虽未明说，但需体现） |
-| **环境影响** | 大规模训练所产生的碳排放 | ICML，NeurIPS也越来越重视此项内容 |
-| **隐私问题** | 你的工作是否涉及或可能用于处理个人数据？ | ACL、NeurIPS |
-| **LLM使用披露** | 在写作或实验过程中是否使用了人工智能？ | ICLR（强制要求）、ACL |
-
-**撰写声明时需注意**：
-
-```latex
-\section*{Broader Impact Statement}
-% NeurIPS/ICML: after conclusion, does not count toward page limit
-
-% 1. Positive applications (1-2 sentences)
-This work enables [specific application] which may benefit [specific group].
-
-% 2. Risks and mitigations (1-3 sentences, be specific)
-[Method/model] could potentially be misused for [specific risk]. We mitigate
-this by [specific mitigation, e.g., releasing only model weights above size X,
-including safety filters, documenting failure modes].
-
-% 3. Limitations of impact claims (1 sentence)
-Our evaluation is limited to [specific domain]; broader deployment would
-require [specific additional work].
-```
-
-**常见错误：**
-- 写出“我们预计不会产生任何负面影响”（这几乎从不对——审稿人对此深感怀疑）
-- 表述含糊：仅称“这可能被滥用”却未说明具体方式
-- 未考虑大规模任务所带来的计算成本
-- 在要求披露的场合忘记说明使用了大语言模型
-
-**计算碳足迹**（针对训练数据量庞大的论文）：
-```python
-# Estimate using ML CO2 Impact tool methodology
-gpu_hours = 1000  # total GPU hours
-gpu_tdp_watts = 400  # e.g., A100 = 400W
-pue = 1.1  # Power Usage Effectiveness (data center overhead)
-carbon_intensity = 0.429  # kg CO2/kWh (US average; varies by region)
-
-energy_kwh = (gpu_hours * gpu_tdp_watts * pue) / 1000
-carbon_kg = energy_kwh * carbon_intensity
-print(f"Energy: {energy_kwh:.0f} kWh, Carbon: {carbon_kg:.0f} kg CO2eq")
-```
-
-### 第5.11步：数据集说明文档与模型卡片（如适用）
-
-如果您的论文介绍了**新的数据集**或**发布了新模型**，请提供结构化的文档。审稿人越来越期望看到此类内容，NeurIPS的数据集与基准测试跟踪系统也要求必须提交。
-
-**数据集的说明文档**（Gebru等人，2021年）——可放入附录中：
-
-```
-Dataset Documentation (Appendix):
-- Motivation: Why was this dataset created? What task does it support?
-- Composition: What are the instances? How many? What data types?
-- Collection: How was data collected? What was the source?
-- Preprocessing: What cleaning/filtering was applied?
-- Distribution: How is the dataset distributed? Under what license?
-- Maintenance: Who maintains it? How to report issues?
-- Ethical considerations: Contains personal data? Consent obtained?
-  Potential for harm? Known biases?
-```
-
-**模型卡片**（Mitchell等人，2019年）——应作为模型使用许可的附录内容包含在内：
-
-```
-Model Card (Appendix):
-- Model details: Architecture, training data, training procedure
-- Intended use: Primary use cases, out-of-scope uses
-- Metrics: Evaluation metrics and results on benchmarks
-- Ethical considerations: Known biases, fairness evaluations
-- Limitations: Known failure modes, domains where model underperforms
-```
-
-### 写作风格
-
-**句子层面的清晰度（Gopen与Swan提出的7项原则）：**
-
-| 原则 | 规则 |
-|------|------|
-| 主语与动词靠近 | 将主语和动词置于相近位置 |
-| 重音位置 | 将强调部分放在句子末尾 |
-| 主题优先 | 先介绍背景信息，再呈现新内容 |
-| 旧信息在前，新信息在后 | 先阐述已知信息，再引入未知信息 |
-| 一个单元，一个功能 | 每段只阐述一个观点 |
-| 使用动词表达动作 | 优先使用动词，避免名词化表达 |
-| 先铺垫背景，再引入新内容 | 在呈现新内容前先做好背景铺垫 |
-
-**词汇选择（Lipton与Steinhardt的建议）：**
-- 表述要具体：使用“准确性”而非“性能”
-- 避免含糊表述：除非确实不确定，否则不要使用“可能”这类词
-- 全文保持术语一致
-- 避免逐步积累的词汇表达：使用“开发”而非“组合”
-
-**包含示例的完整写作指南**：请参阅 [references/writing-guide.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/writing-guide.md)
-
-### 使用LaTeX模板
-
-**务必先复制整个模板目录，再在其中进行编写。**
-
-```
-Template Setup Checklist:
-- [ ] Step 1: Copy entire template directory to new project
-- [ ] Step 2: Verify template compiles as-is (before any changes)
-- [ ] Step 3: Read the template's example content to understand structure
-- [ ] Step 4: Replace example content section by section
-- [ ] Step 5: Use template macros (check preamble for \newcommand definitions)
-- [ ] Step 6: Clean up template artifacts only at the end
-```
-
-**步骤 1：复制完整模板**
-
-```bash
-cp -r templates/neurips2025/ ~/papers/my-paper/
-cd ~/papers/my-paper/
-ls -la  # Should see: main.tex, neurips.sty, Makefile, etc.
-```
-
-请复制整个目录，而不仅仅是 .tex 文件。模板中包含样式文件（.sty）、参考文献样式文件（.bst）、示例内容以及 Makefile。
-
-**步骤 2：首先验证模板能否正常编译**
-
-在进行任何修改之前：
-```bash
-latexmk -pdf main.tex
-# Or manual: pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
-```
-
-如果未经修改的模板无法编译，请先解决该问题（通常是由于缺少TeX相关包——可通过`tlmgr install <package>`进行安装）。
-
-**步骤3：将模板内容保留作为参考**
-
-请勿立即删除示例内容，应将其注释掉并用作格式参考：
-```latex
-% Template example (keep for reference):
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=0.8\linewidth]{example-image}
-%   \caption{Template shows caption style}
-% \end{figure}
-
-% Your actual figure:
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.8\linewidth]{your-figure.pdf}
-  \caption{Your caption following the same style.}
-\end{figure}
-```
-
-**第4步：逐部分替换内容**
-
-请按顺序进行操作：标题/作者 → 摘要 → 引言 → 方法 → 实验 → 相关工作 → 结论 → 参考文献 → 附录。每完成一个部分后及时进行整合。 
-
-**第5步：使用模板宏**
-
-```latex
-\newcommand{\method}{YourMethodName}  % Consistent method naming
-\newcommand{\eg}{e.g.,\xspace}        % Proper abbreviations
-\newcommand{\ie}{i.e.,\xspace}
-```
-
-### 模板使用常见问题
-
-| 问题类型 | 具体表现 | 解决方案 |
-|---------|---------|----------|
-| 仅复制 `.tex` 文件 | 缺少 `.sty` 文件，导致无法编译 | 需复制整个目录 |
-| 修改 `.sty` 文件 | 破坏会议要求的格式规范 | 绝不对样式文件进行编辑 |
-| 添加随机软件包 | 引发冲突，破坏模板结构 | 仅在必要时添加 |
-| 过早删除模板内容 | 丢失格式参考信息 | 在完成全部内容前将其保留为注释 |
-| 不频繁编译 | 错误逐渐累积 | 每写完一个章节后及时编译 |
-| 使用光栅格式的 PNG 图片 | 打印输出时图像模糊 | 始终通过 `savefig('fig.pdf')` 生成矢量 PDF 格式 |
-
-### 模板快速参考表
-
-| 会议名称 | 主文件 | 样式文件 | 页面限制 |
-|----------|-------|---------|----------|
-| NeurIPS 2025 | `main.tex` | `neurips.sty` | 9页 |
-| ICML 2026 | `example_paper.tex` | `icml2026.sty` | 8页 |
-| ICLR 2026 | `iclr2026_conference.tex` | `iclr2026_conference.sty` | 9页 |
-| ACL 2025 | `acl_latex.tex` | `acl.sty` | 8页（长文版） |
-| AAAI 2026 | `aaai2026-unified-template.tex` | `aaai2026.sty` | 7页 |
-| COLM 2025 | `colm2025_conference.tex` | `colm2025_conference.sty` | 9页 |
-
-**通用要求**：采用双盲评审机制，参考文献不计入页数限制，附录数量无上限，必须使用 LaTeX 编写。
-
-所有模板均存放于 `templates/` 目录中。关于编译设置（适用于 VS Code、命令行、Overleaf 及其他集成开发环境），请参阅 [templates/README.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/templates/README.md)。
-
-### 表格与图表
-
-**表格** —— 建议使用 `booktabs` 包以实现专业级的格式排版：
-
-```latex
-\usepackage{booktabs}
-\begin{tabular}{lcc}
-\toprule
-Method & Accuracy $\uparrow$ & Latency $\downarrow$ \\
-\midrule
-Baseline & 85.2 & 45ms \\
-\textbf{Ours} & \textbf{92.1} & 38ms \\
-\bottomrule
-\end{tabular}
-```
-
-规则：  
-- 用粗体标出各项指标的最佳数值；  
-- 使用方向符号（$\uparrow$
-
-```latex
-% --- Professional Packages (add after conference style file) ---
-
-% Typography
-\usepackage{microtype}              % Microtypographic improvements (protrusion, expansion)
-                                     % Makes text noticeably more polished — always include
-
-% Tables
-\usepackage{booktabs}               % Professional table rules (\toprule, \midrule, \bottomrule)
-\usepackage{siunitx}                % Consistent number formatting, decimal alignment
-                                     % Usage: \num{12345} → 12,345; \SI{3.5}{GHz} → 3.5 GHz
-                                     % Table alignment: S column type for decimal-aligned numbers
-
-% Figures
-\usepackage{graphicx}               % Include graphics (\includegraphics)
-\usepackage{subcaption}             % Subfigures with (a), (b), (c) labels
-                                     % Usage: \begin{subfigure}{0.48\textwidth} ... \end{subfigure}
-
-% Diagrams and Algorithms
-\usepackage{tikz}                   % Programmable vector diagrams
-\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc, fit, backgrounds}
-\usepackage[ruled,vlined]{algorithm2e}  % Professional pseudocode
-                                     % Alternative: \usepackage{algorithmicx} if template bundles it
-
-% Cross-references
-\usepackage{cleveref}               % Smart references: \cref{fig:x} → "Figure 1"
-                                     % MUST be loaded AFTER hyperref
-                                     % Handles: figures, tables, sections, equations, algorithms
-
-% Math (usually included by conference .sty, but verify)
-\usepackage{amsmath,amssymb}        % AMS math environments and symbols
-\usepackage{mathtools}              % Extends amsmath (dcases, coloneqq, etc.)
-
-% Colors (for figures and diagrams)
-\usepackage{xcolor}                 % Color management
-% Okabe-Ito colorblind-safe palette:
-\definecolor{okblue}{HTML}{0072B2}
-\definecolor{okorange}{HTML}{E69F00}
-\definecolor{okgreen}{HTML}{009E73}
-\definecolor{okred}{HTML}{D55E00}
-\definecolor{okpurple}{HTML}{CC79A7}
-\definecolor{okcyan}{HTML}{56B4E9}
-\definecolor{okyellow}{HTML}{F0E442}
-```
-
-**注意事项：**
-- `microtype` 是对视觉质量提升效果最显著的包，它能在亚像素级别调整字符间距，因此务必加入。
-- `siunitx` 可通过 `S` 列类型来实现表格中数值的对齐，从而无需手动调整间距。
-- `cleveref` 必须在 `hyperref` 之后加载。由于大多数会议主题文件已包含 `hyperref`，因此应将 `cleveref` 放在最后。
-- 请检查会议模板是否已预先加载了这些包中的任意一个（尤其是 `algorithm`、`amsmath`、`graphicx`），避免重复加载。
-
-### siunitx 的表格对齐功能
-
-`siunitx` 能显著提升包含大量数值的表格的可读性：
-
-```latex
-\begin{tabular}{l S[table-format=2.1] S[table-format=2.1] S[table-format=2.1]}
-\toprule
-Method & {Accuracy $\uparrow$} & {F1 $\uparrow$} & {Latency (ms) $\downarrow$} \\
-\midrule
-Baseline         & 85.2  & 83.7  & 45.3 \\
-Ablation (no X)  & 87.1  & 85.4  & 42.1 \\
-\textbf{Ours}    & \textbf{92.1} & \textbf{90.8} & \textbf{38.7} \\
-\bottomrule
-\end{tabular}
-```
-
-`S` 类型的列会自动以小数点为对齐基准。位于 `{}` 中的表头可避免受此对齐规则的影响。
-
-### 子图
-
-并排显示图表的标准格式：
-
-```latex
-\begin{figure}[t]
-  \centering
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{fig_results_a.pdf}
-    \caption{Results on Dataset A.}
-    \label{fig:results-a}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.48\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{fig_results_b.pdf}
-    \caption{Results on Dataset B.}
-    \label{fig:results-b}
-  \end{subfigure}
-  \caption{Comparison of our method across two datasets. (a) shows the scaling
-  behavior and (b) shows the ablation results. Both use 5 random seeds.}
-  \label{fig:results}
-\end{figure}
-```
-
-使用 `\cref{fig:results}` 表示“图1”，使用 `\cref{fig:results-a}` 表示“图1a”。
-
-### 使用 algorithm2e 编写的伪代码
-
-```latex
-\begin{algorithm}[t]
-\caption{Iterative Refinement with Judge Panel}
-\label{alg:method}
-\KwIn{Task $T$, model $M$, judges $J_1 \ldots J_n$, convergence threshold $k$}
-\KwOut{Final output $A^*$}
-$A \gets M(T)$ \tcp*{Initial generation}
-$\text{streak} \gets 0$\;
-\While{$\text{streak} < k$}{
-  $C \gets \text{Critic}(A, T)$ \tcp*{Identify weaknesses}
-  $B \gets M(T, C)$ \tcp*{Revised version addressing critique}
-  $AB \gets \text{Synthesize}(A, B)$ \tcp*{Merge best elements}
-  \ForEach{judge $J_i$}{
-    $\text{rank}_i \gets J_i(\text{shuffle}(A, B, AB))$ \tcp*{Blind ranking}
-  }
-  $\text{winner} \gets \text{BordaCount}(\text{ranks})$\;
-  \eIf{$\text{winner} = A$}{
-    $\text{streak} \gets \text{streak} + 1$\;
-  }{
-    $A \gets \text{winner}$; $\text{streak} \gets 0$\;
-  }
-}
-\Return{$A$}\;
-\end{algorithm}
-```
-
-### TikZ 图表模板
-
-TikZ 是机器学习论文中方法图的标准工具。常见图表模板包括：
-
-**流程图/管道图**（在机器学习论文中最常用）：
-
-```latex
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[
-  node distance=1.8cm,
-  box/.style={rectangle, draw, rounded corners, minimum height=1cm, 
-              minimum width=2cm, align=center, font=\small},
-  arrow/.style={-{Stealth[length=3mm]}, thick},
-]
-  \node[box, fill=okcyan!20] (input) {Input\\$x$};
-  \node[box, fill=okblue!20, right of=input] (encoder) {Encoder\\$f_\theta$};
-  \node[box, fill=okgreen!20, right of=encoder] (latent) {Latent\\$z$};
-  \node[box, fill=okorange!20, right of=latent] (decoder) {Decoder\\$g_\phi$};
-  \node[box, fill=okred!20, right of=decoder] (output) {Output\\$\hat{x}$};
-  
-  \draw[arrow] (input) -- (encoder);
-  \draw[arrow] (encoder) -- (latent);
-  \draw[arrow] (latent) -- (decoder);
-  \draw[arrow] (decoder) -- (output);
-\end{tikzpicture}
-\caption{Architecture overview. The encoder maps input $x$ to latent 
-representation $z$, which the decoder reconstructs.}
-\label{fig:architecture}
-\end{figure}
-```
-
-**对比/矩阵图**（用于展示不同的方法变体）：
-
-```latex
-\begin{tikzpicture}[
-  cell/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, 
-               align=center, font=\small},
-  header/.style={cell, fill=gray!20, font=\small\bfseries},
-]
-  % Headers
-  \node[header] at (0, 0) {Method};
-  \node[header] at (3, 0) {Converges?};
-  \node[header] at (6, 0) {Quality?};
-  % Rows
-  \node[cell] at (0, -1) {Single Pass};
-  \node[cell, fill=okgreen!15] at (3, -1) {N/A};
-  \node[cell, fill=okorange!15] at (6, -1) {Baseline};
-  \node[cell] at (0, -2) {Critique+Revise};
-  \node[cell, fill=okred!15] at (3, -2) {No};
-  \node[cell, fill=okred!15] at (6, -2) {Degrades};
-  \node[cell] at (0, -3) {Ours};
-  \node[cell, fill=okgreen!15] at (3, -3) {Yes ($k$=2)};
-  \node[cell, fill=okgreen!15] at (6, -3) {Improves};
-\end{tikzpicture}
-```
-
-**迭代循环图**（适用于具有反馈机制的方法）：
-
-```latex
-\begin{tikzpicture}[
-  node distance=2cm,
-  box/.style={rectangle, draw, rounded corners, minimum height=0.8cm, 
-              minimum width=1.8cm, align=center, font=\small},
-  arrow/.style={-{Stealth[length=3mm]}, thick},
-  label/.style={font=\scriptsize, midway, above},
-]
-  \node[box, fill=okblue!20] (gen) {Generator};
-  \node[box, fill=okred!20, right=2.5cm of gen] (critic) {Critic};
-  \node[box, fill=okgreen!20, below=1.5cm of $(gen)!0.5!(critic)$] (judge) {Judge Panel};
-  
-  \draw[arrow] (gen) -- node[label] {output $A$} (critic);
-  \draw[arrow] (critic) -- node[label, right] {critique $C$} (judge);
-  \draw[arrow] (judge) -| node[label, left, pos=0.3] {winner} (gen);
-\end{tikzpicture}
-```
-
-### 用于版本追踪的 LaTeXdiff 工具
-
-在撰写反驳意见时不可或缺——该工具可生成带标记的 PDF 文件，清晰显示不同版本之间的差异：
-
-```bash
-# Install
-# macOS: brew install latexdiff (or comes with TeX Live)
-# Linux: sudo apt install latexdiff
-
-# Generate diff
-latexdiff paper_v1.tex paper_v2.tex > paper_diff.tex
-pdflatex paper_diff.tex
-
-# For multi-file projects (with \input{} or \include{})
-latexdiff --flatten paper_v1.tex paper_v2.tex > paper_diff.tex
-```
-
-这样生成的PDF文件中，被删除的内容会以红色斜线标出，新增内容则用蓝色标示——这正是用于补充反驳材料的标准格式。
-
-### 适用于matplotlib的SciencePlots库
-
-安装该库后，即可生成符合出版要求的图表：
-
-```bash
-pip install SciencePlots
-```
-
-```python
-import matplotlib.pyplot as plt
-import scienceplots  # registers styles
-
-# Use science style (IEEE-like, clean)
-with plt.style.context(['science', 'no-latex']):
-    fig, ax = plt.subplots(figsize=(3.5, 2.5))  # Single-column width
-    ax.plot(x, y, label='Ours', color='#0072B2')
-    ax.plot(x, y2, label='Baseline', color='#D55E00', linestyle='--')
-    ax.set_xlabel('Training Steps')
-    ax.set_ylabel('Accuracy')
-    ax.legend()
-    fig.savefig('paper/fig_results.pdf', bbox_inches='tight')
-
-# Available styles: 'science', 'ieee', 'nature', 'science+ieee'
-# Add 'no-latex' if LaTeX is not installed on the machine generating plots
-```
-
-**标准图表尺寸**（双栏格式）：
-- 单栏：`figsize=(3.5, 2.5)` —— 适合单栏显示
-- 双栏：`figsize=(7.0, 3.0)` —— 覆盖两栏
-- 正方形：`figsize=(3.5, 3.5)` —— 适用于热力图和混淆矩阵
-
----
-
-## 第6阶段：自我评审与修改
-
-**目标**：在提交前模拟评审流程，及早发现不足之处。
-
-### 步骤6.1：模拟多视角评审（集成模式）
-
-从多个角度生成评审意见。自动化研究流程（尤其是SakanaAI的AI科学家工具）带来的重要启示是：**通过元评审员进行集成式评审，能够比单次评审获得更为精准的反馈。**
-
-**步骤1：生成N份独立的评审意见**（N=3-5）
-
-可使用不同的模型或温度参数。每位评审员仅查看论文本身，而无法看到其他人的评审意见。**默认采用负面倾向**——已有大量研究证明，大型语言模型在评估时存在明显的正面偏差。
+可选用不同的模型或温度参数。每位评审员仅能看到论文内容，而无法看到其他人的评审意见。**默认采用负面倾向**——已有大量研究证明，大型语言模型在评估时存在明显的正面偏差。
 
 ```
 You are an expert reviewer for [VENUE]. You are critical and thorough.
@@ -1564,9 +811,9 @@ Provide your review as structured JSON:
 }
 ```
 
-**第2步：元评审（领域主席汇总）**
+**步骤 2：元评审（领域主席汇总）**
 
-将所有N份评审意见提交给元评审员进行处理：
+将所有 N 条评审提交给元评审员进行处理：
 
 ```
 You are an Area Chair at [VENUE]. You have received [N] independent reviews
@@ -1586,17 +833,17 @@ Reviews:
 ...
 ```
 
-**第3步：反馈循环**（可选，进行2-3轮）
+**步骤3：反馈循环**（可选，进行2-3轮）
 
-每位审稿人在查看元评审意见后均可进一步完善自己的评审内容。可设置提前终止条件：若审稿人回复“我已完成评审”（即无修改意见），则停止迭代。
+每位审稿人在查看综合评审意见后均可进一步完善自己的评审内容。可设置提前终止条件：若审稿人回复“我已完成评审”（即无需任何修改），则停止迭代。
 
-**用于评审的模型选择**：即便论文最初是用性能较低的模型撰写的，也应优先使用性能最强的模型进行评审。审稿模型应与写作模型分开选择。
+**用于评审的模型选择**：即便论文最初是用性能较低的模型撰写的，也应优先使用性能最强的模型进行评审。审稿模型应与撰写模型分开选择。
 
 **少样本校准**：如果条件允许，可提供1-2篇来自目标期刊的真实已发表评审意见作为示例。这能显著提升评分的准确性。相关示例请参阅[references/reviewer-guidelines.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/reviewer-guidelines.md)。
 
-### 第6.1b步：视觉评审环节（VLM）
+### 步骤6.1b：视觉审稿环节（VLM）
 
-仅基于文本的评审会遗漏一类问题：图表质量、排版问题以及视觉一致性。如果您拥有具备视觉处理能力的模型，可以对编译后的PDF文件进行独立的**视觉评审**：
+仅基于文本的审稿会遗漏一类问题：图表质量、排版问题以及视觉一致性。如果您拥有具备视觉处理能力的模型，可以对编译后的PDF文件进行单独的**视觉审稿**：
 
 ```
 You are reviewing the visual presentation of this research paper PDF.
@@ -1611,11 +858,11 @@ Check for:
 For each issue, specify the page number and exact location.
 ```
 
-该功能能够检测出基于文本的审查无法发现的問題：轴标签难以辨认的图表、距离首次引用位置有三页之远的插图、图2与图5之间不统一的颜色方案，或是明显宽于列宽的表格。
+该方法能够检测出基于文本审查无法发现的问题：轴标签难以辨认的图表、距离首次引用位置有三页之远的插图、图2与图5之间不统一的颜色方案，或是宽度明显超过列宽的表格。
 
 ### 第6.1c步：声明验证通过
 
-在完成模拟审查后，还需进行单独的验证流程。此举旨在发现审查人员可能遗漏的事实性错误：
+在完成模拟审查后，需进行单独的验证流程。该步骤可发现审查人员可能忽略的事实性错误：
 
 ```
 Claim Verification Protocol:
@@ -1625,27 +872,27 @@ Claim Verification Protocol:
 4. Flag any claim without a traceable source as [VERIFY]
 ```
 
-在基于智能体的工作流中：可将验证任务委托给一个**全新的子智能体**，该子智能体仅接收论文文本和原始结果文件。全新的上下文环境能有效避免确认偏误——验证者不会“记住”结果本应是什么样的。
+在基于智能体的工作流中：可将验证任务委托给一个**全新的子智能体**，该子智能体仅接收论文文本和原始结果文件。通过使用全新的上下文，可以避免确认偏误——验证者不会“记住”结果本应是什么样的。
 
 ### 6.2步：确定反馈优先级
 
-收集评审意见后，需对它们进行分类：
+收集完评审意见后，对它们进行分类：
 
-| 优先级 | 应采取的行动 |
-|--------|------------|
-| **紧急**（存在技术缺陷或缺失基准数据） | 必须立即修复。可能需要开展新的实验 → 回到第2阶段 |
+| 优先级 | 操作措施 |
+|--------|----------|
+| **关键**（存在技术缺陷或缺失基准数据） | 必须修复。可能需要开展新的实验 → 回到第2阶段 |
 | **高**（存在表述不清问题或缺少消融实验） | 应在本次修订中解决 |
-| **中**（存在轻微的写作问题或需要额外实验） | 若时间允许则进行修复 |
+| **中**（存在轻微的写作问题或需补充额外实验） | 若时间允许则进行修复 |
 | **低**（涉及风格偏好或无关建议） | 记录下来以便日后处理 |
 
 ### 6.3步：修订循环
 
-针对每一项紧急/高优先级的问题：
+针对每一项关键/高优先级的问题：
 1. 确定受影响的具体章节
-2. 撰写修复方案
+2. 起草修复方案
 3. 验证修复方案不会破坏其他论点
 4. 更新论文内容
-5. 再次检查是否解决了评审者指出的问题
+5. 根据评审者的意见再次检查
 
 ### 6.4步：撰写反驳意见
 
@@ -1663,17 +910,17 @@ Method X in Table 3 (revised). Our method outperforms X by 3.2pp on [metric]
 **规则**：
 - 解决所有问题——若遗漏任何一点，审稿人都会察觉。
 - 首先给出最有力的回应。
-- 表达简洁直接——审稿人需要阅读大量反驳意见。
-- 若在反驳期内进行了实验，需一并呈现新结果。
-- 即使面对轻微的批评，也绝不可采取防御态度或予以忽视。
+- 表达简洁明了——审稿人需要阅读大量反驳意见。
+- 若在反驳期内进行了实验，需包含新的结果。
+- 即使面对轻微的批评，也绝不能采取防御或轻视的态度。
 - 使用 `latexdiff` 生成标出修改处的 PDF 文件（详见“专业 LaTeX 工具”部分）。
-- 对于具体且具有可操作性的反馈，应向审稿人表示感谢（而非泛泛的赞美）。
+- 对于具体且具有可操作性的反馈，应向审稿人表示感谢（而非泛泛的表扬）。
 
-**禁忌事项**：无依据地声称“我们坚决不同意”；不加解释地称“这超出了研究范围”；仅回应优点而忽视缺点。
+**禁止的做法**：无依据地声称“我们坚决不同意”；不加解释地称“这超出了研究范围”；仅回应优点而忽视缺陷。
 
-### 第 6.5 步：论文进展追踪
+### 第 6.5 步：论文进展跟踪
 
-在关键节点保存文档快照：
+在关键节点保存快照：
 ```
 paper/
   paper.tex                    # Current working version
@@ -1685,22 +932,22 @@ paper/
 
 ## 第7阶段：投稿准备
 
-**目标**：最终检查、格式整理及正式提交。
+**目标**：最终核查、格式调整及正式提交。
 
 ### 步骤7.1：会议特定检查清单
 
-每个会议都设有必填的检查清单。请务必仔细填写——若清单不完整，论文可能会被直接拒收。
+各类会议均设有必填的检查清单。请务必仔细填写——若清单不完整，论文可能会被直接拒收。
 
-相关内容请参阅 [references/checklists.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/checklists.md)，其中包括：
+相关内容详见 [references/checklists.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/checklists.md)，包括：
 - NeurIPS会议的16项论文检查清单
-- ICML会议关于广泛影响力与可复现性的要求
+- ICML会议关于更大影响力与可复现性的要求
 - ICLR会议关于大语言模型披露的政策
 - ACL会议要求的限制条件部分
 - 通用投稿前检查清单
 
 ### 步骤7.2：匿名化检查清单
 
-双盲评审要求审稿人无法知晓论文的作者身份。请逐一核对以下所有项目：
+由于采用双盲评审机制，审稿人无法知晓论文的作者身份。请逐一核对以下所有项目：
 
 ```
 Anonymization Checklist:
@@ -1716,7 +963,7 @@ Anonymization Checklist:
 - [ ] Supplementary materials don't contain identifying information
 ```
 
-**常见错误**：补充代码中显示了 Git 提交信息、使用了机构工具添加水印的图表、残留了先前草稿中的致谢内容，以及在匿名期结束前就发布了 arXiv 预印本。 
+**常见错误**：补充代码中显示了 Git 提交信息、使用了机构工具添加的水印图片、遗留了先前草稿中的致谢内容，以及在匿名期结束前发布了 arXiv 预印本。
 
 ### 第 7.3 步：格式校验
 
@@ -1734,7 +981,7 @@ Pre-Submission Format Check:
 
 ### 第 7.4 步：预编译验证
 
-在尝试运行 `pdflatex` 之前，先执行这些自动检查。在此阶段发现错误，比之后调试编译器输出要高效得多。
+在尝试运行 `pdflatex` 之前，先执行这些自动化检查。在此阶段发现错误比之后调试编译器输出要高效得多。
 
 ```bash
 # 1. Lint with chktex (catches common LaTeX mistakes)
@@ -1777,7 +1024,7 @@ for label, count in dupes.items():
 "
 ```
 
-在继续操作之前，请先解决所有警告信息。对于基于智能体的工作流：需将 chktex 的检测结果反馈给智能体，并给出仅进行最小程度修复的指示。
+在继续操作之前，请先解决所有警告信息。对于基于智能体的工作流：需将 chktex 的检测结果反馈给智能体，并给出仅进行最小程度修复的指令。
 
 ### 第 7.5 步：最终编译
 
@@ -1796,26 +1043,26 @@ pdflatex -interaction=nonstopmode main.tex
 ls -la main.pdf
 ```
 
-**如果编译失败**：请解析 `.log` 文件以定位首个错误。常见解决方案如下：
+**如果编译失败**：请解析 `.log` 文件以找出首个错误。常见解决方案如下：
 - “未定义的控制序列” → 缺少相关包或命令名称拼写有误
-- “缺少插入的 $ 符号” → 数学符号出现在数学模式之外
+- “缺少插入的 $ 符号” → 数学符号位于数学模式之外
 - “文件未找到” → 图片路径错误或缺少 `.sty` 文件
 - “引用未定义” → 缺少对应的 `.bib` 条目或未运行 bibtex 工具
 
-### 7.6步：针对不同会议的特殊要求
+### 7.6步：会议特定要求
 
 | 会议名称 | 特殊要求 |
 |---------|----------|
-| **NeurIPS** | 需在附录中列出论文检查清单，若被录用还需提供通俗摘要 |
-| **ICML** | 需提交更详细的“广泛影响声明”（置于结论部分，不计入字数限制） |
-| **ICLR** | 需公开所使用的LLM信息，并签署互审协议 |
-| **ACL** | 必须包含“局限性说明”章节以及“负责任NLP检查清单” |
+| **NeurIPS** | 需在附录中列出论文检查清单，若被录用还需提供通俗版摘要 |
+| **ICML** | 需提交更详细的“广泛影响声明”（置于结论之后，不计入字数限制） |
+| **ICLR** | 需披露所使用的LLM模型信息，并签署互审协议 |
+| **ACL** | 必须包含“局限性说明”部分，还需填写“负责任自然语言处理”检查清单 |
 | **AAAI** | 风格文件有严格规定——严禁进行任何修改 |
-| **COLM** | 需明确阐述该语言模型对整个社区的贡献 |
+| **COLM** | 需明确阐述该工作对语言模型领域的贡献 |
 
-### 7.7步：会议重投与格式转换
+### 7.7步：会议重新投稿与格式转换
 
-在更换会议模板时，**绝不可直接复制LaTeX文档的序言部分**：
+在不同会议模板之间转换时，**绝不可直接复制LaTeX文档的开头部分**：
 
 ```bash
 # 1. Start fresh with target template
@@ -1830,17 +1077,17 @@ cp -r templates/icml2026/ new_submission/
 ```
 
 | 从 → 到 | 页面调整 | 主要修改内容 |
-|-----------|-------------|----------------|
+|-----------|-------------|-----------------|
 | NeurIPS → ICML | 9 → 8 | 删除1页内容，增加“更广泛的影响力”相关描述 |
 | ICML → ICLR | 8 → 9 | 扩展实验部分，补充大语言模型相关说明 |
 | NeurIPS → ACL | 9 → 8 | 按自然语言处理领域的规范重新组织结构，补充“局限性”章节 |
 | ICLR → AAAI | 9 → 7 | 大幅删减内容，严格遵循格式要求 |
-| 任意方向 → COLM | 不固定 → 9 | 重新架构内容，突出语言模型的应用 |
+| 任意方向 → COLM | 不固定 → 9 | 重新调整内容重点，突出语言模型的应用 |
 
-在删减页面时：可将证明内容移至附录，精简相关研究综述，合并表格，使用子图。  
-在扩充内容时：可增加消融实验，详细阐述局限性，补充更多基线模型，加入定性示例。
+在删减页面时：可将证明性内容移至附录，精简相关研究综述，合并表格，使用子图。  
+在扩展内容时：可增加消融实验，详细阐述局限性，补充更多基准测试结果，提供定性示例。
 
-**被拒后**：在修改版本中回应审稿人的意见，但不要添加“修改说明”章节，也不要提及之前的投稿信息（因采用盲审机制）。
+**被拒后**：在新版本中回应审稿人的意见，但不要添加“修改说明”章节，也不要提及之前的投稿内容（因采用盲审机制）。
 
 ### 第7.8步：准备最终提交版本（录用后）
 
@@ -1862,17 +1109,17 @@ Camera-Ready Checklist:
 
 ### 第7.9步：arXiv与预印本发布策略
 
-在机器学习领域，将论文发布到arXiv是一种常见做法，但在此过程中需特别注意时间选择与匿名性保障问题。
+在机器学习领域，将论文发布到arXiv是常见做法，但需注意时间选择和匿名性相关问题。
 
-**时间选择决策树：**
+**时间决策树：**
 
-| 情境 | 建议 |
+| 情况 | 建议 |
 |------|------|
-| 向双盲评审会议投稿（如NeurIPS、ICML、ACL） | 应在提交截止日期**之后**才在arXiv上发布，切勿提前。虽然不同会议的执行标准有所差异，但提前发布可能在技术层面违反匿名性政策。 |
-| 向ICLR投稿 | ICLR明确允许在提交前将论文发布到arXiv，但提交的论文文本中不得出现作者姓名。 |
-| 论文已发布在arXiv上，现向其他会议投稿 | 大多数会议接受此类情况。但在审稿期间，切勿通过更新版本来加入针对审稿意见的修改内容。 |
-| 工作坊论文 | 任何时间在arXiv上发布均可——因为工作坊通常不采用双盲评审机制。 |
-| 希望抢占发表优先权 | 若担心被他人抢先发表，可立即发布，但需接受由此带来的匿名性牺牲。 |
+| 向双盲评审会议投稿（如NeurIPS、ICML、ACL） | 应在提交截止日期**之后**再发布到arXiv，切勿提前。虽然不同会议的执行标准有所差异，但提前发布可能在技术上违反匿名性政策。 |
+| 向ICLR投稿 | ICLR明确允许在提交前将论文发布到arXiv。但提交的论文中不得出现作者姓名。 |
+| 论文已发布在arXiv上，现向其他会议投稿 | 大多数会议接受此类情况。但在审稿期间，切勿通过引用审稿意见的方式更新arXiv上的版本。 |
+| 工作坊论文 | 任何时间发布到arXiv均可——因为工作坊通常不采用双盲评审机制。 |
+| 希望抢占发表优先权 | 若担心被抢先发表，可立即发布——但需接受匿名性方面的妥协。 |
 
 **arXiv分类选择**（针对机器学习/人工智能论文）：
 
@@ -1880,16 +1127,16 @@ Camera-Ready Checklist:
 |------|------|----------|
 | 机器学习 | `cs.LG` | 通用机器学习方法 |
 | 计算与语言 | `cs.CL` | 自然语言处理、语言模型 |
-| 人工智能 | `cs.AI` | 推理、规划、智能体相关研究 |
+| 人工智能 | `cs.AI` | 推理、规划、智能体技术 |
 | 计算机视觉 | `cs.CV` | 视觉模型 |
-| 信息检索 | `cs.IR` | 搜索系统、推荐系统 |
+| 信息检索 | `cs.IR` | 搜索系统、推荐算法 |
 
-**请选定一个主要分类，再补充1-2个相关的跨领域分类。** 分类越多，论文的曝光度越高，但只有真正相关的分类才建议同时列出。
+**请列出1个主要分类以及1-2个相关交叉分类。** 分类越多，论文的曝光度越高，但只有真正相关的分类才建议交叉标注。
 
 **版本管理策略：**
-- **v1**：初始提交版本（内容与会议提交的版本一致）
-- **v2**：论文被接受后发布的最终版本，包含经过整理的修正内容（摘要中需注明“已被[会议名称]接收”）
-- 在审稿期间，切勿发布包含针对审稿人意见的修改内容的v2版本。
+- **v1版本**：首次提交（格式与会议投稿要求一致）  
+- **v2版本**：论文被接收后进行最终润色并准备发表的版本（需在摘要中注明“已被[会议地点]录用”）  
+请注意，在审稿期间切勿提交已针对审稿人意见作出明显修改的v2版本。
 
 ```bash
 # Check if your paper's title is already taken on arXiv
@@ -1905,7 +1152,7 @@ for r in results: print(f'  {r.title} ({r.published.year})')
 
 ### 第 7.10 步：代码打包研究
 
-发布整洁且可运行的代码，能够显著提升被引频率以及审稿人的信任度。请将代码与最终提交版本一同进行打包。
+发布结构清晰、可直接运行的代码，能有效提升被引频次并增强审稿人的信任度。请将代码与最终提交版本一同打包。
 
 **仓库结构：**
 
@@ -1956,207 +1203,202 @@ To reproduce Figure 2: `python scripts/make_figure2.py`
 - [ ] .gitignore excludes data files, checkpoints, logs
 ```
 
-**待审核时的匿名代码**：
+**待提交的无名代码**（在通过审核之前）：
+
+
+请完整翻译整个输入内容，切勿提前终止。
 ```bash
 # Use Anonymous GitHub for double-blind review
 # https://anonymous.4open.science/
 # Upload your repo → get an anonymous URL → put in paper
 ```
 
-## 第8阶段：录用后的交付物
+## 第8阶段：验收后的交付物
 
-**目标**：通过展示材料与社区互动，最大化已录用论文的影响力。
+**目标**：通过演示材料与社区互动，最大化已获接受的论文的影响力。
 
 ### 步骤8.1：会议海报
 
 大多数会议都要求设置海报展示环节。海报设计原则如下：
 
 | 元素 | 设计指南 |
-|------|----------|
-| **尺寸** | 需符合会议场地要求（通常为24英寸×36英寸或A0纵向/横向格式） |
-| **内容** | 标题、作者、一句话总结贡献、方法示意图、2-3项关键结果、结论 |
-| **排版顺序** | 从左上角到右下角（Z形排列）或分栏式 |
-| **文字** | 标题需在3米距离处仍清晰可读，正文在1米距离处可见。不得使用完整段落，仅用项目符号 |
-| **图表** | 使用论文中已有的图表，但需提高分辨率；重点结果需放大展示 |
+|---------|----------|
+| **尺寸** | 需符合会议场地要求（通常为24英寸×36英寸或A0竖版/横版） |
+| **内容** | 标题、作者姓名、一句话概括研究贡献、方法示意图、2-3项关键结果以及结论 |
+| **排版逻辑** | 从左上角到右下角（Z型排列）或分栏布局 |
+| **文字要求** | 标题需在3米距离处仍清晰可读，正文则在1米距离处可辨。不得使用完整段落，仅可使用项目符号 |
+| **图表要求** | 可使用论文中的图表，但需提高分辨率；关键结果部分应放大展示 |
 
-**常用工具**：LaTeX（`beamerposter`包）、PowerPoint/Keynote、Figma、Canva。
+**常用工具**：LaTeX（`beamerposter`插件）、PowerPoint/Keynote、Figma、Canva。
 
-**制作时间**：建议在会议开始前2周以上完成。布质海报更轻便，便于携带。如今许多会议也支持虚拟/数字海报。
+**制作时间**：建议在会议开始前2周以上完成制作。帆布材质的海报更轻便，便于携带。如今许多会议也支持虚拟/数字海报形式。
 
-### 步骤8.2：会议报告 / 精选展示
+### 步骤8.2：会议演讲/专题汇报
 
-如果获得口头报告或精选展示机会：
+如果获得口头报告或专题汇报机会：
 
-| 报告类型 | 时长 | 内容要点 |
-|----------|------|----------|
-| **精选展示** | 5分钟 | 阐述问题、研究方法及一项关键结果。需严格控制在5分钟内完成排练 |
-| **口头报告** | 15-20分钟 | 完整阐述整个研究过程：问题提出、方法设计、关键结果、消融实验及局限性分析 |
-| **研讨会报告** | 10-15分钟 | 需根据研讨会受众调整内容，可能需要补充更多背景信息 |
+| 演讲类型 | 时长 | 内容要点 |
+|---------|------|----------|
+| **专题汇报** | 5分钟 | 阐述问题、研究方法以及一项关键结果。需严格控制在5分钟内完成 |
+| **口头报告** | 15-20分钟 | 完整阐述研究全貌：包括问题提出、研究方法、关键结果、对比实验以及局限性分析 |
+| **研讨会报告** | 10-15分钟 | 需根据研讨会听众的特点调整内容，可能需要补充更多背景信息 |
 
-**幻灯片设计规则**：
-- 每张幻灯片只呈现一个核心观点
-- 尽量减少文字——详细内容需口头阐述，而非直接展示在幻灯片中
-- 通过动画逐步展示关键图表，帮助听众逐步理解
-- 最后添加一张“总结”幻灯片，用一句话概括研究贡献
-- 准备备用幻灯片，以应对可能出现的提问
+**幻灯片设计规则：**
+- 每张幻灯片只呈现一个核心观点  
+- 减少文字内容——详细内容需口头阐述，而非展示在幻灯片中  
+- 通过动画逐步呈现关键数据，帮助听众逐步理解  
+- 在最后添加一张“总结”幻灯片（用一句话概括核心要点）  
+- 为可能出现的疑问准备备用幻灯片  
 
-### 步骤8.3：博客文章 / 社交媒体推广
+### 第8.3步：撰写博客文章/社交媒体内容  
 
-简洁易懂的总结能显著提升论文影响力：
+简洁易懂的总结能显著提升传播效果：  
 
-- **Twitter/X系列推文**：5-8条推文。首条应直接呈现研究结果，而非方法细节。需包含图1及关键结果图表
-- **博客文章**：字数在800-1500字之间。面向机器学习实践者撰写，而非审稿人，无需过多形式化表达，应重点阐述直观理解与实际应用价值
-- **项目页面**：包含摘要、图表、演示视频、代码链接及BibTeX格式的HTML页面。建议使用GitHub Pages搭建
+- **Twitter/X系列推文**：5-8条推文。先介绍研究成果，再说明方法；需包含图1及关键结果图表。  
+- **博客文章**：字数在800-1500字之间。面向机器学习从业者撰写，而非评审专家；无需过度追求形式化，应侧重直观性和实际应用价值。  
+- **项目页面**：包含摘要、图表、演示示例、代码链接及BibTeX格式的HTML页面，建议使用GitHub Pages搭建。  
 
-**发布时机**：在论文被收录到会议论文集或arXiv上可供下载后1-2天内发布。
+**时间安排**：在论文被收录到会议论文集或发布在arXiv预印本平台后的1-2天内发布内容。  
 
 ---
 
-## 研讨会论文与短篇论文
+## 研讨会论文与短篇论文  
 
-研讨会论文与短篇论文（如ACL短篇论文、Findings系列论文）遵循相同的流程，但存在不同的约束条件和期望标准。
+研讨会论文及短篇论文（如ACL短篇论文、Findings系列论文）遵循相同的处理流程，但存在不同的要求与期望。  
 
 ### 研讨会论文
 
-| 对比维度 | 研讨会论文 | 主流会议论文 |
-|----------|------------|--------------|
+| 属性 | 研讨会论文 | 主会议论文 |
+|------|----------|------------|
 | **页数限制** | 通常为4-6页 | 7-9页 |
-| **评审标准** | 对完整性要求相对较低 | 需要内容完整、论述严谨 |
-| **评审流程** | 一般为单盲或轻度盲审 | 双盲、严格评审 |
-| **评价重点** | 创新性想法、初步结果或行业观点类论文 | 具备完整实证体系且基准测试充分的论文 |
-| **arXiv提交时间** | 可随时提交 | 需注意时机（参见arXiv提交策略） |
-| **贡献要求** | 新颖的研究方向、有趣的负面结果或初步研究进展 | 具有显著进展且证据充分的成果 |
+| **评审标准** | 对完整性要求较低 | 必须完整且详尽 |
+| **评审流程** | 一般为单盲或轻度盲审 | 双盲且严格评审 |
+| **重视内容** | 创意新颖的想法、初步结果、观点性文章 | 具有扎实基线数据的完整实证研究 |
+| **arXiv投稿** | 随时可投 | 时间选择很重要（参见arXiv投稿策略） |
+| **贡献要求** | 新颖的研究方向、有趣的负面结果、进行中的研究 | 具有有力证据的重大进展 |
 
-**何时选择提交研讨会论文**：
-- 拥有处于早期阶段的想法，希望在正式撰写完整论文前获取反馈
-- 得到负面结果，但内容不足以支撑8页以上的篇幅
-- 想针对某一热点话题发表观点或立场文章
-- 进行重复实验研究或可复现性报告
+**何时选择研讨会论文：**
+- 处于早期阶段，希望在撰写完整论文前获取反馈的想法
+- 无法用8页以上篇幅充分阐述的负面研究结果
+- 关于当前热点话题的观点性文章或评论
+- 复现研究或可重复性报告
 
-### ACL短篇论文与Findings系列论文
+### ACL短篇论文与发现类论文
 
 ACL会议设有不同的投稿类型：
 
-| 类型 | 页数 | 需要满足的要求 |
-|------|------|----------------|
-| **长篇论文** | 8页 | 需包含完整的研究内容、强有力的基准测试及消融实验 |
-| **短篇论文** | 4页 | 需聚焦一个明确的研究点，并提供相应证据支持 |
-| **Findings系列论文** | 8页 | 研究质量优异，但略逊于主流会议收录标准 |
+| 类型 | 页数 | 预期内容 |
+|------|------|----------|
+| **长篇论文** | 8页 | 完整的研究内容、扎实的基线数据及实验对比分析 |
+| **短篇论文** | 4页 | 焦点明确的贡献：一个有证据支撑的清晰观点 |
+| **发现类论文** | 8页 | 虽未达到主会议标准，但依然具有较高学术价值的成果 |
 
-**短篇论文写作策略**：选定一个核心论点并予以充分论证。切勿试图将长篇论文的内容压缩到4页内——应重新撰写一篇更具针对性的短文。
+**短篇论文写作策略**：选定一个核心论点并予以充分论证。不要试图将长篇论文的内容压缩到4页内——应另起一篇更为聚焦的论文。
 
 ---
 
-## 非实证机器学习类的论文类型
+## 非实证机器学习领域的论文类型
 
-上述主要流程适用于实证机器学习类论文。其他类型的论文则需要不同的结构与证据标准。关于各类论文的详细指导，请参阅[references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md)。
+上述主要流程适用于实证型机器学习论文。其他类型的论文则需要不同的结构与证据标准。有关各类论文的详细指导，请参阅 [references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md)。
 
-### 理论类论文
+### 理论论文
 
-**结构**：引言 → 基础知识（定义、符号说明）→ 主要结果（定理）→ 证明概要 → 讨论 → 完整证明（附录）
+**结构**：引言 → 基础知识（定义、符号）→ 主要结果（定理）→ 证明概要 → 讨论 → 完整证明（附录）
 
 **与实证论文的主要区别**：
-- 研究贡献体现为定理、界或反例——而非实验数据
-- 方法部分被“基础知识”和“主要结果”替代
-- 证明是核心证据，而非实验数据（尽管对理论的实证验证也是可取的）
-- 文本中提供证明概要，完整证明放在附录中，这是标准做法
-- 实验部分为可选内容，但若能验证理论预测，则能显著增强论文说服力
+- 研究贡献表现为定理、界限或反例——而非实验数据
+- “方法”部分被“基础知识”和“主要结果”取代
+- 证据为证明而非实验结果（尽管对理论进行实证验证也是可接受的）
+- 正文提供证明概要，完整证明放在附录中是常见做法
+- 实验部分为可选内容，但若能验证理论预测则能增强论文说服力
 
-**证明写作原则**：
-- 以正式方式陈述定理，并明确列出所有假设条件
-- 在给出正式证明前先阐述直观思路（“关键洞察在于……”）
-- 证明概要应在0.5-1页内呈现核心思想
-- 使用`\begin{proof}...\end{proof}`环境编写证明
-- 为假设条件编号，并在定理中引用：“在假设1-3成立的前提下，……”
+**证明撰写原则**：
+- 以正式方式陈述定理，并明确列出所有假设
+- 在正式证明之前给出直观解释（“关键思路在于……”）
+- 证明概要应在0.5至1页内阐述核心思想
+- 使用 `\begin{proof}...\end{proof}` 格式
+- 为假设编号并在定理中引用：“在假设1-3的前提下，……”
 
 ### 综述/教程类论文
 
-**结构**：引言 → 分类/框架梳理 → 详细内容阐述 → 存在的开放问题 → 结论
+**结构**：引言 → 分类/框架 → 详细内容覆盖 → 待解决问题 → 结论
 
 **主要区别**：
-- 研究贡献在于对现有研究的系统整理、综合分析及开放问题的识别——而非新方法的提出
-- 需在给定范围内做到内容全面（审稿人会检查是否有遗漏的参考文献）
-- 需有清晰的分类体系或结构框架
-| 价值来源 | 说明 |
-|----------|------|
-| 研究成果间的关联分析 | 单篇论文往往难以展现这些联系 |
-| 最佳投稿期刊 | TMLR的综述专栏、JMLR、《机器学习基础与趋势》系列期刊、ACM计算综述 |
+- 贡献在于对现有开放问题的整理、归纳与识别，而非提出新方法  
+- 内容必须在研究范围内做到全面详尽（审稿人会检查是否存在遗漏的参考文献）  
+- 需要明确的分类体系或结构框架  
+- 其价值体现在不同研究成果之间的关联，而这些关联是单篇论文难以实现的  
+- 最适合发表的期刊/会议：《TMLR》（综述栏目）、《JMLR》、《机器学习基础与趋势》、《ACM计算调查》  
 
-### 基准测试类论文
+### 基准测试论文  
 
-**结构**：引言 → 任务定义 → 数据集构建 → 基准方法评估 → 结果分析 → 用途与局限性说明
+**结构**：引言 → 任务定义 → 数据集构建 → 基线评估 → 分析 → 预期用途与局限性  
 
-**主要区别**：
-- 研究贡献在于基准测试工具本身——它必须填补真实的评估空白
-| 要求 | 说明 |
-|------|------|
-| 数据集文档 | 属于强制要求，而非可选内容（参见第5.11节“数据表”相关内容） |
-| 测试难度 | 需证明该基准测试具有足够挑战性（基准方法无法轻易达到理想性能） |
-| 测量有效性 | 需证明该基准测试确实能衡量其所宣称的指标（即结构效度） |
-| 最佳投稿期刊 | NeurIPS的“数据集与基准测试”专栏、ACL的“资源论文”栏目、LREC-COLING会议 |
+**主要区别**：  
+- 贡献在于基准测试本身——它必须填补真正的评估空白  
+- 数据集文档是必需项，而非可选项（参见数据表，第5.11步）  
+- 需证明该基准测试具有挑战性（基线方法无法轻松完成测试）  
+- 需证明该基准测试确实能衡量其所宣称的指标（结构效度）  
+- 最适合发表的期刊/会议：NeurIPS“数据集与基准测试”栏目、ACL（资源论文栏目）、LREC-COLING  
 
-### 立场文章类论文
+### 立场论文  
 
-**结构**：引言 → 背景介绍 → 核心论点/论证 → 支持证据 → 反驳观点 → 实际影响分析
+**结构**：引言 → 背景 → 论点/主张 → 支持证据 → 反驳观点 → 后续影响  
 
-**主要区别**：
-- 研究贡献体现为论证过程，而非具体结果
-- 需认真回应各种反对意见
-| 证据类型 | 说明 |
-|----------|------|
-| 实证数据 | 可用于支持论点 |
-| 理论分析 | 也可作为论证依据 |
-| 逻辑推理 | 同样具有说服力 |
-| 最佳投稿期刊 | ICML的立场文章专栏、各类研讨会、TMLR会议 |
+**主要区别**：  
+- 贡献在于论点本身，而非实验结果  
+- 需认真回应各种反驳观点  
+- 证据可以是实证数据、理论分析或逻辑推导  
+- 最适合发表的期刊/会议：ICML（立场论文栏目）、各类研讨会、《TMLR》  
 
 ---
 
-## Hermes Agent集成功能
+## Hermes Agent集成
 
-该技能专为Hermes Agent设计，能够利用Hermes提供的工具、任务分配、调度及记忆功能，助力完成整个研究生命周期。
+该技能专为Hermes智能体设计，它借助Hermes提供的工具、任务委派功能、调度机制以及内存管理能力，助力完成完整的研究全流程。
 
 ### 相关技能
 
-可结合其他Hermes技能，针对不同阶段使用本技能：
+可与其他Hermes技能组合使用，以覆盖研究的不同阶段：
 
-| 技能 | 适用阶段 | 使用方法 |
-|------|----------|----------|
-| **arxiv** | 第1阶段（文献综述）：在arXiv上搜索论文、生成BibTeX格式的引用列表、通过Semantic Scholar查找相关文献 | `skill_view("arxiv")` |
-| **subagent-driven-development** | 第5阶段（初稿撰写）：实现分模块并行写作，并进行两阶段审核（先检查是否符合格式要求，再评估内容质量） | `skill_view("subagent-driven-development")` |
-| **plan** | 第0阶段（准备阶段）：在执行任务前制定结构化计划，计划内容会保存到`.hermes/plans/`目录中 | `skill_view("plan")` |
-| **qmd** | 第1阶段（文献调研）：通过混合BM25+向量搜索方式，检索本地知识库中的笔记、会议记录及文档资料 | 安装方法：`skill_manage("install", "qmd")` |
-| **diagramming** | 第4-5阶段：用于创建基于Excalidraw的图表及系统架构图 | `skill_view("diagramming")` |
-| **data-science** | 第4阶段（分析阶段）：提供Jupyter实时内核，支持交互式分析与可视化操作 | `skill_view("data-science")` |
+| 技能 | 适用阶段 | 调用方式 |
+|-------|---------|----------|
+| **arxiv** | 第1阶段（文献综述）：检索arXiv数据库、生成BibTeX格式引用、通过Semantic Scholar查找相关论文 | `skill_view("arxiv")` |
+| **subagent-driven-development** | 第5阶段（初稿撰写）：支持分阶段评审的并行章节写作（先核查是否符合规范，再评估内容质量） | `skill_view("subagent-driven-development")` |
+| **plan** | 第0阶段（准备阶段）：在执行任务前制定结构化计划，计划内容会保存在`.hermes/plans/`目录中 | `skill_view("plan")` |
+| **qmd** | 第1阶段（文献调研）：通过BM25与向量搜索相结合的方式，检索本地知识库中的资料（笔记、记录文档等） | 安装方式：`skill_manage("install", "qmd")` |
+| **diagramming** | 第4-5阶段：用于生成基于Excalidraw的图表及架构图 | `skill_view("diagramming")` |
+| **data-science** | 第4阶段（分析阶段）：提供Jupyter实时内核，支持交互式分析与数据可视化 | `skill_view("data-science")` |
 
-**本技能可替代`ml-paper-writing`技能**——它不仅包含该技能的所有内容，还涵盖了完整的实验/分析流程以及自动推理方法。
+**该技能已取代`ml-paper-writing`**——它不仅包含后者所有的功能，还进一步整合了完整的实验/分析流程以及自动推理方法。
 
-### Hermes工具参考
+### Hermes工具参考手册
 
-| 工具 | 在本流程中的用途 |
-|------|------------------|
-| **`terminal`** | 用于LaTeX编译（`latexmk -pdf`）、git操作、启动实验进程（`nohup python run.py &`）、监控进程状态 |
-| **`process`** | 用于管理后台实验进程：`process("start", ...)`、`process("poll", pid)`、`process("log", pid)`、`process("kill", pid)` |
-| **`execute_code`** | 用于运行Python代码，实现引用验证、统计分析及数据聚合功能。该工具可通过RPC调用其他外部程序 |
-| **`read_file`** / **`write_file`** / **`patch`** | 用于编辑论文内容、实验脚本及结果文件。对于大型.tex文件，可使用`patch`功能进行精准修改 |
-| **`web_search`** | 用于文献检索，例如：`web_search("transformer attention mechanism 2024")` |
-| **`web_extract`** | 用于获取论文内容、验证引用信息，例如：`web_extract("https://arxiv.org/abs/2303.17651")` |
-| **`delegate_task`** | 用于实现分模块并行撰写——可为每个章节启动独立的子Agent，也可用于同步进行引用验证 |
-| **`todo`** | 用于在多次会话之间跟踪任务状态。在每个阶段转换后都需要更新该列表 |
-| **`memory`** | 用于在多次会话之间保留关键决策信息，如研究贡献的定位、目标会议选择、审稿人反馈等 |
-| **`cronjob`** | 用于安排实验监控、截止日期提醒以及自动检查arXiv上的新论文更新 |
-| **`clarify`** | 当遇到困惑时，可向用户提出针对性问题，帮助明确研究方向（如会议选择、贡献定位等） |
-| **`send_message`** | 无论用户是否在线，均可用于在实验完成或初稿准备好时通知用户 |
+| Tool | Usage in This Pipeline |
+|------|----------------------|
+| **`terminal`** | LaTeX compilation (`latexmk -pdf`), git operations, launching experiments (`nohup python run.py &`), process checks |
+| **`process`** | Background experiment management: `process("start", ...)`, `process("poll", pid)`, `process("log", pid)`, `process("kill", pid)` |
+| **`execute_code`** | Run Python for citation verification, statistical analysis, data aggregation. Has tool access via RPC. |
+| **`read_file`** / **`write_file`** / **`patch`** | Paper editing, experiment scripts, result files. Use `patch` for targeted edits to large .tex files. |
+| **`web_search`** | Literature discovery: `web_search("transformer attention mechanism 2024")` |
+| **`web_extract`** | Fetch paper content, verify citations: `web_extract("https://arxiv.org/abs/2303.17651")` |
+| **`delegate_task`** | **Parallel section drafting** — spawn isolated subagents for each section. Also for concurrent citation verification. |
+| **`todo`** | Primary state tracker across sessions. Update after every phase transition. |
+| **`memory`** | Persist key decisions across sessions: contribution framing, venue choice, reviewer feedback. |
+| **`cronjob`** | Schedule experiment monitoring, deadline countdowns, automated arXiv checks. |
+| **`clarify`** | Ask the user targeted questions when blocked (venue choice, contribution framing). |
+| **cron `deliver:`** | Notify the user when experiments complete or drafts are ready even if they're not in chat — schedule the check as a cron job with a messaging `deliver:` target (the agent no longer has a `send_message` tool; outbound delivery is handled by cron/`hermes send`). |
 
 ### 工具使用模式
 
-**最常见的应用场景：实验监控**
+**实验监控**（最常见）：
 ```
 terminal("ps aux | grep <pattern>")
 → terminal("tail -30 <logfile>")
 → terminal("ls results/")
 → execute_code("analyze results JSON, compute metrics")
 → terminal("git add -A && git commit -m '<descriptive message>' && git push")
-→ send_message("Experiment complete: <summary>")
+→ (final response auto-delivers "Experiment complete: <summary>"; for unattended runs, schedule via cron with a deliver: target)
 ```
 
 **并行段落撰写**（通过任务委派实现）：
@@ -2192,7 +1434,7 @@ for paper in results:
 
 ### 使用 `memory` 和 `todo` 进行状态管理
 
-**`memory` 工具**——用于持久化关键决策（容量有限：MEMORY.md 文件大小约为 2200 字符）：
+**`memory` 工具** — 用于保存关键决策（容量有限：MEMORY.md 文件大小约为 2200 字符）：
 
 ```
 memory("add", "Paper: autoreason. Venue: NeurIPS 2025 (9 pages). 
@@ -2201,7 +1443,7 @@ memory("add", "Paper: autoreason. Venue: NeurIPS 2025 (9 pages).
   Status: Phase 5 — drafting Methods section.")
 ```
 
-在做出重大决策或经历阶段转换后，需更新内存状态。该设置会在不同会话之间保持有效。
+在做出重大决策或经历阶段转换后，需更新内存状态。此设置会在不同会话之间保持不变。
 
 **`todo` 工具**——用于详细追踪进度：
 
@@ -2241,9 +1483,9 @@ cronjob("create", {
 })
 ```
 
-**[SILENT] 协议**：若自上次检查以来没有任何变化，则仅回复 `[SILENT]`。这样即可避免向用户发送通知，仅在确实存在值得知晓的变化时再进行报告。
+**[SILENT] 协议**：若自上次检查以来没有发生任何变化，则直接回复 `[SILENT]`。这样即可避免向用户发送通知，仅在确实存在值得知晓的变化时才进行报告。
 
-**截止日期跟踪**：
+**截止日期追踪**：
 ```
 cronjob("create", {
   "schedule": "0 9 * * *",  # Daily at 9am
@@ -2254,20 +1496,20 @@ cronjob("create", {
 })
 ```
 
-### 通信模式
+### 沟通模式
 
-**何时通知用户**（通过 `send_message` 或直接回复）：
+**何时通知用户**（通过您的直接/最终回复，或用于无人值守运行的 cron `deliver:` 目标）：
 - 实验批次处理完成（附带结果表格）
-- 出现需要决策的异常情况或失败
+- 出现需要决策的意外情况或故障
 - 草稿部分已准备好供审核
-- 任务未完成且截止日期临近
+- 任务未完成且截止日期即将到来
 
 **何时无需通知**：
 - 实验仍在运行且无新结果 → `[静默处理]`
 - 常规监控未发现变化 → `[静默处理]`
 - 不需要关注的中间步骤
 
-**报告格式** —— 必须包含结构化数据：
+**报告格式** —— 必须始终包含结构化数据：
 ```
 ## Experiment: <name>
 Status: Complete / Running / Failed
@@ -2280,95 +1522,94 @@ Key finding: <one sentence>
 Next step: <what happens next>
 ```
 
-### 需要人工干预的决策点
+### 需要人工决策的要点
 
-当确实遇到困惑时，可使用 `clarify` 功能针对具体问题进行询问：
+当确实遇到决策瓶颈时，可使用 `clarify` 功能针对具体问题进行询问：
 
 | 决策事项 | 询问时机 |
 |----------|----------|
-| 目标会议/期刊 | 在开始撰写论文之前（涉及页数限制、格式要求等） |
+| 目标会议 venue | 开始撰写论文之前（会影响页数限制与格式要求） |
 | 贡献内容的呈现方式 | 当存在多种合理的呈现方案时 |
-| 实验优先级排序 | 当待处理的实验数量超过可用时间时 |
-| 论文提交准备情况 | 在最终提交之前 |
+| 实验优先级 | 当待处理的实验数量超过可用时间时 |
+| 论文提交准备情况 | 最终提交之前 |
 
-**不建议询问的内容**（应主动决策并明确选择，或标记待处理）：
+**无需询问的内容**（请主动决策并明确选择，或标记该问题）：
 - 用词选择、章节顺序
-- 应突出展示哪些具体结果
-- 引用完整性（先根据现有资料撰写初稿，再标注缺失部分）
+- 应重点突出哪些具体结果
+- 参考文献的完整性（先根据现有资料撰写初稿，再标注缺失部分）
 
 ---
 
 ## 审稿人评估标准
 
-了解审稿人的关注点有助于更有针对性地改进论文：
+了解审稿人的关注点有助于更有针对性地完善论文：
 
 | 评估标准 | 审稿人检查内容 |
 |----------|----------------|
-| **质量** | 技术合理性、论点有充分依据、基线选择合理 |
-| **清晰度** | 表达清晰、专家可复现、符号使用一致 |
-| **重要性** | 对学术界的贡献、能否推动领域理解进展 |
-| **原创性** | 是否带来新见解（无需采用全新方法） |
+| **质量** | 技术层面的合理性、论点的充分支撑以及合理的基准对比 |
+| **清晰度** | 表达的清晰性、能否被专家复现以及符号使用的统一性 |
+| **重要性** | 对研究社区的贡献程度以及对领域理解的推进作用 |
+| **原创性** | 是否带来新的见解（无需采用全新方法） |
 
 **评分标准（NeurIPS 6分制）：**
-- 6分：强烈接受——具有开创性且无瑕疵
-- 5分：接受——技术扎实，影响力高
-- 4分：勉强接受——内容可靠，但评估不够充分
-- 3分：勉强拒绝——缺陷大于优势
-- 2分：拒绝——存在技术缺陷
-- 1分：强烈拒绝——结果已被证实或存在伦理问题
-
-详细指南、常见顾虑及反驳策略请参阅 [references/reviewer-guidelines.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/reviewer-guidelines.md)。
+- 6分：强烈推荐录用 —— 具有开创性且毫无瑕疵
+- 5分：推荐录用 —— 技术扎实，影响力高
+- 4分：勉强录用 —— 内容可靠，但评估不够充分
+- 3分：勉强拒收 —— 缺点大于优点
+- 2分：拒收 —— 存在技术缺陷
+- 1分：强烈拒收 —— 为已有成果或存在伦理问题
+如需了解详细的指导原则、常见疑问及反驳策略，请参阅 [references/reviewer-guidelines.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/reviewer-guidelines.md)。
 
 ---
 
 ## 常见问题与解决方案
 
-| 问题 | 解决方案 |
-|------|----------|
-| 摘要过于笼统 | 若摘要内容适用于任何机器学习论文，可删除首句，直接从具体贡献开始阐述。 |
-| 引言部分超过1.5页 | 将背景内容拆分到“相关工作”章节中，将论文核心贡献以项目符号形式提前呈现。 |
-| 实验部分缺乏明确论点 | 在每个实验前添加说明，例如：“本实验旨在验证[具体论点]……” |
-| 审稿人认为论文难以理解 | 增加引导性内容，统一术语使用，确保图表标题信息完整独立。 |
-| 缺乏统计显著性说明 | 添加误差范围、实验重复次数、统计检验方法及置信区间。 |
-| 实验范围过度扩展 | 每个实验都必须对应一个具体论点，删去无关实验。 |
-| 论文被拒需重新提交 | 请参考第7阶段的“会议论文重投指南”，在不提及审稿意见的情况下回应审稿人的质疑。 |
-| 缺少关于更广泛影响的说明 | 请参阅步骤5.10，大多数会议都要求此部分内容。“无负面影响”的声明几乎不可信。 |
-| 人工评估结果被批评为质量不足 | 请参考步骤2.5及 [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md)，需报告一致性指标、评审人员信息及补偿情况。 |
-| 审稿人质疑论文可复现性 | 需发布代码（步骤7.9），详细记录所有超参数，同时提供随机种子和计算过程细节。 |
-| 理论类论文缺乏直观解释 | 在正式证明之前，先添加附有通俗解释的证明概要。详情请参阅 [references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md)。 |
-| 实验结果为负面或无显著差异 | 请参考第4.3阶段关于处理负面结果的指南，可考虑将此类结果提交到研讨会、TMLR会议，或重新定义为分析性内容。 |
-
----
+| Issue | Solution |
+|-------|----------|
+| Abstract too generic | Delete first sentence if it could prepend any ML paper. Start with your specific contribution. |
+| Introduction exceeds 1.5 pages | Split background into Related Work. Front-load contribution bullets. |
+| Experiments lack explicit claims | Add: "This experiment tests whether [specific claim]..." before each one. |
+| Reviewers find paper hard to follow | Add signposting, use consistent terminology, make figure captions self-contained. |
+| Missing statistical significance | Add error bars, number of runs, statistical tests, confidence intervals. |
+| Scope creep in experiments | Every experiment must map to a specific claim. Cut experiments that don't. |
+| Paper rejected, need to resubmit | See Conference Resubmission in Phase 7. Address reviewer concerns without referencing reviews. |
+| Missing broader impact statement | See Step 5.10. Most venues require it. "No negative impacts" is almost never credible. |
+| Human eval criticized as weak | See Step 2.5 and [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md). Report agreement metrics, annotator details, compensation. |
+| Reviewers question reproducibility | Release code (Step 7.9), document all hyperparameters, include seeds and compute details. |
+| Theory paper lacks intuition | Add proof sketches with plain-language explanations before formal proofs. See [references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md). |
+| Results are negative/null | See Phase 4.3 on handling negative results. Consider workshops, TMLR, or reframing as analysis. |
 
 ## 参考文档
 
-| 文档 | 内容概述 |
-|------|----------|
-| [references/writing-guide.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/writing-guide.md) | Gopen与Swan提出的7项写作原则、Perez的实用小贴士、Lipton的用词建议、Steinhardt的精准度要求以及图表设计指南 |
-| [references/citation-workflow.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/citation-workflow.md) | 引用相关API、Python代码实现、CitationManager类及BibTeX管理方法 |
-| [references/checklists.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/checklists.md) | NeurIPS要求的16项检查项、ICML、ICLR、ACL的规范要求，以及通用预提交检查清单 |
-| [references/reviewer-guidelines.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/reviewer-guidelines.md) | 评估标准、评分规则、常见审稿顾虑及反驳模板 |
-| [references/sources.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/sources.md) | 所有写作指南、会议规范及API的完整参考文献列表 |
-| [references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md) | 实验设计模式、评估方案、监控方法及错误处理策略 |
-| [references/autoreason-methodology.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/autoreason-methodology.md) | Autoreason循环机制、策略选择方法、模型指南、提示词设计、范围约束及Borda评分法 |
-| [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md) | 人工评估的设计方案、标注指南、一致性指标、众包质量检查及IRB相关指导 |
-| [references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md) | 理论类论文（证明写作、定理结构）、综述论文、基准测试论文及立场论文的撰写规范 |
+请完整翻译输入内容，切勿提前终止。
+
+| Document | Contents |
+|----------|----------|
+| [references/writing-guide.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/writing-guide.md) | Gopen & Swan 7 principles, Perez micro-tips, Lipton word choice, Steinhardt precision, figure design |
+| [references/citation-workflow.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/citation-workflow.md) | Citation APIs, Python code, CitationManager class, BibTeX management |
+| [references/checklists.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/checklists.md) | NeurIPS 16-item, ICML, ICLR, ACL requirements, universal pre-submission checklist |
+| [references/reviewer-guidelines.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/reviewer-guidelines.md) | Evaluation criteria, scoring, common concerns, rebuttal template |
+| [references/sources.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/sources.md) | Complete bibliography of all writing guides, conference guidelines, APIs |
+| [references/experiment-patterns.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/experiment-patterns.md) | Experiment design patterns, evaluation protocols, monitoring, error recovery |
+| [references/autoreason-methodology.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/autoreason-methodology.md) | Autoreason loop, strategy selection, model guide, prompts, scope constraints, Borda scoring |
+| [references/human-evaluation.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/human-evaluation.md) | Human evaluation design, annotation guidelines, agreement metrics, crowdsourcing QC, IRB guidance |
+| [references/paper-types.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/references/paper-types.md) | Theory papers (proof writing, theorem structure), survey papers, benchmark papers, position papers |
 
 ### LaTeX模板
 
-`templates/`目录中提供了以下会议的模板：**NeurIPS 2025**、**ICML 2026**、**ICLR 2026**、**ACL**、**AAAI 2026**、**COLM 2025**。
+`templates/`目录中提供了针对**NeurIPS 2025**、**ICML 2026**、**ICLR 2026**、**ACL**、**AAAI 2026**以及**COLM 2025**等会议的模板。
 
-编译说明请参阅 [templates/README.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/templates/README.md)。
+如需了解编译说明，请参阅[templates/README.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/research/research-paper-writing/templates/README.md)。
 
 ### 主要外部参考资源
 
 **写作理念：**
 - [Neel Nanda：如何撰写机器学习论文](https://www.alignmentforum.org/posts/eJGptPbbFPZGLpjsp/highly-opinionated-advice-on-how-to-write-ml-papers)
 - [Sebastian Farquhar：如何撰写机器学习论文](https://sebastianfarquhar.com/on-research/2024/11/04/how_to_write_ml_papers/)
-- [Gopen与Swan：科学写作的科学](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf)
+- [Gopen与Swan：科学写作的原理](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf)
 - [Lipton：科学写作的启发式方法](https://www.approximatelycorrect.com/2018/01/29/heuristics-technical-scientific-writing-machine-learning-perspective/)
 - [Perez：简易论文写作技巧](https://ethanperez.net/easy-paper-writing-tips/)
 
-**API接口：** [Semantic Scholar](https://api.semanticscholar.org/api-docs/) | [CrossRef](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | [arXiv](https://info.arxiv.org/help/api/basics.html)
+**相关API：** [Semantic Scholar](https://api.semanticscholar.org/api-docs/) | [CrossRef](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | [arXiv](https://info.arxiv.org/help/api/basics.html)
 
-**目标会议/期刊规范：** [NeurIPS](https://neurips.cc/Conferences/2025/PaperInformation/StyleFiles) | [ICML](https://icml.cc/Conferences/2025/AuthorInstructions) | [ICLR](https://iclr.cc/Conferences/2026/AuthorGuide) | [ACL](https://github.com/acl-org/acl-style-files)
+**会议规范文档：** [NeurIPS](https://neurips.cc/Conferences/2025/PaperInformation/StyleFiles) | [ICML](https://icml.cc/Conferences/2025/AuthorInstructions) | [ICLR](https://iclr.cc/Conferences/2026/AuthorGuide) | [ACL](https://github.com/acl-org/acl-style-files)
