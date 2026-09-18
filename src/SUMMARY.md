@@ -1830,6 +1830,7 @@
     - [Ascii Art]()
       - [ASCII艺术生成技能](zh/optional-skills/creative/ascii-art/SKILL.md)
     - [Audiocraft Audio Generation]()
+      - [AudioCraft：音频生成](zh/optional-skills/creative/audiocraft-audio-generation/SKILL.md)
       - [References]()
         - [AudioCraft 故障排除指南](zh/optional-skills/creative/audiocraft-audio-generation/references/troubleshooting.md)
     - [Baoyu Article Illustrator]()
