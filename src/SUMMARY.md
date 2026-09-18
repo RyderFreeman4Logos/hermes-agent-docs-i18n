@@ -2957,6 +2957,7 @@
       - [创建技能](zh/website/docs/developer-guide/creating-skills.md)
       - [Cron 内部机制](zh/website/docs/developer-guide/cron-internals.md)
       - [桌面插件 SDK](zh/website/docs/developer-guide/desktop-plugin-sdk.md)
+      - [出站代理内部架构](zh/website/docs/developer-guide/egress-internals.md)
       - [扩展 CLI 功能](zh/website/docs/developer-guide/extending-the-cli.md)
       - [网关内部结构](zh/website/docs/developer-guide/gateway-internals.md)
       - [构建图像生成提供者插件](zh/website/docs/developer-guide/image-gen-provider-plugin.md)
