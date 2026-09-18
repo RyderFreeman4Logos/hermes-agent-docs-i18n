@@ -1832,6 +1832,7 @@
     - [Audiocraft Audio Generation]()
       - [AudioCraft：音频生成](zh/optional-skills/creative/audiocraft-audio-generation/SKILL.md)
       - [References]()
+        - [AudioCraft 高级使用指南](zh/optional-skills/creative/audiocraft-audio-generation/references/advanced-usage.md)
         - [AudioCraft 故障排除指南](zh/optional-skills/creative/audiocraft-audio-generation/references/troubleshooting.md)
     - [Baoyu Article Illustrator]()
       - [端口说明 — baoyu-article-illustrator](zh/optional-skills/creative/baoyu-article-illustrator/PORT_NOTES.md)
