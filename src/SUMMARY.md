@@ -1750,6 +1750,7 @@
   - [计费生命周期：客户端状态、错误处理与恢复机制](zh/docs/billing-lifecycle.md)
   - [Chronos managed-cron — 代理 ↔ NAS 通信协议](zh/docs/chronos-managed-cron-contract.md)
   - [Cron Doctor 规范](zh/docs/cron-doctor-spec.md)
+  - [微量压缩功能](zh/docs/micro-compaction.md)
   - [基于配置文件的入站消息路由](zh/docs/profile-routing.md)
   - [根因分析：执行 `hermes update` 后 SSL 证书包损坏](zh/docs/rca-ssl-cacert-post-git-pull.md)
   - [Relay ↔ Connector 接口规范（v1，实验性版本）](zh/docs/relay-connector-contract.md)
