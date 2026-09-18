@@ -3037,7 +3037,7 @@
     - [Integrations](zh/website/docs/integrations/index.md)
       - [Buzz 集成](zh/website/docs/integrations/buzz.md)
       - [Nous Portal](zh/website/docs/integrations/nous-portal.md)
-      - [AI 提供商](zh/website/docs/integrations/providers.md)
+      - [大语言模型与模型提供者](zh/website/docs/integrations/providers.md)
     - [Reference]()
       - [自动化蓝图](zh/website/docs/reference/automation-blueprints-catalog.md)
       - [CLI 命令参考](zh/website/docs/reference/cli-commands.md)
