@@ -1,6 +1,6 @@
 ---
 name: instructor
-description: Extract structured data from LLM responses with Pydantic validation, retry failed extractions automatically, parse complex JSON with type safety, and stream partial results with Instructor - battle-tested structured output library
+description: Structured LLM outputs validated with Pydantic.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,19 +12,19 @@ metadata:
 
 ---
 
-# Instructor：结构化大语言模型输出功能
+# Instructor：结构化大语言模型输出工具
 
-## 何时使用此功能
+## 何时使用该技能
 
-当您需要实现以下需求时，可使用 Instructor：
+当您需要实现以下功能时，可使用 Instructor：
 - **从大语言模型的响应中可靠地提取结构化数据**
 - **自动根据 Pydantic 模式验证输出结果**
 - **通过自动错误处理机制重试失败的提取操作**
-- **在保证类型安全的前提下解析复杂的 JSON 数据**
-- **以流式方式输出部分结果，实现实时处理**
+- **在保证类型安全的同时解析复杂的 JSON 数据**
+- **流式传输部分结果以实现实时处理**
 - **通过统一的 API 支持多种大语言模型服务提供商**
 
-**GitHub 星标数**：15,000+ | **经过实际验证**：100,000+ 名开发者
+**GitHub 星标数**：15,000+ | **实际应用验证次数**：100,000+ 次
 
 ## 安装指南
 
@@ -189,7 +189,7 @@ print(review.sentiment)  # Sentiment.POSITIVE
 
 ### 2. 验证机制
 
-Pydantic会自动对大语言模型的输出结果进行验证。若验证失败，Instructor将会重新尝试处理。
+Pydantic会自动对大语言模型的输出结果进行验证。若验证失败，Instructor会自动重新尝试。
 
 #### 内置验证器
 
@@ -254,7 +254,7 @@ class DateRange(BaseModel):
 
 ### 3. 自动重试机制
 
-当验证失败时，Hermes Agent会自动进行重试，并向大语言模型提供错误反馈。
+当验证失败时，Hermes Agent会自动进行重试，并向大型语言模型提供错误反馈。
 
 ```python
 # Retries up to 3 times if validation fails
@@ -276,7 +276,7 @@ user = client.messages.create(
 
 **工作原理：**
 1. 大语言模型生成输出内容
-2. Pydantic进行验证
+2. Pydantic进行格式验证
 3. 若验证失败：将错误信息反馈给大语言模型
 4. 大语言模型根据错误提示重新尝试生成内容
 5. 重复上述步骤，直至达到最大重试次数
@@ -420,7 +420,7 @@ company = client.messages.create(
 )
 ```
 
-### 模式 2：分类任务
+### 模式2：分类任务
 
 ```python
 class Category(str, Enum):
@@ -657,7 +657,7 @@ class Product(BaseModel):
     price: float = Field(description="Price in USD, without currency symbol")
 ```
 
-### 2. 采用恰当的验证方式
+### 2. 采用适当的验证方式
 
 ```python
 # ✅ Good: Constrain values
@@ -719,26 +719,26 @@ class PartialData(BaseModel):
 
 **何时选择 Instructor：**
 - 需要结构化且经过验证的输出结果
-- 追求类型安全及 IDE 相关支持
+- 追求类型安全及 IDE 支持
 - 需要自动重试功能
 - 正在构建数据提取系统
 
 **何时选择其他方案：**
-- 使用 DSPy：需要提示词优化功能
-- 使用 LangChain：正在构建复杂的任务链
-- 使用手动 JSON 方式：进行简单的一次性数据提取操作
+- DSPy：需要提示词优化功能
+- LangChain：用于构建复杂的任务链
+- 手动 JSON 方式：适用于简单的一次性数据提取任务
 
 ## 相关资源
 
 - **文档**：https://python.useinstructor.com
-- **GitHub 仓库**：https://github.com/jxnl/instructor（星标数超 1.5 万）
-- **示例指南**：https://python.useinstructor.com/examples
+- **GitHub 仓库**：https://github.com/jxnl/instructor（拥有 15k 多个星标）
+- **使用指南**：https://python.useinstructor.com/examples
 - **Discord 社区**：可获取社区支持
 
-## 相关链接
+## 相关内容
 
-- `references/validation.md` - 高级验证模式
-- `references/providers.md` - 各提供程序的特定配置
-- `references/examples.md` - 实际应用案例
+- `references/validation.md` – 高级验证模式
+- `references/providers.md` – 各提供程序的特定配置
+- `references/examples.md` – 实际应用案例
 
 

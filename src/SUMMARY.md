@@ -2233,7 +2233,7 @@
           - [服务器部署模式](zh/optional-skills/mlops/inference/serving-llms-vllm/references/server-deployment.md)
           - [故障排除指南](zh/optional-skills/mlops/inference/serving-llms-vllm/references/troubleshooting.md)
     - [Instructor]()
-      - [Instructor：结构化大语言模型输出功能](zh/optional-skills/mlops/instructor/SKILL.md)
+      - [Instructor：结构化大语言模型输出工具](zh/optional-skills/mlops/instructor/SKILL.md)
       - [References]()
         - [实际应用案例](zh/optional-skills/mlops/instructor/references/examples.md)
         - [提供商配置](zh/optional-skills/mlops/instructor/references/providers.md)
