@@ -2982,7 +2982,7 @@
       - [学习路径](zh/website/docs/getting-started/learning-path.md)
       - [Nix 与 NixOS 配置](zh/website/docs/getting-started/nix-setup.md)
       - [平台支持情况](zh/website/docs/getting-started/platform-support.md)
-      - [快速入门](zh/website/docs/getting-started/quickstart.md)
+      - [Hermes Agent 快速入门指南](zh/website/docs/getting-started/quickstart.md)
       - [使用 Termux 在 Android 上运行 Hermes](zh/website/docs/getting-started/termux.md)
       - [更新与卸载](zh/website/docs/getting-started/updating.md)
     - [Guides]()
