@@ -2163,6 +2163,7 @@
       - [Description](zh/optional-skills/mlops/evaluation/DESCRIPTION.md)
       - [Evaluating Llms Harness]()
         - [References]()
+          - [API评估](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/api-evaluation.md)
           - [基准测试指南](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/benchmark-guide.md)
     - [Faiss]()
       - [FAISS —— 高效的相似性搜索工具](zh/optional-skills/mlops/faiss/SKILL.md)
