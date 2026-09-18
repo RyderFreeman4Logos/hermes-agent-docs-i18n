@@ -2727,6 +2727,7 @@
         - [设计系统：宝马](zh/skills/creative/popular-web-designs/templates/bmw.md)
         - [设计系统：Cal.com](zh/skills/creative/popular-web-designs/templates/cal.md)
         - [设计系统：Claude（Anthropic）](zh/skills/creative/popular-web-designs/templates/claude.md)
+        - [设计系统：Clay](zh/skills/creative/popular-web-designs/templates/clay.md)
         - [设计系统：ClickHouse](zh/skills/creative/popular-web-designs/templates/clickhouse.md)
         - [设计系统：Cohere](zh/skills/creative/popular-web-designs/templates/cohere.md)
         - [设计系统：Coinbase](zh/skills/creative/popular-web-designs/templates/coinbase.md)
