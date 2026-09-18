@@ -16,7 +16,7 @@ W&B：用于记录机器学习实验、执行参数扫描、管理模型注册�
 |---|---|
 | 来源 | 内置（默认已安装） |
 | 路径 | `skills/mlops/evaluation/weights-and-biases` |
-| 版本 | `1.0.0` |
+| 版本 | `1.0.1` |
 | 开发者 | Orchestra Research |
 | 许可协议 | MIT |
 | 依赖项 | `wandb` |
@@ -26,23 +26,23 @@ W&B：用于记录机器学习实验、执行参数扫描、管理模型注册�
 ## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行操作。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当该技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
 # Weights & Biases：机器学习实验跟踪与 MLOps 工具
 
 ## 何时使用此技能
 
-在需要以下功能时，可使用 Weights & Biases (W&B)：
-- **自动记录指标**，实现机器学习实验的完整跟踪
-- 通过实时控制面板直观展示训练过程
-- 对不同超参数及配置下的实验结果进行对比
-- 通过自动化的参数扫描功能优化超参数设置
-- 利用版本控制和链路追踪功能管理模型注册表
-- 通过团队工作空间实现机器学习项目的协作开发
-- 对数据集、模型、代码等资产进行带有链路追踪功能的跟踪
+在以下场景中可使用 Weights & Biases (W&B)：
+- **记录机器学习实验**，并自动记录各项指标
+- 通过实时控制面板**可视化训练过程**
+- **对比不同超参数及配置下的实验结果**
+- 利用自动化的参数扫描功能**优化超参数**
+- 通过版本控制和链路追踪功能**管理模型注册表**
+- 基于团队工作空间实现**机器学习项目的协作**
+- 对**数据集、模型、代码等工件**进行带有链路追踪的跟踪
 
-**用户数量**：20万+ 机器学习从业者 | **GitHub 星标数**：1.05万+ | **集成数量**：100+
+**用户规模**：20万+ 机器学习从业者 | **GitHub 星标数**：10,500+ | **集成数量**：100+
 
 ## 安装方式
 
@@ -59,7 +59,7 @@ export WANDB_API_KEY=your_api_key_here
 
 ## 快速入门
 
-### 基本实验跟踪功能
+### 基本实验追踪功能
 
 ```python
 import wandb
@@ -94,7 +94,7 @@ for epoch in range(run.config.epochs):
 wandb.finish()
 ```
 
-### 集成 PyTorch 技术
+### 基于 PyTorch 的使用方式
 
 ```python
 import torch
@@ -240,11 +240,11 @@ artifact.add_file('checkpoint.pth')
 wandb.log_artifact(artifact)
 ```
 
-## 超参数扫描
+## 超参数搜索
 
-自动搜索最优的超参数设置。
+自动寻找最优的超参数设置。
 
-### 定义扫描配置
+### 定义搜索配置
 
 ```python
 sweep_config = {
@@ -255,7 +255,7 @@ sweep_config = {
     },
     'parameters': {
         'learning_rate': {
-            'distribution': 'log_uniform',
+            'distribution': 'log_uniform_values',
             'min': 1e-5,
             'max': 1e-1
         },
@@ -334,14 +334,14 @@ sweep_config = {
     'method': 'bayes',
     'metric': {'name': 'val/loss', 'goal': 'minimize'},
     'parameters': {
-        'lr': {'distribution': 'log_uniform', 'min': 1e-5, 'max': 1e-1}
+        'lr': {'distribution': 'log_uniform_values', 'min': 1e-5, 'max': 1e-1}
     }
 }
 ```
 
 ## 构件
 
-通过数据血缘追踪数据集、模型及其他文件。
+通过数据溯源功能追踪数据集、模型及其他文件。
 
 ### 日志构件
 
@@ -362,7 +362,7 @@ artifact.add_dir('data/images/')
 wandb.log_artifact(artifact)
 ```
 
-### 使用 Artifact
+### 使用 Artifact 文件
 
 ```python
 # Download and use artifact
@@ -446,21 +446,25 @@ trainer = Trainer(
 trainer.fit(model, datamodule=dm)
 ```
 
-### Keras/TensorFlow
+### Keras/TensorFlow 框架
 
 ```python
 import wandb
-from wandb.keras import WandbCallback
+from wandb.integration.keras import WandbMetricsLogger, WandbModelCheckpoint
 
 # Initialize
 wandb.init(project="keras-demo")
 
-# Add callback
+# Add callbacks (the monolithic WandbCallback was removed;
+# use the dedicated callbacks from wandb.integration.keras instead)
 model.fit(
     x_train, y_train,
     validation_data=(x_val, y_val),
     epochs=10,
-    callbacks=[WandbCallback()]  # Auto-logs metrics
+    callbacks=[
+        WandbMetricsLogger(),                        # Auto-logs metrics
+        WandbModelCheckpoint("models/model-{epoch}")  # Saves checkpoints
+    ]
 )
 ```
 
@@ -495,7 +499,7 @@ wandb.log({"conf_mat": wandb.plot.confusion_matrix(
 
 ## 最佳实践
 
-### 1. 使用标签与组进行分类管理
+### 1. 使用标签与分组进行整理
 
 ```python
 wandb.init(
@@ -526,7 +530,7 @@ wandb.log({
 })
 ```
 
-### 3. 使用描述性名称
+### 3. 使用具有描述性的名称
 
 ```python
 # ✅ Good: Descriptive run names
@@ -591,19 +595,19 @@ print(f"Share this URL: {run.url}")
 
 - **免费版**：无限个公开项目，100GB 存储空间
 - **学术版**：面向学生及研究人员免费
-- **团队版**：50美元/人/月，支持私有项目，存储空间无限
+- **团队版**：50美元/人/月，支持私有项目，存储空间无限制
 - **企业版**：定制化定价，提供本地部署选项
 
 ## 资源链接
 
 - **文档**：https://docs.wandb.ai
-- **GitHub 仓库**：https://github.com/wandb/wandb（星标数超1.05万）
+- **GitHub 仓库**：https://github.com/wandb/wandb（获赞超 1.05 万次）
 - **示例代码**：https://github.com/wandb/examples
-- **社区板块**：https://wandb.ai/community
+- **社区论坛**：https://wandb.ai/community
 - **Discord 社群**：https://wandb.me/discord
 
 ## 相关内容
 
-- `references/sweeps.md` – 全面的超参数优化指南
-- `references/artifacts.md` – 数据与模型版本控制方案
-- `references/integrations.md` – 各框架专用示例
+- `references/sweeps.md` —— 全面的超参数优化指南
+- `references/artifacts.md` —— 数据与模型版本控制方案
+- `references/integrations.md` —— 各框架专用示例
