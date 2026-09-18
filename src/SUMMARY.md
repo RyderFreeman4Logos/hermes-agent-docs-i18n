@@ -1775,6 +1775,8 @@
   - [Codebase Navigability](zh/evals/codebase_navigability/README.md)
   - [Codex Echo](zh/evals/codex_echo/README.md)
   - [Compaction](zh/evals/compaction/README.md)
+    - [Results]()
+      - [Compaction v2 — 四种任务类型的评分表（2026-08-15，基于锚点索引构建）](zh/evals/compaction/results/SCORECARD-2026-08-15.md)
   - [Core Tool Deferral](zh/evals/core_tool_deferral/README.md)
     - [Results]()
       - [PR #97979 A/B测试结果——核心工具延迟处理方案（共288次实时运行）](zh/evals/core_tool_deferral/results/SUMMARY.md)
