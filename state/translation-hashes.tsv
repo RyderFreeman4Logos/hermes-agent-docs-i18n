@@ -1170,7 +1170,7 @@ website/docs/user-guide/skills/optional/mlops/mlops-evaluation-weights-and-biase
 website/docs/user-guide/skills/optional/mlops/mlops-faiss.md	9fb5b79afc0c06f3b106c9a8feeb552cc75efa5ed982461fba3371704bc70c2a
 website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md	c0526026a7f092b0b447bf429ac0690d8177a59ba135a4e0449819e7002296c6
 website/docs/user-guide/skills/optional/mlops/mlops-guidance.md	cfc47f8e75e1348a4f1f973ea20ebc452a5d0bd57ce03cc3f733998f116f8e6f
-website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md	b1f1d0551d22e8c00cd4e1c3444b7c33880fa3fec89188c94d283dd03ed7b721
+website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md	fa118f6da52c31a2a18eb124c6acb59220b2182f4af6e8aecfb11b94e1f816df
 website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md	8e15e3c17fcfa6bf9e1ab3e2270877baae06c0f635bcd631634d8256f78e1354
 website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md	34f899bc2d0e54e2cd7867bebc365414129f64381c1e730778839023df78f009
 website/docs/user-guide/skills/optional/mlops/mlops-inference-serving-llms-vllm.md	3936773b80d36f858f76bef46f0d302c0e3ebace4a261623ef52b4ba33a519c1
