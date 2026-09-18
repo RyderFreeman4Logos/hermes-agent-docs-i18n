@@ -3151,6 +3151,7 @@
           - [Autonomous Ai Agents]()
             - [Claude Code](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-claude-code.md)
             - [Codex](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-codex.md)
+            - [计算机操作](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-computer-use.md)
             - [Hermes Agent](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-hermes-agent.md)
             - [合并协调器](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-merge-reconciler.md)
             - [Opencode](zh/website/docs/user-guide/skills/bundled/autonomous-ai-agents/autonomous-ai-agents-opencode.md)
