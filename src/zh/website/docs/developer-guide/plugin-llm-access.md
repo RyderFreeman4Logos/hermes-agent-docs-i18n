@@ -6,11 +6,11 @@ description: "Run any LLM call from inside a plugin via ctx.llm — chat or stru
 
 # 插件调用大型语言模型
 
-`ctx.llm` 是插件调用大型语言模型的标准方式。无论是聊天补全、结构化信息提取、同步处理、异步处理，还是是否需要图像输入——所有操作都通过同一接口实现，具备相同的信任机制，并使用由主机管理的凭证。
+`ctx.llm` 是插件进行大型语言模型调用的推荐方式。无论是聊天补全、结构化信息提取、同步处理、异步处理，还是是否需要处理图像——所有操作都通过同一接口完成，遵循相同的信任机制，并使用由主机管理的凭证。
 
-当插件需要执行与模型相关但并不属于代理对话流程的任务时，就会使用这一方式。例如：将工具返回的错误信息转换为非工程师也能理解的格式；在消息入队前对其进行转换的网关适配器；用于总结长文本的斜杠命令；对昨日活动进行评分并往状态看板写入一条记录的定时任务；以及用于判断某条消息是否值得唤醒代理的预过滤机制。
+当插件需要执行与模型相关但并非代理对话流程中的任务时，就会使用这一方式。例如：将工具错误转换为非工程师也能理解的格式的钩子函数；在消息入队前对其进行转换的网关适配器；用于总结长文本的斜杠命令；对昨日活动进行评分并向状态看板写入一条记录的定时任务；以及用于判断某条消息是否值得唤醒代理的预过滤机制。
 
-这类任务本就不应让代理持续参与处理。它们只需要一次大型语言模型调用，得到一个结构化的回复，然后即可完成。
+这类任务本就不应由代理持续参与处理。它们只需要一次大型语言模型调用，得到一个文本形式的回复，然后即可完成。
 
 ## 最简化的调用方式
 
@@ -19,7 +19,7 @@ result = ctx.llm.complete(messages=[{"role": "user", "content": "ping"}])
 return result.text
 ```
 
-整段 API 代码仅用一行即可实现。无需任何密钥、提供者配置，也无需进行 SDK 初始化。该插件会自动适配用户当前使用的提供者和模型；当用户更换提供者时，插件也会随之自动切换。  
+整段 API 代码仅需一行即可实现。无需任何密钥、提供者配置，也无需进行 SDK 初始化。该插件会自动适配用户当前使用的提供者与模型；当用户更换提供者时，插件也会随之自动切换。  
 
 ## 更完整的聊天示例
 
@@ -35,11 +35,11 @@ result = ctx.llm.complete(
 return result.text
 ```
 
-`purpose` 是一个自由格式的审计字符串——它会出现在 `agent.log` 以及 `result.audit` 中，以便操作员能够查看是哪个插件发出了哪次调用。该字段虽非必填，但对于频繁触发的操作而言建议设置。
+`purpose`是一个自由格式的审计字符串——它会被记录在`agent.log`以及`result.audit`中，以便操作员能够查看是哪个插件发起了哪次调用。该字段虽为非必填项，但对于那些频繁触发的操作而言，建议将其设置。
 
 ## 结构化输出
 
-当插件需要类型化的回复时，请切换到结构化输出模式：
+当插件需要结构化的响应时，请切换到结构化输出模式：
 
 ```python
 result = ctx.llm.complete_structured(
@@ -55,18 +55,18 @@ if result.parsed["urgency"] > 0.8:
     await dispatch_to_oncall(result.parsed["category"], message_body)
 ```
 
-主机会向提供者请求 JSON 格式的输出，作为备用方案在本地对其进行解析；如果已安装 `jsonschema`，还会根据该规范对解析结果进行验证，最终通过 `result.parsed` 返回 Python 对象。若模型无法生成有效的 JSON，则 `result.parsed` 的值为 `None`，而 `result.text` 则会包含原始响应内容。
+主机会向提供者请求 JSON 格式的输出，作为备用方案在本地对其进行解析；如果已安装 `jsonschema`，还会根据预设的架构对解析结果进行验证，最终通过 `result.parsed` 返回 Python 对象。若模型无法生成有效的 JSON，则 `result.parsed` 的值为 `None`，而 `result.text` 则会包含原始响应内容。
 
-## 该功能模式的优势
+## 该功能带来的优势
 
-* **一次调用，多种输出格式**。支持用于聊天场景的 `complete()`、用于结构化 JSON 的 `complete_structured()`，以及用于 asyncio 场景的 `acomplete()` 和 `acomplete_structured()`。参数相同，返回的结果对象也一致。
-* **主机掌控凭证管理**。OAuth 令牌、刷新流程、凭证池、针对单任务的临时凭证覆盖——Hermes 所具备的所有凭证管理功能均适用。插件本身无法直接获取令牌，主机会通过 `result.audit` 将相关调用信息反馈给插件。
-* **操作范围受限**。仅支持单次同步或异步调用，无流式处理、无工具循环，也无需管理对话状态。只需输入数据、获取结果并返回即可。
-* **安全封闭机制**。未经配置的插件无法自行选择提供者、模型、智能体或存储的凭证。默认策略为“使用用户当前正在使用的资源”。操作员可在 `config.yaml` 中为特定插件指定自定义设置。
+* **一次调用，多种输出格式**：支持聊天场景的 `complete()`、结构化 JSON 场景的 `complete_structured()`，以及 asyncio 场景的 `acomplete()` 和 `acomplete_structured()`。参数相同，返回的结果对象也一致。
+* **主机掌控凭据管理**：OAuth 令牌、刷新流程、凭据池以及针对单个任务的临时配置调整——Hermes 所具备的所有凭据管理功能均可应用。插件本身无法直接获取令牌，主机会通过 `result.audit` 将相关调用信息反馈给插件。
+* **操作范围受限**：仅支持单次同步或异步调用，不存在流式处理、工具循环或需要管理的对话状态。只需输入数据、获取结果并返回即可。
+* **安全限制机制**：未经配置的插件无法自行选择提供者、模型、智能体或存储的凭据。默认策略为“使用用户当前正在使用的资源”。操作员可在 `config.yaml` 中为特定插件指定自定义配置。
 
 ## 快速入门
 
-下面提供了两个完整的插件示例——一个用于聊天，另一个用于结构化数据处理。这两个插件均封装在同一个 `register(ctx)` 函数中，无需任何外部配置即可针对用户当前激活的模型正常运行。
+下面提供了两个完整的插件示例——一个用于聊天场景，另一个用于结构化数据处理。二者均封装在同一个 `register(ctx)` 函数中，无需任何外部配置即可针对用户当前使用的模型正常运行。
 
 ### 聊天场景补全功能 —— `/tldr`
 
@@ -97,9 +97,9 @@ def _tldr(ctx, raw_args: str) -> str:
     return result.text
 ```
 
-`result.text`为模型的响应内容；`result.usage`包含令牌计数信息；而`result.provider`与`result.model`则用于标注来源信息。
+`result.text` 包含模型的响应内容；`result.usage` 记录了Token数量；而 `result.provider` 与 `result.model` 则用于标注来源信息。
 
-### 结构化提取——/paste-to-tasks
+### 结构化提取 — `/paste-to-tasks`
 
 ```python
 def register(ctx):
@@ -152,23 +152,23 @@ def _paste_to_tasks(ctx, raw_args: str) -> str:
     return "\n".join(lines) or "(no tasks found)"
 ```
 
-第三个示例涉及图像输入，位于[`hermes-example-plugins`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example)仓库中（该仓库用于存放参考插件，并未随hermes-agent一同打包）。关于异步接口（使用`asyncio.gather()`的`acomplete()`/`acomplete_structured()`），请参阅同一仓库中的[`plugin-llm-async-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-async-example)。
+第三个示例涉及图像输入，位于 [`hermes-example-plugins`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example) 仓库中（该仓库用于存放参考插件，并不随 hermes-agent 一同打包）。关于异步接口（使用 `asyncio.gather()` 的 `acomplete()` / `acomplete_structured()`），请参阅同一仓库中的 [`plugin-llm-async-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-async-example)。
 
-## 何时选择哪种方式
+## 何时选择哪种方法
 
 | 需求 | 推荐使用 |
 |---|---|
-| 自由格式文本响应（翻译、总结、重写、生成） | `complete()` |
-| 多轮对话式提示（系统指令+少量示例+用户输入） | `complete()` |
-| 返回符合特定结构规范的字典数据 | `complete_structured()` |
-| 图像或文本输入并返回结构化字典数据 | `complete_structured()` |
+| 自由格式的文本回复（翻译、总结、重写、生成） | `complete()` |
+| 多轮对话式提示（系统指令 + 少量示例 + 用户输入） | `complete()` |
+| 返回符合结构规范的键值对数据 | `complete_structured()` |
+| 接收图像或文本输入并返回结构化数据 | `complete_structured()` |
 | 在异步代码中调用（如网关适配器、异步钩子） | `acomplete()` / `acomplete_structured()` |
 
-其余方面——如提供者选择、模型解析、身份验证、备用方案、超时处理以及视觉功能路由——在这四种方式中均保持一致。
+其余方面——包括提供者选择、模型加载、身份验证、备用方案、超时处理以及视觉处理路由——在这四种方法中均保持一致。
 
-## API接口
+## API 接口
 
-`ctx.llm`是`agent.plugin_llm.PluginLlm`的实例。
+`ctx.llm` 是 `agent.plugin_llm.PluginLlm` 的实例。
 
 ### `complete()`
 
@@ -183,13 +183,14 @@ result = ctx.llm.complete(
     agent_id=None,         # optional, gated
     profile=None,          # optional, gated — explicit auth-profile name
     purpose="optional-audit-string",
+    task=None,             # optional — a plugin-registered auxiliary slot
 )
 # → PluginLlmCompleteResult(text, provider, model, agent_id, usage, audit)
 ```
 
-普通聊天任务完成功能。`messages`采用OpenAI标准的格式——即由多个`{"role": "...", "content": "..."}`字典构成的列表。多轮对话提示（系统指令 + 少量示例的用户/助手对 + 最终用户输入）的处理方式与使用OpenAI SDK时完全一致。
+普通对话完成功能。`messages`采用OpenAI标准的格式——即由多个`{"role": "...", "content": "..."}`字典构成的列表。多轮提示（系统指令 + 少量示例的用户/助手对话对 + 最终用户输入）的处理方式与使用OpenAI SDK时完全一致。
 
-`provider=`和`model=`这两个参数是相互独立的，其格式与主机主配置中的`model.provider`和`model.model`相同。只需设置`model=`即可使用用户当前选定的提供商，但搭配不同的模型；若同时设置这两个参数，则可彻底更换提供商。未指定运算符的任一参数都会引发`PluginLlmTrustError`错误。
+`provider=`和`model=`这两个参数是相互独立的，其格式与主机主配置中的`model.provider`和`model.model`相同。只需设置`model=`即可使用用户当前所选的提供商，但搭配不同的模型；若要完全更换提供商，则需同时设置这两个参数。未指定运算符的任一参数都会引发`PluginLlmTrustError`错误。
 
 ### `complete_structured()`
 
@@ -213,26 +214,51 @@ result = ctx.llm.complete_structured(
     agent_id=None,
     profile=None,
     purpose=None,
+    task=None,             # optional — a plugin-registered auxiliary slot
 )
 # → PluginLlmStructuredResult(text, provider, model, agent_id,
 #                             usage, parsed, content_type, audit)
 ```
 
-输入内容可以是文本或图像块（原始字节会自动通过`data:` URL进行Base64编码）。当指定了`json_schema`或设置`json_mode=True`时，主机会通过`response_format`请求JSON格式的输出，在本地对其进行解析作为备用方案；如果已安装`jsonschema`工具，还会根据您定义的架构对输出内容进行验证。
+输入内容可以是文本或图像块（原始字节会自动通过 `data:` URL 进行 Base64 编码）。当指定了 `json_schema` 或设置 `json_mode=True` 时，主机会通过 `response_format` 请求 JSON 格式的输出，作为备用方案在本地对其进行解析；如果已安装 `jsonschema`，还会根据该规范对解析结果进行验证。
 
-* `result.content_type == "json"` — 表示`result.parsed`是一个符合您所定架构的Python对象。
-* `result.content_type == "text"` — 表示解析或验证失败；可查看`result.text`以获取模型的原始响应内容。
+* `result.content_type == "json"` — `result.parsed` 是一个符合您所定义规范的 Python 对象。
+* `result.content_type == "text"` — 解析或验证失败；请查看 `result.text` 以获取模型的原始响应内容。
 
 ### 异步模式
 
 ```python
-result = await ctx.llm.acomplete(messages=...)
-result = await ctx.llm.acomplete_structured(instructions=..., input=...)
+result = await ctx.llm.acomplete(messages=..., task="classifier")
+result = await ctx.llm.acomplete_structured(
+    instructions=..., input=..., task="classifier"
+)
 ```
 
-其参数与返回结果类型均与同步版本相同。您可以在网关适配器、异步钩子，或任何已在 asyncio 循环中运行的插件代码中使用它们。
+其参数与返回类型与同步版本相同。这些功能适用于网关适配器、异步钩子，以及任何已在 asyncio 循环中运行的插件代码。
 
-### 结果属性
+### 任务路由的辅助调用
+
+当某个插件需要自定义配置的辅助调用路径时，可在四种调用方式中添加 `task=` 参数。该任务需在插件初始化阶段进行注册；在操作员通过 `auxiliary.<task>` 重置其提供者和模型之前，将沿用插件默认设置。
+
+```python
+def register(ctx):
+    ctx.register_auxiliary_task(
+        "classifier", display_name="Classifier", description="Classify input."
+    )
+
+
+result = ctx.llm.complete(messages=[...], task="classifier")
+result = ctx.llm.complete_structured(instructions=..., input=..., task="classifier")
+```
+
+```yaml
+auxiliary:
+  classifier:
+    provider: openrouter
+    model: vendor/model-id
+```
+
+插件可为自身的任务提供提供商/模型注册的默认值。在 `auxiliary.<task>` 中配置的操作符可覆盖这些默认值，并决定具体的部署方案。一个插件仅能使用其自行注册的任务；若遇到未知或非本插件注册的任务名称，将在调用提供商之前失败。`allow_task_override: true` 是一种明确的操作符权限设置，允许使用 Hermes 内置的辅助任务，但不可使用其他插件的任务。如需保留当前活跃的主提供商/模型，可省略 `task=` 参数（或使用 `"auto"`）。
 
 ```python
 @dataclass
@@ -245,7 +271,8 @@ class PluginLlmCompleteResult:
     audit: Dict[str, Any]        # plugin_id, purpose, profile
 
 @dataclass
-class PluginLlmStructuredResult(PluginLlmCompleteResult):
+class PluginLlmStructuredResult:
+    # same fields as PluginLlmCompleteResult, plus:
     parsed: Optional[Any]        # JSON object when content_type == "json"
     content_type: str            # "json" or "text"
     # audit also carries schema_name when supplied
@@ -255,14 +282,14 @@ class PluginLlmStructuredResult(PluginLlmCompleteResult):
 
 ## 信任机制
 
-默认行为为“故障即关闭”。在没有 `plugins.entries` 配置块的情况下，插件可以：
+默认行为为“故障即关闭”。若不存在 `plugins.entries` 配置块，插件可以：
 
 * 对用户当前使用的提供方和模型调用四种方法中的任意一种，
 * 设置请求配置参数（如 `temperature`、`max_tokens`、`timeout`、`system_prompt`、`purpose`、`messages`、`instructions`、`input`、`json_schema`），
 
-仅此而已。在操作员未进行相关设置之前，`provider=`、`model=`、`agent_id=` 和 `profile=` 参数会引发 `PluginLlmTrustError` 异常。
+仅此而已。在操作员未进行授权之前，`provider=`、`model=`、`agent_id=` 和 `profile=` 参数会引发 `PluginLlmTrustError` 错误。同样，除非操作员为内置任务授予了 `allow_task_override` 权限，否则 `task=` 参数也只能使用插件已注册的辅助任务。
 
-**大多数插件根本不需要这一部分配置。** 那些仅调用 `ctx.llm.complete(messages=...)` 且不进行任何参数覆盖的插件，会直接使用用户当前激活的模型和提供方，从而实现零配置运行。只有在插件明确希望指定不同于用户当前设置的模型或提供方时，下方这段配置才具有意义。
+**大多数插件根本无需使用此部分配置。** 那些仅通过调用 `ctx.llm.complete(messages=...)` 且不进行任何参数覆盖的插件，会直接使用用户当前激活的模型和提供方，从而实现零配置运行。只有在插件明确希望指定与用户不同的模型或提供方时，下方配置块才具有意义。
 
 ```yaml
 plugins:
@@ -297,64 +324,66 @@ plugins:
         allow_profile_override: false
 ```
 
-插件标识对于扁平型插件而言，即为清单文件中的 `name:` 字段；而对于嵌套型插件，则为基于路径生成的键值（如 `image_gen/openai`、`memory/honcho` 等）。
+对于扁平插件，插件 ID 即为其清单文件中的 `name:` 字段；而对于嵌套插件，则为从路径中提取的键值（如 `image_gen/openai`、`memory/honcho` 等）。
 
-### 网关所控制的规则
+### 该限制机制所管控的内容
 
-| 覆盖项 | 默认值 | 配置键 |
-| ------ | ------- | ------ |
-| `provider=` | 拒绝 | `allow_provider_override: true` |
-| ↳ 允许列表 | — | `allowed_providers: [...]` |
-| `model=` | 拒绝 | `allow_model_override: true` |
-| ↳ 允许列表 | — | `allowed_models: [...]` |
-| `agent_id=` | 拒绝 | `allow_agent_id_override: true` |
-| `profile=` | 拒绝 | `allow_profile_override: true` |
+| 可覆盖参数       | 默认值 | 配置键                         |
+| --------------- | ------- | ------------------------------ |
+| `provider=`     | 拒绝    | `allow_provider_override: true`  |
+| ↳ 允许列表       | —       | `allowed_providers: [...]`       |
+| `model=`        | 拒绝    | `allow_model_override: true`     |
+| ↳ 允许列表       | —       | `allowed_models: [...]`          |
+| `agent_id=`     | 拒绝    | `allow_agent_id_override: true`  |
+| `profile=`      | 拒绝    | `allow_profile_override: true`   |
+| 内置的 `task=`  | 拒绝    | `allow_task_override: true`      |
 
-各项覆盖规则是独立控制的。即便启用了 `allow_model_override`，也**不会**自动启用 `allow_provider_override`——只有同时通过提供者相关网关验证后，被允许选择模型的插件才能使用用户当前配置的提供者。
+各项覆盖设置是独立受控的。即便启用了 `allow_model_override`，也不代表同时会启用 `allow_provider_override`——除非该插件也通过了提供商限制检查，否则它仍然会被绑定在用户当前使用的提供商上。
 
-### 网关无需控制的规则
+### 该限制机制无需管控的内容
 
-* 请求格式相关参数——如 `temperature`、`max_tokens`、`timeout`、`system_prompt`、`purpose`、`messages`、`instructions`、`input`、`json_schema`、`schema_name`、`json_mode`——始终被允许使用；这些参数并不涉及凭据或路由选择。
-* 由于默认采取拒绝策略，未进行配置的插件依然可以正常工作——它只会使用用户当前激活的提供者和模型。只有那些需要更精细路由控制的插件，操作者才需要关注 `plugins.entries` 设置。
+* 请求配置参数——如 `temperature`、`max_tokens`、`timeout`、`system_prompt`、`purpose`、`messages`、`instructions`、`input`、`json_schema`、`schema_name`、`json_mode`——始终被允许使用；这些参数不会涉及凭据或路由选择。
+* 默认的拒绝策略意味着未配置的插件仍可执行有用任务——它只是会使用当前启用的提供者和模型来运行。对于那些需要更精细路由控制的插件，操作员只需关注 `plugins.entries` 即可。
 
-## 主机负责处理的内容
+## 主机所掌控的内容
 
-`ctx.llm` 会为插件处理以下所有事务，从而免去您的麻烦：
+此处列出了 `ctx.llm` 为插件提供的所有功能，这样您就无需再自行查找了：
 
-* **提供者识别**：从用户配置中读取 `model.provider` 和 `model.model` 字段（若插件被授权，也会使用显式指定的覆盖值）。
-* **身份认证**：从 `~/.hermes/auth.json` 或环境变量中获取 API 密钥、OAuth 令牌或刷新令牌；若已配置凭据池，也会从中取用。插件本身无法看到这些凭据。
-* **视觉处理路由**：当收到图像输入且用户当前激活的文本模型仅为文本类型时，主机会自动切换到已配置的视觉模型进行处理。
-* **回退机制**：如果用户的主要提供者返回 5xx 或 429 错误，请求会先经过 Hermes 的常规聚合器感知型回退流程，之后才会向插件返回错误。
-* **超时控制**：优先遵循您设置的 `timeout=` 参数，若未设置则使用 `auxiliary.<task>.timeout` 配置值或全局辅助配置的默认值。
-* **JSON 格式处理**：当您要求以 JSON 格式获取响应时，主机会先将 `response_format` 参数传递给提供者；如果提供者返回了 JSON 格式的响应，主机则会从受代码隔离的区域重新解析该响应。
-* **模式验证**：若已安装 `jsonschema` 库，主机会根据您指定的 `json_schema` 对响应进行验证；否则仅记录调试信息，不会执行严格的验证流程。
-* **审计日志**：每次调用都会在 `agent.log` 文件中写入一条 INFO 级日志，内容包括插件标识、使用的相关提供者/模型、操作目的以及 token 消耗总量。
+* **提供者解析。** 从用户的配置文件中读取 `model.provider` 和 `model.model` 值（在可信的情况下也会采用显式覆盖的设置）。
+* **身份认证。** 从 `~/.hermes/auth.json` 文件或环境变量中获取 API 密钥、OAuth 令牌或刷新令牌，若已配置凭证池，则也会使用该池中的凭证；插件本身无法直接访问这些凭证。
+* **视觉处理路由。** 当输入为图像且用户当前使用的文本模型仅支持文本处理时，系统会自动切换到已配置的视觉处理模型。
+* **回退机制。** 若用户指定的主要提供者返回 5xx 或 429 错误，请求会先经过 Hermes 的常规聚合器感知型回退流程，之后才会向插件返回错误。
+* **超时设置。** 优先遵循用户指定的 `timeout=` 参数，若未指定则使用 `auxiliary.<task>.timeout` 配置值或全局辅助配置的默认值。
+* **JSON 格式处理。** 当用户要求以 JSON 格式获取结果时，会将 `response_format` 参数传递给提供者；若提供者返回了格式化的响应，则会在本地对该响应进行重新解析。
+* **模式验证。** 若已安装 `jsonschema` 工具，则会根据用户指定的 `json_schema` 对响应数据进行验证；否则仅记录调试信息，不会执行严格的验证流程。
+* **审计日志。** 每次调用都会在 `agent.log` 文件中写入一条 INFO 级别的日志，内容包括插件标识、使用的相关提供者/模型、操作目的以及各类型的令牌使用总量。
 
 ## 插件负责处理的内容
 
-* **请求格式构建**：聊天类请求需使用 `messages` 参数，结构化请求则需使用 `instructions` 和 `input` 参数。插件负责构建提示词，主机则负责执行该提示词。
-* **响应格式定义**：插件可自行决定希望得到的响应格式，主机不会自动推断。
-* **错误处理**：函数 `complete_structured()` 在输入为空或模式验证失败时会抛出 `ValueError` 异常；当信任网关拒绝某项覆盖请求时，会触发 `PluginLlmTrustError` 异常。其他异常（如提供者返回 5xx 错误、未配置凭据、超时等）则由 `auxiliary_client.call_llm()` 函数抛出的异常决定。
-* **成本计算**：每次调用都会使用用户已付费的提供者服务。因此，在处理每个网关消息时，切勿在不考虑 token 消耗的情况下反复调用 `complete()` 函数。
+* **请求格式**：用于聊天场景时为 `messages` 格式，用于结构化任务时则为 `instructions` + `input` 格式。插件负责构建提示词，而主机则负责执行该提示词。
+* **数据结构**：可返回任意您期望的格式，主机不会自动推断其结构。
+* **错误处理**：当输入为空或数据结构验证失败时，`complete_structured()` 会抛出 `ValueError` 异常；若信任机制拒绝某些配置变更，则会触发 `PluginLlmTrustError` 异常。其他情况（如服务提供商返回 5xx 错误、未配置认证信息、超时等）则由 `auxiliary_client.call_llm()` 所抛出的异常决定。
+* **成本问题**：每次调用都会消耗用户所使用的付费服务提供商的额度。在处理每个网关消息的 `complete()` 回调时，务必考虑 Token 消耗情况，避免不必要的循环调用。
 
-## 该接口在插件体系中的定位
+## 在插件架构中的定位
 
-现有的 `ctx.*` 方法都是对 Hermes 现有子系统的扩展：
+现有的 `ctx.*` 方法是对 Hermes 现有子系统的扩展：
 
+| 方法 | 功能说明 |
+|------|----------|
 | `ctx.register_tool` | 添加代理可调用的工具 |
 | `ctx.register_platform` | 连接新的网关适配器 |
-| `ctx.register_image_gen_provider` | 替换图像生成后端 |
-| `ctx.register_memory_provider` | 替换内存处理后端 |
-| `ctx.register_context_engine` | 替换上下文压缩模块 |
+| `ctx.register_image_gen_provider` | 更换图像生成后端 |
+| `ctx.register_memory_provider` | 更换内存管理后端 |
+| `ctx.register_context_engine` | 更换上下文压缩器 |
 | `ctx.register_hook` | 监听生命周期事件 |
-
-而 `ctx.llm` 是首个无需依赖上述任何扩展，即可让插件**独立地**使用用户当前正在使用的模型进行运行的接口。它的唯一功能就是实现这一点。如果您的插件需要注册代理可调用的工具，请使用 `register_tool`；如果需要响应生命周期事件，则使用 `register_hook`；而无论出于何种原因，无论是结构化请求还是非结构化请求，都需要通过 `ctx.llm` 自行发起模型调用。
+`ctx.llm` 是首个让插件能够在无需依赖上述任何组件的情况下，*独立地*调用用户当前正在使用的同一模型的接口。这也是它唯一的职责。如果您的插件需要注册代理调用的工具，可使用 `register_tool`；若需对生命周期事件作出响应，则使用 `register_hook`；而无论出于何种原因——无论是结构化需求还是非结构化需求——都需要进行模型调用时，则应使用 `ctx.llm`。
 
 ## 参考资料
 
 * 实现代码：[`agent/plugin_llm.py`](https://github.com/NousResearch/hermes-agent/blob/main/agent/plugin_llm.py)
 * 测试用例：[`tests/agent/test_plugin_llm.py`](https://github.com/NousResearch/hermes-agent/blob/main/tests/agent/test_plugin_llm.py)
 * 参考插件（配套仓库）：
-  * [`plugin-llm-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example) —— 实现图像输入与结构化数据提取的同步处理
+  * [`plugin-llm-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-example) —— 支持基于图像输入的同步结构化数据提取
   * [`plugin-llm-async-example`](https://github.com/NousResearch/hermes-example-plugins/tree/main/plugin-llm-async-example) —— 使用 `asyncio.gather()` 实现异步处理
-* 辅助客户端（底层引擎）：详见 [提供者运行时](/developer-guide/provider-runtime)。
+* 辅助客户端（底层引擎）：详见 [Provider Runtime](/developer-guide/provider-runtime)。
