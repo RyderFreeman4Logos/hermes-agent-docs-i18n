@@ -3254,6 +3254,7 @@
             - [看板式视频编排器](zh/website/docs/user-guide/skills/optional/creative/creative-kanban-video-orchestrator.md)
             - [模因生成](zh/website/docs/user-guide/skills/optional/creative/creative-meme-generation.md)
             - [像素艺术](zh/website/docs/user-guide/skills/optional/creative/creative-pixel-art.md)
+            - [Pretext](zh/website/docs/user-guide/skills/optional/creative/creative-pretext.md)
             - [Sketch](zh/website/docs/user-guide/skills/optional/creative/creative-sketch.md)
             - [社交媒体内容日历](zh/website/docs/user-guide/skills/optional/creative/creative-social-media-content-calendar.md)
             - [Unreal Mcp](zh/website/docs/user-guide/skills/optional/creative/creative-unreal-mcp.md)
