@@ -1,25 +1,29 @@
 ---
-title: "Powerpoint — Create, read, edit"
+title: "Powerpoint — Create, read, edit .pptx decks with python-pptx"
 sidebar_label: "Powerpoint"
-description: "Create, read, edit"
+description: "Create, read, edit .pptx decks with python-pptx"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # PowerPoint
 
-创建、读取、编辑 .pptx 格式的演示文稿、幻灯片、备注及模板。
+使用 python-pptx 库创建、读取和编辑 .pptx 格式的演示文稿。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/productivity/powerpoint` |
-| 许可证 | 专有许可证。详细条款见 LICENSE.txt 文件 |
+| 路径 | `skills/productivity\powerpoint` |
+| 版本 | `1.1.0` |
+| 开发者 | Nous Research |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
+| 标签 | `pptx`、`powerpoint`、`presentations`、`slides`、`office`、`python-pptx` |
+| 相关技能 | [`docx`](/docs/user-guide/skills/bundled/productivity/productivity-docx)、[`xlsx`](/docs/user-guide/skills/bundled/productivity/productivity-xlsx)、[`pdf`](/docs/user-guide/skills/bundled/productivity/productivity-pdf) |
 
-## 参考：完整 SKILL.md 文件
+## 参考：完整的 SKILL.md 文件
 
 :::info
 以下是 Hermes 在触发该技能时加载的完整技能定义。当技能处于激活状态时，智能体将依据此内容执行操作。
@@ -27,227 +31,117 @@ description: "Create, read, edit"
 
 # PowerPoint 技能
 
+利用 python-pptx 库创建、查看和编辑 PowerPoint (.pptx) 演示文稿。该技能包含五个辅助脚本，可实现基于 JSON 规范的演示文稿生成、结构化内容读取、就地编辑、基于模板的品牌演示文稿创建以及幻灯片渲染等功能——所有操作均在离线环境下完成，无需安装 PowerPoint。
+
 ## 适用场景
 
-每当涉及 .pptx 文件时，无论作为输入、输出还是两者兼有，均可使用此技能。应用场景包括：创建演示文稿、商业计划书或各类报告；从任何 .pptx 文件中读取、解析或提取文本（即便提取出的内容后续会被用于邮件或总结中）；编辑、修改或更新现有演示文稿；合并或拆分幻灯片文件；处理模板、布局、演讲者备注或评论。只要用户提到“演示文稿”“幻灯片”“报告”，或提及 .pptx 文件名，即可触发该技能，无需考虑其后续要对内容进行何种操作。若需要打开、创建或修改 .pptx 文件，均可使用此技能。
+- 用户要求制作幻灯片演示文稿、报告展示或商业计划书。
+- 需要从他人共享的.pptx文件中提取文本、备注、表格、图表数据或图片。
+- 需要更新现有演示文稿：替换文本内容，刷新或修正图表数据，更换标识logo，复制/删除/重新排序幻灯片，设置背景、页脚、超链接或演讲者备注。
+- 必须根据公司的.pptx模板制作符合品牌风格的演示文稿。
+- 请勿将此工具用于传统的.ppt二进制文件——如果安装了LibreOffice，可先使用`soffice --convert-to pptx old.ppt`将其转换。
+
+## 先决条件
+
+- 安装了`python-pptx`的Python 3.10+版本（可通过`pip install python-pptx`安装）。
+- 可选：LibreOffice（`soffice`）以及用于将幻灯片渲染为PNG格式及导出PDF的poppler工具（`pdftoppm`或`pdftocairo`）。`pptx_render.py`会通过`shutil.which`检测这些工具的存在情况；若缺失，它会以优雅的方式降级处理（输出`{"rendered": false, "missing": [...]}`，并返回代码0），此时所有创建/读取/编辑操作仍可正常进行。
+- 可通过终端检查相关工具是否已安装：
+  `python -c "import pptx; print(pptx.__version__)"`以及`which soffice pdftoppm`。
+
+## 运行方式
+
+所有脚本均位于`scripts/`目录中。这些脚本会输出JSON格式的信息到标准输出，并在运行失败时返回非零代码。可通过终端来执行这些脚本：
+
+```bash
+python scripts/pptx_create.py deck.json out.pptx
+python scripts/pptx_read.py deck.pptx --outline      # full JSON outline
+python scripts/pptx_read.py deck.pptx --notes        # speaker notes
+python scripts/pptx_read.py deck.pptx --images ./img # export pictures
+python scripts/pptx_edit.py deck.pptx --replace-text "Old Corp" "New Corp"
+python scripts/pptx_edit.py deck.pptx --chart-data update.json
+python scripts/pptx_edit.py deck.pptx --duplicate-slide 2
+python scripts/pptx_edit.py deck.pptx --remove-slide 3 --move-slide 2 0
+python scripts/pptx_from_template.py brand.pptx out.pptx --values vals.json
+python scripts/pptx_render.py deck.pptx --outdir ./render  # slide PNGs
+```
+
+使用 `write_file` 函数编写 JSON 规范文件；使用 `read_file` 函数查看脚本输出及生成的 JSON 文件。
 
 ## 快速参考
 
-| 任务 | 指引 |
-|------|-------|
-| 读取/分析内容 | `python -m markitdown presentation.pptx` |
-| 基于模板进行编辑或创建 | 阅读 [editing.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/productivity/powerpoint/editing.md) |
-| 从零开始创建 | 阅读 [pptxgenjs.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/productivity/powerpoint/pptxgenjs.md) |
+| 任务 | 命令 |
+|---|---|
+| 根据规范创建演示文稿 | `pptx_create.py spec.json out.pptx` |
+| 16:9与4:3比例 | 在规范文件中指定 `"slide_size": "16:9"` 或 `"4:3"` |
+| 以JSON格式导出大纲 | `pptx_read.py deck.pptx --outline` |
+| 导出图片 | `pptx_read.py deck.pptx --images DIR` |
+| 替换文本 | `pptx_edit.py deck.pptx --replace-text OLD NEW` |
+| 更改图表数据 | `pptx_edit.py deck.pptx --chart-data spec.json` |
+| 修改单个数据系列 | 使用相同参数，规范文件中需包含 `"ops"` 字段（详见下文） |
+| 交换图片 | `pptx_edit.py deck.pptx --swap-image N NAME new.png` |
+| 复制幻灯片 | `pptx_edit.py deck.pptx --duplicate-slide N` |
+| 删除幻灯片 | `pptx_edit.py deck.pptx --remove-slide N` |
+| 重新排序幻灯片 | `pptx_edit.py deck.pptx --move-slide FROM TO` |
+| 设置幻灯片背景 | `pptx_edit.py deck.pptx --set-background N RRGGBB` |
+| 设置超链接 | `pptx_edit.py deck.pptx --hyperlink N TEXT URL` |
+| 显示幻灯片编号 | `pptx_edit.py deck.pptx --enable-slide-number N` |
+| 设置页脚文字 | `pptx_edit.py deck.pptx --set-footer N TEXT` |
+| 设置备注 | `pptx_edit.py deck.pptx --set-notes N TEXT` |
+| 追加备注 | `pptx_edit.py deck.pptx --append-notes N TEXT` |
+| 填充模板内容 | `pptx_from_template.py tpl.pptx out.pptx --values v.json` |
+| 生成幻灯片PNG图片 | `pptx_render.py deck.pptx --outdir DIR` |
 
----
+## 操作步骤
 
-## 读取内容
+### 1. 创建演示文稿
 
-```bash
-# Text extraction
-python -m markitdown presentation.pptx
+首先编写一个 JSON 规范文件（完整格式请参见 `pptx_create.py --help`），随后运行 `pptx_create.py`。针对每张幻灯片，可设置以下参数：`layout`（包括 title、title_content、section、two_content、title_only、blank 等选项）、`title`、`subtitle`、`bullets`（可为字符串，也可为包含层级 level 0-4、字号 pt、加粗/斜体、字体、十六进制颜色以及超链接地址 link 的字典）、`background`（纯色十六进制代码）、`footer`（文本；可启用该布局的页脚占位符）、`slide_number`（true 值；可启用该布局的幻灯片编号占位符）、`images`（图片路径及左侧/顶部位置和英寸单位的宽度/高度）、`tables`（以列表的嵌套列表形式表示的行数）、`shapes`（矩形、圆角矩形、椭圆、菱形、右箭头、人字形等形状，可指定填充色十六进制代码以及可选的文字内容）、`charts`（包括条形图、垂直条形图、折线图、饼图，需提供 categories、series 参数）以及 `notes`（演讲者备注）。
 
-# Visual overview
-python scripts/thumbnail.py presentation.pptx
+### 2. 读取演示文稿
 
-# Raw XML
-python scripts/office/unpack.py presentation.pptx unpacked/
-```
+使用命令 `pptx_read.py deck.pptx --outline` 可获取幻灯片尺寸、布局信息，以及每张幻灯片的布局名称、所有形状中的文字内容、表格单元格数据、图片信息（包括文件名、扩展名和字节大小）、图表的分类/系列/数值数据，还有演讲者备注。如需将嵌入的图片导出为独立文件，可使用 `--images DIR` 参数指定目录，之后若需要查看这些图片的内容，可对导出的图片使用 `vision_analyze` 命令进行分析。
 
-## 编辑工作流程
+### 3. 编辑演示文稿
 
-**详细内容请参阅 [editing.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/productivity/powerpoint/editing.md)。**
+`pptx_edit.py`能够一次性完成多项操作；若需保留原始文件，请使用`--output`参数。文本替换功能会遍历幻灯片形状、表格单元格以及备注内容。图片替换则会重新设置图片的关系标识，从而确保其位置和大小不受影响。删除幻灯片时会同时移除相关关系及`<p:sldId>`条目；而重新排序操作则会在`<p:sldIdLst>`内部调整`<p:sldId>`元素的顺序（python-pptx并未提供相应的公共API，因此这些操作均由脚本在XML层面完成）。使用`--duplicate-slide N`参数可复制第N张幻灯片的独立深拷贝：形状的XML结构以及图片/媒体/超链接关系都会被克隆，同时关系标识也会被重新映射，这样对副本的修改就不会影响到原始文件。该工具不支持对图表幻灯片进行操作（详见“注意事项”部分）。`--set-notes`/`--append-notes`用于编辑演讲者备注；而`--set-background`、`--hyperlink`、`--enable-slide-number`以及`--set-footer`则用于优化演示文稿的整体外观。
 
-1. 使用 `thumbnail.py` 分析模板
-2. 解压 → 操作幻灯片 → 编辑内容 → 清理 → 打包
+要更新图表，可通过`--chart-data`参数传入JSON格式的配置。完整替换的配置格式为：`{"slide": 0, "chart": 0, "categories": [...], "series": {...}}`。若需进行精确调整，可传入`"ops"`参数，其值为一个操作列表，包含`{"op": "update_series", "name": ..., "values": [...]}`、`add_series`、`remove_series`、`rename_category`（支持`from`/`to`或`index`格式）以及`set_title`等操作。由于python-pptx仅能整体替换图表的数据集（即使用`replace_data`功能），因此这些操作实际上是通过“读取现有数据→修改数据→替换数据”的流程来实现的；针对各组成部分的交互界面仅起到封装作用，任何无法表示为类别与数值序列形式的图表数据，在经过这种往返处理后都会被标准化。
 
----
+### 4. 基于模板创建演示文稿
 
-## 从零开始创建
+`pptx_from_template.py` 可以打开一个品牌主题的 .pptx 文件，替换所有幻灯片、表格及备注中来自值 JSON 的 `{{token}}` 占位符，同时还能根据模板预设的布局名称或索引添加新幻灯片，这些新幻灯片将自动继承母版中的字体与颜色设置。提示：如果使用的是没有幻灯片的模板，可以先用 `pptx_edit.py --remove-slide` 删除现有幻灯片。
 
-**详细内容请参阅 [pptxgenjs.md](https://github.com/NousResearch/hermes-agent/blob/main/skills/productivity/powerpoint/pptxgenjs.md)。**
+### 5. 视觉验证
 
-在无法使用模板或参考演示文稿时使用此方法。
+`pptx_render.py deck.pptx --outdir ./render` 会通过 `soffice --headless` 将演示文稿转换为 PDF 格式，再利用 `pdftoppm`（或 `pdftocairo`）将每张幻灯片拆分为独立的 PNG 文件。生成的 JSON 文件会列出所有 PNG 文件的路径——可使用 `vision_analyze` 工具逐一查看这些文件。如果缺少上述任一工具，脚本将输出 `{"rendered": false, "missing": [...]}` 及相关提示并以代码 0 退出；此时可退而使用 `pptx_read.py` 生成的 JSON 大纲，该大纲仅能验证内容与结构，无法检查视觉效果。
 
----
+## 转换为 PDF
 
-## 设计思路
-
-**避免制作枯燥的幻灯片。** 纯白的背景配上简单的项目符号根本无法打动观众。为每张幻灯片参考以下建议。
-
-### 开始之前
-
-- **选择大胆且贴合主题的配色方案**：配色应专为当前主题设计。如果将这些颜色应用到完全不同的演示文稿中依然适用，说明你的选择还不够具体。
-- **主次分明**：应有一种颜色占据主导地位（视觉占比60-70%），再搭配1-2种辅助色调以及1种醒目的强调色。切勿让所有颜色的视觉权重相等。
-- **明暗对比**：标题页和总结页可使用深色背景，内容页则用浅色背景（即“三明治”结构）。或者全程采用深色风格以营造高级感。
-- **确定统一视觉元素**：挑选一个独特的元素并贯穿所有幻灯片——如圆角图片框、彩色圆圈中的图标、粗单边边框等。
-
-### 配色方案
-
-选择与主题相匹配的颜色，不要默认使用通用的蓝色。以下配色方案可供参考：
-
-| 主题 | 主色调 | 辅助色 | 强调色 |
-|------|--------|--------|--------|
-| **午夜商务风** | `1E2761`（深蓝） | `CADCFC`（冰蓝） | `FFFFFF`（白色） |
-| **森林苔藓风** | `2C5F2D`（森林绿） | `97BC62`（苔藓绿） | `F5F5F5`（奶油色） |
-| **珊瑚活力风** | `F96167`（珊瑚红） | `F9E795`（金色） | `2F3C7E`（深蓝） |
-| **温暖赤陶风** | `B85042`（赤陶色） | `E7E8D1`（沙色） | `A7BEAE`（鼠尾草绿） |
-| **海洋渐变风** | `065A82`（深蓝） | `1C7293`（青绿色） | `21295C`（午夜蓝） |
-| **炭灰极简风** | `36454F`（炭灰色） | `F2F2F2`（米白色） | `212121`（黑色） |
-| **青绿信任风** | `028090`（青绿色） | `00A896`（海藻绿） | `02C39A`（薄荷绿） |
-| **浆果奶油风** | `6D2E46`（浆果红） | `A26769`（玫瑰粉） | `ECE2D0`（奶油色） |
-| **鼠尾草宁静风** | `84B59F`（鼠尾草绿） | `69A297`（桉树绿） | `50808E`（板岩灰） |
-| **樱桃醒目风** | `990011`（樱桃红） | `FCF6F5`（米白色） | `2F3C7E`（深蓝） |
-
-### 每张幻灯片的设计要点
-
-**每张幻灯片都需要视觉元素**——如图片、图表、图标或形状。仅有文字的幻灯片极易被遗忘。
-
-**布局选项：**
-- 双栏布局（左侧为文字，右侧为插图）
-- 图标+文字行布局（图标置于彩色圆圈中，上方为醒目标题，下方为描述文字）
-- 2x2或2x3网格布局（一侧放置图片，另一侧排列内容块）
-- 半透出图片布局（图片占据左侧或右侧整个区域），并在其上叠加文字内容
-
-**数据展示方式：**
-- 大型数据标注（数字大小为60-72磅，下方附有小标签）
-- 对比列展示（前后对比、优缺点对比、并列选项对比）
-- 时间轴或流程图（带编号的步骤及箭头指示）
-
-**视觉优化技巧：**
-- 在章节标题旁添加小型彩色圆圈中的图标
-- 用斜体突出显示关键数据或标语
-
-### 字体选择
-
-**挑选有趣的字体组合**——不要默认使用Arial。选择一个有特色的标题字体，并搭配简洁的正文字体。
-
-| 标题字体 | 正文字体 |
-|---------|---------|
-| Georgia | Calibri |
-| Arial Black | Arial |
-| Calibri | Calibri Light |
-| Cambria | Calibri |
-| Trebuchet MS | Calibri |
-| Impact | Arial |
-| Palatino | Garamond |
-| Consolas | Calibri |
-
-| 元素 | 字号大小 |
-|---------|----------|
-| 幻灯片标题 | 36-44磅，加粗 |
-| 章节标题 | 20-24磅，加粗 |
-| 正文文字 | 14-16磅 |
-| 图注文字 | 10-12磅，浅色 |
-
-### 缺距设置
-
-- 最小边距为0.5英寸
-- 各内容块之间的间距为0.3-0.5英寸
-- 保留适当空隙，避免填满所有空间
-
-### 需避免的常见错误
-
-- **避免重复同一布局**：在不同幻灯片中变换列式、卡片样式和标注方式
-- **避免将正文文字居中**：段落和列表应左对齐，仅标题可居中
-- **注意大小对比度**：标题字号需达到36磅以上，才能在14-16磅的正文文字中突出显示
-- **避免默认使用蓝色**：应选择能体现主题特色的颜色
-- **避免随意设置间距**：选定0.3英寸或0.5英寸的固定间距并保持一致
-- **避免只设计一张精美幻灯片，其余保持简单**：要么全面优化，要么整体保持简洁风格
-- **避免制作仅有文字的幻灯片**：务必添加图片、图标、图表等视觉元素，避免仅使用标题和项目符号
-- **注意文本框的内边距**：在将线条或形状与文本边缘对齐时，需为文本框设置`margin: 0`，或调整形状位置以考虑内边距影响
-- **避免使用对比度低的元素**：图标和文字都需要与背景形成强烈对比；避免在浅色背景上使用浅色文字，或在深色背景上使用深色文字
-- **绝对不要在标题下方添加强调线**：这是AI生成幻灯片的典型特征，应改用空白区域或背景色替代
-
----
-
-## 质量检查（必做）
-
-**假设必然存在问题，你的任务就是找出它们。**
-
-初次生成的结果几乎从不完美。应将质量检查视为查找缺陷的过程，而非简单的确认步骤。如果初次检查就未发现任何问题，说明你检查得还不够仔细。
-
-### 内容质量检查
+如果已安装 LibreOffice，可直接将处理完成的演示文稿导出为 PDF 格式：
 
 ```bash
-python -m markitdown output.pptx
+soffice --headless --convert-to pdf --outdir ./out deck.pptx
 ```
 
-检查是否存在内容缺失、拼写错误或顺序不当的问题。
+处理结果将保存在 `./out/deck.pdf` 文件中。对于主机上未安装的字体，系统会自动替换，因此在发送 PDF 之前请务必执行渲染验证（步骤 5）。目前没有纯 Python 的离线 .pptx→PDF 转换方案；如果系统中没有安装 `soffice`，应直接说明情况，而不要尝试强行替代。
 
-**在使用模板时，还需确认是否还有残留的占位符文本：**
+## 常见问题
 
-```bash
-python -m markitdown output.pptx | grep -iE "xxxx|lorem|ipsum|this.*(page|slide).*layout"
-```
+- **文本分段问题**：PowerPoint 会在拼写检查及编辑边界处将段落文本拆分成多个片段。`--replace-text` 参数会首先合并格式相同的相邻片段，因此跨这些片段出现的匹配内容会被完整保留格式地替换。只有当匹配内容涉及*格式确实不同*的片段时，段落才会被重写为第一个片段的格式——请在替换后检查相关幻灯片。
+- **图表幻灯片无法复制**：每个图表都包含独立的 XLSX 工作簿部分，系统不支持可靠地复制此类图表，因此 `--duplicate-slide` 参数会直接拒绝复制图表幻灯片，以避免损坏整个演示文稿。建议在新的幻灯片中重新创建图表。外部超链接以及图片/媒体引用会被保留，而布局和备注相关内容则会被重新生成。
+- **图表操作仅为封装层**：python-pptx 实际上是替换整个数据集；`"ops"` 参数仅通过 `replace_data` 函数对现有图表数据进行处理，因此无法更改图表的*类型*。
+- **重排序需在 XML 层级进行**：python-pptx 不提供专门的重排序接口。`--move-slide` 参数会直接操作 `<p:sldIdLst>` 元素，虽然对于普通演示文稿是安全的，但操作后仍建议重新读取演示文稿以确认结果。
+- **不支持在多个演示文稿之间复制幻灯片**——仅可在同一演示文稿内进行复制，因为该场景下各幻灯片的布局和母版是共享的。
+- 启用页脚/幻灯片编号功能时会从对应幻灯片布局中复制占位符；对于没有这些占位符的布局，使用 `--set-footer` 会报出明确的错误信息（建议改用文本框）。
+- 超链接适用于整个演示文稿序列；`--hyperlink` 选项会将该幻灯片上包含指定文本的所有序列项都设为超链接。
+- 默认的 python-pptx 模板比例为 4:3；除非规格另有规定，否则创建脚本会使用 16:9 的比例。自定义模板则保留其原有的尺寸比例。
+- 不同模板对应的布局索引各不相同。对于品牌专用模板，需先列出所有布局名称：`pptx_read.py template.pptx --outline`（可查看 `layouts_available` 输出）。
+- 空白布局的 `slide.shapes.title` 属性值为 None——创建脚本已处理了这种情况，但在编写自定义的 python-pptx 代码时需牢记这一点。
+- 在编写规格文件时，请始终指定 `encoding="utf-8"`，因为诸如 `{{city}}` 这样的占位符可能会被非 ASCII 字符填充。
 
-如果 grep 返回了结果，在宣布任务成功之前必须先修复这些问题。
+## 验证
 
-### 视觉质量检测
-
-**⚠️ 请务必使用子智能体**——即便只有 2-3 张幻灯片也不例外。您长时间盯着代码查看，很容易看到自己期望看到的内容而非实际存在的状况。子智能体则能带来全新的视角。
-
-首先将幻灯片转换为图像（详见[转换为图像](#converting-to-images)），然后再使用以下提示词：
-
-```
-Visually inspect these slides. Assume there are issues — find them.
-
-Look for:
-- Overlapping elements (text through shapes, lines through words, stacked elements)
-- Text overflow or cut off at edges/box boundaries
-- Decorative lines positioned for single-line text but title wrapped to two lines
-- Source citations or footers colliding with content above
-- Elements too close (< 0.3" gaps) or cards/sections nearly touching
-- Uneven gaps (large empty area in one place, cramped in another)
-- Insufficient margin from slide edges (< 0.5")
-- Columns or similar elements not aligned consistently
-- Low-contrast text (e.g., light gray text on cream-colored background)
-- Low-contrast icons (e.g., dark icons on dark backgrounds without a contrasting circle)
-- Text boxes too narrow causing excessive wrapping
-- Leftover placeholder content
-
-For each slide, list issues or areas of concern, even if minor.
-
-Read and analyze these images:
-1. /path/to/slide-01.jpg (Expected: [brief description])
-2. /path/to/slide-02.jpg (Expected: [brief description])
-
-Report ALL issues found, including minor ones.
-```
-
-### 验证循环
-
-1. 生成幻灯片 → 转换为图片 → 检查
-2. **列出发现的问题**（若未发现问题，则需更仔细地重新检查）
-3. 修复问题
-4. **重新验证受影响的幻灯片**——通常一次修复会引发新的问题
-5. 重复上述步骤，直到全部检查均未发现新问题为止
-
-**在完成至少一个“修复-验证”循环之前，切勿宣布任务成功。**
-
----
-
-## 转换为图片
-
-将演示文稿转换为单个幻灯片图片，以便进行可视化检查：
-
-```bash
-python scripts/office/soffice.py --headless --convert-to pdf output.pptx
-pdftoppm -jpeg -r 150 output.pdf slide
-```
-
-这将生成 `slide-01.jpg`、`slide-02.jpg` 等文件。
-
-在修复问题后，如需重新渲染特定幻灯片：
-
-```bash
-pdftoppm -jpeg -r 150 -f N -l N output.pdf slide-fixed
-```
-
-## 依赖项
-
-- `pip install "markitdown[pptx]"` —— 文本提取功能  
-- `pip install Pillow` —— 缩略图网格生成  
-- `npm install -g pptxgenjs` —— 从零开始创建演示文稿  
-- LibreOffice（`soffice`）—— PDF格式转换（通过`scripts/office/soffice.py`自动配置，适用于沙箱环境）  
-- Poppler（`pdftoppm`）—— PDF转换为图像文件
+1. 在完成任何创建或编辑操作后，运行 `pptx_read.py OUT.pptx --outline`，并检查幻灯片数量、文本内容、表格信息、备注内容以及图表数值是否与预期一致。  
+2. 使用 `--images DIR` 参数后再通过文件大小检查，可确认图片是否已正确嵌入文档中。  
+3. 通过 `pptx_render.py deck.pptx --outdir ./render` 命令渲染所有幻灯片，随后使用 `vision_analyze` 工具逐一查看生成的 PNG 文件——该工具能够检测出轮廓分析无法发现的元素重叠、文本截断以及颜色问题。若缺少相应的渲染工具，脚本会给出提示，此时仍应以轮廓分析结果为准。  
+4. 所附带的测试套件即构成了完整的验证标准：运行 `python -m pytest tests/ -q` 即可进行测试（需安装 python-pptx 和 pytest 工具）。
