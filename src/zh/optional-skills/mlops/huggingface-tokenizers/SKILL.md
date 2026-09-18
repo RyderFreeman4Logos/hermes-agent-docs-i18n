@@ -1,6 +1,6 @@
 ---
 name: huggingface-tokenizers
-description: Fast tokenizers optimized for research and production. Rust-based implementation tokenizes 1GB in <20 seconds. Supports BPE, WordPiece, and Unigram algorithms. Train custom vocabularies, track alignments, handle padding/truncation. Integrates seamlessly with transformers. Use when you need high-performance tokenization or custom tokenizer training.
+description: Fast BPE/WordPiece tokenization and custom vocab training.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -12,28 +12,28 @@ metadata:
 
 ---
 
-# HuggingFace Tokenizers——高效的自然语言处理分词工具
+# HuggingFace Tokenizers——面向自然语言处理的快速分词工具
 
-兼具 Rust 语言的高性能与 Python 的易用性，是专为生产环境设计的快速分词器。
+兼具 Rust 语言的高性能与 Python 的易用性，是可用于生产环境的快速分词器。
 
 ## 何时使用 HuggingFace Tokenizers
 
-**以下情况推荐使用 HuggingFace Tokenizers：**
-- 需要极快的分词速度（每 GB 文本处理时间＜20秒）
+**以下情况建议使用 HuggingFace Tokenizers：**
+- 需要极快的分词速度（每 GB 文本处理时间 <20秒）
 - 需要从零开始训练自定义分词器
-- 需要实现词元与原始文本位置的对应跟踪
+- 需要实现标记与原始文本位置的对应关系跟踪
 - 构建用于生产环境的大语言处理流程
-- 需要高效地对大规模语料库进行分词
+- 需要高效地对大规模语料库进行分词处理
 
 **性能特点：**
-- **速度**：在 CPU 上处理 1GB 文本仅需＜20秒
+- **速度**：在 CPU 上处理 1GB 文本仅需不到 20 秒
 - **实现架构**：以 Rust 为核心，同时提供 Python/Node.js 接口
-- **效率**：相比纯 Python 实现快 10 到 100 倍
+- **效率**：相比纯 Python 实现，速度提升 10 到 100 倍
 
-**其他可选方案：**
+**可选择的其他替代工具：**
 - **SentencePiece**：与语言无关，被 T5/ALBERT 模型采用
 - **tiktoken**：OpenAI 为 GPT 模型开发的 BPE 分词器
-- **transformers AutoTokenizer**：仅用于加载预训练模型（内部实际使用该库）
+- **transformers AutoTokenizer**：仅用于加载预训练模型（其内部实际使用该库）
 
 ## 快速入门
 
@@ -92,7 +92,7 @@ tokenizer.train(files, trainer)
 tokenizer.save("my-tokenizer.json")
 ```
 
-**训练时间**：100MB的语料库大约需要1-2分钟，而1GB的语料库则需要10-20分钟。
+**训练时间**：100MB的语料库大约需要1-2分钟，而1GB的语料库则需约10-20分钟。
 
 ### 带填充的批量编码
 
@@ -117,8 +117,8 @@ for encoding in encodings:
 **工作原理**：
 1. 从字符级词汇表开始
 2. 找出出现频率最高的字符对
-3. 将其合并为新的标记，并添加到词汇表中
-4. 重复上述步骤，直至达到所需的词汇表规模
+3. 将其合并为一个新标记，并加入词汇表
+4. 重复上述步骤，直至达到设定的词汇表大小
 
 **被以下模型采用**：GPT-2、GPT-3、RoBERTa、BART、DeBERTa
 
@@ -145,7 +145,7 @@ tokenizer.train(files=["data.txt"], trainer=trainer)
 - 词汇量大小可调
 - 非常适合形态变化复杂的语言
 
-**缺点**：
+**局限性**：
 - 分词结果取决于合并顺序
 - 可能会意外拆分常见单词
 
@@ -154,7 +154,7 @@ tokenizer.train(files=["data.txt"], trainer=trainer)
 **工作原理**：
 1. 从字符级词汇表开始
 2. 计算各合并对的得分：`频率(对) / (频率(第一个词) × 频率(第二个词))`
-3. 合并得分最高的那一对
+3. 合并得分最高的词对
 4. 重复上述步骤，直至达到目标词汇量
 
 **被以下模型采用**：BERT、DistilBERT、MobileBERT
@@ -180,19 +180,19 @@ tokenizer.train(files=["corpus.txt"], trainer=trainer)
 ```
 
 **优势**：  
-- 优先处理有实际意义的合并操作（得分越高，语义关联度越强）；  
-- 已在 BERT 中成功应用，并取得了当前最先进的性能成果。  
+- 优先处理具有实际意义的合并操作（得分越高，语义关联度越强）；  
+- 已在 BERT 中得到成功应用，并取得了当前最先进的性能成果。  
 
 **局限性**：  
 - 若找不到子词匹配，未知词汇将显示为 `[UNK]`；  
 - 该算法仅能压缩词汇表，无法优化合并规则，因此会导致文件体积增大。  
 
-### 单语模型  
+### 单词级模型（Unigram）  
 
 **工作原理**：  
 1. 从包含所有子串的庞大词汇表开始；  
 2. 使用当前词汇表计算语料库的损失值；  
-3. 移除对损失影响最小的词元；  
+3. 删除对损失影响最小的词汇；  
 4. 重复上述步骤，直至达到目标词汇表大小。  
 
 **被以下模型采用**：ALBERT、T5、mBART、XLNet（通过 SentencePiece 实现）。
@@ -214,17 +214,17 @@ tokenizer.train(files=["data.txt"], trainer=trainer)
 ```
 
 **优势**：
-- 基于概率模型（可找出最可能的分词方式）
+- 基于概率模型（可找到最可能的分词方式）
 - 非常适用于没有词界分隔的语言
 - 能够处理多种不同的语言场景
 
 **缺点**：
-- 训练成本较高
+- 训练过程计算成本较高
 - 需要调整的超参数更多
 
 ## 分词流程
 
-完整流程：**标准化 → 预处理 → 模型推理 → 后处理**
+完整流程：**标准化 → 预处理分词 → 模型处理 → 后处理**
 
 ### 标准化
 
@@ -243,8 +243,8 @@ tokenizer.normalizer = Sequence([
 # After normalization: "hello world"
 ```
 
-**常用规范化工具**：
-- `NFD`、`NFC`、`NFKD`、`NFKC` —— Unicode规范化形式
+**常用规范化处理函数**：
+- `NFD`、`NFC`、`NFKD`、`NFKC` —— Unicode标准化形式
 - `Lowercase()` —— 转换为小写
 - `StripAccents()` —— 移除重音符号（如 é 转为 e）
 - `Strip()` —— 删除空白字符
@@ -330,7 +330,7 @@ for token, offset in zip(output.tokens, output.offsets):
 **应用场景**：
 - 实体识别（将预测结果映射回原文）
 - 问答系统（提取答案片段）
-- 词元分类（将标签与原始位置对应起来）
+- 词元分类（将标签与原始位置对应）
 
 ## 与 Transformer 的集成
 
@@ -452,7 +452,7 @@ with Pool(8) as pool:
 
 ### 训练速度
 
-| 数据集大小 | BPE（3万词汇量） | WordPiece（3万词汇量） | Unigram（8千词汇量） |
+| 数据集规模 | BPE（3万词汇量） | WordPiece（3万词汇量） | Unigram（8千词汇量） |
 |-------------|-----------------|---------------------|--------------------|
 | 10 MB       | 15秒            | 18秒                | 25秒               |
 | 100 MB      | 1.5分钟          | 2分钟               | 4分钟              |
@@ -462,11 +462,11 @@ with Pool(8) as pool:
 
 ### 分词速度
 
-| 实现方式       | 1 GB数据集 | 处理吞吐量     |
-|----------------|-----------|----------------|
-| 纯Python实现   | 约20分钟  | 约50 MB/分钟    |
-| HF分词器库     | 约15秒    | 约4 GB/分钟     |
-| **加速比**     | **80倍**  | **80倍**       |
+| 实现方式       | 1 GB数据集   | 处理吞吐量     |
+|----------------|-------------|----------------|
+| 纯Python实现   | 约20分钟    | 约50 MB/分钟    |
+| HF分词器库     | 约15秒      | 约4 GB/分钟     |
+| **加速比**     | **80倍**    | **80倍**       |
 
 **测试内容**：英文文本，平均句子长度为20个单词
 
@@ -480,7 +480,7 @@ with Pool(8) as pool:
 
 ## 支持的模型
 
-可通过 `from_pretrained()` 函数加载预训练分词器：
+可通过`from_pretrained()`函数加载预训练分词器，支持的模型包括：
 
 **BERT系列**：
 - `bert-base-uncased`、`bert-large-cased`
@@ -499,22 +499,21 @@ with Pool(8) as pool:
 - `facebook/bart-base`、`facebook/mbart-large-cc25`
 - `albert-base-v2`、`albert-xlarge-v2`
 - `xlm-roberta-base`、`xlm-roberta-large`
-
-查看所有模型：https://huggingface.co/models?library=tokenizers
+浏览全部模型：https://huggingface.co/models?library=tokenizers
 
 ## 参考资料
 
-- **[训练指南](references/training.md)** —— 学习如何训练自定义分词器、配置训练器以及处理大规模数据集
-- **[算法深度解析](references/algorithms.md)** —— 详细讲解BPE、WordPiece和Unigram算法
-- **[流程组件](references/pipeline.md)** —— 介绍标准化工具、预分词器、后处理模块及解码器
-- **[与Transformers的集成](references/integration.md)** —— 讲解AutoTokenizer、PreTrainedTokenizerFast以及特殊标记的使用方法
+- **[训练指南](references/training.md)** - 自定义分词器的训练方法、训练器配置以及大规模数据集的处理技巧
+- **[算法深度解析](references/algorithms.md)** - 详细讲解 BPE、WordPiece 和 Unigram 算法
+- **[流水线组件](references/pipeline.md)** - 规范化工具、预分词器、后处理模块及解码器
+- **[与 Transformers 的集成](references/integration.md)** - AutoTokenizer、PreTrainedTokenizerFast 以及特殊标记的使用方法
 
-## 相关资源
+## 资源链接
 
 - **文档**：https://huggingface.co/docs/tokenizers
-- **GitHub仓库**：https://github.com/huggingface/tokenizers ⭐ 9,000+星标
-- **版本号**：0.20.0及以上
+- **GitHub 仓库**：https://github.com/huggingface/tokenizers ⭐ 9,000+ 次点赞
+- **当前版本**：0.20.0+
 - **课程**：https://huggingface.co/learn/nlp-course/chapter6/1
-- **相关论文**：BPE（Sennrich等人，2016年），WordPiece（Schuster与Nakajima，2012年）
+- **相关论文**：BPE（Sennrich 等人，2016年），WordPiece（Schuster 和 Nakajima，2012年）
 
 
