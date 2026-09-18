@@ -3335,7 +3335,7 @@
             - [商店功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-shop.md)
             - [Shopify](zh/website/docs/user-guide/skills/optional/productivity/productivity-shopify.md)
             - [SiYuan](zh/website/docs/user-guide/skills/optional/productivity/productivity-siyuan.md)
-            - [电话功能](zh/website/docs/user-guide/skills/optional/productivity/productivity-telephony.md)
+            - [电话服务](zh/website/docs/user-guide/skills/optional/productivity/productivity-telephony.md)
           - [Research]()
             - [生物信息学](zh/website/docs/user-guide/skills/optional/research/research-bioinformatics.md)
             - [Blogwatcher](zh/website/docs/user-guide/skills/optional/research/research-blogwatcher.md)
