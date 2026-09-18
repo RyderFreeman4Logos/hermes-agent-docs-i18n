@@ -3332,7 +3332,7 @@
             - [Pytorch Lightning](zh/website/docs/user-guide/skills/optional/mlops/mlops-pytorch-lightning.md)
             - [Qdrant](zh/website/docs/user-guide/skills/optional/mlops/mlops-qdrant.md)
             - [Dspy](zh/website/docs/user-guide/skills/optional/mlops/mlops-research-dspy.md)
-            - [稀疏自编码器训练](zh/website/docs/user-guide/skills/optional/mlops/mlops-saelens.md)
+            - [Saelens](zh/website/docs/user-guide/skills/optional/mlops/mlops-saelens.md)
             - [Simpo](zh/website/docs/user-guide/skills/optional/mlops/mlops-simpo.md)
             - [Slime](zh/website/docs/user-guide/skills/optional/mlops/mlops-slime.md)
             - [Stable Diffusion](zh/website/docs/user-guide/skills/optional/mlops/mlops-stable-diffusion.md)
