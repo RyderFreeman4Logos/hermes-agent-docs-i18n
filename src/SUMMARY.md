@@ -3286,6 +3286,7 @@
             - [Accelerate](zh/website/docs/user-guide/skills/optional/mlops/mlops-accelerate.md)
             - [Chroma](zh/website/docs/user-guide/skills/optional/mlops/mlops-chroma.md)
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
+            - [Llms Harness 评估工具](zh/website/docs/user-guide/skills/optional/mlops/mlops-evaluation-evaluating-llms-harness.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
             - [Guidance](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
