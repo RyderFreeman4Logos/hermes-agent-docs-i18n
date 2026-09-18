@@ -6,7 +6,7 @@ description: "Manim CE animations: 3Blue1Brown math/algo videos"
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# Manim 视频生成
+# Manim 视频
 
 Manim CE 动画：3Blue1Brown 风格的数学/算法教学视频。
 
@@ -15,64 +15,67 @@ Manim CE 动画：3Blue1Brown 风格的数学/算法教学视频。
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/creative/manim-video` |
+| 路径 | `skills/creative\manim-video` |
 | 版本 | `1.0.0` |
+| 开发者 | SHL0MS, Hermes Agent |
+| 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
+| 标签 | `Manim`、`动画`、`数学`、`视频` |
 
 ## 参考：完整 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，智能体看到的指令即为此内容。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能启用时，智能体将依据此内容执行操作。
 :::
 
 # Manim 视频制作流程
 
 ## 适用场景
 
-当用户需要以下内容时可使用此技能：动画化解释、数学动画、概念可视化、算法演示、技术说明、3Blue1Brown 风格的视频，或任何包含几何/数学内容的程序化动画。它能够利用 Manim Community Edition 制作出 3Blue1Brown 风格的讲解视频、算法可视化内容、方程推导过程、架构图以及数据叙事作品。
+当用户需要以下内容时可使用该技能：动画化讲解、数学动画、概念可视化、算法演示、技术说明视频、3Blue1Brown 风格的视频，或是任何包含几何/数学内容的程序化动画。它能够利用 Manim Community Edition 制作出 3Blue1Brown 风格的讲解视频、算法可视化内容、方程推导过程、架构图以及数据叙事作品。
 
 ## 创作标准
 
-这属于教育类电影。每一帧都承载着教学意义，每一个动画都在揭示事物的结构。
+这属于教育类电影。每一帧都承载着教学意义，每一个动画元素都在揭示事物的结构。
 
-在编写任何代码之前，首先要明确故事的叙事脉络。要纠正哪些误解？怎样的呈现才能带来“顿悟时刻”？又该通过怎样的视觉叙事帮助观众从困惑走向理解？用户的提示只是起点——需以教育为导向来解读这些需求。
+**在编写任何一行代码之前**，先明确整个内容的叙事脉络。它要纠正哪些错误观念？怎样的时刻能带来“恍然大悟”的体验？又该通过怎样的视觉故事引导观众从困惑走向理解？用户的提示只是起点——应以富有教育意义的视角来解读它。
 
-**先讲几何，再讲代数。** 先展示图形，再呈现方程式。视觉记忆的编码速度远快于符号记忆。当观众先看到几何图案，再了解对应的公式时，就会觉得这个公式是水到渠成的。
+**先讲几何，再讲代数。** 先展示图形，再呈现公式。视觉记忆的编码速度远快于符号记忆。当观众先看到几何图案，再接触到公式时，就会觉得这个公式是水到渠成的。
 
-**初次渲染的质量至关重要。** 输出结果必须在无需多次修改的情况下就具备清晰的视觉效果和统一的美学风格。如果画面显得杂乱、节奏不当，或类似“AI 生成的幻灯片”，那就说明做得不对。
+**首次渲染的结果就必须完美无缺。** 输出内容必须在无需多次修改的情况下就做到视觉清晰、风格统一。如果画面显得杂乱无章、时机不当，或者有“AI生成的幻灯片”的感觉，那便是失败的。
 
-**通过透明度分层引导注意力。** 永远不要以最高亮度展示所有内容。主要元素设为 1.0，背景元素设为 0.4，结构元素（如坐标轴、网格）则设为 0.15。人脑是按层次来处理视觉突出度的。
+**通过透明度层次引导注意力。** 切勿让所有元素都以最高亮度显示。主要元素设为1.0，背景元素设为0.4，结构元素（如坐标轴、网格）则设为0.15。人脑是按层次来处理视觉突出度的。
 
-**留出缓冲时间。** 每个动画之后都需要加入 `self.wait()`。观众需要时间来理解刚刚呈现的内容。切勿急于切换到下一个动画。在关键信息展示后暂停 2 秒绝非浪费时间。
+**留出缓冲时间。** 每个动画之后都必须加入`self.wait()`。这样能让观众有时间消化刚刚呈现的内容。绝不能急于切换到下一个动画。在关键信息显现后暂停2秒，绝非浪费时间。
 
-**保持统一的视觉风格。** 所有场景都应使用相同的配色方案、一致的字体大小以及匹配的动画速度。即便技术上正确，但每个场景都使用随机颜色的视频，在美学上也是失败的。
+**保持统一的视觉语言。** 所有场景都应使用相同的配色方案、一致的字体大小以及匹配的动画速度。即便技术上正确，但每个场景都使用随机颜色的视频，在美学上也是失败的。
 
 ## 先决条件
 
-运行 `scripts/setup.sh` 以检查所有依赖项。所需环境包括：Python 3.10 及以上版本、Manim Community Edition v0.20 及以上版本（可通过 `pip install manim` 安装）、LaTeX（Linux 系统需安装 `texlive-full`，macOS 系统需安装 `mactex`）以及 ffmpeg。参考文档是基于 Manim CE v0.20.1 测试的。
+运行 `scripts/setup.sh` 即可检查所有依赖项。所需环境包括：Python 3.10 及以上版本、Manim Community Edition v0.20 及以上版本（可通过 `pip install manim` 安装）、LaTeX 编译工具（Linux 系统需安装 `texlive-full`，MacOS 系统需安装 `mactex`）以及 ffmpeg。参考文档是基于 Manim CE v0.20.1 版本进行测试的。
 
 ## 模式
 
 | 模式 | 输入内容 | 输出结果 | 参考文档 |
 |------|---------|----------|-----------|
-| **概念讲解** | 主题/概念 | 具有几何直观性的动画化解释 | `references/scene-planning.md` |
-| **方程推导** | 数学表达式 | 分步展示的动画化证明过程 | `references/equations.md` |
-| **算法可视化** | 算法描述 | 包含数据结构的逐步执行过程 | `references/graphs-and-data.md` |
-| **数据叙事** | 数据/指标 | 动画化的图表、对比内容及计数展示 | `references/graphs-and-data.md` |
-| **架构图绘制** | 系统描述 | 通过连接关系逐步呈现各组成部分 | `references/mobjects.md` |
-| **论文讲解** | 研究论文 | 关键发现与方法的动画化呈现 | `references/scene-planning.md` |
-| **3D 可视化** | 3D 概念 | 旋转的曲面、参数曲线及空间几何结构 | `references/camera-and-3d.md` |
+| **概念解释器** | 主题/概念 | 具有几何直观性的动画讲解 | `references/scene-planning.md` |
+| **方程推导器** | 数学表达式 | 分步演示的动画证明过程 | `references/equations.md` |
+| **算法可视化工具** | 算法描述 | 包含数据结构展示的分步执行过程 | `references/graphs-and-data.md` |
+| **数据叙事工具** | 数据/指标 | 动态图表、对比分析及计数器展示 | `references/graphs-and-data.md` |
+| **架构图生成器** | 系统描述 | 逐步构建的组件结构及连接关系 | `references/mobjects.md` |
+| **论文解释器** | 研究论文 | 关键发现与方法的动画演示 | `references/scene-planning.md` |
+| **3D 可视化工具** | 3D 概念 | 旋转曲面、参数曲线及空间几何结构展示 | `references/camera-and-3d.md` |
 
 ## 技术栈
 
-每个项目仅需一个 Python 脚本。无需浏览器、Node.js，也不需要 GPU。
+每个项目仅需一个 Python 脚本，无需浏览器、Node.js 或 GPU 支持。
 
 | 层级 | 工具 | 用途 |
-|---|---|---|
+|-------|------|---------|
 | 核心层 | Manim Community Edition | 场景渲染与动画引擎 |
-| 数学处理层 | LaTeX（texlive/MiKTeX） | 通过 `MathTex` 功能实现方程式渲染 |
-| 视频处理层 | ffmpeg | 场景拼接、格式转换及音频混音 |
-| 文本转语音层 | ElevenLabs / Qwen3-TTS（可选） | 提供旁白配音 |
+| 数学表达式处理 | LaTeX (texlive/MiKTeX) | 通过 `MathTex` 功能实现公式渲染 |
+| 视频输入输出 | ffmpeg | 场景拼接、格式转换及音频混音 |
+| 文本转语音 | ElevenLabs / Qwen3-TTS（可选） | 为内容提供旁白配音 |
 
 ## 工作流程
 
@@ -81,11 +84,11 @@ PLAN --> CODE --> RENDER --> STITCH --> AUDIO (optional) --> REVIEW
 ```
 
 1. **规划阶段** — 编写 `plan.md` 文件，明确故事情节脉络、场景列表、视觉元素、配色方案以及旁白脚本。  
-2. **编码阶段** — 编写 `script.py` 文件，为每个场景定义一个独立的可渲染类。  
-3. **渲染阶段** — 使用 `manim -ql script.py Scene1 Scene2 ...` 生成初稿，使用 `-qh` 参数则用于最终输出。  
+2. **编码阶段** — 编写 `script.py` 文件，为每个场景定义一个独立可渲染的类。  
+3. **渲染阶段** — 使用 `manim -ql script.py Scene1 Scene2 ...` 生成初稿，使用 `-qh` 参数进行最终输出。  
 4. **拼接阶段** — 通过 ffmpeg 将各场景片段合并为 `final.mp4` 文件。  
-5. **音频处理（可选）** — 利用 ffmpeg 添加旁白和/或背景音乐。详情请参阅 `references/rendering.md`。  
-6. **审阅阶段** — 生成预览帧，与规划内容进行比对并做相应调整。  
+5. **音频处理（可选）** — 利用 ffmpeg 添加旁白和/或背景音乐，详情请参阅 `references/rendering.md`。  
+6. **审核阶段** — 生成预览帧，与规划内容对照检查并做相应调整。  
 
 ## 项目结构
 
@@ -99,21 +102,21 @@ project-name/
     videos/script/480p15/
 ```
 
-## 创意设计方向
+## 创意方向
 
 ### 颜色方案
 
 | 颜色方案 | 背景色 | 主色调 | 辅助色 | 强调色 | 适用场景 |
 |---------|-----------|---------|---------|--------|----------|
 | **经典 3B1B** | `#1C1C1C` | `#58C4DD`（蓝色） | `#83C167`（绿色） | `#FFFF00`（黄色） | 通用数学/计算机科学内容 |
-| **温暖学术风** | `#2D2B55` | `#FF6B6B` | `#FFD93D` | `#6BCB77` | 贴近大众的视觉风格 |
+| **温暖学术风** | `#2D2B55` | `#FF6B6B` | `#FFD93D` | `#6BCB77` | 更具亲和力的呈现风格 |
 | **霓虹科技风** | `#0A0A0A` | `#00F5FF` | `#FF00FF` | `#39FF14` | 系统设计、架构相关内容 |
-| **单色风格** | `#1A1A2E` | `#EAEAEA` | `#888888` | `#FFFFFF` |极简主义设计 |
+| **单色风格** | `#1A1A2E` | `#EAEAEA` | `#888888` | `#FFFFFF` |极简主义风格 |
 
 ### 动画速度
 
 | 使用场景 | 运行时间 | 动画结束后自停时间 |
-|---------|-----------|-------------------|
+|---------|---------|-------------------|
 | 标题/开场画面出现 | 1.5秒 | 1.0秒 |
 | 关键公式展示 | 2.0秒 | 2.0秒 |
 | 变形/过渡动画 | 1.5秒 | 1.5秒 |
@@ -123,7 +126,7 @@ project-name/
 
 ### 字体大小规范
 
-| 字体角色 | 字体尺寸 | 用途 |
+| 字体角色 | 字体大小 | 用途 |
 |------|---------|-------|
 | 标题 | 48 | 场景标题、开场文字 |
 | 标题级文字 | 36 | 场景内的章节标题 |
@@ -143,25 +146,25 @@ Text("n=1: sin(x)", font_size=20, font=MONO)                  # labels
 MathTex(r"\nabla L")                                            # math (uses LaTeX)
 ```
 
-为确保可读性，`font_size` 的最小值应设置为 18。
+为确保良好的可读性，建议将`font_size`的值设置为至少18。
 
 ### 每个场景的差异化设计
 
 切勿为所有场景使用完全相同的配置。针对每个场景：
-- 从预设调色板中选择**不同的主色调**
-- 设计**不同的布局结构**——无需始终将所有元素居中
-- 采用**不同的动画起始方式**，可在“写入”、“淡入”、“从中心放大”和“创建”之间切换
-- 调整**视觉重点的分布**，让部分场景内容密集，部分场景则较为简洁
+- 从预设色板中选择**不同的主色调**
+- 设计**不同的布局结构**——不必始终将所有元素居中
+- 采用**不同的动画起始方式**，可在“写入”、“淡入”、“从中心扩展”及“创建”之间切换
+- 调整**视觉层次感**，让部分场景内容密集，其他场景则相对简洁
 
 ## 工作流程
 
 ### 第一步：规划（plan.md）
 
-在编写任何代码之前，先撰写 `plan.md` 文件。详细的模板可参考 `references/scene-planning.md`。
+在编写任何代码之前，先撰写`plan.md`文件。详细的模板可参考`references/scene-planning.md`。
 
 ### 第二步：编码（script.py）
 
-每个场景对应一个类。所有场景均应能够独立渲染。
+每个场景对应一个类。所有场景都应能够独立渲染。
 
 ```python
 from manim import *
@@ -183,10 +186,10 @@ class Scene1_Introduction(Scene):
 ```
 
 常见模式：
-- 每个动画的**字幕**：在 `self.add_subcaption("文本", duration=N)` 中设置，或在 `self.play()` 方法中使用 `subcaption="文本"`；
-- 为确保不同场景风格统一，在文件顶部定义**通用的颜色常量**；
-- 在每个场景中均设置 **`self.camera.background_color`**；
-- **流畅的结束方式**——在场景结束时让所有 mobject 渐隐消失：`self.play(FadeOut(Group(*self.mobjects)))`。
+- 每个动画的**字幕**：在代码中使用 `self.add_subcaption("文本内容", duration=N)`，或在调用 `self.play()` 时直接使用 `subcaption="文本内容"`。
+- 在文件顶部定义**通用的颜色常量**，以确保不同场景之间的视觉一致性。
+- 在每个场景中设置 **`self.camera.background_color`**。
+- **流畅的场景结束方式**：在场景结束时让所有 mobject 逐渐淡出，代码实现为 `self.play(FadeOut(Group(*self.mobjects)))`。
 
 ### 第 3 步：渲染
 
@@ -225,12 +228,12 @@ MathTex(r"\frac{1}{2}")
 label.to_edge(DOWN, buff=0.5)  # never < 0.5
 ```
 
-### 在替换文本前先渐隐
+### 在替换文本前渐隐效果
 ```python
 self.play(ReplacementTransform(note1, note2))  # not Write(note2) on top
 ```
 
-### 绝不对未添加的Mobject应用动画效果
+### 绝不对未添加的M对象应用动画效果
 ```python
 self.play(Create(circle))  # must add first
 self.play(circle.animate.set_color(RED))  # then animate
@@ -238,52 +241,50 @@ self.play(circle.animate.set_color(RED))  # then animate
 
 ## 性能指标
 
-| 质量等级 | 分辨率 | 帧率 | 渲染速度 |
-|---------|-----------|-----|----------|
+| 质量等级 | 分辨率 | 帧率 | 处理速度 |
+|---------|-----------|-----|-------|
 | `-ql`（草稿级） | 854x480 | 15 | 每场景 5-15 秒 |
 | `-qm`（中等级） | 1280x720 | 30 | 每场景 15-60 秒 |
 | `-qh`（成品级） | 1920x1080 | 60 | 每场景 30-120 秒 |
 
-建议始终从 `-ql` 级别开始迭代，最终输出时才使用 `-qh` 级别进行渲染。
+建议始终从 `-ql` 级别开始迭代优化，最终输出时再使用 `-qh` 级别进行渲染。
 
 ## 参考资料
 
-| 文件名 | 内容简介 |
-|--------|----------|
-| `references/animations.md` | 核心动画技术、速率函数、组合方式、`.animate` 语法及时间控制模式 |
-| `references/mobjects.md` | 文本处理、形状绘制、VGroup/Group 使用、定位技巧、样式设置以及自定义 mobject 的创建方法 |
-| `references/visual-design.md` | 12 条视觉设计原则、透明度叠加技巧、布局模板以及色彩搭配方案 |
-| `references/equations.md` | Manim 中的 LaTeX 格式、TransformMatchingTex 功能以及公式推导模式 |
-| `references/graphs-and-data.md` | 坐标轴绘制、数据可视化、柱状图展示、动态数据呈现以及算法可视化方法 |
-| `references/camera-and-3d.md` | MovingCameraScene、ThreeDScene、3D 曲面处理以及相机控制技巧 |
-| `references/scene-planning.md** | 叙事结构设计、布局模板、场景切换方式以及规划模板使用指南 |
-| `references/rendering.md** | CLI 命令参考、质量预设选项、ffmpeg 工具使用、旁白录制流程以及 GIF 导出方法 |
-| `references/troubleshooting.md** | LaTeX 错误处理、动画故障排查、常见错误及调试技巧 |
-| `references/animation-design-thinking.md** | 何时选择动画展示而非静态图像、内容分解策略、节奏控制以及叙事同步技巧 |
-| `references/updaters-and-trackers.md** | ValueTracker、add_updater、always_redraw 函数，以及基于时间的更新器与模式设计 |
-| `references/paper-explainer.md** | 将研究论文转化为动画的流程、模板设计及领域特定模式 |
-| `references/decorations.md** | SurroundingRectangle、Brace、箭头、虚线、角度标记等装饰元素及其生命周期管理 |
-| `references/production-quality.md** | 预编码处理、预渲染步骤、渲染后检查清单、空间布局设计、色彩搭配及节奏控制策略 |
+| File | Contents |
+|------|----------|
+| `references/animations.md` | Core animations, rate functions, composition, `.animate` syntax, timing patterns |
+| `references/mobjects.md` | Text, shapes, VGroup/Group, positioning, styling, custom mobjects |
+| `references/visual-design.md` | 12 design principles, opacity layering, layout templates, color palettes |
+| `references/equations.md` | LaTeX in Manim, TransformMatchingTex, derivation patterns |
+| `references/graphs-and-data.md` | Axes, plotting, BarChart, animated data, algorithm visualization |
+| `references/camera-and-3d.md` | MovingCameraScene, ThreeDScene, 3D surfaces, camera control |
+| `references/scene-planning.md` | Narrative arcs, layout templates, scene transitions, planning template |
+| `references/rendering.md` | CLI reference, quality presets, ffmpeg, voiceover workflow, GIF export |
+| `references/troubleshooting.md` | LaTeX errors, animation errors, common mistakes, debugging |
+| `references/animation-design-thinking.md` | When to animate vs show static, decomposition, pacing, narration sync |
+| `references/updaters-and-trackers.md` | ValueTracker, add_updater, always_redraw, time-based updaters, patterns |
+| `references/paper-explainer.md` | Turning research papers into animations — workflow, templates, domain patterns |
+| `references/decorations.md` | SurroundingRectangle, Brace, arrows, DashedLine, Angle, annotation lifecycle |
+| `references/production-quality.md` | Pre-code, pre-render, post-render checklists, spatial layout, color, tempo |
 
----
+## 创意发散模式（仅当用户要求生成实验性、创意性或独特的输出时使用）
 
-## 创意变体（仅当用户要求实验性/创意性/独特风格的输出时使用）
+若用户希望采用富有创意、实验性或非传统的方式来进行解释，应在设计动画之前选定策略并明确其逻辑依据。
 
-若用户希望获得更具创意、实验性或非传统风格的解释方式，应在设计动画之前先选定策略并明确其逻辑依据。
+- **SCAMPER法** —— 适用于用户希望对常规解释方式进行创新性重构的场景  
+- **假设反转法** —— 适用于用户希望挑战事物通常被教授的方式的场景  
 
-- **SCAMPER 方法**——适用于用户希望对常规解释方式进行创新改造的场景
-- **假设反转法**——适用于用户希望挑战传统教学方式的场景
+### SCAMPER法的应用思路
+对标准的数学/技术可视化内容进行改造：
+- **替换**：更换原有的视觉隐喻（如用蜿蜒路径替代数轴，用城市网格替代矩阵）
+- **组合**：融合两种不同的解释方法（同时运用代数与几何方式）
+- **反转**：逆向推导——从最终结果出发，逐步分解为基本原理
+- **修改**：夸大某个参数以凸显其重要性（如将学习率提高10倍，样本量增加1000倍）
+- **消除**：去除所有符号表达——完全通过动画与空间关系来进行解释  
 
-### SCAMPER 变换方法
-对标准的数学/技术可视化内容进行以下变换：
-- **替换**：用新的视觉隐喻替代原有元素（例如将数轴替换为蜿蜒路径，矩阵替换为城市网格）
-- **组合**：将两种不同的解释方式结合使用（如同时采用代数与几何方法）
-- **反转**：从结果倒推，逐步分解至基本原理
-- **修改**：夸大某些参数以凸显其重要性（例如将学习率放大10倍，样本量放大1000倍）
-- **消除**：完全去掉所有符号标记，仅通过动画与空间关系来传达内容
-
-### 假设反转法
-1. 列出该主题在常规可视化中的“标准”特征（从左到右的呈现顺序、2D格式、离散步骤、正式符号等）
-2. 选出其中最根本的假设
-3. 对该假设进行反转（例如从右到左推导、将2D概念以3D形式呈现、用连续过渡替代离散步骤、完全不使用符号）
-4. 探索这种反转方式能揭示出常规方法所隐藏的内容
+### 假设反转法的具体步骤
+1. 列出该主题在可视化呈现上的“标准特征”（从左到右的顺序、二维界面、离散步骤、正式符号等）  
+2. 确定其中最根本的假设  
+3. 对该假设进行反转（如从右到左推导、将二维概念以三维形式呈现、用连续过渡替代分步展示、完全不使用符号）  
+4. 探索这种反转所带来的新发现，即常规方法所隐藏的内容

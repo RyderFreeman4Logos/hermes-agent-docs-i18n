@@ -3137,7 +3137,7 @@
             - [DESIGN.md 技能](zh/website/docs/user-guide/skills/bundled/creative/creative-design-md.md)
             - [Excalidraw](zh/website/docs/user-guide/skills/bundled/creative/creative-excalidraw.md)
             - [Humanizer](zh/website/docs/user-guide/skills/bundled/creative/creative-humanizer.md)
-            - [Manim 视频生成](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
+            - [Manim 视频](zh/website/docs/user-guide/skills/bundled/creative/creative-manim-video.md)
             - [p5Js](zh/website/docs/user-guide/skills/bundled/creative/creative-p5js.md)
             - [流行网页设计模板](zh/website/docs/user-guide/skills/bundled/creative/creative-popular-web-designs.md)
             - [Pretext](zh/website/docs/user-guide/skills/bundled/creative/creative-pretext.md)
