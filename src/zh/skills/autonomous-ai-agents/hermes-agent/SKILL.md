@@ -1,55 +1,52 @@
 ---
 name: hermes-agent
-description: "Configure, extend, or contribute to Hermes Agent."
-version: 2.3.0
+description: "Use, configure, theme, extend, and orchestrate Hermes Agent."
+version: 3.2.0
 author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [hermes, setup, configuration, multi-agent, spawning, cli, gateway, development]
+    tags: [hermes, setup, configuration, multi-agent, spawning, cli, gateway, bots, bot-mode, features, themes, skins, desktop-plugins, tui-widgets, petdex, development]
     homepage: https://github.com/NousResearch/hermes-agent
     related_skills: [claude-code, codex, opencode]
 ---
 
 # Hermes Agent
 
-Hermes Agent 是 Nous Research 开发的开源 AI 智能体框架，可在终端、原生桌面应用、消息平台以及集成开发环境（IDE）中运行。它与 Claude Code（Anthropic）、Codex（OpenAI）、OpenClaw 属于同一类别——这类自主编程与任务执行型智能体均通过调用工具与用户系统进行交互。Hermes 能与任何大型语言模型提供商配合使用（包括 OpenRouter、Anthropic、OpenAI、Google、DeepSeek、xAI 以及本地模型等20多种），并且可在 Linux、macOS、Windows 和 WSL 系统上运行。
+Hermes Agent 是 Nous Research 开发的开源 AI 智能体框架，可在终端、原生桌面应用、消息平台以及集成开发环境（IDE）中运行。它与 Claude Code（Anthropic）、Codex（OpenAI）、OpenClaw 属于同一类别——这类自主编码与任务执行型智能体通过调用工具与用户的系统进行交互。Hermes 支持任何大型语言模型提供商（包括 OpenRouter、Anthropic、OpenAI、Google、DeepSeek、xAI 以及本地模型等20多种），并且可在 Linux、macOS、Windows 和 WSL 系统上运行。
 
 Hermes 的独特之处在于：
 
-- **通过“技能”实现自我提升**——Hermes 能从经验中学习，将可重复使用的操作流程保存为“技能”。当它解决复杂问题、发现新的工作流程或得到纠正后，就能将这些知识以技能文档的形式保存下来，供后续会话使用。随着时间的推移，这些技能不断积累，使智能体更擅长处理特定任务及适应特定环境。
-- **跨会话持久记忆**——能够记住用户身份、个人偏好、环境详情以及过往经验教训。通过可插拔的记忆后端（内置选项、Honcho、Mem0 等），用户可自主选择记忆的存储方式。
-- **多平台接入能力**——同一个智能体可在 Telegram、Discord、Slack、WhatsApp、iMessage、Signal、Matrix、Teams、Email 以及十余种其他平台上运行，不仅能进行聊天，还能完整调用各类工具。
-- **多种交互界面**——同一个智能体核心可驱动命令行界面（CLI）、Ink TUI、原生 Electron 桌面应用、网页控制面板，以及专为 IDE（如 VS Code / Zed / JetBrains）设计的 ACP 服务器。
-- **与提供商无关**——在任务执行过程中可随时更换模型和提供商，而无需调整其他设置。凭证池会自动在多个 API 密钥之间切换。
-- **多实例配置功能**——可运行多个独立的 Hermes 实例，每个实例拥有独立的配置、会话、技能和记忆数据。
-- **高度可扩展**——支持插件、MCP 服务器、自定义工具、Webhook 触发器、定时任务调度，以及完整的 Python 生态系统。
+- **通过技能实现自我提升**——Hermes 能够从经验中学习，将可复用的操作流程保存为技能，并在后续会话中自动加载使用。  
+- **跨会话持久记忆**——能够记住用户身份、偏好设置、环境信息以及已获得的经验教训。支持多种可插拔的记忆后端。  
+- **多平台接入能力**——同一个智能体可在 Telegram、Discord、Slack、WhatsApp、iMessage、Signal、Matrix、Teams、Email 以及十余种其他平台上运行，不仅能进行聊天，还能完整使用各类工具。  
+- **多元交互界面**——同一个智能体核心可驱动 CLI 命令行工具、Ink TUI 图形界面、原生 Electron 桌面应用、网页控制面板，以及适用于 VS Code、Zed、JetBrains 等 IDE 的 ACP 服务器。  
+- **与具体提供方解耦**——可在工作流程中进行模型和提供方的切换；凭据池会自动在多个 API 密钥之间轮换。  
+- **独立配置文件**——可运行多个独立的 Hermes 实例，每个实例拥有独立的配置、会话、技能及记忆数据。  
+- **高度可扩展与主题定制**——支持插件、MCP 服务器、自定义工具、Webhook 触发器、定时任务调度，以及用于美化各交互界面的主题皮肤、桌面 UI 插件、TUI 小部件和可爱吉祥物。
 
-人们将 Hermes 应用于软件开发、科学研究、系统管理、数据分析、内容创作、家庭自动化等领域，凡是需要具备持久上下文感知能力和完整系统访问权限的 AI 智能体的场景，都能从中受益。
-
-**本技能旨在帮助您高效使用 Hermes Agent**——涵盖其设置安装、功能配置、启动多个智能体实例、故障排查、查找相关命令与设置，以及在需要扩展或贡献代码时理解系统运作原理等内容。
+**该技能为一个核心模块。** 其正文部分涵盖了身份识别、快速入门、智能体创建/编排以及核心约束规则等内容。其他所有信息均存储在参考文件中——**在回答问题前请先加载对应的参考文件**，切勿仅依据正文内容回答细节性问题。
 
 **文档链接：** https://hermes-agent.nousresearch.com/docs/
 
-## 范围与验证说明
+## 范围与验证
 
-本技能仅为简明的操作指南，并非涵盖 Hermes 所有功能的完整参考资料。如果某项功能、命令或设置在此处未提及，也不意味着它不存在。在给出否定回答之前，请务必查阅官方代码仓库及完整文档。
+该技能文档仅为简明的操作指南，并非涵盖Hermes所有功能的完整参考资料。若某项功能、命令或设置未在此处或相关参考资料中提及，也请勿因此就认定其不存在。在给出否定答复之前，请务必查阅最新的代码仓库及官方文档。
 
-推荐的验证来源包括：
+建议优先核查以下内容（从最易找到的开始）：
 
-- 命令行指令：`hermes --help`、`hermes <command> --help`，以及 `hermes_cli/main.py`
-- 用户文档：https://hermes-agent.nousresearch.com/docs/
+- **所有已发布的功能，每项占一行：https://hermes-agent.nousresearch.com/docs/llms.txt**。对于“Hermes能实现X功能吗？”或“如何执行X操作？”这类问题，可从此处开始查询——该文件会对全部文档进行索引，并提供对应答案的页面链接。它会在每次构建时根据文档结构自动生成，因此永远不会落后于产品版本。可以使用`web_extract`命令获取该内容；若无法使用网络工具，则可通过`curl -s https://hermes-agent.nousresearch.com/docs/llms.txt`来获取。完整的文档集合则保存在 `/docs/llms-full.txt` 文件中。
+- CLI命令：`hermes --help`、`hermes <command> --help` 以及 `hermes_cli/main.py`
 - 源代码仓库：https://github.com/NousResearch/hermes-agent
+
+切勿凭记忆就断言“Hermes无法实现某功能”。实际上，Hermes的功能远不止本技能文档所描述的那样，而该索引的存在也便于随时验证否定答复的准确性。
 
 ## 快速入门
 
 ```bash
 # Install (shell installer — sets up uv, Python, the venv, and the launcher)
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-
-# Or via PyPI (ships the TUI bundle + shell launcher)
-pip install hermes-agent       # or: uv pip install hermes-agent
 
 # Interactive chat (default surface; set display.interface: tui to launch the Ink TUI instead)
 hermes
@@ -68,553 +65,68 @@ hermes dashboard               # web admin panel + embedded chat
 hermes proxy                   # OpenAI-compatible local proxy backed by your OAuth provider
 ```
 
-## CLI 参考手册
-
-### 全局标志位
+## 核心路径
 
 ```
-hermes [flags] [command]
-
-  --version, -V             Show version
-  --resume, -r SESSION      Resume session by ID or title
-  --continue, -c [NAME]     Resume by name, or most recent session
-  --worktree, -w            Isolated git worktree mode (parallel agents)
-  --skills, -s SKILL        Preload skills (comma-separate or repeat)
-  --profile, -p NAME        Use a named profile
-  --yolo                    Skip dangerous command approval
-  --pass-session-id         Include session ID in system prompt
-```
-
-没有子命令的默认值为 `chat`。
-
-### 聊天功能
-
-```
-hermes chat [flags]
-  -q, --query TEXT          Single query, non-interactive
-  -m, --model MODEL         Model (e.g. anthropic/claude-sonnet-4)
-  -t, --toolsets LIST       Comma-separated toolsets
-  --provider PROVIDER       Force provider (openrouter, anthropic, nous, etc.)
-  -v, --verbose             Verbose output
-  -Q, --quiet               Suppress banner, spinner, tool previews
-  --checkpoints             Enable filesystem checkpoints (/rollback)
-  --source TAG              Session source tag (default: cli)
-```
-
-### 配置
-
-```
-hermes setup [section]      Interactive wizard (model|terminal|gateway|tools|agent)
-hermes model                Interactive model/provider picker
-hermes config               View current config
-hermes config edit          Open config.yaml in $EDITOR
-hermes config set KEY VAL   Set a config value
-hermes config path          Print config.yaml path
-hermes config env-path      Print .env path
-hermes config check         Check for missing/outdated config
-hermes config migrate       Update config with new options
-hermes doctor [--fix]       Check dependencies and config
-hermes status [--all]       Show component status
-```
-
-凭据（包括 OAuth 和 API 密钥，以及凭据池功能）均在 `hermes auth` 下进行管理——详情请参阅下方的“凭据与凭据池”部分。
-
-### 工具与技能
-
-```
-hermes tools                Interactive tool enable/disable (curses UI)
-hermes tools list           Show all tools and status
-hermes tools enable NAME    Enable a toolset
-hermes tools disable NAME   Disable a toolset
-
-hermes skills list          List installed skills
-hermes skills search QUERY  Search the skills hub
-hermes skills install ID    Install a skill (ID can be a hub identifier OR a direct https://…/SKILL.md URL; pass --name to override when frontmatter has no name)
-hermes skills inspect ID    Preview without installing
-hermes skills config        Enable/disable skills per platform
-hermes skills check         Check for updates
-hermes skills update        Update outdated skills
-hermes skills uninstall N   Remove a hub skill
-hermes skills publish PATH  Publish to registry
-hermes skills browse        Browse all available skills
-hermes skills tap add REPO  Add a GitHub repo as skill source
-```
-
-### MCP 服务器
-
-```
-hermes mcp serve            Run Hermes as an MCP server
-hermes mcp add NAME         Add an MCP server (--url or --command)
-hermes mcp remove NAME      Remove an MCP server
-hermes mcp list             List configured servers
-hermes mcp test NAME        Test connection
-hermes mcp configure NAME   Toggle tool selection
-```
-
-内置的MCP客户端如何连接服务器（stdio/HTTP）并自动发现其工具，再将这些工具作为一等工具提供；此外还支持通过目录安装功能（`hermes mcp install <name>`）：`skill_view(name="hermes-agent", file_path="references/native-mcp.md")`。
-
-### 网关（消息平台）
-
-```
-hermes gateway run          Start gateway foreground
-hermes gateway install      Install as background service
-hermes gateway start/stop   Control the service
-hermes gateway restart      Restart the service
-hermes gateway status       Check status
-hermes gateway setup        Configure platforms
-```
-
-支持的平台超过20种：Telegram、Discord、Slack、WhatsApp（通过Baileys bridge及官方Business Cloud API接入）、iMessage（基于Photon协议——可通过`hermes photon setup`命令配置，该协议为BlueBubbles的继任者且无需Mac中转）、Signal、电子邮件、短信、Matrix、Mattermost、Microsoft Teams、LINE、SimpleX、ntfy、Google Chat、Home Assistant、钉钉、飞书、企业微信、微信（WeChat）、Raft（代理网络）、API服务器以及Webhooks。Open WebUI可通过API服务器适配器进行连接。大多数适配器均存放在`plugins/platforms/`目录下，因此新增适配器时无需修改核心代码。
-
-平台相关文档：https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
-
-### 会话管理
-
-```
-hermes sessions list        List recent sessions
-hermes sessions browse      Interactive picker
-hermes sessions export OUT  Export to JSONL
-hermes sessions rename ID T Rename a session
-hermes sessions delete ID   Delete a session
-hermes sessions prune       Clean up old sessions (--older-than N days)
-hermes sessions stats       Session store statistics
-```
-
-### 定时任务
-
-```
-hermes cron list            List jobs (--all for disabled)
-hermes cron create SCHED    Create: '30m', 'every 2h', '0 9 * * *'
-hermes cron edit ID         Edit schedule, prompt, delivery
-hermes cron pause/resume ID Control job state
-hermes cron run ID          Trigger on next tick
-hermes cron remove ID       Delete a job
-hermes cron status          Scheduler status
-```
-
-### Webhooks 接口
-
-```
-hermes webhook subscribe N  Create route at /webhooks/<name>
-hermes webhook list         List subscriptions
-hermes webhook remove NAME  Remove a subscription
-hermes webhook test NAME    Send a test POST
-```
-
-完整配置、路由设置、载荷模板化，以及基于事件的智能体运行模式：`skill_view(name="hermes-agent", file_path="references/webhooks.md")`。
-
-### 配置文件
-
-```
-hermes profile list         List all profiles
-hermes profile create NAME  Create (--clone, --clone-all, --clone-from)
-hermes profile use NAME     Set sticky default
-hermes profile delete NAME  Delete a profile
-hermes profile show NAME    Show details
-hermes profile alias NAME   Manage wrapper scripts
-hermes profile rename A B   Rename a profile
-hermes profile export NAME  Export to tar.gz
-hermes profile import FILE  Import from archive
-```
-
-### 凭证与资源池
-
-```
-hermes auth                 Interactive credential manager
-hermes auth add [PROVIDER]  Add OAuth or API-key credential
-                            (e.g. nous, openai-codex, qwen-oauth, anthropic)
-hermes auth list [PROVIDER] List pooled credentials
-hermes auth remove P INDEX  Remove by provider + index
-hermes auth reset PROVIDER  Clear exhaustion status
-```
-
-每个提供者对应的多个凭证会共同构成一个池，该池会自动轮换使用这些凭证，并自动跳过已用尽的密钥。
-
-```
-hermes insights [--days N]  Usage analytics
-hermes update               Update to latest version
-hermes desktop / gui        Launch the native desktop app
-hermes dashboard            Web admin panel + embedded chat
-hermes proxy                OpenAI-compatible local proxy backed by an OAuth provider
-hermes portal               Quick setup / sign in via Nous Portal
-hermes kanban <verb>        Multi-agent work-queue board (init/create/list/show/assign/…)
-hermes pairing list/approve/revoke  DM authorization
-hermes plugins list/install/remove  Plugin management
-hermes secrets bitwarden …  External secret store (Bitwarden Secrets Manager)
-hermes memory setup/status/off  Memory provider config
-hermes send                 Send a one-off message through a gateway platform
-hermes completion bash|zsh  Shell completions
-hermes acp                  ACP server (IDE integration)
-hermes claw migrate         Migrate from OpenClaw
-hermes uninstall            Uninstall Hermes
-```
-
-如需查看完整且权威的命令列表，请运行 `hermes --help`（以及 `hermes <command> --help`）。由插件或提供程序生成的子命令（例如用于 iMessage 的 `hermes photon setup`）只有在相关插件被安装或启用后才会显示。
-
----
-
-## 斜杠命令（会话内使用）
-
-这些命令可在交互式聊天会话中输入。新命令会频繁添加；如果下方内容显得过时，可会在会话中输入 `/help` 以获取最新列表，或查阅[实时斜杠命令参考文档](https://hermes-agent.nousresearch.com/docs/reference/slash-commands)。权威的命令注册表位于 `hermes_cli/commands.py` —— 所有的命令使用场景（自动补全、Telegram 菜单、Slack 映射、/help）均以此为依据。
-
-### 会话控制
-```
-/new (/reset)        Fresh session
-/clear               Clear screen + new session (CLI)
-/retry               Resend last message
-/undo                Remove last exchange
-/title [name]        Name the session
-/compress            Manually compress context
-/stop                Kill background processes
-/rollback [N]        Restore filesystem checkpoint
-/snapshot [sub]      Create or restore state snapshots of Hermes config/state (CLI)
-/background <prompt> Run prompt in background
-/queue <prompt>      Queue for next turn
-/steer <prompt>      Inject a message after the next tool call without interrupting
-/agents (/tasks)     Show active agents and running tasks
-/resume [name]       Resume a named session
-/goal [text|sub]     Set a standing goal Hermes works on across turns until achieved
-                     (subcommands: status, pause, resume, clear)
-/redraw              Force a full UI repaint (CLI)
-```
-
-### 配置
-```
-/config              Show config (CLI)
-/model [name]        Show or change model
-/personality [name]  Set personality
-/reasoning [level]   Set reasoning (none|minimal|low|medium|high|xhigh|max|ultra|show|hide)
-/verbose             Cycle: off → new → all → verbose
-/voice [on|off|tts]  Voice mode
-/yolo                Toggle approval bypass
-/busy [sub]          Control what Enter does while Hermes is working (CLI)
-                     (subcommands: queue, steer, interrupt, status)
-/indicator [style]   Pick the TUI busy-indicator style (CLI)
-                     (styles: kaomoji, emoji, unicode, ascii)
-/footer [on|off]     Toggle gateway runtime-metadata footer on final replies
-/skin [name]         Change theme (CLI)
-/statusbar           Toggle status bar (CLI)
-```
-
-### 工具与技能
-```
-/tools               Manage tools (CLI)
-/toolsets            List toolsets (CLI)
-/skills              Search/install skills (CLI)
-/skill <name>        Load a skill into session
-/reload-skills       Re-scan ~/.hermes/skills/ for added/removed skills
-/reload              Reload .env variables into the running session (CLI)
-/reload-mcp          Reload MCP servers
-/cron                Manage cron jobs (CLI)
-/curator [sub]       Background skill maintenance (status, run, pin, archive, …)
-/kanban [sub]        Multi-profile collaboration board (tasks, links, comments)
-/plugins             List plugins (CLI)
-```
-
-### 网关
-```
-/approve             Approve a pending command (gateway)
-/deny                Deny a pending command (gateway)
-/restart             Restart gateway (gateway)
-/sethome             Set current chat as home channel (gateway)
-/update              Update Hermes to latest (gateway)
-/topic [sub]         Enable or inspect Telegram DM topic sessions (gateway)
-/platforms (/gateway) Show platform connection status (gateway)
-```
-
-### 实用工具
-```
-/branch (/fork)      Branch the current session
-/handoff <platform>  Hand the live session off to a messaging platform (CLI)
-/fast                Toggle priority/fast processing
-/browser             Open CDP browser connection
-/history             Show conversation history (CLI)
-/save                Save conversation to file (CLI)
-/copy [N]            Copy the last assistant response to clipboard (CLI)
-/paste               Attach clipboard image (CLI)
-/image               Attach local image file (CLI)
-```
-
-### 信息
-```
-/help                Show commands
-/commands [page]     Browse all commands (gateway)
-/usage               Token usage
-/insights [days]     Usage analytics
-/status              Session info (gateway)
-/profile             Active profile info
-/debug               Upload debug report (system info + logs) and get shareable links
-```
-
-### 退出
-```
-/quit (/exit, /q)    Exit CLI
-```
-
-## 主要路径与配置
-
-```
-~/.hermes/config.yaml       Main configuration
-~/.hermes/.env              API keys and secrets (under $HERMES_HOME if set)
+~/.hermes/config.yaml       Main configuration (settings — never secrets)
+~/.hermes/.env              API keys and secrets ONLY (under $HERMES_HOME if set)
 $HERMES_HOME/skills/        Installed skills
-~/.hermes/sessions/         Gateway routing index, request dumps, *.jsonl transcripts (and optional per-session JSON snapshots when sessions.write_json_snapshots: true)
+~/.hermes/skins/            Custom themes (see references/themes.md)
+~/.hermes/desktop-plugins/  Desktop app UI plugins (see references/desktop-plugins.md)
+~/.hermes/tui-widgets/      TUI widget apps (see references/tui-widgets.md)
+~/.hermes/pets/             Installed pet mascots (see references/petdex.md)
 ~/.hermes/state.db          Canonical session store (SQLite + FTS5)
+~/.hermes/sessions/         Gateway routing index, request dumps, *.jsonl transcripts
 ~/.hermes/logs/             Gateway and error logs
 ~/.hermes/auth.json         OAuth tokens and credential pools
 ~/.hermes/hermes-agent/     Source code (if git-installed)
 ```
 
-配置文件采用相同的结构，存储路径为 `~/.hermes/profiles/<name>/`。
-
-### 配置章节
-
-可通过 `hermes config edit` 或 `hermes config set section.key value` 命令进行编辑。
-
-| 章节 | 可配置选项 |
-|---------|-------------|
-| `model` | `default`、`provider`、`base_url`、`api_key`、`context_length` |
-| `agent` | `max_turns`（90）、`tool_use_enforcement` |
-| `terminal` | `backend`（local/docker/ssh/modal）、`cwd`、`timeout`（180） |
-| `compression` | `enabled`、`threshold`（0.50）、`target_ratio`（0.20） |
-| `display` | `skin`、`interface`（cli/tui）、`tool_progress`、`show_reasoning`、`show_cost`、`language` |
-| `stt` | `enabled`、`provider`（local/groq/openai/mistral） |
-| `tts` | `provider`（edge/elevenlabs/openai/minimax/mistral/neutts） |
-| `memory` | `memory_enabled`、`user_profile_enabled`、`provider` |
-| `security` | `tirith_enabled`、`website_blocklist` |
-| `delegation` | `model`、`provider`、`base_url`、`api_key`、`max_iterations`（50）、`reasoning_effort` |
-| `checkpoints` | `enabled`、`max_snapshots`（50） |
-| `curator` | `enabled`、`consolidate`（false — 选择性合并辅助模型技能）、`interval_hours`、`stale_after_days` |
-
-完整配置参考：https://hermes-agent.nousresearch.com/docs/user-guide/configuration
-
-### 提供商支持
-
-目前支持20多种供应商，可通过 `hermes model` 或 `hermes setup` 命令进行配置。
-
-| 提供商 | 认证方式 | 对应环境变量 |
-|----------|------|-------------|
-| OpenRouter | API密钥 | `OPENROUTER_API_KEY` |
-| Anthropic | API密钥 | `ANTHROPIC_API_KEY` |
-| Nous Portal | OAuth认证 | `hermes auth` |
-| OpenAI Codex | OAuth认证 | `hermes auth` |
-| GitHub Copilot | 令牌 | `COPILOT_GITHUB_TOKEN` |
-| Google Gemini | API密钥 | `GOOGLE_API_KEY` 或 `GEMINI_API_KEY` |
-| DeepSeek | API密钥 | `DEEPSEEK_API_KEY` |
-| xAI / Grok | API密钥 | `XAI_API_KEY` |
-| Hugging Face | 令牌 | `HF_TOKEN` |
-| Z.AI / GLM | API密钥 | `GLM_API_KEY` |
-| MiniMax | API密钥 | `MINIMAX_API_KEY` |
-| MiniMax CN | API密钥 | `MINIMAX_CN_API_KEY` |
-| Kimi / Moonshot | API密钥 | `KIMI_API_KEY` |
-| Alibaba / DashScope | API密钥 | `DASHSCOPE_API_KEY` |
-| Xiaomi MiMo | API密钥 | `XIAOMI_API_KEY` |
-| Kilo Code | API密钥 | `KILOCODE_API_KEY` |
-| OpenCode Zen | API密钥 | `OPENCODE_ZEN_API_KEY` |
-| OpenCode Go | API密钥 | `OPENCODE_GO_API_KEY` |
-| Qwen OAuth | OAuth认证 | `hermes auth add qwen-oauth` |
-| 自定义端点 | 配置文件 | 在config.yaml中设置 `model.base_url` 和 `model.api_key` |
-| GitHub Copilot ACP | 外部工具 | `COPILOT_CLI_PATH` 或 Copilot CLI |
-
-完整供应商文档：https://hermes-agent.nousresearch.com/docs/integrations/providers
-
-### 工具集
-
-可通过 `hermes tools`（交互式命令）或 `hermes tools enable/disable NAME` 命令启用/禁用工具集。
-
-| 工具集 | 功能说明 |
-|---------|----------|
-| `web` | 网页搜索与内容提取 |
-| `search` | 仅网页搜索（属于`web`的子集） |
-| `browser` | 浏览器自动化（支持Browserbase、Camofox或本地Chromium） |
-| `terminal` | Shell命令执行与进程管理 |
-| `file` | 文件读写、搜索与修补操作 |
-| `code_execution` | 沙箱化Python代码执行 |
-| `vision` | 图像分析功能 |
-| `image_gen` | AI图像生成及图像编辑功能 |
-| `video` | 视频分析（`video_analyze`）与生成功能 |
-| `x_search` | 首席级X（Twitter）搜索功能（需X OAuth认证或API密钥） |
-| `tts` | 文本转语音功能 |
-| `skills` | 技能浏览与管理功能 |
-| `memory` | 跨会话持久化内存功能 |
-| `session_search` | 搜索历史对话内容 |
-| `delegation` | 子代理任务分配功能 |
-| `cronjob` | 定时任务管理功能 |
-| `clarify` | 向用户提问以获取更多信息 |
-| `messaging` | 跨平台消息发送功能 |
-| `todo` | 会话内任务规划与跟踪功能 |
-| `kanban` | 多代理工作队列工具（仅对工作者开放） |
-| `debugging` | 额外的自我诊断/调试工具（默认关闭） |
-| `safe` | 为受限会话设计的极简低风险工具集 |
-| `spotify` | Spotify播放与播放列表控制功能 |
-| `homeassistant` | 智能家居控制功能（默认关闭） |
-| `discord` | Discord集成工具 |
-| `discord_admin` | Discord管理/审核工具 |
-| `feishu_doc` | Feishu（Lark）文档处理工具 |
-| `feishu_drive` | Feishu（Lark）云盘工具 |
-| `yuanbao` | Yuanbao集成工具 |
-| `rl` | 强化学习相关工具（默认关闭） |
-
-所有工具集的完整列表存储在 `toolsets.py` 文件中的 `TOOLSETS` 字典中；`_HERMES_CORE_TOOLS` 是大多数平台默认使用的工具组合。
-
-工具更改需通过 `/reset` 命令创建新会话后才会生效。为保留提示词缓存，这些更改不会在对话进行中应用。
-
----
-
-## 项目上下文文件
-
-Hermes会从工作目录读取上下文文件，将项目级指令注入系统提示词中。文件的加载遵循**先匹配者胜**原则——每个会话仅加载一个项目上下文来源。
-
-| 文件（按优先级顺序） | 加载方式 | 适用场景 |
-|---|---|---|
-| `.hermes.md` / `HERMES.md` | 从当前目录向上遍历至git根目录，停在git根目录处 | 需要分层项目规则设置（根目录规则 + 各包的覆盖规则） |
-| `AGENTS.md` / `agents.md` | **仅限当前工作目录**——子目录及父目录的副本将被忽略 | 需要可在Hermes、Claude Code、Codex等不同工具中通用且保持一致的代理指令 |
-| `CLAUDE.md` / `claude.md` | 仅限当前工作目录 | 与AGENTS.md类似，但针对Claude优化 |
-| `.cursorrules` / `.cursor/rules/*.mdc` | 仅限当前工作目录 | 从Cursor迁移过来的用户使用 |
-
-位于 `$HERMES_HOME` 目录下的 `SOUL.md` 文件独立存在，只要存在就会始终被加载——它用于设置代理的身份信息，而非项目规则。
-
-### 如何选择合适的文件
-
-- **选择 `.hermes.md`**：当你需要Hermes特有的、适用于整个项目（根目录及所有子目录）的规则，或者希望规则能从父目录继承时使用。由于遍历会在git根目录停止，因此位于用户主目录下的 `.hermes.md` 文件不会影响其他项目（git仓库的根目录即为分隔边界）。
-- **选择 `AGENTS.md`**：当同一个项目还需要由其他工具（如Codex、Claude Code、OpenCode）处理时使用。这些工具对 `AGENTS.md` 都有各自的格式要求，而“仅限当前工作目录”的设计保证了该文件的通用性。
-- **不要将项目规则放在 `~/.hermes/AGENTS.md`**（或其他用户主目录下的位置）。当Hermes以该目录作为当前工作目录运行时，虽然该文件会被加载，但仅适用于当前目录。如需跨项目使用上下文，请使用 `SOUL.md`（位于 `$HERMES_HOME`，仅用于设置身份信息），或通过 `hermes skills install` 命令安装技能。
-
-### 文件大小与截断处理
-
-每个上下文文件的字符数上限为20,000个。超过此限制的文件会被**截取开头和结尾部分**（中间内容将被删除，并显示 `[...truncated...]` 标记）。对于内容较长的项目规则，建议将其拆分为多个技能，而非塞进一个文件中。
-
-### 安全性
-
-所有上下文文件在进入系统提示词之前都会经过威胁模式扫描。凡是检测到提示词注入或恶意提示词内容的模式，都会被替换为 `[BLOCKED: ...]` 占位符。这意味着，即使 `AGENTS.md` 文件中包含明显的注入尝试，内容也不会传递给模型——扫描器会拦截内容而非整个文件，因此文件的其余部分仍可正常加载。
-
-### 临时禁用上下文加载
-
-可使用 `hermes --ignore-rules` 命令，跳过所有项目上下文文件（`.hermes.md`、`AGENTS.md`、`CLAUDE.md`、`.cursorrules`）以及 `SOUL.md` 中的身份信息，同时还会忽略用户自定义配置、插件和MCP服务器。该命令可用于判断问题出在用户设置还是Hermes本身。
-
-### 示例：一个简短的 `.hermes.md` 文件
-
-```markdown
-# My Project
-
-Hermes: when working in this repo, follow these rules.
-
-## Build
-- Always run `make test` before declaring a change done.
-- Use `uv run` for Python, not `pip install`.
-
-## Style
-- Prefer `pathlib.Path` over `os.path`.
-- No `print()` in production code — use the `logger`.
-```
-
-当 Hermes 在 `/home/me/projects/myrepo` 的任意子目录中运行时，会自动加载位于 `/home/me/projects/myrepo/.hermes.md` 的该文件；但若在 `/home/me/other-project` 中运行，则不会加载。
-
-## 安全与隐私相关开关
-
-常见的一些“为何 Hermes 会对我的输出、工具调用或命令执行特定操作？”类开关，以及用于修改它们的具体命令。由于这些设置仅在启动时读取一次，因此大多数情况下需要重新启动会话（在聊天界面中使用 `/reset` 命令，或重新调用 `hermes`）才能生效。
-
-### 工具输出中的机密信息遮蔽
-
-机密信息遮蔽功能**默认处于开启状态**——在工具输出（终端标准输出、`read_file` 的返回内容、网页内容、子代理的总结信息等）进入对话上下文及日志之前，系统会自动扫描其中可能包含的 API 密钥、令牌和机密字符串。在正常使用情况下建议保持该功能开启：
-
-```bash
-hermes config set security.redact_secrets true       # keep enabled globally
-```
-
-**需要重启。** `security.redact_secrets` 会在导入时被创建快照——在会话进行中通过某些方式（例如通过工具调用执行 `export HERMES_REDACT_SECRETS=false`）来切换该设置，不会对正在运行的进程产生任何影响。请告知用户需通过终端在配置文件中修改该设置，然后再启动新的会话。这样做是有意为之，旨在防止大型语言模型在处理任务过程中自行改变该设置。
-
-仅在确实需要原始的凭证类字符串用于调试或编辑器开发时，才应关闭此功能：
-```bash
-hermes config set security.redact_secrets false
-```
-
-### 网关消息中的个人身份信息脱敏
-
-此功能与机密信息脱敏相互独立。启用该功能后，网关会在会话上下文数据传递给模型之前，先对用户 ID 进行哈希处理，并删除其中的电话号码：
-
-```bash
-hermes config set privacy.redact_pii true    # enable
-hermes config set privacy.redact_pii false   # disable (default)
-```
-
-### 命令审批提示
-
-默认情况下（`approvals.mode: smart`），Hermes 会请求辅助大语言模型来评估那些被标记为具有破坏性风险的shell命令（如 `rm -rf`、`git reset --hard` 等）。可选择的模式如下：
-
-- `smart` — 对低风险命令自动批准，拒绝高风险命令，在不确定时向用户发起提示（默认模式）
-- `manual` — 始终向用户发起提示
-- `off` — 跳过所有审批提示（相当于 `--yolo`）
-
-```bash
-hermes config set approvals.mode smart       # recommended middle ground
-hermes config set approvals.mode off         # bypass everything (not recommended)
-```
-
-无需修改配置即可实现每次调用时绕过限制：
-- `hermes --yolo …`
-- `export HERMES_YOLO_MODE=1`
-
-注意：YOLO模式或`approvals.mode: off`设置并不会关闭机密信息遮蔽功能，二者是相互独立的。
-
-### Shell钩子允许列表
-
-某些Shell钩子集成在触发前需要明确列出允许的项。该列表通过`~/.hermes/shell-hooks-allowlist.json`文件进行管理——首次有钩子试图运行时会交互式提示设置。
-
-### 禁用Web/浏览器/图像生成工具
-
-若希望让模型完全不使用网络或媒体相关工具，可打开“hermes tools”并针对不同平台进行开关设置。更改将在下次会话时生效（可使用`/reset`重置）。详情请参阅上文“工具与技能”部分。
-
----
-
-## 语音与转录
-
-### STT（语音转文本）
-
-来自消息平台的语音消息会自动被转录。
-
-提供方优先级（系统自动检测）：
-1. **本地faster-whisper** — 免费，无需API密钥：`pip install faster-whisper`
-2. **Groq Whisper** — 免费套餐：需设置`GROQ_API_KEY`
-3. **OpenAI Whisper** — 付费服务：需设置`VOICE_TOOLS_OPENAI_KEY`
-4. **Mistral Voxtral** — 需设置`MISTRAL_API_KEY`
-
-配置选项：
-```yaml
-stt:
-  enabled: true
-  provider: local        # local, groq, openai, mistral
-  local:
-    model: base          # tiny, base, small, medium, large-v3
-```
-
-### 文本转语音（Text → Voice）
-
-| 提供商 | 环境变量 | 是否免费？ |
-|--------|---------|----------|
-| Edge TTS | 无 | 是（默认） |
-| ElevenLabs | `ELEVENLABS_API_KEY` | 免费套餐 |
-| OpenAI | `VOICE_TOOLS_OPENAI_KEY` | 需付费 |
-| MiniMax | `MINIMAX_API_KEY` | 需付费 |
-| Mistral (Voxtral) | `MISTRAL_API_KEY` | 需付费 |
-| NeuTTS（本地版） | 无（需执行 `pip install neutts[all]` 并搭配 `espeak-ng`） | 免费 |
-
-语音指令：`/voice on`（语音对语音），`/voice tts`（始终使用语音），`/voice off`。
-
----
-
-## 启动额外的 Hermes 实例
-
-以完全独立的子进程形式运行多个 Hermes 进程——拥有独立的会话、工具及环境。
-
-### 何时使用此方法而非 delegate_task
-
-| | `delegate_task` | 启动 `hermes` 进程 |
-|-|-----------------|------------------|
-| 隔离性 | 独立对话，共享进程 | 完全独立的进程 |
+配置文件的路径采用 `~/.hermes/profiles/<名称>/` 的格式，结构保持一致。当某个配置文件处于激活状态时，应从 `$HERMES_HOME` 变量中获取实际的主目录路径——切勿直接硬编码 `~/.hermes`。 
+
+## 路由表——加载任务对应的参考信息
+
+| User wants... | Load |
+|---|---|
+| **Anything not listed below — "can Hermes do X?", "how do I set up X?"** | **https://hermes-agent.nousresearch.com/docs/llms.txt** |
+| Bots that chat, run routines, or message each other; the Bots tab | docs: `/user-guide/bot-mode` |
+| CLI commands, subcommands, flags, "how do I run X" | `references/cli-reference.md` |
+| In-session slash commands | `references/slash-commands.md` |
+| Provider setup, API keys, OAuth | `references/providers-and-models.md` |
+| config.yaml sections, toolsets, voice/STT/TTS | `references/configuration.md` |
+| AGENTS.md / .hermes.md / CLAUDE.md project rules | `references/project-context-files.md` |
+| Secret redaction, PII, approval modes, "reset permissions" | `references/security-privacy.md` |
+| Delegation, cron, curator, kanban | `references/background-systems.md` |
+| MCP servers (add, catalog, `hermes mcp`) | `references/native-mcp.md` |
+| Webhook routes and event-driven runs | `references/webhooks.md` |
+| A custom theme/skin ("synthwave theme", "change the gold ●") | `references/themes.md` + `templates/skin.yaml` |
+| A desktop app UI element (pane, widget, ⌘K command, page) | `references/desktop-plugins.md` + `templates/plugin.js` |
+| A live TUI panel or modal widget (ticker, clock, dashboard) | `references/tui-widgets.md` + `templates/clock.mjs` |
+| Pet mascots — install, select, scale, diagnose | `references/petdex.md` |
+| Windows-specific issues (keybinds, WinError 10106, BOM) | `references/windows-quirks.md` |
+| Debugging: voice, tools missing, gateway, aux models | `references/troubleshooting.md` |
+| Contributing code: adding tools, slash commands, tests | `references/contributor-guide.md` |
+| delegate_task "capped at N" reports | `references/delegate-task-concurrency-diagnosis.md` |
+| "Can app X use my Nous Portal subscription/OAuth?" | `references/portal-auth-for-third-party-apps.md` |
+| Connecting a messaging platform (Telegram, Discord, Slack, WhatsApp, …) | docs: `/user-guide/messaging` |
+
+上述参考列表并非功能清单——它仅列出了那些需要更详细文档说明的主题。对于Hermes已提供的其他所有功能，只需查看`llms.txt`文件，该文件会将查询内容与对应的解答页面关联起来。
+
+即便不加载参考列表，也有两条主题设置规则始终适用：**用户需自行应用皮肤样式**（使用命令`hermes config set display.skin <名称>`——所有界面都会在约一秒内实时更新；无需告知用户运行 `/skin` 命令）；以及**如需调整某颜色，需直接编辑当前激活的皮肤样式**（使用命令`hermes skin set <键值> <十六进制颜色值>`）——切勿修改`default`皮肤，因为这会清除色彩方案并重置背景。
+
+## 启动额外的Hermes实例
+
+可以将多个Hermes进程作为完全独立的子进程来运行——即拥有独立的会话、工具和环境。
+
+### 何时使用此方法而非delegate_task
+
+| | `delegate_task` | 启动独立`hermes`进程 |
+|-|-----------------|--------------------------|
+| 隔离性 | 独立对话，共享同一进程 | 完全独立的进程 |
 | 运行时长 | 几分钟（受父进程循环限制） | 数小时/数天 |
 | 工具访问权限 | 仅能使用父进程的部分工具 | 可使用所有工具 |
-| 交互性 | 不支持 | 支持（PTY 模式） |
-| 适用场景 | 快速处理的并行子任务 | 长时间自主运行的任务 |
+| 交互性 | 不支持 | 支持（PTY模式） |
+| 适用场景 | 快速处理的并行子任务 | 长时间运行的自主任务 |
 
 ### 单次执行模式
 
@@ -627,7 +139,7 @@ terminal(command="hermes chat -q 'Set up CI/CD for ~/myapp'", background=true)
 
 ### 交互式 PTY 模式（通过 tmux 实现）
 
-Hermes 使用 prompt_toolkit，而该库需要真实的终端环境。建议使用 tmux 来实现交互式进程启动：
+Hermes 使用 prompt_toolkit 库，该库需要真实的终端环境。建议使用 tmux 来实现交互式进程启动：
 
 ```
 # Start
@@ -672,318 +184,28 @@ terminal(command="tmux new-session -d -s resumed 'hermes --continue'", timeout=1
 terminal(command="tmux new-session -d -s resumed 'hermes --resume 20260225_143052_a1b2c3'", timeout=10)
 ```
 
-### 实用提示
-
-- **处理子任务时优先使用 `delegate_task`** —— 相比启动完整进程，其开销更小。
-- 在启动用于编辑代码的 Agent 时，使用 `-w`（工作树模式）——可避免 git 冲突。
-- 为一次性模式设置超时时间——复杂任务可能需要 5-10 分钟才能完成。
-- 使用 `hermes chat -q` 进行“发完即忘”式操作——无需伪终端。
-- 交互式会话建议使用 tmux——原始伪终端模式会导致 prompt_toolkit 出现 `\r` 与 `\n` 的兼容问题。
-- 对于定时任务，建议使用 `cronjob` 工具而非直接启动进程——它能自动处理任务交付与重试机制。
-
----
-
-## 持久化与后台系统
-
-有四个系统与主对话循环并行运行。此处为快速参考；完整的开发者文档位于 `AGENTS.md`，面向用户的文档则在 `website/docs/user-guide/features/` 下。
-
-### 任务委派 (`delegate_task`)
-
-启动一个拥有独立上下文与终端会话的子 Agent。
-
-- **单次任务：** `delegate_task(goal, context)`。
-- **批量任务：** `delegate_task(tasks=[{goal, ...}, ...])` 会并行执行多个子任务，其并发数量受 `delegation.max_concurrent_children`（默认为 3）限制。
-- **后台运行：** `delegate_task(background=true)` 会立即返回一个处理句柄，同时让主循环继续运行；子任务完成后，其结果会作为新轮次重新加入对话。
-- **角色划分：** `leaf`（默认角色，不可再次委派）与 `orchestrator`（可自行启动工作进程，其启动深度受 `delegation.max_spawn_depth` 限制）。
-- **非持久化：** 后台运行的子任务仍属于进程级存在——若父进程退出，子任务也会丢失。对于需要长期运行的任务，请使用 `cronjob` 或 `terminal(background=True, notify_on_complete=True)`。
-
-配置项：位于 `config.yaml` 中的 `delegation.*`。
-
-### Cron（定时任务）
-
-一种持久化调度器——由 `cron/jobs.py` 和 `cron/scheduler.py` 组成。可通过 `cronjob` 工具、`hermes cron` CLI（支持 `list`、`add`、`edit`、`pause`、`resume`、`run`、`remove` 命令）或 `/cron` 斜杠命令来操作。
-
-- **调度规则：** 时长（如 `"30m"`、`"2h"`）、“每隔”时间表达式（如 `"every monday 9am"`）、5 字段 Cron 表达式（如 `"0 9 * * *"`）或 ISO 时间戳。
-- **任务级配置选项：** `skills`（指定技能）、`model`/`provider`（覆盖默认模型与提供方）、`script`（任务执行前的数据收集脚本；若设置 `no_agent=True`，则该脚本即构成整个任务）、`context_from`（将任务 A 的输出传递给任务 B）、`workdir`（在指定目录中运行，并加载该目录下的 `AGENTS.md`/`CLAUDE.md` 文件）、跨平台任务交付功能。
-- **固有约束：** 每次执行最多可被强制中断 3 分钟；`.tick.lock` 文件可防止不同进程同时触发调度；Cron 会话默认设置 `skip_memory=True`；Cron 生成的请求会带有头部与尾部信息，而不会被直接映射到目标网关会话中（从而保持角色切换的完整性）。
-
-用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
-
-### 技能管理器（技能生命周期管理）
-
-负责对 Agent 创建的技能进行后台维护。它会记录技能使用情况，标记闲置技能为过时，归档过时技能，并保留任务执行前的 tar.gz 备份，确保数据不会丢失。
-
-- **CLI 命令：** `hermes curator <动词>` —— 支持 `status`、`run`、`pause`、`resume`、`pin`、`unpin`、`archive`、`restore`、`prune`、`backup`、`rollback` 等操作。
-- **斜杠命令：** `/curator <子命令>`，功能与 CLI 相同。
-- **作用范围：** 仅处理 `created_by: "agent"` 标识的技能。预装或通过 hub 安装的技能不在管理范围内。该工具**绝不会删除**技能——最严厉的操作仅为归档。被标记为“固定”的技能可免于所有自动转换及大语言模型审核流程。
-- **成本：** 基于确定性的闲置检测与清理操作是免费进行的。辅助模型用于“将重叠技能整合为汇总组”的功能默认处于关闭状态——可通过设置 `curator.consolidate: true` 或执行 `hermes curator run --consolidate` 来启用。常规的后台维护操作不消耗任何令牌。
-- **监控数据：** 日志文件保存在 `~/.hermes/skills/.usage.json` 中，其中记录了每个技能的 `use_count`、`view_count`、`patch_count`、`last_activity_at`、`state` 以及是否被固定等信息。
-
-配置项：`curator.*`（包括 `enabled`、`interval_hours`、`min_idle_hours`、`stale_after_days`、`archive_after_days`、`backup.*` 等）。  
-用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/curator
-
-### 看板系统（多 Agent 工作队列）
-
-这是一个基于 SQLite 的持久化看板系统，适用于多账号/多工作进程的协作场景。用户可通过 `hermes kanban <动词>` 来操作它；由调度器启动的工作进程可使用受 `HERMES_KANBAN_TASK` 限制的 `kanban_*` 工具集，而调度者账号则可启用更完整的 `kanban` 工具集。除非特别配置，普通会话不会生成任何 `kanban_*` 结构。
-
-- **常用 CLI 命令：** `init`、`create`、`list`（别名 `ls`）、`show`、`assign`、`link`、`unlink`、`comment`、`complete`、`block`、`unblock`、`archive`、`tail`。较少使用的命令包括：`watch`、`stats`、`runs`、`log`、`dispatch`、`daemon`、`gc`。
-- **工作进程/调度者工具集：** `kanban_show`、`kanban_complete`、`kanban_block`、`kanban_heartbeat`、`kanban_comment`、`kanban_create`、`kanban_link`；那些在非调度器任务中明确启用了 `kanban` 工具集的账号，还可使用 `kanban_list` 和 `kanban_unblock` 命令来管理看板中的任务流转。
-- **调度器**默认在网关内部运行（`kanban.dispatch_in_gateway: true`），负责回收过期的任务请求、提升已准备就绪的任务优先级、以原子方式获取任务，并启动对应的账号。若连续出现 `failure_limit` 次启动失败（默认为 2 次，可通过 `kanban.failure_limit` 或每个任务的 `max_retries` 参数进行配置），调度器会自动阻止该任务继续处理。
-- **隔离机制：** 看板本身是硬性隔离边界（工作进程的环境中会固定设置 `HERMES_KANBAN_BOARD` 变量）；而“租户”则是看板内的一个软性命名空间，用于实现工作路径与内存键的隔离。
-
-用户文档：https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban
-
----
-
-## 用户界面与其他功能
-
-除了 CLI 与网关之外，还有以下几项值得了解的功能：
-
-- **桌面应用**（`hermes desktop` / `hermes gui`）——专为 macOS/Linux/Windows 设计的原生 Electron 应用：支持流式聊天、会话列表、拖放及剪贴板粘贴文件、Cmd+K 快捷调色板、状态栏模型选择器、可自定义的快捷键、原生通知功能、实时子 Agent 监控窗口、VS Code Marketplace 主题，以及针对不同账号的远程网关登录功能（支持 OAuth 或用户名/密码认证），从而让轻量级的本地 GUI 能够控制功能强大的远程 Agent。
-- **Web 控制面板**（`hermes dashboard`）——功能完备的管理员面板：允许在浏览器中配置所有消息通道、MCP 目录、Webhook/钩子功能、内存设置，以及完整的账号构建工具（包括模型、技能与 MCP），同时还内置了 `hermes --tui` 聊天界面。该控制面板通过 OAuth/令牌机制进行访问保护。
-- **兼容 OpenAI 的代理**（`hermes proxy`）——提供一个 `http://localhost:port` 接口，可调用由您当前登录的 OAuth 提供方（如 Claude Pro、ChatGPT Pro、SuperGrok）支持的 OpenAI API。您可以直接将 Codex CLI、Aider、Cline、Continue 或任何脚本指向该接口使用，无需 API 密钥。
-- **自动化蓝图**——选择某个已命名的自动化流程后，Hermes 会询问您需要哪些配置（无需使用 Cron 语法）。一个自动化定义可生成控制面板表单、斜杠命令、Agent 对话内容以及文档目录中的条目。
-- **`memory` 工具的批量操作**——您可以传入一个包含添加/替换/删除操作的 `operations` 数组，这些操作会针对最终的字符预算以原子方式执行，因此即使单独执行某项添加操作会导致内存溢出，通过批量操作仍可同时释放空间并添加新内容。
-- **`session_search`**——基于 FTS5 算法实现，无需额外的大语言模型支持，几乎无需成本。该工具仅有一个命令，根据传入的参数不同可对应三种使用模式：搜索模式（通过 `query` 参数指定查询条件）、滚动查看模式（通过 `session_id` 与 `around_message_id` 参数定位内容）、浏览模式（无参数）。
-- **通过 SuperGrok OAuth 访问 xAI Grok**——可使用您的 xAI 账号登录（无需 API 密钥），该功能还内置了 Cursor 的 `grok-composer-2.5-fast` 编程模型。
-
----
-
-## Windows 系统特有的问题
-
-Hermes 在 Windows 系统上可直接运行（支持 PowerShell、cmd、Windows Terminal、git-bash mintty、VS Code 集成终端等）。大部分功能都能正常使用，但由于 Win32 与 POSIX 环境存在一些差异，我们遇到了一些问题——请在发现新问题时在此处记录下来，以便后续使用者无需重复摸索。
-
-### 输入/快捷键
-
-**Alt+Enter 不会插入换行符**——Windows Terminal（以及 mintty）会在 prompt_toolkit 接收到按键之前将其用于全屏模式。建议使用 **Ctrl+Enter** 代替（在 Windows 上 CLI 将其绑定为换行操作；原始的 Ctrl+J 也会产生相同效果，且不会造成问题）。若想查看终端如何处理按键输入，可从项目根目录运行 `python scripts/keystroke_diagnostic.py` 脚本。
-
-### 配置/文件
-
-**首次运行时会出现 HTTP 400 “未提供模型”错误**——这是因为 `config.yaml` 文件是以带 UTF-8 BOM 格式保存的（Notepad 编辑器会自动添加 BOM）。请将其重新保存为不带 BOM 的 UTF-8 格式；这样使用 `hermes config edit` 命令时就能正确写入配置。
-
-### `execute_code` / 沙箱环境
-
-**沙箱子进程会抛出 WinError 10106 错误**——原因是该进程无法创建 `AF_INET` 类型的套接字。根本原因通常是 Hermes 的环境清理机制移除了 `SYSTEMROOT`/`WINDIR`/`COMSPEC` 等路径（Python 的 `socket` 模块需要这些路径才能找到 `mswsock.dll` 文件），而非 Winsock LSP 出现故障。《tools/code_execution_tool.py` 文件中的 `_WINDOWS_ESSENTIAL_ENV_VARS` 允许列表可解决此问题；如果仍然遇到该错误，可在 `execute_code` 代码块中输出 `os.environ` 的内容，确认 `SYSTEMROOT` 变量是否已被正确设置。
-
-### 在 Windows 上进行测试
-
-`scripts/run_tests.sh` 脚本仅支持 POSIX 环境（要求先运行 `.venv/bin/activate` 命令激活虚拟环境）；而 Hermes 安装目录下的 `venv/Scripts/` 文件夹中未预装 pip/pytest 工具（为节省体积而未包含）。建议在系统级的 Python 环境中安装 pytest，然后直接使用 `-n 0` 参数运行测试（`pyproject.toml` 文件中的 `addopts` 配置已自动设置了 `-n` 参数）。
-
-```bash
-"/c/Program Files/Python311/python" -m pip install --user pytest pytest-xdist pyyaml
-export PYTHONPATH="$(pwd)"
-"/c/Program Files/Python311/python" -m pytest tests/foo/test_bar.py -v --tb=short -n 0
-```
-
-（仅适用于 POSIX 环境的测试需要添加跳过机制——详情请参见下方“贡献者指南”中的跨平台保护列表。）
-
-### 路径/文件系统
-
-**行尾字符。** Git 可能会提示“LF 将被替换为 CRLF”，但这只是视觉上的差异——仓库中的 `.gitattributes` 文件会自动处理。请勿让编辑器将已提交的 POSIX 行尾格式的文件自动转换为 CRLF 格式。
-
-**正斜杠在几乎所有地方都适用。** 所有的 Hermes 工具以及大多数 Windows API 都支持 `C:/Users/...` 这种路径格式。在代码和日志中建议使用正斜杠，这样可以避免在 bash 中出现需要转义的反斜杠。
-
----
-
-## 故障排除
-
-### 语音功能无法使用
-1. 检查 config.yaml 文件中是否设置了 `stt.enabled: true`。
-2. 确认对应的服务提供方已配置：可通过 `pip install faster-whisper` 安装相应组件，或设置 API 密钥。
-3. 在网关端执行 `/restart` 命令；在 CLI 环境下则需退出程序后重新启动。
-
-### 某工具不可用
-1. 运行 `hermes tools` 命令，检查该平台是否已启用相应的工具集。
-2. 部分工具需要环境变量（请查看 `.env` 文件）。
-3. 启用工具后执行 `/reset` 命令重置配置。
-
-### 模型/服务提供方相关问题
-1. 运行 `hermes doctor` 命令，检查配置及依赖项是否正常。
-2. 使用 `hermes auth` 命令重新认证 OAuth 服务提供方（或执行 `hermes auth add <provider>` 添加新提供方）。
-3. 确认 `.env` 文件中包含正确的 API 密钥。
-4. **Copilot 403 错误**：`gh auth login` 生成的令牌无法用于 Copilot API。必须通过 `hermes model` → GitHub Copilot 的专用 OAuth 设备码流程进行认证。
-
-### 修改未生效
-- **工具/技能问题**：执行 `/reset` 命令可启动带有更新后工具集的新会话。
-- **配置更改问题**：在网关端执行 `/restart` 命令；在 CLI 环境下则需退出程序后重新启动。
-- **代码更改问题**：重启 CLI 或网关进程。
-
-### 技能未显示
-1. 运行 `hermes skills list` 命令，确认相关技能已成功安装。
-2. 使用 `hermes skills config` 命令检查该平台是否已启用相应技能。
-3. 如需手动加载特定技能，可执行 `/skill name` 命令或使用 `hermes -s name` 参数。
-
-### 网关相关问题
-请先查看日志以定位问题：
-```bash
-grep -i "failed to send\|error" ~/.hermes/logs/gateway.log | tail -20
-```
-
-常见网关问题：
-- **SSH登出时网关崩溃**：启用延迟退出功能：`sudo loginctl enable-linger $USER`
-- **关闭WSL2时网关崩溃**：WSL2要求在`/etc/wsl.conf`中设置`systemd=true`，以便systemd服务正常运行。若未设置此参数，网关将回退到`nohup`模式（会随会话关闭而终止）。
-- **网关陷入崩溃循环**：重置故障状态：`systemctl --user reset-failed hermes-gateway`
-
-### 各平台特有问题
-- **Discord机器人无响应**：需在机器人的“特权网关意图”设置中启用**消息内容意图**。
-- **Slack机器人仅在私信中正常工作**：必须订阅`message.channels`事件。否则，机器人将忽略公共频道。
-- **Windows系统特有问题**（如`Alt+Enter`换行、WinError 10106错误、UTF-8 BOM配置、测试套件及行尾格式等），请参阅上文专门的**Windows系统特有问题**部分。
-
-### 辅助模型无法使用
-如果视觉处理、压缩、会话搜索等`auxiliary`任务 silently 失败，`auto`提供程序将无法找到对应的后端服务。此时需设置`OPENROUTER_API_KEY`或`GOOGLE_API_KEY`，或为每个辅助任务单独配置相应的提供程序：
-```bash
-hermes config set auxiliary.vision.provider <your_provider>
-hermes config set auxiliary.vision.model <model_name>
-```
-
-## 如何查找相关内容
-
-| 需要查找的内容 | 查找位置 |
-|----------------|----------|
-| 配置选项 | `hermes config edit` 或 [配置文档](https://hermes-agent.nousresearch.com/docs/user-guide/configuration) |
-| 可用工具 | `hermes tools list` 或 [工具参考手册](https://hermes-agent.nousresearch.com/docs/reference/tools-reference) |
-| 斜杠命令 | 会话中输入 `/help` 或 [斜杠命令参考手册](https://hermes-agent.nousresearch.com/docs/reference/slash-commands) |
-| 技能目录 | `hermes skills browse` 或 [技能目录](https://hermes-agent.nousresearch.com/docs/reference/skills-catalog) |
-| 提供商配置 | `hermes model` 或 [提供商指南](https://hermes-agent.nousresearch.com/docs/integrations/providers) |
-| 平台配置 | `hermes gateway setup` 或 [消息传递文档](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/) |
-| MCP 服务器 | `hermes mcp list` 或 [MCP 指南](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) |
-| 配置文件 | `hermes profile list` 或 [配置文件文档](https://hermes-agent.nousresearch.com/docs/user-guide/profiles) |
-| 定时任务 | `hermes cron list` 或 [定时任务文档](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) |
-| 内存状态 | `hermes memory status` 或 [内存相关文档](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) |
-| 环境变量 | `hermes config env-path` 或 [环境变量参考手册](https://hermes-agent.nousresearch.com/docs/reference/environment-variables) |
-| CLI 命令 | `hermes --help` 或 [CLI 参考手册](https://hermes-agent.nousresearch.com/docs/reference/cli-commands) |
-| 网关日志 | `~/.hermes/logs/gateway.log` |
-| 会话文件 | `hermes sessions browse`（读取 state.db 文件） |
-| 源代码 | `~/.hermes/hermes-agent/` |
-
----
-
-## 贡献者快速参考指南
-
-专为偶尔参与贡献或提交 PR 的用户准备。完整开发者文档请访问：https://hermes-agent.nousresearch.com/docs/developer-guide/
-
-### 项目结构
-
-```
-hermes-agent/
-├── run_agent.py          # AIAgent — core conversation loop
-├── model_tools.py        # Tool discovery and dispatch
-├── toolsets.py           # Toolset definitions
-├── cli.py                # Interactive CLI (HermesCLI)
-├── hermes_state.py       # SQLite session store
-├── agent/                # Prompt builder, context compression, memory, model routing, credential pooling, skill dispatch
-├── hermes_cli/           # CLI subcommands, config, setup, commands
-│   ├── commands.py       # Slash command registry (CommandDef)
-│   ├── config.py         # DEFAULT_CONFIG, env var definitions
-│   └── main.py           # CLI entry point and argparse
-├── tools/                # One file per tool
-│   └── registry.py       # Central tool registry
-├── gateway/              # Messaging gateway
-│   └── platforms/        # Platform adapters (telegram, discord, etc.)
-├── cron/                 # Job scheduler
-├── tests/                # Extensive pytest suite (run via scripts/run_tests.sh)
-└── website/              # Docusaurus docs site
-```
-
-配置文件：`~/.hermes/config.yaml`（用于设置参数），`~/.hermes/.env`（用于存储 API 密钥）——若已设置 `$HERMES_HOME`，则这两个文件均位于该路径下。
-
-### 添加工具
-
-需要准备两个文件。自动发现功能会导入任何包含顶层 `registry.register()` 调用的 `tools/*.py` 文件，但只有当某个工具的名称被加入工具集后，它才会向智能体*公开*可用。
-
-**1. 创建 `tools/your_tool.py` 文件：**
-```python
-import json, os
-from tools.registry import registry
-
-def check_requirements() -> bool:
-    return bool(os.getenv("EXAMPLE_API_KEY"))
-
-def example_tool(param: str, task_id: str = None) -> str:
-    return json.dumps({"success": True, "data": "..."})
-
-registry.register(
-    name="example_tool",
-    toolset="example",
-    schema={"name": "example_tool", "description": "...", "parameters": {...}},
-    handler=lambda args, **kw: example_tool(
-        param=args.get("param", ""), task_id=kw.get("task_id")),
-    check_fn=check_requirements,
-    requires_env=["EXAMPLE_API_KEY"],
-)
-```
-
-**2. 将其集成到 `toolsets.py` 中的工具集中** —— 将该工具的名称添加到 `_HERMES_CORE_TOOLS`（所有平台通用）或特定的工具集中。
-
-所有的处理函数都必须返回 JSON 字符串。在获取路径时请使用 `get_hermes_home()` 函数，切勿直接硬编码 `~/.hermes` 路径。对于仅限本地使用的自定义工具，建议在 `~/.hermes/plugins/` 目录下编写插件，而非修改核心代码 —— 详情请参阅开发者指南。
-
-### 添加斜杠命令
-
-1. 在 `hermes_cli/commands.py` 文件的 `COMMAND_REGISTRY` 中添加 `CommandDef` 定义；
-2. 在 `cli.py` 文件中的 `process_command()` 函数中编写对应的处理逻辑；
-3. （可选）在 `gateway/run.py` 文件中添加网关处理函数。
-
-所有的相关组件（帮助文本、自动补全功能、Telegram 菜单、Slack 映射等）都会自动从这个中央注册表中获取对应信息。
-
-### Agent 循环（概览）
-
-```
-run_conversation():
-  1. Build system prompt
-  2. Loop while iterations < max:
-     a. Call LLM (OpenAI-format messages + tool schemas)
-     b. If tool_calls → dispatch each via handle_function_call() → append results → continue
-     c. If text response → return
-  3. Context compression triggers automatically near token limit
-```
-
-### 测试
-
-请使用标准运行器——它能够确保与持续集成流程保持一致（隔离的运行环境、未设置的凭据、时区设置为 UTC、并行工作进程以及每项测试的独立子进程隔离）：
-
-```bash
-scripts/run_tests.sh                          # full suite
-scripts/run_tests.sh tests/tools/             # one directory
-scripts/run_tests.sh tests/tools/test_x.py    # one file
-scripts/run_tests.sh -v --tb=long             # pass-through pytest flags
-```
-
-- 测试会自动将 `HERMES_HOME` 重定向至临时目录——绝不会修改真实的 `~/.hermes/` 目录。
-- 脚本会依次检测 `.venv`、`venv`，以及共享工作区的虚拟环境。
-- **Windows 系统**：该封装仅支持 POSIX 标准；如需使用直接调用 pytest 的解决方案，请参阅上文的“Windows 系统特有问题”部分。
-
-**跨平台测试保护机制**：使用仅支持 POSIX 标准系统调用的测试需要添加跳过标记。代码库中已有的常见标记包括：
-- 创建符号链接 → `@pytest.mark.skipif(sys.platform == "win32", reason="Symlinks require elevated privileges on Windows")`（参见 `tests/cron/test_cron_script.py`）
-- POSIX 文件权限（如 0o600 等）→ `@pytest.mark.skipif(sys.platform.startswith("win"), reason="POSIX mode bits not enforced on Windows")`（参见 `tests/hermes_cli/test_auth_toctou_file_modes.py`）
-- `signal.SIGALRM` → 仅适用于 Unix 系统（参见 `tests/conftest.py::_enforce_test_timeout`）
-- 实时 Winsock 相关功能/Windows 系统特有回归测试 → `@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific regression")`
-
-如果被测试代码同时调用了 `platform.system()`、`platform.release()` 或 `platform.mac_ver()` 函数，仅修改 `sys.platform` 是不够的。因为这些函数会独立读取真实的操作系统信息，因此在 Windows 环境下将 `sys.platform` 设置为 `"linux"` 的测试仍会返回 `platform.system() == "Windows"`，从而执行 Windows 版本的逻辑。需同时修改这三个函数的值。
-
-```python
-monkeypatch.setattr(sys, "platform", "linux")
-monkeypatch.setattr(platform, "system", lambda: "Linux")
-monkeypatch.setattr(platform, "release", lambda: "6.8.0-generic")
-```
-
-如需示例代码，请参阅 `tests/agent/test_prompt_builder.py::TestEnvironmentHints`。
-
-### 系统提示中的执行环境部分
-
-关于主机/后端的实际信息（操作系统、`$
-
-```
-type: concise subject line
-
-Optional body.
-```
-
-类型：`fix:`、`feat:`、`refactor:`、`docs:`、`chore:`
-
-### 核心规则
-
-- **严禁破坏提示词缓存** —— 严禁在对话过程中更改上下文、工具或系统提示词
-- **消息角色交替发送** —— 严禁连续出现两条助手消息或两条用户消息
-- 所有路径均需使用 `hermes_constants` 中的 `get_hermes_home()` 函数（确保配置安全）
-- 配置值应存放在 `config.yaml` 中，敏感信息则需保存在 `.env` 文件中
-- 新工具必须配备 `check_fn`，以便仅在满足特定条件时才会显示
+### 小贴士
+
+- **处理快速子任务时优先使用 `delegate_task`**——相比启动完整进程，其开销更小
+- **在启动用于编辑代码的 Agent 时使用 `-w`（工作树模式）**——可避免 Git 冲突
+- **为一次性模式设置超时时间**——复杂任务可能需要 5-10 分钟才能完成
+- **如需“发完即忘”的操作，可使用 `hermes chat -q`**——无需伪终端
+- **交互式会话建议使用 tmux**——原始伪终端模式会导致 prompt_toolkit 出现 `\r` 与 `\n` 的兼容问题
+- **对于定时任务**，建议使用 `cronjob` 工具而非直接启动 Agent——它能自动处理任务交付与重试机制
+- **出现“`delegate_task` 的并发数已达上限”提示时**——请参阅 `references/delegate-task-concurrency-diagnosis.md`。Hermes 实际存在三种上限限制机制；若均未触发，则说明是模型自身限定了处理能力，并将其归因于“运行时上限”
+- **关于“` $external_app` 能否使用我的 Nous Portal 订阅/OAuth 访问权限？”的疑问**——请参阅 `references/portal-auth-for-third-party-apps.md`。该文档会向用户详细讲解三层授权机制（插件与应用的区别、Portal 实际提供的接口功能，以及本地代理选项）
+
+## Surfaces（快速入门）
+
+- **桌面应用**（`hermes desktop` / `hermes gui`）——专为 macOS/Linux/Windows 系统开发的原生 Electron 应用：支持流式聊天、会话列表展示、Cmd+K 快捷调色板、文件拖放功能、原生通知，以及针对不同配置文件的远程网关登录功能。可通过 UI 插件对其进行扩展——详情参见 `references/desktop-plugins.md`。
+- **Web 控制面板**（`hermes dashboard`）——功能完备的管理员面板：涵盖消息频道管理、MCP 服务目录、Webhook 配置、内存管理、配置文件构建工具，同时还内置了 `hermes --tui` 聊天界面。该面板通过 OAuth/令牌机制进行安全保护。
+- **Ink TUI**（`hermes --tui` 或 `display.interface: tui`）——基于终端的 UI，配有可固定在侧边栏的插件应用——详情参见 `references/tui-widgets.md`。
+- **兼容 OpenAI 的代理**（`hermes proxy`）——基于本地 OpenAI API 构建，其授权机制由您当前登录的 OAuth 提供商决定。您可以将 Codex CLI、Aider、Cline 或任何脚本指向该代理使用，无需额外 API 密钥。
+
+## 不可违背的硬性规则（无论加载了何种功能，均不得违反）
+
+- **严禁破坏提示词缓存**——在对话过程中不得更改历史上下文、工具集或系统提示词。唯一例外是上下文压缩操作。
+- **消息角色必须交替**——禁止连续出现两条助手消息或两条用户消息；仅 `tool` 操作的结果可以重复出现。
+- **敏感信息存放在 `.env` 文件中，配置项存放在 `config.yaml` 中**——切勿要求用户在 `.env` 文件中存放非凭据类配置。
+- **使用与配置文件兼容的路径**——在代码中应使用 `get_hermes_home()` 函数获取路径，在会话中解析路径时则使用 `$HERMES_HOME` 变量。
+- **严禁直接为用户手动编辑 `config.yaml` 文件**——应使用 `hermes config set KEY VAL` 命令进行配置修改；哪怕是微小的缩进错误都可能破坏文件结构，进而导致实时网关失效。
