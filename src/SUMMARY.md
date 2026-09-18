@@ -3181,6 +3181,7 @@
             - [Obsidian](zh/website/docs/user-guide/skills/bundled/note-taking/note-taking-obsidian.md)
           - [Productivity]()
             - [Airtable](zh/website/docs/user-guide/skills/bundled/productivity/productivity-airtable.md)
+            - [Box](zh/website/docs/user-guide/skills/bundled/productivity/productivity-box.md)
             - [文档转行动项](zh/website/docs/user-guide/skills/bundled/productivity/productivity-document-to-action-items.md)
             - [Docx](zh/website/docs/user-guide/skills/bundled/productivity/productivity-docx.md)
             - [Google Workspace](zh/website/docs/user-guide/skills/bundled/productivity/productivity-google-workspace.md)
