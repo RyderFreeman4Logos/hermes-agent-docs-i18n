@@ -1,134 +1,177 @@
 ---
-title: "Hermes Agent Skill Authoring — Author in-repo SKILL"
+title: "Hermes Agent Skill Authoring — Author in-repo SKILL.md files: frontmatter and structure"
 sidebar_label: "Hermes Agent Skill Authoring"
-description: "Author in-repo SKILL"
+description: "Author in-repo SKILL.md files: frontmatter and structure"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Hermes Agent 技能编写指南
 
-在代码库中编写 SKILL.md：包括 frontmatter、验证规则及结构要求。
+在代码仓库中编写 SKILL.md 文件：包括前置信息与结构设置。
 
 ## 技能元数据
 
 | | |
 |---|---|
 | 来源 | 内置（默认已安装） |
-| 路径 | `skills/software-development/hermes-agent-skill-authoring` |
-| 版本 | `1.0.0` |
+| 路径 | `skills/software-development\hermes-agent-skill-authoring` |
+| 版本 | `2.0.0` |
 | 编写者 | Hermes Agent |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
 | 标签 | `skills`、`authoring`、`hermes-agent`、`conventions`、`skill-md` |
-| 相关技能 | [`plan`](/docs/user-guide/skills/bundled/software-development/software-development-plan)、[`requesting-code-review`](/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review) |
+| 相关技能 | [`requesting-code-review`](/docs/user-guide/skills/bundled/software-development/software-development-requesting-code-review) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，代理程序会将其视为操作指令。
+以下是当触发该技能时 Hermes 会加载的完整技能定义。当技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
 :::
 
-# 在代码库中编写 Hermes-Agent 技能
+# 在代码仓库中编写 Hermes-Agent 技能
 
 ## 概述
 
 SKILL.md 文件可以存储在两个位置：
 
-1. **用户本地**：`~/.hermes/skills/<可选分类>/<名称>/SKILL.md` —— 为个人使用，不会共享。可通过 `skill_manage(action='create')` 创建。
-2. **代码库中（适用于当前项目）**：`/home/bb/hermes-agent/skills/<分类>/<名称>/SKILL.md` —— 会被提交并随软件包一起分发。需使用 `write_file` 和 `git add` 操作。`skill_manage(action='create')` 不适用于此目录结构。
+1. **用户本地**：`~/.hermes/skills/<可选分类>/<名称>/SKILL.md` —— 为个人使用，不会被共享。可通过 `skill_manage(action='create')` 创建。
+2. **代码仓库内（适用于当前项目）**：位于 hermes-agent 代码仓库中的 `skills/<分类>/<名称>/SKILL.md` 或 `optional-skills/<分类>/<名称>/SKILL.md` —— 会被提交并随软件包一同分发。需使用 `write_file` 加 `git add` 操作完成。`skill_manage(action='create')` 不会作用于此目录结构。
+仓库内的技能必须符合该仓库的**严格编写标准**（详见 AGENTS.md 中的“技能编写标准（HARDLINE）”——该部分为权威依据；本文档则为相关操作指南）。审阅者会直接拒绝违反这些标准的 Pull Request，因此提前满足标准比事后补救更为经济高效。
 
 ## 适用场景
 
-- 用户要求你在“当前分支/代码库/提交版本”中添加技能
-- 你要提交的可复用工作流需要随 hermes-agent 一同分发
-- 你需要编辑 `/home/bb/hermes-agent/skills/` 下的现有技能（小范围修改可使用 `patch`，整体重写可使用 `write_file`；对于代码库中的技能，`skill_manage` 仍可用于执行 patch 操作，但不支持创建操作）
+- 用户要求你在“当前分支/仓库/提交版本”中添加技能；
+- 你正在提交可复用的工作流，希望其随 hermes-agent 一同发布；
+- 你正在编辑 `skills/` 或 `optional-skills/` 目录下的现有技能（小幅度修改可使用 `patch` 命令，彻底重写则用 `write_file`；对于仓库内的技能，`skill_manage` 仍可用于补丁操作，但不支持创建新技能）；
+- **不适用于**：`~/.hermes/skills/` 目录中的个人技能（此类情况请直接使用 `skill_manage` 命令）。
 
-## 必需的 frontmatter 要求
+## 首先确定技能层级：内置型还是可选型
 
-验证规则来源：`tools/skill_manager_tool.py::_validate_frontmatter`。必须满足以下要求：
+- **内置型（`skills/<category>/`）**——用于日常高频操作，对各类用户都极具通用性，占用资源少。判定标准是：你能理直气壮地声称“用户每月会在此技能上运行 5 次及以上操作”。
+- **可选型（`optional-skills/<category>/`）**——针对特定领域或场景（如区块链、游戏、金融、某款应用），用于处理周期性任务或复杂操作，体积较大。需通过 `hermes skills install official/<category>/<skill>` 命令安装。
 
-- 文件开头以 `---` 开头（不能有前置空行）
-- 内容之前以 `\n---\n` 结尾
-- 文件格式需为 YAML 映射结构
-- 必须包含 `name` 字段
-- 必须包含 `description` 字段，长度不超过 **1024 字符**（即 `MAX_DESCRIPTION_LENGTH` 的限制）
-- 在结尾的 `---` 之后必须有非空内容
+**不确定时请选择可选型**。后续升级技能较为容易，而降级则可能导致用户流失。“任何需要此技能的人都会受益”是可选型的适用理由，而非内置型的依据。
 
-`skills/software-development/` 下的所有技能均遵循此统一结构规范：
+请根据工具的实际功能来选择分类，而非其给人的使用感受（即便某个 AI 智能体 CLI 给人“提升效率”的感觉，也应归入 `autonomous-ai-agents/`）。可通过 `search_files(pattern='*', target='files', path='skills')` 查阅现有分类，切勿随意创建新的顶层分类。
+
+**禁止创建路由器/索引/中心节点类技能。** 若某技能的核心内容仅为指向其他相关技能的路由表，这不仅会增加额外的间接调用步骤，还会重复那些相关技能本身的“使用场景”触发条件。如果该技能在没有“加载技能 X 作为替代”这样的指引时内容为空，那就无需编写——目录结构及各个相关技能的触发条件已能实现相同功能。
+
+## 必需的前置信息
+
+验证规则来源：`tools/skill_manager_tool.py::_validate_frontmatter`。强制要求如下：
+
+- 第一行必须以 `---` 开头（不能有前置空行）。
+- 正文之前需以 `\n---\n` 结尾。
+- 需为 YAML 映射格式。
+- 必须包含 `name` 字段。
+- 必须包含 `description` 字段（验证工具允许的最大长度为 1024 字符——但请注意代码仓库中的更严格限制）。
+- 在结尾的 `---` 之后，正文内容不能为空。
+
+代码仓库规定的标准结构（即使验证工具未作强制要求，也需包含所有字段）：
 
 ```yaml
 ---
 name: my-skill-name               # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
-description: Use when <trigger>. <one-line behavior>.
-version: 1.0.0
-author: Hermes Agent
+description: Concise capability statement, under sixty chars.
+version: 0.1.0                    # semver; new skills start at 0.1.0
+author: Real Name (github-handle), Hermes Agent
 license: MIT
+platforms: [linux, macos, windows]   # audit, don't guess — see Platform Gating
 metadata:
   hermes:
-    tags: [short, descriptive, tags]
-    related_skills: [other-skill, another-skill]
+    tags: [Short, Descriptive, Tags]
+    related_skills: [other-in-repo-skill]
 ---
 ```
 
-验证器不会强制要求必须包含 `version` / `author` / `license` / `metadata` 这些字段，但所有节点都应具备这些信息——若省略它们，您的技能包就会显得格格不入。
+### `description` 规则（重要提示——验证工具允许的长度为1024字符，并非标准限制）
 
-## 大小限制
+- **长度不超过60个字符**，且需为单句，以句号结尾。
+- 应描述功能而非实现方式，同时不得重复技能名称。
+- 禁止使用营销性词汇，如“强大”“全面”“无缝”“先进”等。
+- 系统提示中的技能索引显示长度最多为57个字符，超出部分会显示“...”——因此触发条件或功能描述必须完整包含在该范围内。
+- 若描述中包含冒号`:`，需用双引号将其括起来；否则YAML解析器会将其视为映射结构，导致文档生成工具崩溃。双引号不计入60字符的限制内。
 
-- 描述部分：≤ 1024 字符（必须遵守）。
-- 完整的 SKILL.md 文件：≤ 100,000 字符（通过 `MAX_SKILL_CONTENT_CHARS` 参数进行限制，约合 36k 个标记）。
-- 属于 `software-development/` 目录下的节点技能包大小应在 **8-14k 字符** 之间。请尽量控制在这个范围内。如果内容超过 20k 字符，建议将其拆分到 `references/*.md` 文件中，并在 SKILL.md 中引用这些文件。
+**正确示例**：`Track named companies for material news with cited digests.`
+**错误示例**：`Use when a user asks to monitor named competitors or companies for product launches, pricing changes, funding, ...`（长度达240字符，审核时被拒绝）
 
-## 节点匹配结构
+### `author` 规则
 
-仓库中的每个技能包大致都遵循以下结构：
+- 首先注明**人类作者**，其次标注“Hermes Agent”作为协作方，格式为：`Ben Barclay (benbarclay), Hermes Agent`。
+- 对于由他人贡献的技能，绝不能仅写`author: Hermes Agent`——即便内容是由智能体撰写的，也需注明人类作者，而非工具本身。
+- 由维护者自行编写的技能，格式为：`Teknium (teknium1), Hermes Agent`。
+
+### `related_skills` 规则
+
+- 每个条目都必须对应您PR所在分支树结构中已存在的技能。不得引用仅处于规划阶段、位于其他PR中，或仅存在于`~/.hermes/skills/`目录下的技能。
+- 需逐一验证每个条目，可使用命令 `search_files(pattern='<name>', target='files', path='skills')`（以及 `optional-skills/` 目录）进行检查。
+## 平台限制策略：审核优先，绝不盲目信任
+
+`platforms:` 用于根据主机操作系统来控制功能的加载。其值应依据该技能的代码及脚本实际调用的环境来确定：
+
+| 技能仅使用…… | `platforms:` |
+|---|---|
+| Hermes 工具 + 标准库 Python + 跨平台 CLI 工具 | `[linux, macos, windows]` |
+| bash 流水线、`grep`/`awk`/`sed` 处理命令、heredoc 文件 | `[linux, macos]` |
+| `osascript`、`defaults`、`pmset` 命令 | `[macos]` |
+| `apt`/`systemctl`/`/proc` 接口 | `[linux]` |
+
+在 `scripts/` 目录中应查找仅适用于 POSIX 系统的信号，例如：`fcntl`、`termios`、`pty`、`os.fork`、`os.killpg`、`signal.SIGKILL`、`os.kill(pid, 0)` 等用于检测程序是否存活的信号，以及硬编码的 `/tmp`、`/proc`、`/etc` 路径。推荐做法是首先确保代码具备跨平台兼容性（如使用 `tempfile.gettempdir()`、`pathlib.Path`、`psutil.pid_exists` 等函数）；只有在某项功能确实受特定平台限制时，才设置更严格的平台限制，并在 `## 潜在问题` 部分说明原因。
+
+## 文件大小限制
+
+- 完整的 SKILL.md 文件长度不得超过 100,000 个字符（受 `MAX_SKILL_CONTENT_CHARS` 参数约束），但建议简单技能的文件控制在 **约 100 行**，复杂技能则控制在 **约 200 行**。同类技能的文件长度通常在 8,000 至 14,000 字符之间。
+- 体积较大或仅适用于特定分支的内容应存放在 `references/*.md`、`templates/` 或 `scripts/` 目录中，通过引用方式在 SKILL.md 中提及，而非直接嵌入代码。
+- 不要期望模型能在每次调用时都自动嵌入解析器或复杂的逻辑代码——建议将相关辅助脚本放入 `scripts/` 目录，并通过路径进行调用。
+
+## 文档结构（现代章节顺序）
 
 ```
-# <Title>
+# <Skill> Skill
+2-3 sentence intro: what it does, what it doesn't do, dependency stance.
 
-## Overview
-One or two paragraphs: what and why.
-
-## When to Use
-- Bulleted triggers
-- "Don't use for:" counter-triggers
-
-## <Topic sections specific to the skill>
-- Quick-reference tables are common
-- Code blocks with exact commands
-- Hermes-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
-
-## Common Pitfalls
-Numbered list of mistakes and their fixes.
-
-## Verification Checklist
-- [ ] Checkbox list of post-action verifications
-
-## One-Shot Recipes (optional)
-Named scenarios → concrete command sequences.
+## When to Use          — bulleted triggers (+ "Don't use for:" counter-triggers)
+## Prerequisites        — exact env vars, installs, API key sourcing
+## How to Run           — canonical invocation through the `terminal` tool
+## Quick Reference      — flat command list, no narration
+## Procedure            — numbered steps, each with a checkable completion criterion
+## Pitfalls             — known limits, things that look broken but aren't
+## Verification         — how to prove the skill worked
 ```
 
-并非每个部分都是必填的，但要想让该技能具备与同类产品相媲美的水准，至少需要包含“概述”、“适用场景”、可操作的详细内容以及常见陷阱说明。  
+并非每个技能都需要包含所有章节（纯流程型任务技能可能无需“快速参考”部分），但“使用场景说明”+“可操作步骤”+“常见陷阱”+“验证方法”是不可或缺的。应删除营销性引言、无实际意义的“设置检查”内容，以及已在“前置条件”中阐述过的环境变量说明。
 
-## 目录放置位置
+### 应引用Hermes内置工具，而非原始shell命令
 
-```
-skills/<category>/<skill-name>/SKILL.md
-```
+当技能需要某种功能时，需用反引号标明对应的Hermes工具名称：`terminal`、`read_file`、`write_file`、`patch`、`search_files`、`web_search`、`web_extract`、`browser_navigate`、`vision_analyze`、`delegate_task`、`cronjob`。切勿使用Agent已封装好的shell工具名称（例如将`grep`替换为`search_files`，`cat`替换为`read_file`，`sed`/`awk`替换为`patch`，`find`/`ls`替换为`search_files target='files'`）。基于CLI的技能应采用`terminal(command="<tool> ...", timeout=...)`的格式来组织指令调用——直接使用原始shell语句（如“run `foo --version`”）属于会阻碍审核的违规行为。若该技能依赖MCP服务器，也需在“前置条件”中明确说明其名称并记录相关设置方法。
 
-当前仓库中存在的分类（可通过 `ls skills/` 查看）包括：`autonomous-ai-agents`、`creative`、`data-science`、`devops`、`dogfood`、`email`、`gaming`、`github`、`leisure`、`mcp`、`media`、`mlops/*`、`note-taking`、`productivity`、`red-teaming`、`research`、`smart-home`、`social-media`、`software-development`。
+### 绝对禁止使用本地机器路径
 
-请从现有分类中选择最接近的一项，切勿随意创建新的顶级分类。
+应使用相对于代码仓库的路径（如`skills/...`、`tools/skill_manager_tool.py`）。如果在已提交的技能代码中硬编码了`/home/<you>/...`这类本地路径，将会影响其他所有用户的使用，且会立即成为审核时的问题点。
+
+## 编写优质技能的原则
+
+技能存在的意义在于提升Agent执行流程的可预测性——让Agent始终遵循一致且高效的运作规范。
+
+1. **提升流程的可预测性。** 若某条指令不会改变处理结果，应将其删除。  
+2. **合理控制上下文信息量。** 每次交互都会产生费用，详细内容应放在正文或链接参考中。  
+3. **为每一步设定明确的完成标准。** 这些标准需具备可验证性，且在关键情况下应做到全面覆盖——例如使用“确保所有修改过的文件都被处理”而非“总结更改内容”。  
+4. **将规则与其所管理的概念放在一起。**  
+5. **使用简洁有力的词汇**（如“闭环机制”“根本原因”“回归测试”），而非冗长的重复解释。  
+6. **去除重复内容和无用操作。** “请谨慎操作”和“遵循最佳实践”无法改变模型行为——应将其替换为可验证的标准或直接删除。  
+
+## 测试与文档（仓库管理技能的必备项）
+
+1. **测试代码**位于`tests/skills/test_<skill>_skill.py`中——仅允许使用标准库、pytest以及`unittest.mock`，禁止使用网络连接。可通过`scripts/run_tests.sh tests/skills/test_<skill>_skill.py -q`命令运行。（通用的`tests/tools/test_skill_manager_tool.py`测试通过并不能证明你的技能也符合要求。）
+2. **文档重新生成**：运行`python website/scripts/generate-skill-docs.py`，随后需严格控制文件范围——该工具会重写所有自动生成的页面。请使用`git checkout --`移除所有非你负责的文件；最终的差异对比结果中应仅显示你的SKILL.md文件、每个技能对应的独立文档页、一条简短的目录条目，以及`website/sidebars.ts`文件中的一行插入内容（可通过`search_files(pattern='<your-slug>', path='website/sidebars.ts')`进行验证——必须恰好返回一条匹配结果，否则该页面即为孤立文件）。
+3. **`.env.example`文件**（仅当该技能需要新的环境变量时使用）：需用注释清晰地标出相关内容；请勿修改该文件中的其他任何部分。
 
 ## 工作流程
 
-1. 调查目标分类下的**同行**：
-   ```
-   ls skills/<category>/
-   ```
-1. 阅读2-3份同类SKILL.md文件，以此作为参考来把握文风与结构。  
-2. 若不确定具体要求，可查看`tools/skill_manager_tool.py`中的验证规则。  
-3. 使用`write_file`函数将内容写入`skills/<category>/<name>/SKILL.md`路径下。  
+1. 使用`search_files(target='files')`查找目标类别中的同类技能，阅读2-3个同类技能的SKILL.md文件，以此确定文档的风格与结构。建议优先扩展现有技能，而非创建功能单一的新技能。
+2. 确定技能的层级与类别（参见上文）。如有疑问，可自行选择，但提交前务必征得他人意见，切勿直接默认设置。
+3. 使用`write_file`命令将内容写入`skills/<category>/<name>/SKILL.md`文件中（或`optional-skills/...`目录下）。
 4. 在本地进行验证：
    ```python
    import yaml, re, pathlib
@@ -137,41 +180,58 @@ skills/<category>/<skill-name>/SKILL.md
    m = re.search(r'\n---\s*\n', content[3:])
    fm = yaml.safe_load(content[3:m.start()+3])
    assert "name" in fm and "description" in fm
-   assert len(fm["description"]) <= 1024
+   assert len(fm["description"]) <= 60, f"description {len(fm['description'])} chars — hardline is 60"
+   assert fm["description"].endswith(".")
+   assert "platforms" in fm
    assert len(content) <= 100_000
    ```
-5. 在当前分支上执行 **Git add + commit** 操作。  
-6. **注意：** 当前会话的技能加载器为缓存模式——在开启新会话之前，`skill_view` / `skills_list` 功能将无法显示新增的技能。这是正常现象，并非故障。
+同时，请确认仓库中确实存在每一个`related_skills`条目。
+5. **添加测试用例并重新生成文档**（见上一节）。
+6. 在当前分支上执行`Git add + commit`操作，然后创建一个Pull Request。
+7. **注意：**当前会话的技能加载器处于缓存状态——因此直到开启新会话后，`skill_view`/`skills_list`才会显示新增的技能。这是正常现象，并非错误。
 
-## 引用其他技能
+## 编辑仓库中的现有技能
 
-在加载时，`metadata.hermes.related_skills` 会合并仓库内的技能树（位于 `skills/` 目录）与用户本地技能树（位于 `~/.hermes/skills/`）。虽然可以从仓库内的技能引用用户本地的技能，但其他克隆该仓库的用户则无法识别这些本地技能。建议尽量仅通过仓库内的技能来互相引用。如果某个高频使用的技能仅存在于 `~/.hermes/skills/` 中，可考虑将其移至仓库中。
+- **小型修复：**对于仓库中的技能，可使用`skill_manage(action='patch', ...)`函数，或者直接使用`patch`命令。
+- **大规模重写：**需要将整个SKILL.md文件的内容通过`write_file`函数写入。
+- **辅助文件：**也可以通过`write_file`函数向技能目录下的`references/`、`templates/`或`scripts/`文件夹中添加文件。
+- **务必执行提交操作**——仓库中的技能属于代码源，而非运行时状态。一旦前置数据发生变化，就需要重新运行文档生成工具。
 
-## 编辑仓库内的现有技能
+## 常见问题与陷阱
 
-- **小型修复（如拼写错误、补充注意事项、优化触发条件）：** 对于仓库内的技能，使用 `skill_manage(action='patch', name=..., old_string=..., new_string=...)` 即可。  
-- **大规模重写：** 需要直接用 `write_file` 编辑整个 SKILL.md 文件。虽然 `skill_manage(action='edit')` 也能实现，但必须提供完整的新内容。  
-- **添加辅助文件：** 可通过 `write_file` 在 `skills/<category>/<name>/references/<file>.md`、`templates/<file>` 或 `scripts/<file>` 目录下创建文件。`skill_manage(action='write_file')` 也可用于此目的，且会严格遵循参考文件/模板/脚本/资源文件的目录允许列表。  
-- **务必执行提交操作**——仓库内的技能属于源代码，而非运行时状态。
+1. **使用 `skill_manage(action='create')` 创建仓库内的技能时**。该命令会将内容写入 `~/.hermes/skills/` 目录，而非仓库目录结构中，请改用 `write_file` 命令。
 
-## 常见问题
+2. **以验证工具的限制作为标准**。验证工具允许描述长度为1024字符，而审核流程会拒绝长度超过60字符的描述。验证工具不会检查 `platforms:`、作者格式、测试用例或文档内容，这些需由审核流程来处理。
 
-1. **对仓库内的技能使用 `skill_manage(action='create')`。** 此命令会将内容写入 `~/.hermes/skills/` 目录，而非仓库内的技能树。如需在仓库内创建技能，请使用 `write_file`。  
-2. **`---` 前存在多余空格。** 验证工具会检查 `content.startswith("---")`，若有前置空行或 BOM 字符，将导致验证失败。  
-3. **描述内容过于笼统。** 合规的技能描述应以 “Use when ...” 开头，并明确说明适用的*触发场景类别*，而非具体任务。“Use when debugging X” 比 “Debug X” 更为规范。  
-4. **遗漏作者、许可证及元数据字段。** 虽然这不是验证工具的强制要求，但所有合规技能都应包含这些信息；缺失会导致技能看起来未完成。  
-5. **创建与现有技能重复的技能。** 在创建新技能之前，建议先列出 `skills/<category>/` 目录下的 2-3 个现有技能，并考虑在其基础上进行扩展，而非直接创建功能相似的新技能。  
-6. **误以为当前会话能立即看到新增技能。** 实际上无法立即显示，因为技能加载器仅在会话启动时初始化。建议在新建会话中查看，或通过提供完整路径使用 `skill_view` 功能查询。  
-7. **链接到仓库中不存在的技能。** 虽然 `related_skills: [some-user-local-skill]` 对当前用户有效，但会导致其他克隆者出现问题。建议仅使用仓库内的技能作为引用。
+3. **贡献的技能需标注 `author: Hermes Agent`**。应首先注明具体贡献者。
 
-## 验证清单
+4. **`---` 前不能有前置空格**。若存在前置空行或BOM字符，验证将会失败。
 
-- [ ] 文件位于 `skills/<category>/<name>/SKILL.md` 目录下（而非 `~/.hermes/skills/` 目录）  
-- [ ] 前置内容从字节 0 开始以 `---` 标识，结尾处为 `\n---\n`  
-- [ ] 文件中包含 `name`、`description`、`version`、`author`、`license` 以及 `metadata.hermes.{tags, related_skills}` 字段  
-- [ ] 名称长度不超过 64 个字符，且仅包含小写字母和连字符  
-- [ ] 描述内容长度不超过 1024 个字符，并以 “Use when ...” 开头  
-- [ ] 文件总长度不超过 100,000 个字符（建议控制在 8-15k 字符之间）  
-- [ ] 文件结构应为：`# 标题` → `## 概述` → `## 适用场景` → 正文内容 → `## 常见问题` → `## 验证清单`  
-- [ ] `related_skills` 中引用的技能应在仓库内存在（或明确标注为允许使用用户本地技能）  
-- [ ] 已在目标分支上完成 `git add skills/<category>/<name>/ && git commit` 操作
+5. **描述过于笼统，或触发词位于57字符之后**。
+
+6. **`related_skills` 指向仓库中不存在的技能**（如用户本地保存的、计划添加的，或位于其他分支中的技能）。
+
+7. **重复创建同类技能**。应先查看该类别中已有的技能，选择扩展而非重复创建。
+
+8. **跳过文档生成工具，或推送与其无关的变更内容**。这两种做法都是错误的：不生成文档会导致技能孤立且没有文档页面；盲目生成文档则会使得差异文件因包含其他技能的变更内容而变得臃肿。
+
+9. **认为新技能会立即在当前会话中显示**。实际上，加载器是在会话启动时才被初始化的。
+
+10. **任由技能相关内容逐渐积压**。添加规则时，应同时删除被替代的旧内容。
+
+## 验证检查清单
+
+- [ ] 级别需明确指定（套餐标准：每月5次及以上使用；否则归类至`optional-skills/`）
+- [ ] 文件应存放于`skills/<类别>/<名称>/SKILL.md`或`optional-skills/<类别>/<名称>/SKILL.md`路径下
+- [ ] 前置信息需以字节0处的`---`开始，以`\n---\n`结束
+- [ ] 必须包含`name`、`description`、`version`、`author`、`license`、`platforms`以及`metadata.hermes.{tags, related_skills}`字段
+- [ ] 描述内容长度不得超过60个字符，需为单句结构，以句号结尾，不得包含任何营销用语
+- [ ] `author`字段需首先注明实际贡献者姓名
+- [ ] `platforms:`字段的内容需根据实际代码/脚本核实，不可复制自其他相关文件
+- [ ] 所有的`related_skills`条目都必须在代码仓库内部可找到对应内容
+- [ ] 正文需遵循现代文档结构规范，所有指令均需通过Hermes工具呈现
+- [ ] 文件中严禁出现任何基于本地机器的路径
+- [ ] 每个有序步骤都需设定可验证的完成标准
+- [ ] 通过`scripts/run_tests.sh`运行后，`tests/skills/test_<skill>_skill.py`中的测试用例必须全部通过
+- [ ] 文档生成时需严格遵循结构规范，侧边栏中对应slug的条目数量必须为1个
+- [ ] 需在指定分支上执行`git add`并提交代码，随后创建PR
