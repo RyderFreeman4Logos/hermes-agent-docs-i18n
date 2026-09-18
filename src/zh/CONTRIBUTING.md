@@ -1,6 +1,6 @@
 # 为 Hermes Agent 做贡献
 
-感谢您为 Hermes Agent 出力！本指南涵盖了您所需的一切内容：开发环境搭建、架构理解、功能开发决策以及如何让您的 Pull Request 被合并。
+感谢您为 Hermes Agent 出力！本指南涵盖了您所需的所有内容：搭建开发环境、了解架构设计、确定要开发的功能，以及如何让您的 Pull Request 被合并。
 
 ---
 
@@ -8,107 +8,110 @@
 
 我们按照以下顺序重视各类贡献：
 
-1. **错误修复** — 程序崩溃、异常行为、数据丢失等问题。始终是最高优先级。
+1. **错误修复** — 程序崩溃、异常行为、数据丢失等问题。始终为最高优先级。
 2. **跨平台兼容性** — macOS、不同 Linux 发行版以及 Windows 上的 WSL2。我们希望 Hermes 能在所有平台上正常运行。
-3. **安全性强化** — shell 注入、命令提示符注入、路径遍历、权限提升等问题。详情请参阅[安全考虑事项](#security-considerations)。
-4. **性能与稳定性** — 重试逻辑、错误处理机制以及优雅降级功能。
-5. **新技能开发** — 但仅限具有广泛实用价值的技能。详情请参阅[应该是技能还是工具？](#should-it-be-a-skill-or-a-tool)。
-6. **新工具开发** — 很少有需求。大多数功能应以技能的形式实现，具体内容见下文。
+3. **安全性强化** — 命令注入、提示符注入、路径遍历、权限提升等问题。详情请参阅[安全考虑事项](#security-considerations)。
+4. **性能与稳定性** — 重试机制、错误处理以及优雅降级功能。
+5. **新技能** — 但仅限具有广泛实用价值的技能。详情请参阅[应该是技能还是工具？](#should-it-be-a-skill-or-a-tool)。
+6. **新工具** — 几乎没有需求。大多数功能应以技能的形式实现，具体内容见下文。
 7. **文档完善** — 错误修正、内容澄清以及新增示例。
 
 ---
 
 ## 开始之前：先进行搜索
 
-在开始编写代码之前先快速搜索一下，既能节省您的时间，也能保持 Pull Request 队列的整洁——此类问题中重复提交的情况很常见，因此花一分钟提前排查是值得的。
+在编写代码之前先快速搜索一下，既能节省您的时间，也能保持 Pull Request 队列的整洁——重复提交的情况十分常见，因此提前花一分钟搜索是值得的。
 
-- 对与您要解决的问题或错误现象相关的**已开放和已合并的 Pull Request 与问题记录**进行搜索——Pull Request 模板中的重复内容检测功能会在代码审核阶段才触发，到那时您可能已经浪费了时间。
+- 对与您要解决的问题或错误症状相关的**已开放及已合并的 Pull Request 和问题记录**进行搜索——Pull Request 模板中的重复内容检测功能会在代码审核阶段才触发，到那时您可能已经浪费了时间。
   ```bash
   gh search issues --repo NousResearch/hermes-agent "<your terms>"
   gh search prs --repo NousResearch/hermes-agent --state all "<your terms>"
   ```
-或者使用网页界面：[issues](https://github.com/NousResearch/hermes-agent/issues?q=) · [PRs (所有状态)](https://github.com/NousResearch/hermes-agent/pulls?q=is%3Apr)。  
-- **问题跟踪系统可能会落后于代码更新。** 许多用户请求的功能早已在代码中实现，因此在提出新需求前，建议先通过源代码搜索（如 `search_files` 或编辑器自带的 grep 功能）确认该功能是否已存在。  
-- **如果已有开放的 PR 在处理相同问题**，建议优先审查或改进该 PR，而非重复创建新的 PR。  
-- **对于规模较大的任务**，可在对应 issue 中留言说明你正在处理该问题，以避免他人重复开展工作。  
+或者可以使用网页界面：[问题追踪](https://github.com/NousResearch/hermes-agent/issues?q=) · [PRs（所有状态）](https://github.com/NousResearch/hermes-agent/pulls?q=is%3Apr)。  
+- **问题追踪系统可能与代码更新存在延迟。** 许多用户请求的功能早已在代码中实现，因此在提出新需求之前，建议先通过源代码搜索（如 `search_files` 功能或编辑器自带的 grep 工具）确认该功能是否已存在。  
+- **如果已有开放的 PR 正在处理该问题**，建议优先查看或改进那个 PR，而非重复创建新的提交。  
+- **对于规模较大的任务**，可在对应问题上留言表明自己正在处理，以免他人重复开展工作。  
 
-相关内容：#38284 涉及了代理端的类似机制——Hermes 会在进行深度自我排查前先检查现有的 issue 和 PR。本部分则是为人工贡献者提供的补充说明。  
+相关内容：#38284 涉及了代理端的类似机制——Hermes 会在进行深度自我排查之前先检查现有的问题与 PR。本部分则是为人工贡献者提供的补充说明。  
 
 ---
 
-## 应该创建技能还是工具？
+## 应该将其设计为技能还是工具？
 
 这是新贡献者最常遇到的问题。答案几乎总是**技能**。  
 
-### 何时将其定义为技能：  
-- 该功能可通过指令 + shell 命令 + 现有工具来实现；  
-- 它封装了外部 CLI 或 API，代理可通过 `terminal` 或 `web_extract` 调用这些接口；  
-- 不需要为代理集成自定义的 Python 代码或 API 密钥管理功能。  
-**示例**：arXiv 搜索、git 工作流、Docker 管理、PDF 处理、通过 CLI 工具发送邮件等。  
+### 何时应将其设为技能：  
+- 该功能可通过指令、Shell 命令及现有工具来实现；  
+- 它封装了外部 CLI 或 API，且代理能够通过 `terminal` 或 `web_extract` 功能调用这些接口；  
+- 无需在代理中集成自定义的 Python 代码或处理 API 密钥管理功能。  
+- **示例**：arXiv 搜索、Git 工作流管理、Docker 管理、PDF 处理、通过 CLI 工具发送邮件等。  
 
-### 何时将其定义为工具：  
-- 需要与 API 密钥、认证流程或由代理框架管理的多组件配置进行端到端集成；  
-- 需要每次都精确执行的自定义处理逻辑（而非依赖 LLM 的“尽力而为”解读）；  
-- 需要处理二进制数据、流式数据或实时事件，而这些数据无法通过终端传输。  
-**示例**：浏览器自动化（Browserbase 会话管理）、文本转语音（音频编码 + 平台推送）、视觉分析（base64 图像处理）等。  
+### 何时应将其设为工具：
 
-### 技能是否需要打包在一起？  
+- 需要与 API 密钥、身份验证流程，或由 Agent harness 管理的多组件配置实现端到端集成。  
+- 需要具备自定义处理逻辑，且该逻辑必须每次都精确执行（而非依赖 LLM 的“尽力而为”式解读）。  
+- 能够处理无法通过终端传输的二进制数据、流式数据或实时事件。  
+- 典型应用场景包括：浏览器自动化（Browserbase 会话管理）、文本转语音（音频编码与平台推送）、视觉分析（base64 格式图像处理）。
 
-打包在 `skills/` 目录中的技能会随每个 Hermes 安装包一同提供。这类技能应**对大多数用户都有广泛用途**，例如：文档处理、网络研究、常见开发工作流、系统管理等功能，且会被大量用户频繁使用。  
+### 是否应将该技能打包？
 
-如果你的技能虽官方认可且实用，但并非所有人都需要（比如某些付费服务集成或依赖较大的功能），可将其放入 **`optional-skills/`** 目录——该目录中的技能会随仓库一同提供，但默认不会被激活。用户可通过 `hermes skills browse` 查看（标记为“官方”），并使用 `hermes skills install` 安装（无需第三方警告，因其具有内置信任度）。  
+打包在 `skills/` 目录中的技能会随每次 Hermes 安装一同提供。这类技能应当**对大多数用户都具有广泛实用性**，例如：文档处理、网络搜索、常见开发工作流、系统管理，且会被大量用户频繁使用。
 
-如果你的技能属于专业领域、由社区贡献或针对特定场景设计，更适合放在**技能中心**——将其上传到技能注册表，并在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可通过 `hermes skills install` 安装此类技能。  
+如果您的技能虽属官方出品且实用，但并非所有人都需要（比如某些付费服务集成或依赖庞大的外部组件），则应将其放入 **`optional-skills/`** 目录——该目录中的技能会随代码仓库一同提供，但默认不会被激活。用户可通过 `hermes skills browse` 查看这些标记为“官方”的技能，并使用 `hermes skills install` 进行安装（无需担心第三方风险，因其具有内置信任度）。
 
----
-
-## 内存提供器：应作为独立插件发布  
-
-**我们不再接受新的内存提供器加入此仓库。** `plugins/memory/` 目录下已有的内置提供器（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）已不再接受新增。如果你想添加新的内存后端，应将其作为**独立插件仓库**发布，供用户安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。  
-
-独立内存插件需满足以下要求：  
-- 实现相同的 `MemoryProvider` ABC 接口（位于 `agent/memory_provider.py` 文件中），包括 `sync_turn`、`prefetch`、`shutdown` 方法，可选的 `post_setup(hermes_home, config)` 方法用于与设置向导集成；  
-- 使用相同的发现系统——`discover_memory_providers()` 函数会从用户/项目插件目录及 pip 安装路径中自动检测这类插件；  
-- 通过 `post_setup()` 方法与 `hermes memory setup` 功能集成，无需修改核心代码；  
-- 可在 `cli.py` 文件中使用 `register_cli(subparser)` 方法注册自己的 CLI 子命令；  
-- 拥有与内置提供器相同的生命周期钩子和配置管理功能。  
-
-对于在 `plugins/memory/` 下新增目录的 PR，我们将予以拒绝，并提示用户将相关提供器作为独立仓库发布。现有的内置提供器仍可保留，对其的缺陷修复也欢迎提交。  
-
-这并非质量标准问题，而是出于耦合度和维护性考虑。内存提供器是最常见的插件类型，但并不应全部集中在这个目录下。  
+而对于那些专业化、由社区贡献或针对小众场景设计的技能，则更适合发布在 **Skills Hub** 平台上——将其上传至技能注册表后，即可在 [Nous Research Discord](https://discord.gg/NousResearch) 中分享。用户同样可通过 `hermes skills install` 来安装此类技能。
 
 ---
 
-## 第三方产品集成：也应作为独立插件发布  
+## 内存提供器：作为独立插件发布
 
-同样的规则也适用于**任何集成第三方产品或项目的插件**——比如可观测性/指标后端、供应商 SaaS 连接器、分析仪表板、付费服务集成等类似第三方功能。**这类插件不应被放入此仓库。**  
+**我们不再接受向该仓库添加新的内存提供程序。** `plugins/memory/` 目录下现有的内置提供程序（honcho、mem0、supermemory、byterover、hindsight、holographic、openviking、retaindb）已停止接收新功能添加。如果您想添加新的内存后端，应将其发布为**独立的插件仓库**，供用户安装到 `~/.hermes/plugins/` 目录中（或通过 pip 安装）。
 
-原因在于维护负担，而非代码质量问题。每当有外部产品被整合到核心代码树中，我们就必须在一个发展迅速的代码库中持续维护它，而且还要面对那些我们并不拥有且无法控制的后端系统。Hermes 的功能更新速度很快，若将第三方产品与其深度绑定，会给维护者带来无止境的负担。  
+独立的记忆插件需满足以下要求：
 
-建议将这些插件作为**独立插件仓库**发布：  
-- 实现相应的 ABC 接口，并使用现有的插件发现路径（`~/.hermes/plugins/`、项目级的 `.hermes/plugins/` 目录或 pip 安装路径），详情参见[构建 Hermes 插件](https://hermes-agent.nousresearch.com/docs/guides/build-a-hermes-plugin)；  
-- 通过我们已提供的接口注册生命周期钩子（`pre_tool_call`、`post_tool_call`、`pre_llm_call`、`post_llm_call`、`on_session_start`、`on_session_end`）、工具（`ctx.register_tool`）以及 CLI 子命令（`ctx.register_cli_command`），无需修改核心代码；  
-- 如果你的插件需要框架未提供的功能，应提出需求以**扩展通用插件接口**（例如新增钩子或 `ctx` 方法），而不要在核心代码中为该插件编写特殊处理逻辑；  
-- 在 [Nous Research Discord](https://discord.gg/NousResearch) 的 `#plugins-skills-and-skins` 频道中宣传你的插件，以便用户发现并安装。  
+- 实现相同的 `MemoryProvider` ABC 接口（位于 `agent/memory_provider.py` 文件中），包括 `sync_turn`、`prefetch`、`shutdown` 方法；如需集成设置向导，还可选择实现 `post_setup(hermes_home, config)` 方法；
+- 使用相同的发现机制——`discover_memory_providers()` 函数会从用户/项目插件目录及 pip 安装路径中自动检测这些插件；
+- 通过 `post_setup()` 方法与 `hermes memory setup` 功能集成，无需修改核心代码；
+- 可以在 `cli.py` 文件中使用 `register_cli(subparser)` 方法注册自定义的 CLI 子命令；
+- 可享有与内置提供程序相同的生命周期钩子和配置管理功能。
 
-即使是一个设计良好的第三方产品插件，也可能因不符合上述发布规则而被拒绝——这属于定位决策，而非对代码质量的评判。对于在 `plugins/` 下新增此类目录的 PR，我们也会予以拒绝，并提示用户将其作为独立仓库发布。  
+对于那些试图在 `plugins/memory/` 目录下创建新子目录的提交请求，我们将予以拒绝，并建议将其作为独立仓库进行发布。现有的内置提供程序将继续保留，对其进行的错误修复也依然受到欢迎。
+
+这并非质量标准，而是一项关于代码耦合度与维护效率的决策。由于内存提供程序是最常见的插件类型，因此并不适合全部集中存放于此目录中。
 
 ---
 
-## 开发环境设置  
+## 第三方产品集成：以独立插件形式发布
 
-### 先决条件  
+同样的规则也适用于**任何集成第三方产品或项目的插件**——无论是可观测性/指标后端、供应商的 SaaS 连接器、分析仪表板、付费服务集成，还是其他类似的第三方整合方案。**这类插件不会被放入此仓库中。**
 
-| 要求 | 说明 |
-|------|------|
-| **Git** | 需安装 `git-lfs` 扩展 |
-| **Python 3.11–3.13** | 若缺失，uv 工具会自动安装 |
-| **uv** | 快速的 Python 包管理工具（[安装指南](https://docs.astral.sh/uv/)） |
-| **Node.js 20+** | 可选——用于浏览器工具和 WhatsApp 桥接功能（需与项目根目录的 `package.json` 中指定的引擎版本一致） |
+原因在于维护负担，而非质量问题。每当有外部产品被纳入核心代码库，维护人员就必须在快速发展的代码体系以及并非由我们所有且无法控制的后端环境中，继续为其提供支持。Hermes 的更新频率很高，核心代码也在不断演进；将第三方产品与之耦合会给维护人员带来无尽的负担。
 
-### 使用标准安装程序进行安装  
+建议将这些插件作为**独立的插件仓库**来发布：
 
-对于大多数贡献者而言，最简便的开发环境搭建方式就是跟随普通用户的操作流程：运行标准安装程序，然后在克隆的仓库中开始开发。安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令入口，定义 `hermes update` 的更新机制，并将完整的 git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录下（通常为 `~/.hermes/hermes-agent`）。这样，你的开发环境就能与 CLI 工具、更新程序、懒加载依赖安装器、网关及文档所期望的架构保持一致。
+- 实现相应的 ABC 并使用现有的插件发现路径（`~/.hermes/plugins/`、项目级的 `.hermes/plugins/` 或 pip 入口），详情请参阅[构建 Hermes 插件](https://hermes-agent.nousresearch.com/docs/guides/build-a-hermes-plugin)；
+- 通过已提供的接口注册生命周期钩子（`pre_tool_call`、`post_tool_call`、`pre_llm_call`、`post_llm_call`、`on_session_start`、`on_session_end`）、工具（`ctx.register_tool`）以及 CLI 子命令（`ctx.register_cli_command`），无需对核心代码进行修改；
+- 如果您的插件需要框架未提供的功能，应提出需求以**扩展通用插件接口**（新增钩子或 `ctx` 方法），切勿在核心代码中为该插件编写特殊处理逻辑；
+- 在 [Nous Research Discord](https://discord.gg/NousResearch) 的 `#plugins-skills-and-skins` 频道中宣传您的插件，以便用户发现并安装。
+
+即便一个第三方产品插件开发得十分完善且已通过自动审查，仍可能因上述原因被拒绝——这属于发布决策，而非对代码质量的评判。那些在 `plugins/` 目录下添加此类插件的 Pull Request 也会被拒绝，并提示将其作为独立仓库发布。
+
+---
+
+## 开发环境配置
+
+### 先决条件
+
+| 要求 | 备注 |
+|-------------|-------|
+| **Git** | 需已安装 `git-lfs` 扩展 |
+| **Python 3.11–3.13** | 若缺失，uv 会自动进行安装 |
+| **uv** | 快速的 Python 包管理工具（[安装方式](https://docs.astral.sh/uv/)） |
+| **Node.js 20+** | 非必需——用于浏览器工具及 WhatsApp 桥接功能（需与根目录下的 `package.json` 中指定的运行环境一致） |
+
+### 使用标准安装程序进行安装
+
+对于大多数贡献者而言，最便捷的开发启动方式与普通用户相同：运行标准安装程序，然后在克隆的代码仓库中进行开发。该安装程序会创建 Hermes 虚拟环境，配置 `hermes` 命令，标记 `hermes update` 的安装方式，并将完整的 Git 项目克隆到 `$HERMES_HOME/hermes-agent` 目录中（通常为 `~/.hermes/hermes-agent`）。这样一来，您的开发环境就能与 CLI、更新工具、延迟依赖安装器、网关以及文档所要求的结构保持一致。
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
@@ -117,7 +120,7 @@ cd "${HERMES_HOME:-$HOME/.hermes}/hermes-agent"
 # Add dev/test extras on top of the standard install.
 uv pip install -e ".[all,dev]"
 
-# Optional: browser tools / docs site dependencies.
+# Optional: docs site + workspace dependencies.
 npm install
 ```
 
@@ -130,9 +133,9 @@ scripts/run_tests.sh
 
 ### 手动克隆作为备用方案
 
-仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方式（例如在容器或 CI 任务中使用的临时克隆目录）。若选择这种方式安装，请务必从该虚拟环境运行 `hermes` 入口程序；直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入与当前项目无关的系统级 Python 包。
+仅当您明确不想使用 Hermes 的托管安装结构时才应采用此方式（例如在容器或 CI 任务中使用的临时克隆项目）。若选择这种方式安装，请务必从该虚拟环境运行 `hermes` 入口程序；直接使用系统命令 `python3 -m hermes_cli.main` 可能会引入与当前项目无关的系统 Python 包。
 
-请在**已克隆的源代码目录之外**创建虚拟环境。如果虚拟环境位于代理程序运行的目录内，代理程序可能会对其自身下载的代码执行相对路径指令（如 `rm -rf venv`、`uv venv venv` 等），从而直接删除该虚拟环境，导致正在运行的进程在会话中途意外终止。将虚拟环境置于源代码目录之外，可避免工作区中的任何相对路径指向它。
+请在**已克隆的源代码目录之外**创建虚拟环境。如果虚拟环境位于代理程序运行的目录内，代理程序可能会对其自身checkout的路径执行相对路径命令（如 `rm -rf venv`、`uv venv venv` 等），从而悄无声息地破坏正在运行的运行时环境，导致会话中断。将虚拟环境置于目录之外，可确保工作区中的任何相对路径都无法指向它。
 
 ```bash
 git clone https://github.com/NousResearch/hermes-agent.git
@@ -146,7 +149,7 @@ export PATH="$VIRTUAL_ENV/bin:$PATH"
 # Install with all extras (messaging, cron, CLI menus, dev tools)
 uv pip install -e ".[all,dev]"
 
-# Optional: browser tools
+# Optional: workspace / docs dependencies
 npm install
 ```
 
@@ -169,7 +172,7 @@ hermes doctor
 hermes chat -q "Hello"
 ```
 
-如果您使用了手动克隆的备用方案，请从代码检出目录运行 `./hermes`，或明确地创建该克隆版本的虚拟环境链接：
+如果您使用了手动克隆的备用方案，请从代码检出目录运行 `./hermes`，或明确地创建该克隆版本的虚拟环境符号链接：
 
 ```bash
 mkdir -p ~/.local/bin
@@ -179,7 +182,8 @@ ln -sf "$(pwd)/venv/bin/hermes" ~/.local/bin/hermes
 ### 运行测试
 
 ```bash
-# Preferred — matches CI (hermetic env, 4 xdist workers); see AGENTS.md
+# Preferred — matches CI (hermetic `env -i`, per-file subprocess isolation
+# via run_tests_parallel.py, worker count auto-scaled); see AGENTS.md
 scripts/run_tests.sh
 
 # Alternative (activate the venv first). The wrapper is still recommended
@@ -191,14 +195,17 @@ pytest tests/ -v
 
 ```
 hermes-agent/
-├── run_agent.py              # AIAgent class — core conversation loop, tool dispatch, session persistence
-├── cli.py                    # HermesCLI class — interactive TUI, prompt_toolkit integration
+├── run_agent.py              # AIAgent facade (~1.5k LOC) — the turn loop lives in agent/conversation_loop.py + agent/turn_*.py
+├── cli.py                    # HermesCLI class — interactive CLI orchestrator (~4.6k LOC + hermes_cli/cli_*_mixin.py)
 ├── model_tools.py            # Tool orchestration (thin layer over tools/registry.py)
 ├── toolsets.py               # Tool groupings and presets (hermes-cli, hermes-telegram, etc.)
-├── hermes_state.py           # SQLite session database with FTS5 full-text search, session titles
+├── hermes_state.py           # SessionDB facade (~1.4k LOC); implementation in hermes_state_*.py (21 siblings) — FTS5 search, session titles
 ├── batch_runner.py           # Parallel batch processing for trajectory generation
 │
 ├── agent/                    # Agent internals (extracted modules)
+│   ├── conversation_loop.py      # run_conversation() — the agent turn loop (phases in turn_*.py)
+│   ├── tool_executor.py          # Tool dispatch (inline agent-level tools, delegate, registry)
+│   ├── session_persistence.py    # Session/trajectory saving
 │   ├── prompt_builder.py         # System prompt assembly (identity, skills, context files, memory)
 │   ├── context_compressor.py     # Auto-summarization when approaching context limits
 │   ├── auxiliary_client.py       # Resolves auxiliary OpenAI clients (summarization, vision)
@@ -208,16 +215,19 @@ hermes-agent/
 │
 ├── hermes_cli/               # CLI command implementations
 │   ├── main.py                   # Entry point, argument parsing, command dispatch
+│   ├── cli_*_mixin.py            # HermesCLI mixins (slash commands, display, session, ...)
 │   ├── config.py                 # Config management, migration, env var definitions
 │   ├── setup.py                  # Interactive setup wizard
-│   ├── auth.py                   # Provider resolution, OAuth, Nous Portal
+│   ├── auth.py                   # Provider resolution, OAuth, Nous Portal (facade + auth_*.py siblings)
 │   ├── models.py                 # OpenRouter model selection lists
 │   ├── banner.py                 # Welcome banner, ASCII art
 │   ├── commands.py               # Central slash command registry (CommandDef), autocomplete, gateway helpers
 │   ├── callbacks.py              # Interactive callbacks (clarify, sudo, approval)
 │   ├── doctor.py                 # Diagnostics
 │   ├── skills_hub.py             # Skills Hub CLI + /skills slash command
-│   └── skin_engine.py            # Skin/theme engine — data-driven CLI visual customization
+│   ├── skin_engine.py            # Skin/theme engine — data-driven CLI visual customization
+│   ├── web_server.py             # Dashboard server (facade + web_server_*.py siblings)
+│   └── web_routers/              # Dashboard FastAPI routers (one file per surface)
 │
 ├── tools/                    # Tool implementations (self-registering)
 │   ├── registry.py               # Central tool registry (schemas, handlers, dispatch)
@@ -227,7 +237,9 @@ hermes-agent/
 │   ├── web_tools.py              # web_search, web_extract (Parallel/Firecrawl + Gemini summarization)
 │   ├── vision_tools.py           # Image analysis via multimodal models
 │   ├── delegate_tool.py          # Subagent spawning and parallel task execution
-│   ├── code_execution_tool.py    # Sandboxed Python with RPC tool access
+│   ├── code_execution_tool.py    # Sandboxed Python with RPC tool access (env allowlists in code_execution_env.py)
+│   ├── mcp_tool.py               # MCP client (facade + mcp_tool_*.py siblings: config, discovery, transport, ...)
+│   ├── browser_tool.py           # Browser automation (facade + browser_tool_*.py siblings)
 │   ├── session_search_tool.py    # Search past conversations with FTS5 + anchored windows
 │   ├── cronjob_tools.py          # Scheduled task management
 │   ├── skill_tools.py            # Skill search, load, manage
@@ -236,9 +248,10 @@ hermes-agent/
 │       ├── local.py, docker.py, ssh.py, singularity.py, modal.py, daytona.py
 │
 ├── gateway/                  # Messaging gateway
-│   ├── run.py                    # GatewayRunner — platform lifecycle, message routing, cron
+│   ├── run.py                    # GatewayRunner facade (~5.5k LOC); phases in run_*.py (startup, inbound, turn, busy, ...)
+│   ├── slash_commands_*.py       # Gateway slash command handler mixins
 │   ├── config.py                 # Platform configuration resolution
-│   ├── session.py                # Session store, context prompts, reset policies
+│   ├── session.py                # Session store, context prompts, explicit resets (+ session_*.py siblings)
 │   └── platforms/                # Platform adapters
 │       ├── telegram.py, discord_adapter.py, slack.py, whatsapp.py
 │
@@ -260,15 +273,15 @@ hermes-agent/
 
 | 路径 | 用途 |
 |------|---------|
-| `~/.hermes/config.yaml` | 设置选项（模型、终端、工具集、压缩功能等） |
+| `~/.hermes/config.yaml` | 设置选项（模型、终端、工具集、压缩等功能） |
 | `~/.hermes/.env` | API 密钥与敏感信息 |
 | `~/.hermes/auth.json` | OAuth 认证凭证（Nous Portal 使用） |
-| `~/.hermes/skills/` | 所有已激活的技能（包括打包内置的、通过 Hub 安装的以及由 Agent 创建的技能） |
+| `~/.hermes/skills/` | 所有已激活的技能（打包内置的、通过 Hub 安装的以及由 Agent 创建的） |
 | `~/.hermes/memories/` | 持久化记忆内容（MEMORY.md、USER.md 文件） |
 | `~/.hermes/state.db` | SQLite 会话数据库 |
-| `~/.hermes/sessions/` | 网关路由索引（`sessions.json`）、请求日志追踪信息、网关生成的 `*.jsonl` 转录文件；若设置了 `sessions.write_json_snapshots: true`，还可包含每个会话的 JSON 快照。默认情况下不会生成会话级快照，状态数据以 state.db 为准。 |
+| `~/.hermes/sessions/` | 网关路由索引（`sessions.json`）、请求转储记录、网关生成的 `*.jsonl` 转录文件，以及手动导出的 `/save` 文件。系统不再自动生成每会话的 JSON 快照，state.db 即为标准状态存储文件。 |
 | `~/.hermes/cron/` | 定时任务相关数据 |
-| `~/.hermes/whatsapp/session/` | WhatsApp 桥接服务的认证凭证 |
+| `~/.hermes/whatsapp/session/` | WhatsApp 桥接工具的认证凭证 |
 
 ---
 
@@ -293,29 +306,29 @@ User message → AIAgent._run_agent_loop()
 
 ### 核心设计模式
 
-- **自动注册工具**：每个工具文件在导入时会调用 `registry.register()` 函数。`model_tools.py` 通过导入所有工具模块来触发发现流程。
-- **工具集分组**：工具会被归类到不同的工具集中（如 `web`、`terminal`、`file`、`browser` 等），并且可以根据不同平台启用或禁用这些工具集。
-- **会话持久化**：所有对话内容都存储在 SQLite 数据库中（由 `hermes_state.py` 负责管理），支持全文搜索，并为每个会话设置唯一标题。原本存在于 `~/.hermes/sessions/` 目录中的会话级 JSON 快照已被 SQLite 存储方式取代，默认处于关闭状态；如果您的外部工具需要直接读取这些 JSON 文件，可通过设置 `sessions.write_json_snapshots: true` 来重新启用该功能。
-- **临时注入机制**：系统提示和预填信息会在 API 调用时动态注入，不会被保存到数据库或日志中。
-- **提供者抽象层**：该智能体可适配任何兼容 OpenAI 的 API。提供者的识别工作会在初始化阶段完成，支持通过 Nous Portal OAuth、OpenRouter API 密钥或自定义端点进行配置。
-- **提供者路由机制**：在使用 OpenRouter 时，可通过 `config.yaml` 中的 `provider_routing` 参数来控制提供者的选择方式（例如按吞吐量/延迟/价格排序、允许或忽略特定提供者、设定数据保留策略）。这些配置会以 `extra_body.provider` 的形式嵌入到 API 请求中。
+- **自动注册工具**：每个工具文件在导入时都会调用 `registry.register()` 函数。`model_tools.py` 通过导入所有工具模块来触发工具发现机制。
+- **工具集分组**：工具被划分到不同的工具集中（如 `web`、`terminal`、`file`、`browser` 等），可根据不同平台需求启用或禁用这些工具集。
+- **会话持久化**：所有对话内容均存储在 SQLite 数据库中（由 `hermes_state.py` 负责管理），支持全文搜索并为每个会话设置唯一标题。系统已取消自动生成会话级 JSON 快照的功能；现有文件不会被修改，如需手动导出，请使用 `/save json` 或 `hermes sessions export` 命令。
+- **临时注入机制**：系统提示和预填信息会在 API 调用时动态注入，绝不会被保存到数据库或日志中。
+- **提供者抽象层**：该智能体可适配任何兼容 OpenAI 的 API。提供者的识别工作在初始化阶段完成，支持通过 Nous Portal OAuth、OpenRouter API 密钥或自定义端点进行配置。
+- **提供者路由功能**：在使用 OpenRouter 时，可通过 `config.yaml` 文件中的 `provider_routing` 参数来控制提供者的选择方式（如按吞吐量/延迟/价格排序、允许或忽略特定提供者、设置数据保留策略）。这些配置会以 `extra_body.provider` 的形式嵌入到 API 请求中。
 
 ---
 
 ## 代码风格规范
 
-- 遵循 **PEP 8** 标准，但部分实际情况可适当放宽限制（我们不强制要求严格的行长度限制）。
-- **注释**：仅用于解释那些不显而易见的逻辑意图、设计权衡或 API 的特殊行为。无需对代码的功能进行冗余描述——例如 `# 增加计数器` 这类注释毫无意义。
-- **错误处理**：应捕获特定的异常，并使用 `logger.warning()`/`logger.error()` 进行日志记录；对于意外错误，需设置 `exc_info=True` 以确保日志中能显示完整的堆栈跟踪信息。
-- **跨平台兼容性**：切勿假设代码仅在 Unix 系统上运行。更多相关内容请参阅 [跨平台兼容性](#cross-platform-compatibility) 部分。
+- 遵循 **PEP 8** 规范，但允许适当例外（我们不强制要求严格的行长度限制）  
+- **注释**：仅用于说明那些不显而易见的意图、权衡因素或 API 的特殊之处。切勿描述代码的功能——`# 增加计数器` 这样的注释毫无意义  
+- **错误处理**：捕获特定的异常。使用 `logger.warning()`/`logger.error()` 记录日志；对于意外错误，请设置 `exc_info=True` 以便在日志中显示堆栈跟踪信息  
+- **跨平台兼容性**：切勿默认代码仅在 Unix 系统上运行。详情请参阅 [跨平台兼容性](#cross-platform-compatibility)  
 
 ---
 
 ## 添加新工具
 
-在编写新工具之前，请先思考：[这是否更适合被定义为技能而非工具？](#should-it-be-a-skill-or-a-tool)
+在编写工具之前，先思考：[这是否应该被视为一项技能而非工具？](#should-it-be-a-skill-or-a-tool)  
 
-工具会自动向中央注册表进行注册。每个工具文件都会将自身的结构定义、处理逻辑以及注册信息集中存放在一起。
+工具会自动向中央注册表进行注册。每个工具文件都会将其结构定义、处理逻辑及注册信息集中存放于同一位置：
 
 ```python
 """my_tool — Brief description of what this tool does."""
@@ -363,9 +376,9 @@ registry.register(
 
 **连接到工具集（必需）：** 内置工具会自动被发现：当 `model_tools` 被加载时，`tools/registry.py` 中的 `discover_builtin_tools()` 函数会自动导入任何包含顶层 `registry.register(...)` 调用的 `tools/*.py` 文件。无需在 `model_tools.py` 中手动维护导入列表。
 
-您仍需将工具名称添加到 `toolsets.py` 中对应的列表中（例如 `_HERMES_CORE_TOOLS` 或专门的工具集）；否则该工具虽然会注册，但不会向智能体暴露。如果您要创建新的工具集，请在 `toolsets.py` 中添加它，并将其连接到相关的平台预设中。
+您仍需将工具名称添加到 `toolsets.py` 中对应的列表中（例如 `_HERMES_CORE_TOOLS` 或专用的工具集）；否则该工具虽然会注册，但永远不会向智能体暴露。如果您要创建新的工具集，请在 `toolsets.py` 中添加它，并将其连接到相关的平台预设中。
 
-有关基于配置文件的路径选择以及插件与核心组件的使用指南，请参阅 `AGENTS.md` 文档中的“添加新工具”部分。
+有关基于配置文件的路径选择以及插件与核心组件的使用指南，请参阅 `AGENTS.md` 文件中的“添加新工具”部分。
 
 ---
 
@@ -444,7 +457,7 @@ How the agent confirms it worked.
 
 ### 平台专用技能
 
-技能可通过 `platforms` 前置字段来指定其支持的操作系统平台。包含该字段的技能会在不兼容的平台上自动从系统提示、`skills_list()` 函数以及斜杠命令中隐藏。
+技能可通过 `platforms` 前置字段来指定其支持的操作系统平台。带有该字段的技能会在不兼容的平台上自动从系统提示、`skills_list()` 函数以及斜杠命令中隐藏。
 
 ```yaml
 platforms: [macos]            # macOS only (e.g., iMessage, Apple Reminders)
@@ -452,7 +465,7 @@ platforms: [macos, linux]     # macOS and Linux
 platforms: [windows]          # Windows only
 ```
 
-如果该字段被省略或留空，则该技能将在所有平台上加载（具备向后兼容性）。有关仅适用于 macOS 的技能示例，请参阅 `skills/apple/` 目录。
+如果该字段被省略或留空，则该技能将在所有平台上加载（具备向后兼容性）。有关仅适用于 macOS 的技能示例，请参见 `skills/apple/` 目录。
 
 ### 条件化技能激活
 
@@ -472,8 +485,8 @@ metadata:
 **语义说明：**
 - `fallback_for_*`：该技能为备用选项。当列出的工具或工具集可用时，它会被**隐藏**；而在这些工具不可用时则**显示**出来。适用于作为高级工具的免费替代方案。
 - `requires_*`：该技能需要特定的工具才能正常运行。当列出的工具或工具集不可用时，它会被**隐藏**。适用于依赖特定功能的技能（例如，仅能在拥有终端访问权限时使用的技能）。
-- 如果同时指定了这两种语义，技能才会在该两种条件均满足时显示。
-- 如果未指定任何语义，则该技能将始终显示（保持向后兼容性）。
+- 若同时指定了这两种语义，技能必须同时满足所有条件才会显示。
+- 若未指定任何语义，则该技能将始终显示（以确保向后兼容性）。
 
 **示例：**
 
@@ -494,11 +507,11 @@ metadata:
     fallback_for_toolsets: [browser]
 ```
 
-过滤操作在提示语构建阶段于 `agent/prompt_builder.py` 文件中执行。`build_skills_system_prompt()` 函数会获取代理提供的所有可用工具及工具集，进而通过 `_skill_should_show()` 函数来评估每个技能的显示条件。
+过滤操作在提示语构建阶段于 `agent/prompt_builder.py` 文件中执行。`build_skills_system_prompt()` 函数会获取代理系统中可用的工具及工具集，再通过 `_skill_should_show()` 函数来评估每个技能的启用条件。
 
 ### 技能配置元数据
 
-技能可通过 `required_environment_variables` 前置字段声明安全的加载时配置元数据。若该字段未设置值，不会导致技能无法被识别；而是在实际加载该技能时，仅会触发针对命令行界面的安全提示语。
+技能可通过 `required_environment_variables` 前置字段声明安全性的加载时配置元数据。若该字段未设置值，不会导致技能无法被识别；而是在实际加载该技能时，仅会触发一个仅适用于命令行的安全提示语。
 
 ```yaml
 required_environment_variables:
@@ -508,7 +521,7 @@ required_environment_variables:
     required_for: full functionality
 ```
 
-用户可以跳过设置步骤，直接继续加载该技能。Hermes仅向模型暴露元数据（如`stored_as`、`skipped`、`validated`），而绝不会泄露其密钥值。原有的`prerequisites.env_vars`格式依然被支持，并已转换为新的表示形式。
+用户可以跳过设置步骤，直接继续加载该技能。Hermes仅向模型暴露元数据（如`stored_as`、`skipped`、`validated`），而绝不会泄露其敏感值。原有的`prerequisites.env_vars`格式依然被支持，并已转换为新的数据格式。
 
 ```yaml
 prerequisites:
@@ -520,19 +533,19 @@ prerequisites:
 
 **何时声明必需的环境变量：**
 - 该技能使用了需要在加载时安全获取的 API 密钥或令牌
-- 即使用户跳过设置步骤，该技能仍能正常使用，但功能可能会略有下降
+- 即使用户跳过设置步骤，该技能仍能正常工作，但功能可能会受限
 
 **何时声明命令运行前提条件：**
-- 该技能依赖于某些可能尚未安装的 CLI 工具（例如 `himalaya`、`openhue`、`ddgs`）
-- 应将命令检查视为参考建议，而非在发现问题时才进行隐藏处理
+- 该技能依赖于某些可能未安装的 CLI 工具（例如 `himalaya`、`openhue`、`ddgs`）
+- 应将命令检查视为使用指南，而非在发现问题时才进行隐藏处理
 
-可参考 `skills/gifs/gif-search/` 和 `skills/email/himalaya/` 中的示例。
+相关示例可参考 `skills/gifs/gif-search/` 和 `skills/email/himalaya/` 目录。
 
 ### 技能开发标准（硬性要求）
 
-所有新开发的或经过升级的技能——无论是内置技能、可选技能还是用户贡献的技能——在合并之前都必须符合这些标准。审核人员会拒绝违反这些标准的提交请求。
+所有新开发的或经过升级的技能——无论是内置技能、可选技能还是用户贡献的技能——在合并之前都必须符合这些标准。审核人员会拒绝违反这些标准的 Pull Request。
 
-1. **`description` 字符数不得超过 60 个，需为单句结构，并以句号结尾。** 过长的描述会导致技能列表界面显得臃肿，且在加载大量技能时也会分散模型的注意力。应描述技能的功能，而非实现方式。禁止使用任何营销用语（如“强大”、“全面”、“无缝”、“先进”）。同时不得重复技能名称。可通过以下方式进行检查：
+1. **`description` 字符数必须不超过 60 个字符，仅限一句话，且以句号结尾。** 过长的描述会导致技能列表界面显得臃肿，同时在加载大量技能时也会分散模型的注意力。应描述技能的功能，而非实现方式。禁止使用任何营销用语（如“强大”、“全面”、“无缝”、“先进”等）。不得重复技能名称。可通过以下方式进行检查：
    ```python
    import re, pathlib
    m = re.search(r'^description: (.*)$',
@@ -541,12 +554,12 @@ prerequisites:
    assert len(m.group(1)) <= 60, len(m.group(1))
    ```
 
-良好示例：`按关键词、作者、分类或编号搜索arXiv论文。`  
-较差示例：`这是一项功能强大且功能全面的技能，能够让智能体利用关键词、作者和分类等多种标准在arXiv上搜索相关的学术论文。`
+良好示例：`按关键词、作者、类别或编号搜索arXiv论文。`  
+不良示例：`这是一项功能强大且功能全面的技能，能够让智能体利用关键词、作者和类别等多种标准在arXiv上搜索相关的学术论文。`  
 
-2. **SKILL.md正文中提及的工具必须是Hermes原生工具，或是该技能明确指定的MCP服务器。** 当技能需要某种功能时，需用反引号标明对应的工具名称：`` `terminal` ``, `` `web_extract` ``, `` `web_search` ``, `` `read_file` ``, `` `write_file` ``, `` `patch` `", `` `search_files` `", `` `vision_analyze` `", `` `browser_navigate` `", `` `delegate_task` `", `` `image_generate` `", `` `text_to_speech` `", `` `cronjob` `", `` `memory` `", `` `skill_view` `", `` `todo` `", `` `execute_code` ``。
+2. **SKILL.md文档中提及的工具必须是Hermes原生工具，或是该技能明确指定的MCP服务器。** 当某个技能需要某种功能时，需用反引号标明对应的工具名称，例如：`` `terminal` ``、`` `web_extract` ``、`` `web_search` ``、`` `read_file` ``、`` `write_file` ``、`` `patch` ``、`` `search_files` ``、`` `vision_analyze` ``、`` `browser_navigate` ``、`` `delegate_task` ``、`` `image_generate` ``、`` `text_to_speech` ``、`` `cronjob` ``、`` `memory` ``、`` `skill_view` ``、`` `todo` ``、`` `execute_code` ``。  
 
-   禁止使用智能体已封装好的Shell工具名称：
+   **切勿使用智能体已封装好的shell命令作为工具名称：**  
 
    | 不要这样写 | 应该这样写 |
    |---|---|
@@ -557,45 +570,45 @@ prerequisites:
    | 用于内容提取的`curl` | `web_extract` |
    | `echo > file`, `cat <<EOF` | `write_file` |
 
-   如果技能依赖于某个MCP服务器，需明确写出该服务器名称，并在`## Prerequisites`部分说明其设置方式。第三方CLI工具（如`ffmpeg`、`gh`或特定SDK）虽可从脚本文件中调用，但描述时应说明是通过`terminal`工具来执行，而非手动启动Shell会话。
+   如果该技能依赖某个MCP服务器，需明确写出服务器名称，并在`## Prerequisites`部分说明其设置方式。第三方CLI工具（如`ffmpeg`、`gh`或特定SDK）虽可从脚本文件中调用，但描述时应说明是通过`terminal`工具来执行，而非手动启动shell会话。
 
-3. **`platforms:`限制会根据实际导入的脚本进行校验。** 使用仅支持POSIX系统的原生函数（如`fcntl`、`termios`、`os.setsid`、用于检测存活状态的`os.kill(pid, 0)`、`/proc`目录、硬编码的`/tmp`路径、`signal.SIGKILL`、bash heredoc语法、`osascript`、`apt`、`systemctl`等）的技能，必须通过`platforms:`前置字段声明其支持的平台。默认原则是先实现跨平台兼容——例如使用`tempfile.gettempdir()`、`pathlib.Path`、`psutil.pid_exists()`，以及Python层面的过滤功能而非`grep`。只有当某种依赖确实受限于特定平台时（如`osascript`仅适用于macOS，`/proc`仅适用于Linux），才将其限制在更窄的范围。
+3. **`platforms:` 筛选机制会根据实际脚本导入情况来进行验证。** 那些仅使用 POSIX 原语的技能（如用于检测进程存活状态的 `fcntl`、`termios`、`os.setsid`、`os.kill(pid, 0)`，以及 `/proc`、硬编码的 `/tmp` 路径、`signal.SIGKILL`、bash heredocs、`osascript`、`apt`、`systemctl` 等）必须通过 `platforms:` 前置字段明确说明其支持的平台。默认策略是首先确保该技能在多平台上都能正常运行——例如使用 `tempfile.gettempdir()`、`pathlib.Path`、`psutil.pid_exists()`，以及 Python 层级的过滤功能而非 `grep`。只有当某个依赖项确实受限于特定平台时（比如 `osascript` 仅适用于 macOS，/proc 仅适用于 Linux），才将其限制在更小的平台范围内。
 
-4. **`author`字段应首先标注实际贡献者。** 对于外部贡献，需先列出贡献者的真实姓名及GitHub用户名（格式为`Jane Doe (jane-doe)`），“Hermes Agent”则作为次要协作方。如果贡献者的提交记录中将“Hermes Agent”列为作者，那是因为他们使用Hermes编写了该技能，此时应替换为他们的真实姓名——应表彰个人贡献，而非工具。
+4. **`author` 字段应首先标注实际贡献者。** 对于外部贡献，应首先列出贡献者的真实姓名和 GitHub 用户名（格式为“Jane Doe (jane-doe)”），“Hermes Agent”则作为次要合作者标注。如果某次提交将“Hermes Agent”列为作者，那是因为该贡献者是使用 Hermes 编写了该技能，此时应将其替换为贡献者的真实姓名——应当表彰的是人，而非工具。
 
-5. **SKILL.md的正文需遵循现代的章节结构。** 首先使用`# <Skill> Skill`作为标题，用2-3句话说明该技能的功能与局限性，随后依次包含以下内容：
+5. **SKILL.md 正文需遵循现代的结构顺序。** 文档开头为 `# <Skill> Skill` 的标题，接着用 2-3 句话说明该技能的功能与限制，之后依次包含以下部分：
    - `## When to Use` — 触发条件
-   - `## Prerequisites` — 环境变量、安装步骤、MCP设置及API密钥获取方式
-   - `## How to Run` — 通过`terminal`工具的标准调用方式
-   - `## Quick Reference` — 简洁的命令/API参考表
-   - `## Procedure` — 带有可直接复制粘贴的命令的编号步骤说明
-   - `## Pitfalls` — 已知的限制、速率限制，以及看似出错但实际上正常的情况
-   - `## Verification` — 一个可验证技能是否正常的单一命令
+   - `## Prerequisites` — 环境变量、安装步骤、MCP 配置以及 API 密钥的获取方式
+   - `## How to Run` — 通过 `terminal` 工具的标准调用方式
+   - `## Quick Reference` — 简洁的命令/API 参考表
+   - `## Procedure` — 带有可直接复制粘贴的命令的编号步骤列表
+- `## 潜在问题` — 已知的限制、速率限制，以及看似异常但实际上正常的情况  
+- `## 验证方法` — 用于证明该技能功能正常的单条命令  
 
-   复杂技能的文档长度宜控制在200行左右，简单技能则为100行左右。应删除冗余的引言、营销性文字，以及已在`## Prerequisites`中说明过的环境变量内容。
+对于复杂的技能，文档行数目标约为200行；简单技能则为100行左右。请删除冗余的引言内容、营销性文字，以及已在`## 先决条件`中说明过的环境变量相关内容。  
 
-6. **脚本文件应存放在`scripts/`目录中，引用文件放在`references/`目录，模板则存于`templates/`目录。** 不要期望模型每次调用时都能内联编写解析器、XML遍历工具或复杂的逻辑——应提供相应的辅助脚本。在SKILL.md中引用脚本时，需使用相对于技能目录的路径。
+6. **脚本应存放在`scripts/`目录中，引用文件放在`references/`目录，模板则存放于`templates/`目录。** 不要期望模型在每次调用时都自动编写解析器、XML遍历工具或复杂的逻辑代码——应提供相应的辅助脚本。通过相对于技能目录的路径，在SKILL.md中引用这些脚本。  
 
-7. **测试文件位于`tests/skills/test_<skill>_skill.py`处**，且只能使用标准库、pytest以及`unittest.mock`这些工具。禁止进行实时网络请求。可通过`scripts/run_tests.sh tests/skills/test_<skill>_skill.py -q`命令运行测试。测试必须在hermetic CI环境中通过（不能出现API密钥泄露的情况）。对于任何依赖环境变量或文件系统的功能，可使用`monkeypatch`和`tmp_path`来模拟。
+7. **测试文件位于`tests/skills/test_<skill>_skill.py`，且仅允许使用标准库、pytest以及`unittest.mock`。禁止进行实时网络请求。可通过`scripts/run_tests.sh tests/skills/test_<skill>_skill.py -q`命令运行测试。该测试必须在完全隔离的CI环境中通过（不得有API密钥泄露）。对于任何依赖环境变量或文件系统的需求，可使用`monkeypatch`和`tmp_path`来解决。**  
 
-8. **`.env.example`文件中的示例内容应被置于一个边界清晰的独立区块中。** 不要修改该文件的其他部分——由贡献者提供的`.env.example`版本通常已经过时，且若在技能专属区块之外进行修改，这些更改将在后续恢复过程中被忽略。所有值都应以`#`开头进行注释（这只是文档内容，而非实际配置）。
+8. **`.env.example`文件中的新增内容应被限制在明确标出的区块内。** 请勿修改该文件的其他部分——贡献者提供的`.env.example`版本通常已过时，且若在技能模块之外的区域进行修改，这些更改将在后续处理过程中被忽略。请用`#`对所有值添加注释（这只是文档内容，而非实际配置文件）。  
 
-### 技能编写指南
+### 技能开发指南
 
-- **除非绝对必要，否则不要引入外部依赖。** 建议优先使用Python标准库、curl以及Hermes现有的工具（如`web_extract`、`terminal`、`read_file`）。
-- **采用渐进式披露原则。** 先介绍最常用的工作流程，边缘情况和高级用法则放在文档末尾。
-- **为XML/JSON解析或复杂逻辑提供辅助脚本**——不要期望大型语言模型每次都能内联编写解析代码。
-- **务必进行测试。** 运行命令`hermes --toolsets skills -q "Use the X skill to do Y"`，并确认智能体能正确执行指令。
+- **除非绝对必要，否则不要引入外部依赖。** 建议优先使用 Python 标准库、curl 以及现有的 Hermes 工具（如 `web_extract`、`terminal`、`read_file`）。
+- **逐步披露信息。** 先介绍最常用的工作流程，将边缘情况和高级用法放在最后。
+- **提供辅助脚本**用于处理 XML/JSON 解析或复杂逻辑——不要指望每次都让大语言模型直接编写解析代码。
+- **进行测试。** 运行 `hermes --toolsets skills -q "使用 X 技能来完成 Y"`，并确认智能体能够正确遵循指令。
 
 ---
 
 ## 添加皮肤/主题
 
-Hermes采用了数据驱动的皮肤系统——添加新皮肤无需修改任何代码。
+Hermes 采用数据驱动的皮肤系统——添加新皮肤无需修改任何代码。
 
-**方案A：用户自定义皮肤（YAML文件）**
+**选项 A：用户自定义皮肤（YAML 文件）**
 
-创建`~/.hermes/skins/<名称>.yaml`文件：
+创建 `~/.hermes/skins/<名称>.yaml` 文件：
 
 ```yaml
 name: mytheme
@@ -625,11 +638,11 @@ branding:
 tool_prefix: "╎"             # Tool output line prefix
 ```
 
-所有字段均为可选项——缺失的值将沿用默认主题的设置。
+所有字段均为可选——缺失的值将沿用默认主题。
 
 **选项 B：内置主题**
 
-在 `hermes_cli/skin_engine.py` 文件中的 `_BUILTIN_SKINS` 字典中添加相应主题。其结构与上文相同，但需以 Python 字典的形式呈现。内置主题随软件包一同提供，始终可用。
+在 `hermes_cli/skin_engine.py` 文件中的 `_BUILTIN_SKINS` 字典中添加该主题。其结构与上文相同，但需以 Python 字典的形式呈现。内置主题随软件包一同提供，始终可用。
 
 **启用方式：**
 - 命令行：`/skin mytheme`，或在 config.yaml 中设置 `display.skin: mytheme`
@@ -641,15 +654,15 @@ tool_prefix: "╎"             # Tool output line prefix
 
 ## 跨平台兼容性
 
-Hermes 支持在 Linux、macOS 以及原生 Windows 系统（包括 WSL2）上运行。在编写涉及操作系统的代码时，应假设*任何*平台都可能触发该代码路径。
+Hermes 支持在 Linux、macOS 以及原生 Windows 系统（包括 WSL2）上运行。在编写涉及操作系统的代码时，应假设*任何*平台都可能触发您的代码逻辑。
 
-> **在提交 Pull Request 之前：**请运行 `scripts/check-windows-footguns.py`，以检测代码差异中常见的、在 Windows 上存在安全风险的写法。该工具基于 grep 实现，效率很高；CI 系统也会在每个 PR 上自动执行此检查。
+> **在提交 Pull Request 之前：**请运行 `scripts/check-windows-footguns.py`，以检查您的代码差异中是否存在常见的 Windows 不安全模式。该工具基于 grep 实现，运行速度很快；CI 系统也会在每个 PR 上自动执行此检查。
 
 ### 关键规则
 
-1. **切勿使用 `os.kill(pid, 0)` 进行进程存活检测。**`os.kill(pid, 0)` 是 POSIX 标准中用于判断“该进程是否存活”的方法——信号 0 仅用于进行权限检查，不会实际执行任何操作。**但在 Windows 系统上，它并非无操作。**Python 在 Windows 上的 `os.kill` 函数会将 `sig=0` 转换为 `CTRL_C_EVENT`（两者的整数值均为 0，因此会发生冲突），并通过 `GenerateConsoleCtrlEvent(0, pid)` 将该信号发送给包含目标进程 PID 的**整个控制台进程组**，从而向该组内的所有进程发送 Ctrl+C。这样一来，“检测进程是否存活”的操作实际上会“杀死目标进程以及与其共享同一控制台的许多无关进程”。相关问题可参见 [bpo-14484](https://bugs.python.org/issue14484)（自 2012 年以来一直未解决，出于兼容性考虑也永远不会修复）。
+1. **切勿使用 `os.kill(pid, 0)` 来进行进程存活检测。** `os.kill(pid, 0)` 是 POSIX 标准中用于判断“该 PID 是否存活”的常用方法——信号值 0 仅用于执行无实际作用的权限检查。**但在 Windows 系统上，这一操作并非无作用。** Python 在 Windows 平台上的 `os.kill` 函数会将 `sig=0` 转换为 `CTRL_C_EVENT`（因为两者的整数值均为 0），并通过 `GenerateConsoleCtrlEvent(0, pid)` 发送信号，从而将 Ctrl+C 传递给包含目标 PID 的**整个控制台进程组**。这样一来，“检测进程是否存活”的操作实际上会悄悄“杀死目标进程以及与其共享同一控制台的许多无关进程”。相关问题可参见 [bpo-14484](https://bugs.python.org/issue14484)（该问题自 2012 年提出，由于兼容性原因将永远无法修复）。
 
-   **推荐做法：**使用 `psutil` 库（它是核心依赖项，始终可用）。
+   **推荐做法：** 使用 `psutil` 库（其为核心依赖项，始终可用）。
 
    ```python
    import psutil
@@ -658,37 +671,26 @@ Hermes 支持在 Linux、macOS 以及原生 Windows 系统（包括 WSL2）上�
        ...
    ```
 
-如果您确实需要使用 Hermes 封装层（它在 `pip install` 完成之前会提供标准库的备用方案），请使用 `gateway.status._pid_exists(pid)`。该函数会首先调用 `psutil.pid_exists`，只有在 `psutil` 无法正常使用时，才会仅在 Windows 系统上采用手动实现的 `OpenProcess + WaitForSingleObject` 方法。
+如果您确实需要使用 Hermes 封装层（它在 `pip install` 完成之前，会为架构搭建阶段的导入提供标准库兜底方案），可以调用 `gateway.status._pid_exists(pid)`。该函数会首先尝试使用 `psutil.pid_exists`，只有在 `psutil` 无法正常使用时，才会仅在 Windows 系统上采用手动实现的 `OpenProcess + WaitForSingleObject` 方法。
 
-要查找新的调用位置，可使用 Audit grep 命令：`rg "os\.kill\([^,]+,\s*0\s*\)"`。如果在非测试代码中检测到此类调用，很可能是 Windows 系统的静默终止功能存在缺陷。
+若要查找新增的调用位置，可使用 Audit grep 命令：`rg "os\.kill\([^,]+,\s*0\s*\)"`。如果在非测试代码中检测到此类调用，很可能是 Windows 系统的静默终止功能存在缺陷。
 
-2. **在调用外部命令之前，请先使用 `shutil.which()` 检查工具是否存在——切勿假设 Windows 拥有 Linux 所有的工具。** `wmic` 已在 Windows 10 21H1 及更高版本中被移除。而 `ps`、`kill`、`grep`、`awk`、`fuser`、`lsof`、`pgrep` 以及大多数 POSIX 风格的 CLI 工具在 Windows 上根本不存在。建议使用 `shutil.which("tool")` 来检测工具是否可用，若不可用则改用 Windows 原生的替代工具——通常是通过 `subprocess.run(["powershell", "-NoProfile", "-Command", ...])` 调用 PowerShell。
+2. **在调用外部命令之前，请先使用 `shutil.which()` 检查工具是否存在——切勿默认 Windows 拥有 Linux 所有的工具。** `wmic` 已在 Windows 10 21H1 及更高版本中被移除。而 `ps`、`kill`、`grep`、`awk`、`fuser`、`lsof`、`pgrep` 以及大多数 POSIX 风格的 CLI 工具在 Windows 上根本不存在。建议通过 `shutil.which("tool")` 来检测这些工具的可用性，若无法找到，则需改用 Windows 原生的替代工具——通常是通过 `subprocess.run(["powershell", "-NoProfile", "-Command", ...])` 调用 PowerShell。
 
-对于进程枚举操作，PowerShell 的 `Get-CimInstance Win32_Process` 是 `wmic process` 的现代替代方案。具体实现方式可参考 `hermes_cli/gateway.py::_scan_gateway_pids` 文件中的代码模式。
-
-3. **`termios` 和 `fcntl` 仅适用于 Unix 系统。** 在处理相关功能时，务必同时捕获 `ImportError` 和 `NotImplementedError` 异常。
-   ```python
-   try:
-       from simple_term_menu import TerminalMenu
-       menu = TerminalMenu(options)
-       idx = menu.show()
-   except (ImportError, NotImplementedError):
-       # Fallback: numbered menu for Windows
-       for i, opt in enumerate(options):
-           print(f"  {i+1}. {opt}")
-       idx = int(input("Choice: ")) - 1
+至于进程枚举功能，PowerShell 的 `Get-CimInstance Win32_Process` 已成为 `wmic process` 的现代替代方案。具体实现方式可参考 `hermes_cli/gateway.py::_scan_gateway_pids` 文件中的代码逻辑。
    ```
 
-4. **文件编码。** Windows系统在保存`.env`文件时可能会使用`cp1252`编码。务必妥善处理编码错误：
+3. **File encoding.** Windows may save `.env` files in `cp1252`. Always
+   handle encoding errors:
    ```python
    try:
        load_dotenv(env_path)
    except UnicodeDecodeError:
        load_dotenv(env_path, encoding="latin-1")
    ```
-记事本及类似编辑器在保存配置文件（`config.yaml`）时可能会为其添加 UTF-8 BOM 标记；如果读取的是可能经过 Windows 图形界面编辑器处理的文件，建议使用 `encoding="utf-8-sig"` 参数进行读取。
+记事本及类似编辑器在保存配置文件（`config.yaml`）时可能会添加 UTF-8 BOM 标记；若要读取可能经过 Windows 图形界面编辑器处理过的文件，请使用 `encoding="utf-8-sig"` 参数。
 
-5. **进程管理。** `os.setsid()`、`os.killpg()`、`os.fork()`、`os.getuid()` 以及 POSIX 信号处理机制在 Windows 系统上存在差异。建议通过 `platform.system()`、`sys.platform` 或 `hasattr(os, "setsid")` 等方式来进行条件判断。
+4. **进程管理。** `os.setsid()`、`os.killpg()`、`os.fork()`、`os.getuid()` 以及 POSIX 信号处理机制在 Windows 系统上有所不同。建议通过 `platform.system()`、`sys.platform` 或 `hasattr(os, "setsid")` 来进行兼容性判断。
    ```python
    if platform.system() != "Windows":
        kwargs["preexec_fn"] = os.setsid
@@ -709,84 +711,84 @@ Hermes 支持在 Linux、macOS 以及原生 Windows 系统（包括 WSL2）上�
        pass
    ```
 
-6. **Windows 系统中不存在的信号：`SIGALRM`、`SIGCHLD`、`SIGHUP`、`SIGUSR1`、`SIGUSR2`、`SIGPIPE`、`SIGQUIT`、`SIGKILL`。**如果在 Windows 上尝试使用这些信号，Python 的 `signal` 模块会在导入时抛出 `AttributeError` 异常。建议使用 `getattr(signal, "SIGKILL", signal.SIGTERM)` 方法，或通过平台检测将相关代码块包裹起来。在 Windows 上，`loop.add_signal_handler` 会引发 `NotImplementedError` 异常，务必进行捕获处理。
+5. **Windows 系统中不存在的信号：`SIGALRM`、`SIGCHLD`、`SIGHUP`、`SIGUSR1`、`SIGUSR2`、`SIGPIPE`、`SIGQUIT`、`SIGKILL`。**如果在 Windows 上尝试使用这些信号，Python 的 `signal` 模块会在导入时抛出 `AttributeError` 异常。建议使用 `getattr(signal, "SIGKILL", signal.SIGTERM)` 方法，或通过平台检测来屏蔽相关代码块。在 Windows 上，`loop.add_signal_handler` 会引发 `NotImplementedError` 异常，务必对其进行捕获处理。
 
-7. **路径分隔符。**应使用 `pathlib.Path` 对象而非用 `/` 进行字符串拼接。虽然正斜杠在 Windows 上几乎到处都可用，但 `subprocess.run(["cmd.exe", "/c", ...])` 及其他 Shell 环境可能要求使用反斜杠——因此应在子进程调用边界处通过 `str(path)` 进行转换，而非在 Python 逻辑内部处理。
+6. **路径分隔符。**应使用 `pathlib.Path` 对象而非字符串拼接并使用 `/` 符号来构建路径。虽然正斜杠在 Windows 上几乎处处可用，但 `subprocess.run(["cmd.exe", "/c", ...])` 以及其他涉及命令行的场景可能要求使用反斜杠——因此应在调用子进程之前通过 `str(path)` 进行转换，而非在 Python 逻辑内部处理。
 
-8. **在 Windows 上创建符号链接需要提升权限**（除非启用了开发者模式）。若测试中涉及创建符号链接，应添加标记 `@pytest.mark.skipif(sys.platform == "win32", reason="Symlinks require elevated privileges on Windows")` 以跳过该测试。
+7. **在 Windows 上创建符号链接需要提升权限**（除非开启了开发者模式）。那些涉及创建符号链接的测试应添加标记 `@pytest.mark.skipif(sys.platform == "win32", reason="Symlinks require elevated privileges on Windows")`，以便在 Windows 环境中自动跳过。
 
-9. **默认情况下，NTFS 文件系统不会强制执行 POSIX 文件权限模式（如 0o600、0o644 等）。**那些依赖 `stat().st_mode & 0o777` 来进行断言的测试在 Windows 上必须被跳过——因为该概念在 NTFS 上并不适用。如有必要，可使用 ACL（如 `icacls`、`pywin32`）来实现对 Windows 系统中敏感文件的保护。
+8. **默认情况下，NTFS 文件系统并不支持 POSIX 文件权限模式（如 0o600、0o644 等）。**那些依赖 `stat().st_mode & 0o777` 来进行断言的测试在 Windows 上必须被跳过，因为该概念在此系统中并不适用。如有必要，可利用 ACL（如 `icacls`、`pywin32` 库）来实现 Windows 系统下敏感文件的保护。
 
-10. **在 Windows 上运行独立的后台守护进程需使用 `pythonw.exe`，而非 `python.exe`。**`python.exe` 总是会分配控制台或与其关联，这使其容易受到任何同级进程发送的 `CTRL_C_EVENT` 信号的影响。而 `pythonw.exe` 是无需控制台的版本。可在 `subprocess.Popen(creationflags=...)` 中结合使用 `CREATE_NO_WINDOW | DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB` 标志。相关实现可参考 `hermes_cli/gateway_windows.py::_spawn_detached` 文件。
+9. **在 Windows 系统上，以分离模式运行的后台守护进程需要使用 `pythonw.exe`，而非 `python.exe`。** `python.exe` 总是会绑定到控制台，因此容易受到任何关联进程发送的 `CTRL_C_EVENT` 信号的影响。而 `pythonw.exe` 是无需控制台的版本。可在 `subprocess.Popen(creationflags=...)` 中结合使用 `CREATE_NO_WINDOW | DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP | CREATE_BREAKAWAY_FROM_JOB` 这些标志。相关实现参考代码位于 `hermes_cli/gateway_windows.py::_spawn_detached`。
 
-11. **当使用 `.cmd` 或 `.bat` 启动脚本时，`subprocess.Popen` 需要借助 `shutil.which` 函数来定位可执行文件。**在 Windows 上，若直接将 `"agent-browser"` 传递给 `Popen`，它会查找 `node_modules/.bin/` 目录中那个没有扩展名的 POSIX 启动脚本，而 `CreateProcessW` 无法执行此类文件，从而导致 `WinError 193 "not a valid Win32 application"` 错误。建议使用 `shutil.which("agent-browser", path=local_bin)`，该函数会考虑 PATHEXT 设置，并在 Windows 上自动选择 `.CMD` 格式的可执行文件。
+10. **当使用 `.cmd` 或 `.bat` 形式的脚本通过 `subprocess.Popen` 调用时，需要借助 `shutil.which` 函数来定位正确的执行文件。** 在 Windows 上，若将 `"agent-browser"` 传递给 `Popen`，系统会在 `node_modules/.bin/` 目录中查找没有扩展名的 POSIX 命令行脚本，而 `CreateProcessW` 无法执行此类脚本，从而导致“WinError 193 ‘不是有效的 Win32 应用程序’”的错误。应使用 `shutil.which("agent-browser", path=local_bin)`，该函数会考虑系统的 PATH 环境变量，并在 Windows 上自动选择 `.CMD` 格式的脚本。
 
-12. **切勿使用 Shell 启动行作为运行 Python 的方式。**`#!/usr/bin/env python` 仅能在通过 Unix Shell 执行文件时生效。即使在文件中存在启动行，使用 `subprocess.run(["./myscript.py"])` 在 Windows 上也会失败。应始终明确指定 Python 的执行路径：`[sys.executable, "myscript.py"]`。
+11. **请勿通过 shell 命令行脚本的方式来运行 Python。** `#!/usr/bin/env python` 这种写法仅能在通过 Unix shell 执行文件时生效。即使在脚本中包含了 shebang 行，Windows 系统上的 `subprocess.run(["./myscript.py"])` 也会失败。应始终明确指定 Python 的执行路径，即使用 `[sys.executable, "myscript.py"]` 这种形式。
 
-13. **安装程序中的 Shell 命令。**如果修改了 `scripts/install.sh` 文件，也需同步修改 `scripts/install.ps1` 文件。这两个脚本是“在 Linux 上可行不代表在 Windows 上也能运行”这一现象的典型例子，且其实现方式已多次变更——务必保持两者完全一致。
+12. **安装程序中的 Shell 命令。** 如果您修改了 `scripts/install.sh`，则必须在 `scripts/install.ps1` 中进行相应的修改。这两个脚本是“在 Linux 上能运行并不代表在 Windows 上也能运行”这一现象的典型例证，且其内容曾多次出现不一致——请务必保持二者同步。
 
-14. **在 Windows 上，以下路径会被 OneDrive 重定向：桌面、文档、图片、视频文件夹。**当启用 OneDrive 备份功能时，这些文件夹的“真实”路径为 `%USERPROFILE%\OneDrive\Desktop` 等，而非看似存在的空目录 `%USERPROFILE%\Desktop`。可通过 `ctypes` + `SHGetKnownFolderPath` 函数或读取 `Shell Folders` 注册表项来确定真实路径——切勿直接假设使用 `~/Desktop`。
+13. **Windows 系统中会被 OneDrive 重定向的已知路径：** 桌面、文档、图片、视频。启用 OneDrive 备份后，这些路径的“真实”位置为 `%USERPROFILE%\OneDrive\Desktop`（及其他类似路径），而非 `%USERPROFILE%\Desktop`（该路径实际上是一个空目录）。可通过 `ctypes` + `SHGetKnownFolderPath` 或读取 `Shell Folders` 注册表项来确定真实路径——切勿直接假设使用 `~/Desktop`。
 
-15. **生成的脚本中应使用 CRLF 还是 LF 行结束符？**Windows 系统的 `cmd.exe` 和 `schtasks` 工具都是逐行解析命令的，混合使用行结束符或仅使用 LF 格式的行尾可能会导致多行 `.cmd`/`.bat` 文件出错。在生成 Windows 可执行的脚本时，应使用 `open(path, "w", encoding="utf-8", newline="\r\n")`，或直接使用 `open(path, "wb")` 并显式指定字节序列。
+14. **生成的脚本中 CRLF 与 LF 的区别。** Windows 的 `cmd.exe` 和 `schtasks` 命令都是逐行解析的；混合使用或仅包含 LF 结尾的行可能导致多行格式的 `.cmd`/`.bat` 文件出错。在生成供 Windows 执行的脚本时，应使用 `open(path, "w", encoding="utf-8", newline="\r\n")`——或者使用 `open(path, "wb")` 并手动指定字节序列——切勿随意选择编码方式。
 
-16.**在一个命令行中不能混用两种不同的引号规则。**`subprocess.run(["schtasks", "/TR", some_cmd])` 中，`/TR` 部分由 `schtasks` 自身解析，而 `some_cmd` 字符串则会在任务执行时由 `cmd.exe` 重新解析。由于解析器不同，其转义规则也有所差异。因此应分别使用不同的引号处理函数，切勿混用。相关实现可参考 `hermes_cli/gateway_windows.py::_quote_cmd_script_arg` 和 `_quote_schtasks_arg` 函数。
+15. **单条命令行中使用的两种不同引号规则。** 在 `subprocess.run(["schtasks", "/TR", some_cmd])` 这种用法中，`/TR` 会被 schtasks 自身解析，而 `some_cmd` 字符串则会在任务执行时由 `cmd.exe` 再次解析。由于解析器不同，其转义规则也有所差异。因此应分别使用两种引号处理函数，且严禁混用。可参考 `hermes_cli/gateway_windows.py` 文件中的 `_quote_cmd_script_arg` 和 `_quote_schtasks_arg` 函数作为实现示例。
 
-### 跨平台测试策略
+### 跨平台测试
 
-那些依赖仅适用于 POSIX 系统的系统调用的测试需要添加跳过标记。常见示例包括：
-- 符号链接相关测试 → `@pytest.mark.skipif(sys.platform == "win32", ...)`
-- 文件权限模式为 `0o600` 的测试 → `@pytest.mark.skipif(sys.platform.startswith("win"), ...)`
-- `signal.SIGALRM` 相关测试 → 仅适用于 Unix 系统（参见 `tests/conftest.py::_enforce_test_timeout`）
-- `os.setsid` / `os.fork` 相关测试 → 仅适用于 Unix 系统
-- 需要实时 Winsock 功能或针对 Windows 特有的回归测试 → `@pytest.mark.skipif(sys.platform != "win32", reason="Windows-specific regression")`
+需要在特定平台上测试其行为表现的测试，必须在其目标平台上执行。
 
-如果在跨平台测试中通过 monkeypatch 修改了 `sys.platform`，也应同时修改 `platform.system()`、`platform.release()` 和 `platform.mac_ver()` 这些函数——因为它们各自都会独立读取真实的操作系统信息，否则即使部分函数被修改，Windows 环境下的测试仍可能走错分支。
+```python
+@pytest.mark.linux_only
+@pytest.mark.macos_only
+@pytest.mark.windows_only
+```
+除非确实必要，否则应避免直接修改 `sys.platform`，若必须如此，也请同时修改 `platform.system()`、`platform.release()` 和 `platform.mac_ver()`。符号链接、0o600 权限设置、SIGALRM 信号以及 os.setsid/fork 函数均为 Unix 系统所独有。
 
 ---
 
-## 安全性考量
+## 安全注意事项
 
-Hermes 具有终端访问权限，因此安全性至关重要。
+Hermes 具有终端访问权限，因此安全问题至关重要。
 
-### 现有的安全防护措施
+### 现有的防护措施
 
 | 防护层级 | 实现方式 |
 |---------|----------|
-| **Sudo 密码传递保护** | 使用 `shlex.quote()` 函数防止 Shell 注入攻击 |
-| **危险命令检测** | 在 `tools/approval.py` 中通过正则表达式配合用户审批流程进行检测 |
-| **Cron 任务注入防护** | `tools/cronjob_tools.py` 中的扫描工具可识别并阻止可能篡改任务的指令模式 |
-| **写操作禁止列表** | 对敏感路径（如 `~/.ssh/authorized_keys`、`/etc/shadow`）通过 `os.path.realpath()` 获取真实路径，从而防止通过符号链接绕过限制 |
-| **技能模块安全防护** | 通过 `tools/skills_guard.py` 对 hub 安装的技能模块进行安全扫描 |
-| **代码执行沙箱** | `execute_code` 子进程在运行时会将环境变量中的 API 密钥移除 |
-| **容器加固措施** | 在 Docker 环境中会取消所有额外权限、禁止权限提升、设置 PID 上限，并限制临时文件系统的大小 |
+| **Sudo 密码传递** | 使用 `shlex.quote()` 函数防止shell注入攻击 |
+| **危险命令检测** | 通过 `tools/approval.py` 中的正则表达式模式实现用户审批流程 |
+| **Cron 脚本注入防护** | `tools/cronjob_tools.py` 中的扫描工具可拦截试图覆盖指令的模式 |
+| **写入禁止列表** | 对受保护路径（如 `~/.ssh/authorized_keys`、`/etc/shadow`）使用 `os.path.realpath()` 获取真实路径，从而防止通过符号链接绕过限制 |
+| **技能模块防护** | 通过 `tools/skills_guard.py` 对 hub 安装的技能模块进行安全扫描 |
+| **代码执行沙箱** | `execute_code` 子进程在运行时会被移除环境变量中的 API 密钥 |
+| **容器加固** | Docker 环境下会禁用所有特殊权限、防止权限提升，同时设置 PID 限制及限制临时文件系统的大小 |
 
-### 在提交涉及安全敏感的代码时的注意事项
+### 贡献涉及安全敏感的代码时的注意事项
 
-- 在将用户输入插入 Shell 命令时，务必始终使用 `shlex.quote()` 进行转义处理。
-- 在进行基于路径的访问控制检查之前，应先通过 `os.path.realpath()` 获取路径的真实内容。
-- **绝不对敏感信息进行日志记录。**API 密钥、令牌和密码等敏感数据绝不能出现在日志输出中。
-- 应在工具执行周围添加异常处理机制，避免某次失败导致整个代理循环崩溃。
-- 如果你的修改涉及文件路径、进程管理或 Shell 命令，必须在所有平台上进行测试。
+- 在将用户输入嵌入Shell命令时，**务必使用 `shlex.quote()`** 进行处理。  
+- 在执行基于路径的访问控制检查之前，**使用 `os.path.realpath()` 解析符号链接**。  
+- **切勿记录敏感信息**。API密钥、令牌和密码绝不能出现在日志输出中。  
+- 在工具执行过程中需**捕获通用异常**，以避免单次失败导致整个代理循环崩溃。  
+- 若您的修改涉及文件路径、进程管理或Shell命令，**必须在所有平台上进行测试**。  
 
-如果你的 Pull Request 可能影响系统安全，请在描述中明确说明。
+如果您的拉取请求会影响安全性，请在描述中明确说明。  
 
-### 依赖项锁定策略（供应链安全加固）
+### 依赖项锁定策略（供应链加固）
 
-在 2026 年 3 月发生的 [litellm 供应链攻击事件](https://github.com/BerriAI/litellm/issues/24512)以及 2026 年 5 月出现的 [Mini Shai-Hulud 僵虫攻击事件](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)之后，所有依赖项都必须遵循以下规则：
+鉴于2026年3月发生的 [litellm供应链入侵事件](https://github.com/BerriAI/litellm/issues/24512)以及2026年5月出现的 [Mini Shai-Hulud蠕虫攻击](https://socket.dev/blog/tanstack-npm-packages-compromised-mini-shai-hulud-supply-chain-attack)，所有依赖项都必须遵守以下规则：
 
-| 依赖来源类型 | 要求的锁定方式 | 原因说明 |
+| 来源类型 | 所需处理方式 | 原因说明 |
 |---|---|---|
-| **PyPI 包** | 使用 `>=floor,<next_major` 的版本范围 | PyPI 上的版本一旦发布即不可更改，但开发者仍可推送新版本到该范围。设置 `<next_major` 的上限可以防止原本安装的是 1.x 版本被升级为恶意的 2.0.0 版本。 |
-| **Git URL 指定的依赖**（如 atroposlib、tinker、yc-bench、Baileys 等） | 需锁定完整的提交 SHA 值 | 分支和标签都是可变的引用，而 SHA 值是基于内容唯一标识的。 |
-| **GitHub Actions 相关依赖** | 需锁定完整的提交 SHA 值以及版本注释 | Action 的标签也是可变的引用（例如 tj-actions/changed-files 2025 年 3 月版本），因此应将其锁定为 `uses: owner/action@<sha>  # vX.Y.Z` 的形式。 |
-| **仅用于 CI 环境的 pip 安装依赖** | 可使用 `==exact` 精确锁定版本 | Hermetic 的 CI 环境构建频率较低，允许使用固定版本。 |
+| **PyPI 包** | `>=floor,<next_major` | PyPI 上的版本一旦发布即不可更改，但可在指定范围内推送新版本。设置 `<next_major` 的上限可防止 1.x 版本升级为恶意的 2.0.0 版本。 |
+| **Git URL**（如 atroposlib、tinker、yc-bench、Baileys） | 完整的提交 SHA 值 | 分支和标签属于可变的引用；而 SHA 值采用内容寻址机制。 |
+| **GitHub Actions** | 完整的提交 SHA 值 + 版本说明 | Action 标签属于可变引用（例如 `tj-actions/changed-files March 2025`）。应通过 `uses: owner/action@<sha>  # vX.Y.Z` 的形式进行固定版本指定。 |
+| **仅用于 CI 的 pip 安装** | `==exact` | 由于是在 Hermetic CI 环境中构建，允许版本存在变动。 |
 
-**在 Pull Request 中新增的任何 PyPI 依赖项都必须设置 `<next_major` 作为版本上限。**那些指定无限制 `>=X.Y.Z` 版本范围的依赖项将会被审稿人拒绝。`supply-chain-audit.yml` CI 工作流还会自动标记依赖清单中的变更，以便人工审核。
+**在 PR 中新增的每一个 PyPI 依赖都必须设置 `<next_major` 的上限。** 若提交的内容包含无限制的 `>=X.Y.Z` 版本指定，将会被审阅者拒绝。`supply-chain-audit.yml` CI 工作流还会标记依赖清单的变更，以便人工审核。
 
-**如何确定版本上限：**
-- 如果该包的当前版本为 `1.x.y`，则上限可设置为 `<2`。
-- 如果该包处于 `0.x.y` 版本阶段（即 1.0 之前），则上限可设置为 `<0.(当前次要版本号 + 2)`。例如，如果当前版本是 `0.29.x`，则上限为 `<0.32`。这样的设置能在保留一定版本灵活性的同时，确保恶意篡改后的版本不太可能落入该范围内。
-- 特例：那些 API 非常稳定的包（如 `aiohttp-socks`），经审稿人评估后也可使用 `<1` 作为上限。
+**如何确定上限值：**
+- 如果包的版本为 `1.x.y`，则使用 `<2`。
+- 如果包的版本为 `0.x.y`（1.0 之前的版本），则使用 `<0.(当前次要版本号 + 2)`——例如当前版本为 `0.29.x`，则使用 `<0.32`。这样既能保留约 2 个次要版本的缓冲空间，又能确保范围足够小，从而降低恶意版本混入的可能性。
+- 特例：对于 API 非常稳定的包（如 `aiohttp-socks`），经审阅者判断后可使用 `<1`。
 
 **示例：**
 ```toml
@@ -827,18 +829,18 @@ refactor/description   # Code restructuring
 
 ### 提交前准备
 
-1. **运行测试**：使用 `scripts/run_tests.sh`（推荐，与 CI 流水线相同），或在激活项目虚拟环境后执行 `pytest tests/ -v`。
+1. **运行测试**：使用 `scripts/run_tests.sh`（推荐，与 CI 流水线相同）；或在激活项目虚拟环境后执行 `pytest tests/ -v`。
 2. **手动测试**：启动 `hermes` 并调用你修改过的代码路径进行测试。
 3. **检查跨平台兼容性**：如果你修改了文件读写、进程管理或终端处理相关功能，需确保其在 macOS、Linux 和 WSL2 环境下都能正常运行。
-4. **保持 PR 的专注性**：每个 PR 应只包含一个逻辑上的更改。切勿将错误修复、代码重构和新功能合并到同一个 PR 中。
+4. **保持 PR 的聚焦性**：每个 PR 应只包含一个逻辑上的更改。避免将错误修复、代码重构和新功能混在一起。
 
 ### PR 描述内容
 
 需包含以下信息：
 - **具体修改了什么**以及**原因**
-- **如何测试该更改**（错误的复现步骤，功能的使用示例）
-- **在哪些平台上进行了测试**
-- 参考相关的 Issues 编号
+- **如何测试该更改**（错误的复现步骤，功能的用法示例）
+- **已在哪些平台上进行测试**
+- 引用任何相关的 Issue
 
 ### 提交信息格式
 
@@ -857,7 +859,7 @@ refactor/description   # Code restructuring
 | `refactor` | 代码重构（不改变功能行为） |
 | `chore` | 构建、持续集成及依赖项更新 |
 
-适用范围：`cli`、`gateway`、`tools`、`skills`、`agent`、`install`、`whatsapp`、`security` 等。
+作用范围：`cli`、`gateway`、`tools`、`skills`、`agent`、`install`、`whatsapp`、`security` 等。
 
 示例：
 ```
@@ -871,10 +873,10 @@ test(tools): add unit tests for file_operations
 
 ## 报告问题
 
-- 请通过 [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues) 提交问题
-- 需提供以下信息：操作系统、Python版本、Hermes版本（使用 `hermes version` 命令查看）、完整的错误堆栈信息
-- 同时需附上问题重现的步骤
-- 在提交新问题前请先查看已有问题，避免重复提交
+- 请使用 [GitHub Issues](https://github.com/NousResearch/hermes-agent/issues) 提交问题
+- 需提供以下信息：操作系统、Python版本、Hermes版本（通过 `hermes --version` 查看）、完整的错误堆栈信息
+- 同时需附上问题复现步骤
+- 在提交新问题前请先查看现有问题，避免重复提交
 - 若发现安全漏洞，请通过私密渠道进行报告
 
 ---
@@ -883,7 +885,7 @@ test(tools): add unit tests for file_operations
 
 - **Discord**：[discord.gg/NousResearch](https://discord.gg/NousResearch) —— 用于提问、展示项目成果及分享技能
 - **GitHub Discussions**：用于讨论设计方案与架构相关内容
-- **Skills Hub**：可将自定义技能上传至注册表，并在社区中分享
+- **Skills Hub**：可将自定义技能上传至注册表，并与社区成员共享
 
 ---
 
