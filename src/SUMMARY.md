@@ -3258,6 +3258,7 @@
             - [1-3-1 规则](zh/website/docs/user-guide/skills/optional/communication/communication-one-three-one-rule.md)
           - [Creative]()
             - [ASCII 艺术](zh/website/docs/user-guide/skills/optional/creative/creative-ascii-art.md)
+            - [Audiocraft 音频生成功能](zh/website/docs/user-guide/skills/optional/creative/creative-audiocraft-audio-generation.md)
             - [宝玉文章插画师](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-article-illustrator.md)
             - [宝玉漫画](zh/website/docs/user-guide/skills/optional/creative/creative-baoyu-comic.md)
             - [概念图绘制](zh/website/docs/user-guide/skills/optional/creative/creative-concept-diagrams.md)
