@@ -3313,7 +3313,7 @@
             - [Weights And Biases](zh/website/docs/user-guide/skills/optional/mlops/mlops-evaluation-weights-and-biases.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
             - [Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
-            - [Guidance](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
+            - [指导功能](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
             - [Huggingface Tokenizers](zh/website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md)
             - [Llama Cpp](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md)
             - [Outlines](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-outlines.md)
