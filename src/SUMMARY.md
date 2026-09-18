@@ -2257,6 +2257,7 @@
       - [Segment Anything Model]()
         - [Segment Anything Model（SAM）](zh/optional-skills/mlops/models/segment-anything-model/SKILL.md)
         - [References]()
+          - [Segment Anything 高级使用指南](zh/optional-skills/mlops/models/segment-anything-model/references/advanced-usage.md)
           - [Segment Anything 故障排除指南](zh/optional-skills/mlops/models/segment-anything-model/references/troubleshooting.md)
     - [Nemo Curator]()
       - [NeMo Curator——基于GPU加速的数据筛选工具](zh/optional-skills/mlops/nemo-curator/SKILL.md)
