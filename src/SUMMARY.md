@@ -3269,7 +3269,7 @@
             - [Chroma](zh/website/docs/user-guide/skills/optional/mlops/mlops-chroma.md)
             - [Clip](zh/website/docs/user-guide/skills/optional/mlops/mlops-clip.md)
             - [Faiss](zh/website/docs/user-guide/skills/optional/mlops/mlops-faiss.md)
-            - [优化注意力机制：Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
+            - [Flash Attention](zh/website/docs/user-guide/skills/optional/mlops/mlops-flash-attention.md)
             - [Guidance](zh/website/docs/user-guide/skills/optional/mlops/mlops-guidance.md)
             - [Huggingface Tokenizers](zh/website/docs/user-guide/skills/optional/mlops/mlops-huggingface-tokenizers.md)
             - [Llama Cpp](zh/website/docs/user-guide/skills/optional/mlops/mlops-inference-llama-cpp.md)
