@@ -3058,7 +3058,7 @@
       - [配置](zh/website/docs/user-guide/configuration.md)
       - [模型配置](zh/website/docs/user-guide/configuring-models.md)
       - [桌面应用](zh/website/docs/user-guide/desktop.md)
-      - [Hermes Agent — Docker](zh/website/docs/user-guide/docker.md)
+      - [Hermes Docker 部署指南](zh/website/docs/user-guide/docker.md)
       - [Git 工作树](zh/website/docs/user-guide/git-worktrees.md)
       - [从其他 Agent 导入](zh/website/docs/user-guide/import-from-other-agents.md)
       - [本地模型](zh/website/docs/user-guide/local-models.md)
