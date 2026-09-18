@@ -4,138 +4,161 @@ title: "Slash Commands Reference"
 description: "Complete reference for interactive CLI and messaging slash commands"
 ---
 
-# 斜杠命令参考手册
+# 斜杠命令参考
 
-Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py` 中的中央 `COMMAND_REGISTRY` 进行驱动：
+Hermes 提供两种斜杠命令接口，二者均通过 `hermes_cli/commands.py` 中的中央 `COMMAND_REGISTRY` 来驱动：
 
 - **交互式 CLI 斜杠命令**——由 `cli.py` 调用，并从注册表中获取自动补全功能；
-- **消息传递型斜杠命令**——由 `gateway/run.py` 调用，其帮助文本和平台菜单同样来自该注册表。
+- **消息平台斜杠命令**——由 `gateway/run.py` 调用，其帮助文本和平台菜单也由注册表生成。
 
-已安装的技能也会作为动态斜杠命令展示在两种接口中。这包括诸如 `/plan` 这样的内置技能，它可启动计划模式，并将 Markdown 格式的计划保存到与当前工作区/后端工作目录相对的 `.hermes/plans/` 文件夹中。
+已安装的技能同样会作为动态斜杠命令在这两种接口中呈现。（`/plan` 曾属于此类命令，但现在已成为内置命令——详见下方的会话表格。）
 
-## 权限管理与管理员/用户区分
+## 权限与管理员/用户区分
 
-所有支持按用户设置允许列表的消息平台（Telegram、Discord、Slack、Matrix、Mattermost、Signal 等）都同时支持两级斜杠命令权限控制：**管理员**可以使用所有已注册的命令，而**普通用户**仅能使用在 `user_allowed_commands` 中列出的命令名称（此外还有始终允许的 `/help` 和 `/whoami` 命令）。你可以在 `~/.hermes/gateway-config.yaml` 文件中平台的 `extra:` 块内配置 `allow_admin_from` 和 `user_allowed_commands`（以及针对群组的对应参数 `group_allow_admin_from` / `group_user_allowed_commands`）。
+所有支持按用户设置允许列表的消息平台（Telegram、Discord、Slack、Matrix、Mattermost、Signal 等）都支持两级斜杠命令权限划分：**管理员**可以使用所有已注册的命令，而**普通用户**仅能使用在 `user_allowed_commands` 中列出的命令名称（此外还可以使用始终允许的 `/help` 和 `/whoami` 命令）。你可以在 `~/.hermes/config.yaml` 文件中该平台的 `extra:` 块内配置 `allow_admin_from` 和 `user_allowed_commands`（以及针对群组的对应参数 `group_allow_admin_from` / `group_user_allowed_commands`）。
 
-具体示例请参考各平台的文档——各平台的结构是完全一致的：
+具体示例请参考各平台的相关文档——各平台的结构是完全一致的。
 
-- [Telegram](../user-guide/messaging/telegram.md#slash-command-access-control)
-- [Discord](../user-guide/messaging/discord.md)
-- [Slack](../user-guide/messaging/slack.md)
-- [Matrix](../user-guide/messaging/matrix.md)
-- [Mattermost](../user-guide/messaging/mattermost.md)
-- [Signal](../user-guide/messaging/signal.md)
+- [Telegram](../user-guide/messaging/telegram.md#slash-command-access-control)  
+- [Discord](../user-guide/messaging/discord.md)  
+- [Slack](../user-guide/messaging/slack.md)  
+- [Matrix](../user-guide/messaging/matrix.md)  
+- [Mattermost](../user-guide/messaging/mattermost.md)  
+- [Signal](../user-guide/messaging/signal.md)  
 
-如果某个权限范围未设置 `allow_admin_from`，则该范围将保持不受限制的向后兼容模式——所有被允许的用户都可以使用所有命令。
+如果某个作用域未设置 `allow_admin_from`，则该作用域将保持无限制的向后兼容模式——所有被允许的用户均可使用所有命令。  
 
-## 交互式 CLI 斜杠命令
+## 交互式 CLI 斜杠命令  
 
-在 CLI 中输入 `/` 即可打开自动补全菜单。内置命令不区分大小写。
+在 CLI 中输入 `/` 即可打开自动补全菜单。内置命令不区分大小写。  
 
-### 会话管理
+### 会话
+
+| Command | Description |
+|---------|-------------|
+| `/new [name]` (alias: `/reset`) | Start a new session (fresh session ID + history). Optional `[name]` sets the initial session title — e.g. `/new my-experiment` opens a fresh session already titled `my-experiment` so it's easy to find later with `/resume` or `/sessions`. Append `now`, `--yes`, or `-y` to skip the confirmation modal — e.g. `/reset now`, `/new --yes my-experiment`. |
+| `/clear` | Clear screen and start a new session |
+| `/history` | Show conversation history (respects `/timestamps`) |
+| `/save` | Save the current conversation |
+| `/prompt` (alias: `/compose`) | Compose your next prompt in `$EDITOR` (markdown) instead of the inline input — useful for long, multi-line, or carefully-formatted prompts. |
+| `/retry` | Retry the last message (resend to agent) |
+| `/undo` | Remove the last user/assistant exchange |
+| `/title` | Set a title for the current session (usage: /title My Session Name) |
+| `/compress [here [N] \| focus topic]` | Manually compress conversation context (flush memories + summarize). `/compress here [N]` summarizes everything except the most recent N exchanges (default 2), kept verbatim — pick your own compression boundary. A focus topic narrows what a full summary preserves. |
+| `/rollback` | List or restore filesystem checkpoints (usage: /rollback [number]) |
+| `/diff [staged\|all\|session] [--stat] [path...]` | Show git changes in the working directory. Default: unstaged changes plus untracked files. `staged` shows what's staged for commit, `all` everything since HEAD, and `session` the cumulative diff of everything Hermes changed here (from the earliest retained checkpoint baseline — requires checkpoints to be enabled; complements `/rollback diff <N>`). `--stat` prints just the changed-file summary; path arguments restrict the diff. |
+| `/snapshot [create\|restore <id>\|prune]` (alias: `/snap`) | Create or restore state snapshots of Hermes config/state. `create [label]` saves a snapshot, `restore <id>` reverts to it, `prune [N]` removes old snapshots, or list all with no args. Database restores write through SQLite's backup API so live processes (gateway, dashboard) see the restored data safely; if that path fails while another process still holds the database open, the restore refuses instead of risking corruption — stop the holder and retry. |
+| `/stop` | Kill all running background processes |
+| `/queue <prompt>` (alias: `/q`) | Queue a prompt for the next turn (doesn't interrupt the current agent response). |
+| `/steer <prompt>` | Inject a mid-run note that arrives at the agent **after the next tool call** — no interrupt, no new user turn. The text is appended to the last tool result's content once the current tool completes, giving the agent new context without breaking the current tool-calling loop. Use this to nudge direction mid-task (e.g. "focus on the auth module" while the agent is running tests). |
+| `/goal <text>` | Set a standing goal Hermes works toward across turns — our take on the Ralph loop. After each turn an auxiliary judge model decides whether the goal is done; if not, Hermes auto-continues. Subcommands: `/goal status`, `/goal pause`, `/goal resume`, `/goal clear`. Budget defaults to 20 turns (`goals.max_turns`); any real user message preempts the continuation loop, and state survives `/resume`. See [Persistent Goals](/user-guide/features/goals) for the full walkthrough. |
+| `/subgoal <text>` | Append a user-supplied criterion to the active goal mid-loop. The continuation prompt surfaces all subgoals to the agent verbatim, and the judge factors them into its DONE/CONTINUE verdict — so the goal isn't marked done until the original goal **and** every subgoal are met. Subcommands: `/subgoal` (list), `/subgoal remove <N>`, `/subgoal clear`. Requires an active `/goal`. |
+| `/heartbeat every <interval> <prompt>` (alias: `/hb`) | Set a recurring prompt that re-enters **this session** as a normal user turn whenever it's idle and the interval has elapsed (min 60s; missed ticks coalesce). Subcommands: `/heartbeat status`, `/heartbeat pause`, `/heartbeat resume`, `/heartbeat clear`. Session-scoped and in-process — use `hermes cron` for durable isolated schedules. See [Session Heartbeats](/user-guide/features/heartbeat). |
+| `/refine [focus]` | Run the background memory/skill self-improvement review **now** instead of waiting for the automatic post-turn trigger. Optional focus text steers the review (e.g. `/refine save the deploy workflow as a skill`). Runs in a background fork against a conversation snapshot — the live session and prompt cache are untouched; results are reported when done. |
+| `/review [instructions]` | Spawn an independent, full-privilege reviewer subagent to review the work just discussed — a PR, code, docs, any artifact referenced in the last 10 chat messages. It investigates in the background (opens the PR, reads the diff, runs code) and its full review re-enters this session as a background-subagent completion the primary agent can act on. Pin a dedicated review model via `auxiliary.review` in config.yaml (defaults to your main model). See [Subagent Delegation](/user-guide/features/delegation#the-review-command). |
+| `/moa <prompt>` | Run a single prompt through the default [Mixture of Agents](/user-guide/features/mixture-of-agents) preset, then restore your current model. One-shot — does not change your session model. |
+| `/resume [name]` | Resume a previously-named session |
+| `/sessions` (TUI alias: `/switch`) | Classic CLI: browse and resume previous sessions in an interactive picker. TUI: open the live session switcher for currently open TUI sessions. Use `/sessions new` in the TUI to start another live session immediately. |
+| `/egress [status]` | Show Docker egress proxy status — enabled/configured/running state, credential source, token mappings, uncovered providers, and next remediation step. Works in CLI, TUI, Desktop chat, and messaging gateway. |
+| `/redraw` | Force a full UI repaint (recovers from terminal drift after tmux resize, mouse selection artifacts, etc.) |
+| `/status` | Show session info — model, provider, profile, session ID, working directory, title, created/updated timestamps, token totals, agent-running state — followed by a local **Session recap** block (recent user/assistant turn counts, tool result count, top tools used, last few files touched, the latest user prompt, and the latest assistant reply). The recap is computed locally from the in-memory conversation; no LLM call, no prompt-cache impact. |
+| `/context [all]` (alias: `/ctx`) | Visual context-window breakdown. On the CLI/TUI: a 5×20 glyph block grid (each cell ≈ 1% of the model window) plus an estimated per-category table — system prompt, tool definitions, rules, skills index, MCP, subagents, memory, conversation — versus free space. On messaging platforms: a usage gauge with auto-compression threshold/headroom, compression stats, cumulative throughput, and the same category table in plain text. `/context all` appends per-skill and per-toolset cost listings (index cost vs SKILL.md load cost; schema tokens per toolset). Read-only and computed locally — no LLM call, no prompt-cache impact. |
+| `/agents` (alias: `/tasks`) | Show active agents and running tasks across the current session. |
+| `/bg <prompt>` | Run a prompt in a separate background session. The agent processes your prompt independently — your current session stays free for other work. Results appear as a panel when the task finishes. See [CLI Background Sessions](/user-guide/cli#background-sessions). |
+| `/btw <question>` | Ask a quick side question **about the current conversation** without interrupting it. A one-shot auxiliary LLM call answers from a read-only snapshot of the transcript — the live session's history and prompt cache are untouched, and the current turn keeps running. For independent work with a fresh context, use `/bg`. |
+| `/branch [name]` (alias: `/fork`) | Branch the current session (explore a different path) |
+| `/worktree [new [name]\|list]` | **CLI only.** Inspect or create isolated git worktrees mid-session (inspired by Copilot CLI's `/worktree new`). Bare `/worktree` shows the active worktree; `/worktree list` lists the repo's worktrees; `/worktree new [name]` creates a worktree under `.worktrees/` (branched from the freshly-fetched remote tip, honoring `worktree_sync`) and retargets the session's terminal and file tools into it. Named trees use your name (`hermes/<name>` branch); unnamed ones get a random `hermes-<id>`. On exit the tree is kept only if it has unpushed commits — same lifecycle as `hermes -w`. See [Git Worktrees](/user-guide/git-worktrees). |
+| `/handoff <platform>` | **CLI only.** Hand the current session off to a messaging platform (Telegram, Discord, Slack, WhatsApp, Signal, Matrix). The gateway picks it up immediately, creates a fresh thread on platforms that support threads (Telegram topics, Discord text-channel threads, Slack message-anchored threads), re-binds the destination to your CLI session_id so the full role-aware transcript replays, and forges a synthetic user turn so the agent confirms it's working in the new place. Your CLI exits cleanly on success with a `/resume` hint; resume locally any time with `/resume <title>`. Refused mid-turn. Requires the gateway to be running and a home channel configured for the target platform (`/sethome` from the destination chat). See [Cross-Platform Handoff](/user-guide/sessions#cross-platform-handoff). |
+| `/journey [list\|delete <id>\|edit <id>]` (aliases: `/learning`, `/memory-graph`) | Open the learning journey timeline of learned skills + memories. Works in the classic CLI, as a TUI overlay, and in the desktop app (Star Map panel). Not available on messaging platforms. See [Learning Journey](/user-guide/features/memory#learning-journey-journey). |
+
+### 配置
+
+| Command | Description |
+|---------|-------------|
+| `/config` | Show current configuration |
+| `/model [model-name]` | Show or change the current model. Supports: `/model claude-sonnet-4`, `/model provider:model` (switch providers), `/model custom:model` (custom endpoint), `/model custom:name:model` (named custom provider), `/model custom` (auto-detect from endpoint), and user-defined aliases (`/model fav`, `/model grok` — see [Custom model aliases](#custom-model-aliases)). Flags: `--global` persists the change to config.yaml; `--session` forces session-only; `--once` applies to the next turn only; `--refresh` re-fetches the provider's model list; `--provider <name>` switches backend (session-only unless `--global`). A plain `/model <name>` is session-only unless `model.persist_switch_by_default: true` is set — except when no `model.default`/`model.provider` is configured yet, in which case the first pick persists so the profile gets a real default. The same rule governs the desktop composer picker. **Interactive picker:** running `/model` with no arguments opens the provider→model picker; on the model list you can **type to fuzzy-filter** the models (e.g. type `grok` to narrow to matching models), Backspace to trim the filter, Esc to clear it (or close the picker). Selection always resolves to one concrete model — the filter only narrows the list, it never guesses. **Note:** `/model` can only switch between already-configured providers. To add a new provider, exit the session and run `hermes model` from your terminal. **Cost note:** switching models mid-conversation resets the prompt cache — the cache key includes the model, so your next turn re-reads the entire conversation at full input price instead of the ~75%-discounted cached rate. Expected and unavoidable, but worth knowing on long sessions. |
+| `/codex-runtime [auto\|codex_app_server\|on\|off]` | Toggle the optional [Codex app-server runtime](../user-guide/features/codex-app-server-runtime) for OpenAI/Codex models. `auto` (default) uses Hermes' standard chat completions; `codex_app_server` hands turns to a `codex app-server` subprocess for native shell, apply_patch, ChatGPT subscription auth, and migrated Codex plugins. Effective on next session. |
+| `/personality` | Set a predefined personality. `/personality none` (or `default` / `neutral`) clears the overlay and returns to base behavior. |
+| `/verbose` | Cycle tool progress display: off → new → all → verbose. Can be [enabled for messaging](#notes) via config. |
+| `/focus [on\|off\|status]` | Toggle **focus view** — a display-only reduced-output mode showing just your prompt and the final response. Composes with `/verbose`: turning it on snaps tool progress to `off` and remembers your previous mode, and `/focus off` restores it. Each turn ends with a dim recovery line (`⋯ 7 tool lines hidden · /focus off to show`) and a persistent `◉ focus` badge sits in the status bar so you always know you're in the reduced view. Nothing is sent differently to the model — detail is hidden, never discarded. |
+| `/fast [normal\|fast\|auto\|cold\|status]` | Fast mode — OpenAI Priority Processing / Anthropic Fast Mode. `fast` = every request; `auto` = only requests in the first `agent.fast_auto_seconds` (default 60s) of each turn; `cold` = that same window on the first turn of a session only. Default `normal` (off). See [Fast mode](../user-guide/configuration.md#fast-mode). |
+| `/reasoning [level\|show\|hide\|full\|clamp] [--global]` | Manage reasoning effort and display. Levels include `none` / `minimal` / `low` / `medium` / `high` / `xhigh` / `max` / `ultra`. `show` / `hide` (or `on` / `off`) toggle reasoning display; `full` and `clamp` adjust how reasoning is shown. `--global` persists effort to config. |
+| `/skin` | Show or change the display skin/theme |
+| `/export [profile] [-o out.tar.gz]` | **CLI only.** Pack a profile into a shareable `.tar.gz` — skills, memory, persona, crons, plugins, settings, and (from the desktop) themes and layout. Credentials (`auth.json`, `.env`) are stripped. Defaults to the active profile and `<name>.tar.gz` in the current directory. Same archive as `hermes profile export`; for a versioned, updatable share use a [profile distribution](../user-guide/profile-distributions.md) instead. |
+| `/import <archive.tar.gz> [--name <name>]` | **CLI only.** Install a profile archive as a new profile, inferring the name from the archive unless `--name` is given. Refuses to overwrite an existing profile and cannot import as `default`. Creates a shell wrapper when the name is free. See [Export and import a profile file](../user-guide/profile-distributions.md#export-and-import-a-profile-file). |
+| `/statusbar` (alias: `/sb`) | Toggle the context/model status bar on or off |
+| `/battery [on\|off\|status]` | Toggle a color-coded battery read-out as the first status-bar element (off by default; no-op without a battery). |
+| `/voice [on\|off\|tts\|status]` | Toggle CLI voice mode and spoken playback. Recording uses `voice.record_key` (default: `Ctrl+B`). |
+| `/yolo` | Toggle YOLO mode — skip all dangerous command approval prompts. |
+| `/approvals [manual\|smart\|off]` | Show or set the persistent dangerous-command approval mode. |
+| `/footer [on\|off\|status]` | Toggle the gateway runtime-metadata footer on final replies (shows model, context %, and cwd). |
+| `/busy [queue\|steer\|interrupt\|status]` | Control what happens when you message while Hermes is working — queue the new message, steer mid-turn, or interrupt immediately. Works in the CLI and messaging gateway. |
+| `/indicator [kaomoji\|emoji\|unicode\|ascii]` | CLI-only: pick the TUI busy-indicator style. |
+| `/timestamps [on\|off\|status]` | CLI-only: toggle `[HH:MM]` timestamps on messages and in `/history`. |
+| `/wake [on\|off\|status]` | CLI-only: toggle the "Hey Hermes" wake word listener. |
+
+### 工具与技能
+
+| Command | Description |
+|---------|-------------|
+| `/tools [list\|disable\|enable] [name...]` | Manage tools: list available tools, or disable/enable specific tools for the current session. Disabling a tool removes it from the agent's toolset and triggers a session reset. |
+| `/toolsets` | List available toolsets |
+| `/browser [connect\|disconnect\|status]` | Manage a local Chromium-family CDP connection. `connect` attaches browser tools to a running Chrome, Brave, Chromium, or Edge instance (default: `http://127.0.0.1:9222`). `disconnect` detaches. `status` shows current connection. Auto-launches a supported Chromium-family browser if no debugger is detected. |
+| `/skills` | Search, install, inspect, or manage skills from online registries. Also the review surface for the skill write-approval gate: `/skills pending`, `/skills diff <id>`, `/skills approve <id>`, `/skills reject <id>`, `/skills approval on\|off`. See [Gating agent skill writes](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval). |
+| `/memory [pending\|approve\|reject\|approval]` | Review pending memory writes staged by the write-approval gate (`memory.write_approval`) and toggle the gate. See [Controlling memory writes](/user-guide/features/memory#controlling-memory-writes-write_approval). |
+| `/bundles` | List configured skill bundles — `/<name>` slash aliases that preload several skills at once. Configure under `bundles:` in `~/.hermes/config.yaml`. See [Skill Bundles](/user-guide/features/skills#skill-bundles). |
+| `/learn <what to learn from>` | Distill a reusable skill from anything you describe — a directory, a URL, the workflow you just walked the agent through, or pasted notes. Open-ended: the agent gathers the sources with its own tools and authors a `SKILL.md` following the house authoring standards. Works in the CLI, the messaging gateway, the TUI, and the dashboard Skills page. |
+| `/plan [task]` | Write a markdown implementation plan to `.hermes/plans/` in the active workspace — planning only, no execution. Empty argument infers the task from the conversation. (Formerly the bundled `plan` skill; now built-in so it survives the Telegram/Discord command-menu caps.) |
+| `/init [notes]` | Generate or update `AGENTS.md` project instructions from a repo scan (port of Codex `/init`). The agent inspects manifests, layout, and toolchain configs with its read-only tools, then writes a concise `AGENTS.md` — or, if one exists, merge-updates it preserving your content. Optional notes steer the emphasis. Works in the CLI, the messaging gateway, and the TUI. |
+| `/cron` | Manage scheduled tasks (list, add/create, edit, pause, resume, run, remove) |
+| `/suggestions [accept\|dismiss N\|catalog\|clear]` (alias: `/suggest`) | Review suggested automations. Use `/suggestions` to list pending suggestions, `/suggestions accept <id>` to create the proposed automation, `/suggestions dismiss <id>` to reject one, `/suggestions catalog` to add curated starter automations, and `/suggestions clear` to clear resolved suggestion records. Accepted jobs preserve the current surface as the delivery origin. |
+| `/blueprint [name] [slot=value ...]` (alias: `/bp`) | Set up an automation from a blueprint template. Bare `/blueprint` lists the catalog; `/blueprint <name>` starts a guided slot-filling flow on the next agent turn; `/blueprint <name> slot=value ...` creates the job directly. |
+| `/curator` | Background skill maintenance — `status`, `run`, `pin`, `archive`. See [Curator](/user-guide/features/curator). |
+| `/kanban <action>` | Drive the multi-profile, multi-project collaboration board without leaving chat. Full `hermes kanban` surface is available: `/kanban list`, `/kanban show t_abc`, `/kanban create "title" --assignee X`, `/kanban comment t_abc "text"`, `/kanban unblock t_abc`, `/kanban dispatch`, etc. Multi-board support included: `/kanban boards list`, `/kanban boards create <slug>`, `/kanban boards switch <slug>`, `/kanban --board <slug> <action>`. See [Kanban slash command](/user-guide/features/kanban#kanban-slash-command). |
+| `/reload-mcp` (alias: `/reload_mcp`) | Reload MCP servers from config.yaml and re-probe tool availability (credentials/daemons that appeared mid-session) |
+| `/reload-skills` (alias: `/reload_skills`) | Re-scan `~/.hermes/skills/` for newly installed or removed skills |
+| `/reload` | Reload `.env` variables into the running session (picks up new API keys without restarting) |
+| `/plugins` | List installed plugins and their status |
+| `/pet [list\|<slug>]` | Toggle or adopt a [petdex](/user-guide/features/pets) mascot. `/pet` toggles the pane, `/pet list` shows installed pets, `/pet <slug>` adopts a specific one. |
+| `/hatch <description>` (alias: `/generate-pet`) | Generate a brand-new petdex pet from a text description, using the configured image backend (OpenRouter / Nous Portal). See [Pets](/user-guide/features/pets). |
+
+### 信息
+
+| Command | Description |
+|---------|-------------|
+| `/help` | Show available commands, grouped by category. Core commands are shown by default with skill commands collapsed to a one-line count; `/help skills` lists all skill commands, and `/help <text>` filters commands (and matching skills) by substring. |
+| `/palette` | Open the fuzzy command palette (also **Ctrl+P**) — type to filter all commands + skills, ↑/↓ to move, Enter to insert the selected command into the composer (never auto-runs), Esc to cancel. Matching is ranked by command name first, so a short query stays precise. |
+| `/version` | Show Hermes Agent version, build, and environment info. |
+| `/whoami` | Show your slash command access level (admin / user). |
+| `/usage` | Show token usage, cost breakdown, session duration, and — when available from the active provider — an **Account limits** section with remaining quota / credits / plan usage pulled live from the provider's API. |
+| `/topup` | Show your Nous balance and manage billing on the portal (replaces the old `/credits` and `/billing` commands). |
+| `/subscription` (alias: `/upgrade`) | **CLI only.** View your Nous plan and change it in the browser. |
+| `/insights` | Show usage insights and analytics (last 30 days) |
+| `/update` | Update Hermes Agent to the latest version. |
+| `/platforms` (alias: `/gateway`) | Show gateway/messaging platform status (CLI-only summary view). |
+| `/paste` | Attach a clipboard image |
+| `/copy [number]` | Copy the last assistant response to clipboard (or the Nth-from-last with a number). CLI-only. |
+| `/image <path>` | Attach a local image file for your next prompt. |
+| `/debug` | Upload debug report (system info + logs) and get shareable links. Also available in messaging. |
+| `/update` | Update Hermes Agent to the latest version. |
+| `/profile` | Show active profile name and home directory |
+
+### 退出
 
 | 命令 | 描述 |
-|------|------|
-| `/new [name]`（别名：`/reset`） | 启动一个新会话（生成新的会话 ID 和历史记录）。可选的 `[name]` 参数可用于设置初始会话标题——例如，输入 `/new my-experiment` 可以立即创建一个标题为 `my-experiment` 的新会话，方便后续通过 `/resume` 或 `/sessions` 查找。若要跳过确认弹窗，可添加 `now`、`--yes` 或 `-y` 参数，例如 `/reset now`、`/new --yes my-experiment`。 |
-| `/clear` | 清空屏幕并启动新会话 |
-| `/history` | 显示对话历史记录 |
-| `/save` | 保存当前对话内容 |
-| `/prompt`（别名：`/compose`） | 在 `$EDITOR`（Markdown 编辑器）中编写下一个提示词，而非直接在界面中输入——非常适合输入长度较长、多行或格式复杂的提示词。 |
-| `/retry` | 重新发送上一条消息给智能体 |
-| `/undo` | 删除上一次用户与智能体之间的交互内容 |
-| `/title` | 为当前会话设置标题（用法：/title My Session Name） |
-| `/compress [here [N] \| focus topic]` | 手动压缩对话上下文（清除部分记忆并生成摘要）。`/compress here [N]` 会保留除最近 N 条交互记录之外的所有内容并原样呈现——你可以自行设定压缩边界。通过指定“关注主题”，可以进一步限定完整摘要中需要保留的内容范围。 |
-| `/rollback` | 列出或恢复文件系统检查点（用法：/rollback [数字]） |
-| `/snapshot [create\|restore <id>\|prune]`（别名：`/snap`） | 创建或恢复 Hermes 配置/状态的快照。`create [标签]` 用于保存快照，`restore <id>` 用于恢复到指定快照，`prune [N]` 用于删除旧快照，不带参数则可列出所有快照。 |
-| `/stop` | 终止所有正在运行的后台进程 |
-| `/queue <prompt>`（别名：`/q`） | 将提示词排队到下次处理（不会中断当前智能体的响应）。 |
-| `/steer <prompt>` | 在当前工具调用之后，向智能体注入一条临时备注——不会中断当前流程，也不会开启新的用户轮次。当前工具处理完成后，该文本会追加到上一个工具的响应内容中，从而为智能体提供新上下文，同时不会打断当前的工具调用循环。可用于在任务执行过程中引导智能体的工作方向（例如，在智能体正在运行测试时要求其“专注于认证模块”）。 |
-| `/goal <text>` | 设置一个全局目标，Hermes 会在多轮对话中持续朝着该目标努力——这相当于我们实现的 Ralph 循环。每轮对话结束后，一个辅助判断模型会判定该目标是否已完成；若未完成，Hermes 会自动继续处理。子命令包括：`/goal status`、`/goal pause`、`/goal resume`、`/goal clear`。默认目标轮次数为 20 轮（由 `goals.max_turns` 控制）；任何真实用户的消息都会中断该循环，且会话状态可通过 `/resume` 恢复。完整使用指南请参阅 [持久化目标](/user-guide/features/goals)。 |
-| `/subgoal <text>` | 在当前目标执行过程中，添加用户自定义的判定标准。后续的提示词会将所有子目标原样呈现给智能体，判断模型会在综合所有子目标后给出“已完成”或“继续”的判定——只有当原始目标以及所有子目标都达成时，该目标才会被标记为已完成。子命令包括：`/subgoal`（列出子目标）、`/subgoal remove <N>`、`/subgoal clear`。使用时必须已存在有效的 `/goal`。 |
-| `/moa <prompt>` | 使用默认的 [混合智能体](/user-guide/features/mixture-of-agents) 预设配置处理单个提示词，处理完成后再恢复为你当前使用的模型。此为一次性操作，不会更改你的会话模型。 |
-| `/resume [name]` | 恢复之前命名的会话 |
-| `/sessions`（TUI 别名：`/switch`） | 传统 CLI 模式：通过交互式选择器浏览并恢复之前的会话。TUI 模式：打开当前打开的 TUI 会话的实时切换界面。在 TUI 中使用 `/sessions new` 可立即启动另一个实时会话。 |
-| `/redraw` | 强制重新绘制整个用户界面（可解决 tmux 调整大小、鼠标选择异常等问题导致的界面错位问题）。 |
-| `/status` | 显示会话相关信息——包括模型类型、提供方、配置文件、会话 ID、工作目录、标题、创建/更新时间戳、令牌总量以及智能体运行状态——随后还会显示一个本地的 **会话概览** 区块（包含近期用户与智能体的交互次数、工具响应数量、最常用的工具、最近操作的文件、最新的用户提示词以及最新的智能体回复）。该概览内容是根据内存中的对话记录在本地计算的，不会调用大型语言模型，也不会影响提示词缓存。 |
-| `/agents`（别名：`/tasks`） | 显示当前会话中正在运行的智能体及任务列表。 |
-| `/background <prompt>`（别名：`/bg`、`/btw`） | 在独立的后台会话中运行提示词。智能体会独立处理你的提示词，而你的当前会话仍可用于其他工作。任务完成后，结果会以面板形式显示。更多信息请参阅 [CLI 后台会话](/user-guide/cli#background-sessions)。 |
-| `/branch [name]`（别名：`/fork`） | 创建当前会话的分支（即探索不同的处理路径）。 |
-| `/handoff <platform>` | **仅限 CLI 使用。** 将当前会话转移到某个消息平台（Telegram、Discord、Slack、WhatsApp、Signal、Matrix）。网关会立即接管该会话，在支持线程功能的平台（如 Telegram 的主题、Discord 的文本频道线程、Slack 的消息锚定线程）上创建新的线程，同时将目标平台的会话 ID 与你的 CLI 会话 ID 关联起来，从而实现包含角色信息的完整对话记录回放。此外，系统还会生成一条模拟的用户轮次，让智能体确认自己已在新平台正常工作。操作成功后，CLI 会给出 `/resume` 的提示并正常退出；你可以随时使用 `/resume <标题>` 在本地恢复会话。若在当前轮次中执行此操作则会被拒绝。该功能要求网关正在运行，且目标平台已配置了默认频道（可通过目标聊天的 `/sethome` 命令设置）。更多信息请参阅 [跨平台会话转移](/user-guide/sessions#cross-platform-handoff)。 |
-
-### 配置管理
-
-| 命令 | 描述 |
-|------|------|
-| `/config` | 显示当前配置信息 |
-| `/model [model-name]` | 显示或更改当前使用的模型。支持的操作包括：`/model claude-sonnet-4`、`/model provider:model`（切换提供方）、`/model custom:model`（使用自定义端点）、`/model custom:name:model`（使用带名称的自定义提供方）、`/model custom`（根据端点自动检测模型），以及用户自定义的别名（如 `/model fav`、`/model grok`——详情请参阅 [自定义模型别名](#custom-model-aliases)）。若要将更改永久保存到 `config.yaml` 文件中，可使用 `--global` 参数。**注意：** `/model` 命令仅能在已配置的提供方之间切换。若要添加新的提供方，需先退出当前会话，然后在终端中运行 `hermes model` 命令。**费用提示：** 在对话进行过程中切换模型会导致提示词缓存被重置——因为缓存键中包含模型信息，所以下次轮次时系统需要重新读取整个对话内容，需按全额价格收费，而非享受约 75% 的折扣价。这种情况虽在所难免，但在长时间会话中值得留意。 |
-| `/codex-runtime [auto\|codex_app_server\|on\|off]` | 切换 OpenAI/Codex 模型的可选 [Codex 应用服务器运行模式](../user-guide/features/codex-app-server-runtime)。默认值为 `auto`，此时会使用 Hermes 的标准聊天补全功能；设置为 `codex_app_server` 后，会将轮次处理交给 `codex app-server` 子进程，从而实现原生 Shell 操作、apply_patch 功能、ChatGPT 订阅认证以及已迁移的 Codex 插件支持。此设置会在下次会话中生效。 |
-| `/personality` | 设置预定义的性格模式 |
-| `/verbose` | 循环切换工具处理进度显示模式：关闭 → 新消息提示 → 所有消息提示 → 详细模式。也可通过配置为**消息传递场景**启用该功能（详见 #备注）。 |
-| `/fast [normal\|fast\|status]` | 切换快速模式——即 OpenAI 的优先处理模式或 Anthropic 的快速模式。可选值包括：`normal`、`fast`、`status`。 |
-| `/reasoning` | 管理推理强度并控制相关显示内容（用法：/reasoning [level\|show\|hide]） |
-| `/skin` | 显示或更改界面皮肤/主题 |
-| `/statusbar`（别名：`/sb`） | 切换是否显示上下文/模型状态栏 |
-| `/voice [on\|off\|tts\|status]` | 切换 CLI 的语音模式及语音播放功能。录音时使用的快捷键为 `voice.record_key`（默认为 `Ctrl+B`）。 |
-| `/yolo` | 切换 YOLO 模式——跳过所有危险命令的确认提示。 |
-| `/footer [on\|off\|status]` | 切换是否在最终回复中显示网关运行时的元数据页脚（包含模型类型、上下文占比及当前工作目录信息）。 |
-| `/busy [queue\|steer\|interrupt\|status]` | 仅限 CLI 使用：控制在 Hermes 处理任务时按下回车键的对应行为——将新消息排队、在当前轮次中插入临时指令，或立即中断当前操作。 |
-| `/indicator [kaomoji\|emoji\|unicode\|ascii]` | 仅限 CLI 使用：选择 TUI 中的忙碌状态指示器样式。 |
-| `/timestamps [on\|off\|status]` | 仅限 CLI 使用：切换是否在消息及 `/history` 显示区中显示 `[HH:MM]` 格式的时间戳。 |
-
-### 工具与技能| 命令 | 描述 |
-|------|------|
-| `/tools [list\|disable\|enable] [name...]` | 管理工具：列出可用工具，或为当前会话禁用/启用特定工具。禁用工具会将其从智能体的工具集中移除，并触发会话重置。 |
-| `/toolsets` | 列出所有可用的工具集 |
-| `/browser [connect\|disconnect\|status]` | 管理本地的 Chromium 系列 CDP 连接。`connect` 会将浏览器工具连接到正在运行的 Chrome、Brave、Chromium 或 Edge 实例（默认地址：`http://127.0.0.1:9222`）。`disconnect` 用于断开连接。`status` 可查看当前连接状态。若未检测到调试器，系统会自动启动支持的 Chromium 系列浏览器。 |
-| `/skills` | 从在线注册表中搜索、安装、查看或管理技能。同时也可用于处理技能写入审批流程：`/skills pending`、`/skills diff <id>`、`/skills approve <id>`、`/skills reject <id>`、`/skills approval on\|off`。详情请参阅[智能体技能写入审批机制](/user-guide/features/skills#gating-agent-skill-writes-skillswrite_approval)。 |
-| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录，并切换该审批状态。详情请参阅[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
-| `/bundles` | 列出已配置的技能包——即通过 `/<name>` 这种斜杠别名形式一次性预加载多个技能的配置。相关设置可在 `~/.hermes/config.yaml` 的 `bundles:` 部分进行配置。详情请参阅[技能包](/user-guide/features/skills#skill-bundles)。 |
-| `/learn <what to learn from>` | 根据用户提供的任何内容——如目录、网址、刚刚向智能体演示的工作流程或粘贴的笔记——生成可复用的技能。该功能支持开放式输入：智能体会使用自身工具收集相关资料，然后按照既定的编写标准生成一个 `SKILL.md` 文件。该功能可在 CLI、消息传递网关、文本用户界面以及控制台的技能页面中使用。 |
-| `/cron` | 管理定时任务（列出、添加/创建、编辑、暂停、恢复、运行、删除） |
-| `/suggestions [accept\|dismiss N\|catalog\|clear]`（别名：`/suggest`） | 查看系统推荐的自动化方案。使用 `/suggestions` 可列出待处理的建议，`/suggestions accept <id>` 可创建所推荐的自动化方案，`/suggestions dismiss <id>` 可拒绝某项建议，`/suggestions catalog` 可添加精选的入门级自动化方案，`/suggestions clear` 可清除已处理的建议记录。被采纳的自动化方案会以当前界面作为执行基础。 |
-| `/blueprint [name] [slot=value ...]`（别名：`/bp`） | 根据蓝图模板创建自动化方案。仅输入 `/blueprint` 可查看所有可用蓝图；`/blueprint <name>` 会在下次智能体响应时启动引导式的参数填充流程；`/blueprint <name> slot=value ...` 可直接创建自动化任务。 |
-| `/curator` | 背景下的技能维护操作——包括 `status`、`run`、`pin`、`archive` 等功能。详情请参阅[Curator 功能](/user-guide/features/curator)。 |
-| `/kanban <action>` | 无需离开聊天界面即可操作多项目、多角色的协作看板。完整的 `hermes kanban` 功能包括：`/kanban list`、`/kanban show t_abc`、`/kanban create "title" --assignee X`、`/kanban comment t_abc "text"`、`/kanban unblock t_abc`、`/kanban dispatch` 等。还支持多看板管理：`/kanban boards list`、`/kanban boards create <slug>`、`/kanban boards switch <slug>`、`/kanban --board <slug> <action>`。详情请参阅[Kanban 斜杠命令](/user-guide/features/kanban#kanban-slash-command)。 |
-| `/reload-mcp`（别名：`/reload_mcp`） | 从 `config.yaml` 文件中重新加载 MCP 服务器 |
-| `/reload-skills`（别名：`/reload_skills`） | 重新扫描 `~/.hermes/skills/` 目录，检测是否有新安装或已移除的技能 |
-| `/reload` | 将 `.env` 变量重新加载到当前运行的会话中（无需重启即可获取新的 API 密钥） |
-| `/plugins` | 列出已安装的插件及其状态 |
-| `/pet [list\|<slug>]` | 切换或选用 [petdex](/user-guide/features/pets) 模型宠物。`/pet` 用于切换宠物显示面板，`/pet list` 可查看已安装的宠物，`/pet <slug>` 可选用特定的宠物。 |
-| `/hatch <description>`（别名：`/generate-pet`） | 根据文本描述，使用配置好的图像后端（OpenRouter / Nous Portal）生成全新的 petdex 宠物。详情请参阅[宠物功能](/user-guide/features/pets)。 |
-
-### 信息查询命令
-
-| 命令 | 描述 |
-|------|------|
-| `/help` | 显示此帮助信息 |
-| `/version` | 显示 Hermes Agent 的版本、构建编号以及运行环境信息 |
-| `/usage` | 显示令牌使用情况、费用明细、会话时长；若当前使用的服务提供商支持，还会显示**账户限额**部分，其中包含从该提供商的 API 实时获取的剩余配额/积分/套餐使用情况 |
-| `/credits` | 显示用户的 Nous 信用余额以及充值链接 |
-| `/billing` | 用于 Nous 的 CLI 远程充值功能——可查看余额、购买积分，以及管理自动充值和月度限额设置 |
-| `/insights` | 显示过去 30 天内的使用情况分析数据 |
-| `/platforms`（别名：`/gateway`） | 显示网关/消息传递平台的状态（仅为 CLI 提供的概要视图） |
-| `/paste` | 附加剪贴板中的图像内容 |
-| `/copy [number]` | 将助手的最后一条回复复制到剪贴板（可指定编号，复制倒数第 N 条回复）。该功能仅适用于 CLI 环境 |
-| `/image <path>` | 附加本地图像文件，以便在后续提示中使用 |
-| `/debug` | 上传调试报告（包含系统信息及日志），并生成可分享的链接。该功能在消息传递界面中也可用 |
-| `/profile` | 显示当前激活的配置文件名称及主目录路径 |
-
-### 退出命令
-
-| 命令 | 描述 |
-|------|------|
-| `/quit` | 退出 CLI 界面（也可使用 `/exit`） |
+|---------|-------------|
+| `/quit` | 退出 CLI（也可使用：/exit）。 |
 
 ### 动态 CLI 斜杠命令
 
 | 命令 | 描述 |
-|------|------|
-| `/<skill-name>` | 将任何已安装的技能作为按需调用的命令使用。例如：`/gif-search`、`/github-pr-workflow`、`/excalidraw` |
-| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置各种技能 |
+|---------|-------------|
+| `/<skill-name>` | 将任何已安装的技能作为按需命令加载。示例：/gif-search、/github-pr-workflow、/excalidraw。 |
+| `/skills ...` | 从注册表及官方可选技能目录中搜索、浏览、查看、安装、审计、发布及配置技能。 |
 
-### 快捷命令
+### 快速命令
 
-用户自定义的快捷命令可将简短的斜杠命令映射为 shell 命令或另一个斜杠命令。相关设置可在 `~/.hermes/config.yaml` 文件中进行配置：
+用户自定义的快速命令可将简短的斜杠命令映射到 shell 命令或另一个斜杠命令。可在 `~/.hermes/config.yaml` 中进行配置：
 
 ```yaml
 quick_commands:
@@ -150,17 +173,17 @@ quick_commands:
     target: /gmail unread
 ```
 
-接着在 CLI 或消息平台中输入 `/status`、`/deploy` 或 `/inbox`。这些快捷命令会在指令发送时立即被解析，因此可能不会出现在所有的内置自动补全/帮助列表中。
+接着在 CLI 或消息平台中输入 `/status`、`/deploy` 或 `/inbox`。这些快捷命令会在指令发送时立即被解析，因此可能不会显示在所有的内置自动补全/帮助列表中。
 
-仅包含字符串的提示语无法作为快捷命令使用。较长且可重复使用的提示语应放入某个技能中，或者使用 `type: alias` 指向现有的斜杠命令。
+仅包含字符串的提示语无法作为快捷命令使用。较长且可重复使用的提示语应放入技能模块中，或使用 `type: alias` 指向现有的斜杠命令。
 
 ### 自定义模型别名
 
-为常用的模型定义自定义简称，之后便可通过 CLI 或任何消息平台中的 `/model <alias>` 命令来调用它们。无论是在会话级（默认）模式还是使用 `--global` 参数的模式下，这些别名都能以相同方式生效。
+为您经常使用的模型定义自定义简称，之后便可通过运行中的会话中使用 `/model <alias>`、启动时使用 `hermes chat --model <alias>`，或在任何消息平台中调用这些别名。无论是在仅限当前会话（默认）模式还是 `--global` 模式下，这些别名的使用方式都完全一致。
 
 系统支持两种配置格式：
 
-**完整格式**——指定确切的模型、提供方，以及可选的基础 URL。可将该配置放入 `~/.hermes/config.yaml` 文件中：
+**完整格式** — 指定具体的模型、提供方，以及可选的基础 URL。可将该配置放入 `~/.hermes/config.yaml` 文件中：
 
 ```yaml
 model_aliases:
@@ -174,9 +197,16 @@ model_aliases:
     model: qwen3-coder:30b
     provider: custom
     base_url: http://localhost:11434/v1
+  theta:
+    model: theta-1
+    provider: custom
+    base_url: https://theta.example.com/v1
+    key_env: THETA_API_KEY        # or: api_key: "${THETA_API_KEY}"
 ```
 
-**简写形式**——将 `provider/model` 组合为一条字符串。无需编辑 YAML 即可在命令行中直接设置：
+拥有独立 `base_url` 的别名可通过 `api_key`（字面值或 `"${VAR}"` 引用形式）或 `key_env`（环境变量名称）来携带该端点的凭证；若两者均被设置，则以 `api_key` 为准。若两者均未设置，凭证将从别名的 **host** 字段中获取，而不会继承自切换前正在使用的提供方。
+
+**简写形式**——将 `provider/model` 合并为一个字符串。无需编辑 YAML 即可在命令行中直接设置：
 
 ```bash
 hermes config set model.aliases.fav anthropic/claude-opus-4.6
@@ -190,83 +220,113 @@ hermes config set model.aliases.grok x-ai/grok-4
 /model grok --global  # also persists current-model change to config.yaml
 ```
 
-用户自定义别名会优先于系统内置的简写名称，因此将别名命名为 `sonnet`、`kimi`、`opus` 等即可覆盖系统默认名称。别名名称不区分大小写。
+用户自定义别名会优先于内置的简写名称，因此将别名命名为 `sonnet`、`kimi`、`opus` 等将会覆盖那些内置名称。别名名称不区分大小写。
 
 ### 别名解析
 
-命令支持前缀匹配：输入 `/h` 会对应 `/help`，输入 `/mod` 会对应 `/model`。当某个前缀存在歧义（可匹配多个命令）时，按注册顺序的第一个匹配项生效。完整的命令名称及已注册的别名始终优先于前缀匹配结果。
+命令支持前缀匹配：输入 `/h` 会对应到 `/help`，输入 `/mod` 会对应到 `/model`。当某个前缀存在歧义（可匹配多个命令）时，注册顺序中最先出现的匹配项将优先生效。完整的命令名称以及已注册的别名始终比前缀匹配具有更高优先级。
 
-## 消息传递类斜杠命令
+## 消息类斜杠命令
 
-消息网关在 Telegram、Discord、Slack、WhatsApp、Signal、邮件、Home Assistant 以及 Teams 聊天中支持以下内置命令：
+> **Slack 线程命令（以 `!` 为前缀）：**
+> Slack 本身会阻止在消息线程中使用原生斜杠命令（“线程中不支持 /queue 功能，很抱歉！”），并且不会将这些命令传递给 Hermes。在 Slack 线程中，应使用 `!` 前缀——如 `!stop`、`!new`、`!status`——此时网关会像处理斜杠命令一样将其转发。在线程中，`@Hermes !stop` 和 `@Hermes /stop` 也同样有效。系统仅会检查第一个单词是否在已知命令列表中，因此像 `!nice work` 这样的消息会原封不动地传递给智能体。详情请参阅[在线程中使用命令](/user-guide/messaging/slack#using-commands-inside-threads-the-cmd-prefix)。
 
-| 命令 | 描述 |
-|------|------|
-| `/start` | 平台协议级命令。许多聊天平台（如 Telegram、Discord 等）会在用户首次与机器人对话时自动发送 `/start`。Hermes 会默默响应该请求——不会回复也不会消耗会话次数——从而避免初次交互时的无效操作。您也可以主动发送该命令以确认网关可访问。 |
-| `/new [name]`（别名：`/reset`） | 启动新会话（新的会话 ID + 空历史记录）。可选的 `[name]` 用于设置初始会话标题。添加 `now`、`--yes` 或 `-y` 可跳过确认弹窗，例如 `/reset now`、`/new --yes my-experiment`。 |
-| `/status` | 显示会话信息，随后是本地的**会话概览**板块（最近的对话轮次数、最常使用的工具、处理过的文件、最新的提示词与回复）。 |
-| `/stop` | 终止所有正在运行的后台进程，并中断当前运行的智能体。 |
-| `/model [provider:model]` | 显示或更改模型。支持切换提供商（如 `/model zai:glm-5`）、自定义端点（如 `/model custom:model`）、命名自定义提供商（如 `/model custom:local:qwen`）、自动检测（如 `/model custom`）以及用户自定义别名（如 `/model fav`、`/model grok`——详见[自定义模型别名](#custom-model-aliases)）。使用 `--global` 可将更改永久保存到 config.yaml 中。**注意：** `/model` 仅能在已配置的提供商之间切换。若需添加新提供商或设置 API 密钥，请在终端（聊天会话之外）使用 `hermes model` 命令。**费用提示：** 在会话进行中切换模型会重置提示词缓存（缓存键包含模型信息），因此下一条消息将重新读取整个对话历史，需按完整输入量收费。 |
-| `/codex-runtime [auto\|codex_app_server\|on\|off]` | 切换可选的[Codex 应用服务器运行时](../user-guide/features/codex-app-server-runtime)模式。该设置会保存到 config.yaml 中的 `model.openai_runtime` 字段，并清除缓存中的智能体，以便下一条消息使用新的运行时。更改效果在下次会话时生效。 |
-| `/personality [name]` | 为当前会话设置个性特征叠加层。 |
-| `/fast [normal\|fast\|status]` | 切换快速模式——即 OpenAI 的优先处理模式或 Anthropic 的快速模式。 |
-| `/retry` | 重新发送上一条消息。 |
-| `/undo` | 删除上一次的对话内容。 |
-| `/sethome`（别名：`/set-home`） | 将当前聊天标记为平台上的主频道，用于后续消息推送。 |
-| `/compress [here [N] \| focus topic]` | 手动压缩对话上下文。`/compress here [N]` 会保留最近的 N 条对话内容（默认为 2 条）的原文，并对其余内容进行总结。设置“聚焦主题”可进一步限定完整总结中需保留的内容范围。 |
-| `/topic [off\|help\|session-id]` | **仅适用于 Telegram 私信。**用于管理用户自定义的多会话主题模式。`/topic` 可启用或查看该模式状态；`/topic off` 可禁用并清除所有绑定；`/topic help` 可查看使用说明；在主题模式下输入 `/topic <session-id>` 可恢复之前的会话。详见[多会话私信模式](/user-guide/messaging/telegram#multi-session-dm-mode-topic)。 |
-| `/title [name]` | 设置或查看会话标题。 |
-| `/resume [name]` | 恢复之前命名的会话。 |
-| `/usage` | 显示令牌使用情况、预估费用明细（输入/输出）、上下文窗口状态、会话时长，以及——若当前提供商支持——**账户限额**部分，其中会显示从提供商 API 实时获取的剩余配额/积分。 |
-| `/credits` | 显示您的 Nous 积分余额，并提供充值链接，点击后可打开浏览器中的账单页面。 |
-| `/insights [days]` | 显示使用情况分析报告。 |
-| `/reasoning [level\|show\|hide]` | 调整推理强度或切换推理显示开关。 |
-| `/voice [on\|off\|tts\|join\|channel\|leave\|status]` | 控制聊天中的语音回复功能。`join`/`channel`/`leave` 用于管理 Discord 的语音频道模式。 |
-| `/rollback [number]` | 列出或恢复文件系统检查点。 |
-| `/background <prompt>` | 在独立的后台会话中运行指定提示词。任务完成后，结果会返回到同一聊天窗口。详见[消息传递类后台会话](/user-guide/messaging/#background-sessions)。 |
-| `/queue <prompt>`（别名：`/q`） | 将指定提示词排队，等待下一轮处理，而不会中断当前对话。 |
-| `/steer <prompt>` | 在下一次工具调用之后插入一条消息，且不会打断当前流程——模型会在下一次迭代时处理该消息，而非视为新的对话轮次。 |
-| `/goal <text>` | 设置一个长期目标，Hermes 会在多轮对话中持续努力实现该目标——这相当于我们实现的“Ralph 循环”。每次对话结束后会有一个判断模型进行检查；若未完成目标，Hermes 会自动继续尝试，直到目标达成、您暂停/清除该目标，或达到每轮对话的额度上限（默认为 20）。子命令包括：`/goal status`、`/goal pause`、`/goal resume`、`/goal clear`。在智能体运行过程中可安全地使用这些子命令来查看状态、暂停或清除目标；若要设置新目标，则需先执行 `/stop`。详见[持久目标](/user-guide/features/goals)。 |
-| `/footer [on\|off\|status]` | 切换最终回复中是否显示运行时元数据页脚（包含模型名称、上下文占比及当前工作目录信息）。 |
-| `/curator [status\|run\|pin\|archive]` | 用于后台技能维护的控制命令。 |
-| `/suggestions [accept\|dismiss N\|catalog\|clear]` | 直接在聊天中查看建议的自动化脚本。`/suggestions` 可列出待处理的建议，`catalog` 可添加精选的入门级自动化脚本，`clear` 可清除已处理的建议记录。被接受的建议会将当前聊天/线程设为任务交付的起始点。 |
-| `/blueprint [name] [slot=value ...]` | 浏览定时任务蓝图，开始引导式填空式对话，或直接创建蓝图任务。直接创建的任务结果会返回到当前聊天/线程。 |
-| `/memory [pending\|approve\|reject\|approval]` | 查看由写入审批机制（`memory.write_approval`）暂存的待处理内存写入记录——可直接在聊天中批准或拒绝这些记录——也可通过 `/memory approval on\|off` 切换该审批机制的开启状态。详见[控制内存写入](/user-guide/features/memory#controlling-memory-writes-write_approval)。 |
-| `/skills [pending\|approve\|reject\|diff\|approval]` | 查看由写入审批机制（`skills.write_approval`）暂存的待处理**技能**写入记录。每条待处理记录会以一行简短摘要的形式显示；在聊天界面中 `/skills diff <id>` 的显示内容会被截断——完整差异信息可在 CLI 或 `~/.hermes/pending/skills/<id>.json` 文件中查看。该功能仅在审批机制开启或仍有待处理写入记录时显示；搜索/安装功能仍仅通过 CLI 实现。 |
-| `/kanban <action>` | 通过聊天界面操作多角色、多项目的协作看板——其参数与 CLI 完全一致。由于绕过了正在运行的智能体限制，因此诸如 `/kanban unblock t_abc`、`/kanban comment t_abc "…"`、`/kanban list --mine`、`/kanban boards switch <slug>` 等命令都可在对话进行中直接使用。`/kanban create …` 会自动将发起聊天的频道订阅到新任务的终端事件中。详见[看板类斜杠命令](/user-guide/features/kanban#kanban-slash-command)。 |
-| `/platform <list\|pause\|resume> [name]` | 直接在聊天界面操作正在运行的网关平台。`/platform list` 可显示所有适配器及其状态（运行中、因故障暂停、手动暂停）；`/platform pause <name>` 会停止向该适配器发送新消息，但不会卸载它；`/platform resume <name>` 会重新启用该适配器，并在上游服务恢复正常后清除已触发的断路器。 |
-| `/reload-mcp`（别名：`/reload_mcp`） | 从配置文件中重新加载 MCP 服务器。 |
-| `/yolo` | 切换 YOLO 模式——跳过所有危险命令的审批提示。 |
-| `/commands [page]` | 分页浏览所有命令和技能。 |
-| `/approve [session\|always]` | 批准并执行待处理的危险命令。`session` 仅针对当前会话进行批准；`always` 会将该命令加入永久允许列表。 |
-| `/deny` | 拒绝待处理的危险命令。 |
-| `/update` | 将 Hermes Agent 更新到最新版本。 |
-| `/restart` | 在终止所有正在运行的任务后，优雅地重启网关。网关恢复在线后会向请求者的聊天/线程发送确认信息。 |
-| `/debug` | 上传调试报告（包含系统信息及日志），并获取可分享的链接。 |
-| `/help` | 显示消息传递相关的帮助信息。 |
-| `/<skill-name>` | 按名称调用任何已安装的技能。 |
+该消息网关支持在 Telegram、Discord、Slack、WhatsApp、Signal、电子邮件、Home Assistant 以及 Teams 聊天中使用以下内置命令：
+
+| Command | Description |
+|---------|-------------|
+| `/start` | Platform-protocol command. Many chat platforms (Telegram, Discord, …) send `/start` automatically the first time a user opens a bot conversation. Hermes acknowledges the ping silently — no agent reply, no session burn — so first-contact handshakes don't waste a turn. You can also send it explicitly to confirm the gateway is reachable. |
+| `/new [name]` (alias: `/reset`) | Start a new session (fresh session ID + history). Optional `[name]` sets the initial session title. Append `now`, `--yes`, or `-y` to skip the confirmation modal — e.g. `/reset now`, `/new --yes my-experiment`. |
+| `/status` | Show session info, followed by a local **Session recap** block (recent turn counts, top tools used, files touched, latest prompt + reply). |
+| `/stop` | Kill all running background processes and interrupt the running agent. |
+| `/model [provider:model]` | Show or change the model. Supports provider switches (`/model zai:glm-5`), custom endpoints (`/model custom:model`), named custom providers (`/model custom:local:qwen`), auto-detect (`/model custom`), and user-defined aliases (`/model fav`, `/model grok` — see [Custom model aliases](#custom-model-aliases)). Use `--global` to persist the change to config.yaml. **Note:** `/model` can only switch between already-configured providers. To add a new provider or set up API keys, use `hermes model` from your terminal (outside the chat session). **Cost note:** a mid-session model switch resets the prompt cache (the cache key includes the model), so the next message re-reads the whole conversation at full input price. |
+| `/codex-runtime [auto\|codex_app_server\|on\|off]` | Toggle the optional [Codex app-server runtime](../user-guide/features/codex-app-server-runtime). Persists to `model.openai_runtime` in config.yaml and evicts the cached agent so the next message picks up the new runtime. Effective on next session. |
+| `/personality [name]` | Set a personality overlay for the session. `/personality none` (or `default` / `neutral`) clears it. |
+| `/fast [normal\|fast\|auto\|cold\|status]` | Fast mode — OpenAI Priority Processing / Anthropic Fast Mode. `auto`/`cold` open a bounded fast window per turn / per session. |
+| `/retry` | Retry the last message. |
+| `/undo` | Remove the last exchange. |
+| `/sethome` (alias: `/set-home`) | Mark the current chat as the platform home channel for deliveries. |
+| `/compress [here [N] \| focus topic]` | Manually compress conversation context. `/compress here [N]` keeps the most recent N exchanges (default 2) verbatim and summarizes the rest. A focus topic narrows what a full summary preserves. |
+| `/topic [off\|help\|session-id]` | **Telegram DM only.** Manage user-managed multi-session topic mode. `/topic` enables it or shows status; `/topic off` disables it and clears bindings; `/topic help` shows usage; `/topic <session-id>` inside a topic restores a previous session. See [Multi-session DM mode](/user-guide/messaging/telegram#multi-session-dm-mode-topic). |
+| `/title [name]` | Set or show the session title. |
+| `/resume [name]` | Resume a previously named session. |
+| `/sessions [all] [search <query>]` | List previous sessions for this chat; the active session appears with a `(current)` marker. `/sessions search <query>` filters by title/id match (most recently active first); `/sessions all` lists across origins (admin only — non-admins get a notice and the chat-scoped list). |
+| `/usage` | Show token usage, estimated cost breakdown (input/output), context window state, session duration, and — when available from the active provider — an **Account limits** section with remaining quota / credits pulled live from the provider's API. |
+| `/topup` | Show your Nous balance and manage billing on the portal. |
+| `/whoami` | Show your slash command access level (admin / user). |
+| `/insights [days]` | Show usage analytics. |
+| `/reasoning [level\|show\|hide\|full\|clamp] [--global]` | Change reasoning effort (levels up to `max` / `ultra`) or toggle reasoning display (`full` / `clamp` included). `--global` persists to config. |
+| `/voice [on\|off\|tts\|join\|channel\|leave\|status]` | Control spoken replies in chat. `join`/`channel`/`leave` manage Discord voice-channel mode. |
+| `/rollback [number]` | List or restore filesystem checkpoints. |
+| `/diff [staged\|all\|session] [--stat]` | Show git changes in the working directory (fenced and truncated to platform message limits). `session` shows the cumulative diff of everything Hermes changed; `--stat` shows just the summary. |
+| `/bg <prompt>` | Run a prompt in a separate background session. Results are delivered back to the same chat when the task finishes. See [Messaging Background Sessions](/user-guide/messaging/#background-sessions). |
+| `/btw <question>` | Ask a side question about the current conversation without interrupting it. Answered from a transcript snapshot; the answer is sent to the chat when ready. |
+| `/queue <prompt>` (alias: `/q`) | Queue a prompt for the next turn without interrupting the current one. |
+| `/steer <prompt>` | Inject a message after the next tool call without interrupting — the model picks it up on its next iteration rather than as a new turn. |
+| `/goal <text>` | Set a standing goal Hermes works toward across turns — our take on the Ralph loop. A judge model checks after each turn; if not done, Hermes auto-continues until it is, you pause/clear it, or the turn budget (default 20) is hit. Subcommands: `/goal status`, `/goal pause`, `/goal resume`, `/goal clear`. Safe to run mid-agent for status/pause/clear; setting a new goal requires `/stop` first. See [Persistent Goals](/user-guide/features/goals). |
+| `/subgoal <text>` | Append criteria to the active `/goal` mid-loop (`/subgoal`, `/subgoal remove <N>`, `/subgoal clear`). |
+| `/heartbeat every <interval> <prompt>` (alias: `/hb`) | Set a recurring prompt that re-enters this session when idle. Subcommands: `status`, `pause`, `resume`, `clear`. On Slack use `/hermes heartbeat …`. |
+| `/refine [focus]` | Run the memory/skill self-improvement review now, optionally with focus instructions. On Slack use `/hermes refine …`. |
+| `/review [instructions]` | Spawn an independent reviewer subagent for the work just discussed (PR, code, docs); its review re-enters this chat when done. On Slack use `/hermes review …`. |
+| `/moa <prompt>` | Run one prompt through the default [Mixture of Agents](/user-guide/features/mixture-of-agents) preset, then restore the session model. |
+| `/branch [name]` (alias: `/fork`) | Branch the current session (explore a different path). |
+| `/agents` (alias: `/tasks`) | Show active agents and running tasks. |
+| `/sessions` | Browse and resume previous sessions. |
+| `/context [all]` (alias: `/ctx`) | Context-window usage gauge and category breakdown (messaging-friendly text form). `/context all` adds per-skill / per-toolset cost detail. |
+| `/egress [status]` | Show Docker egress proxy status. |
+| `/init [notes]` | Generate or update `AGENTS.md` from a repo scan. |
+| `/learn <what to learn from>` | Distill a reusable skill from anything you describe. |
+| `/plan [task]` | Write a markdown implementation plan to `.hermes/plans/`; no execution. |
+| `/bundles` | List configured skill bundles (`/<name>` aliases that preload several skills). |
+| `/reload-skills` (alias: `/reload_skills`) | Re-scan `~/.hermes/skills/` for newly installed or removed skills. |
+| `/footer [on\|off\|status]` | Toggle the runtime-metadata footer on final replies (shows model, context %, and cwd). |
+| `/curator [status\|run\|pin\|archive]` | Background skill maintenance controls. |
+| `/suggestions [accept\|dismiss N\|catalog\|clear]` | Review suggested automations right in chat. `/suggestions` lists pending suggestions, `catalog` adds curated starter automations, and `clear` prunes resolved suggestion records. Accepted suggestions keep this chat/thread as the job delivery origin. |
+| `/blueprint [name] [slot=value ...]` | Browse cron blueprints, start a guided slot-filling conversation, or create a blueprint job directly. Directly created jobs deliver back to the current chat/thread. |
+| `/memory [pending\|approve\|reject\|approval]` | Review pending memory writes staged by the write-approval gate (`memory.write_approval`) — approve or reject them right in chat — and toggle the gate with `/memory approval on\|off`. See [Controlling memory writes](/user-guide/features/memory#controlling-memory-writes-write_approval). |
+| `/skills [pending\|approve\|reject\|diff\|approval]` | Review pending **skill** writes staged by the write-approval gate (`skills.write_approval`). Shows a one-line gist per staged write; `/skills diff <id>` is truncated for chat — read the full diff on the CLI or in `~/.hermes/pending/skills/<id>.json`. Only appears when the gate is on (or staged writes remain); search/install stay CLI-only. |
+| `/kanban <action>` | Drive the multi-profile, multi-project collaboration board from chat — identical argument surface to the CLI. Bypasses the running-agent guard, so `/kanban unblock t_abc`, `/kanban comment t_abc "…"`, `/kanban list --mine`, `/kanban boards switch <slug>`, etc. work mid-turn. `/kanban create …` auto-subscribes the originating chat to the new task's terminal events. See [Kanban slash command](/user-guide/features/kanban#kanban-slash-command). |
+| `/platform <list\|pause\|resume> [name]` | Operate a running gateway platform right from chat. `/platform list` shows every adapter and its state (running, paused-by-breaker, manually-paused); `/platform pause <name>` stops dispatching new messages to that adapter without unloading it; `/platform resume <name>` re-enables it and clears a tripped circuit breaker once the upstream is healthy. |
+| `/reload-mcp` (alias: `/reload_mcp`) | Reload MCP servers from config and re-probe tool availability. |
+| `/verbose` | Cycle tool progress display. **Off by default on messaging** — enable with `display.tool_progress_command: true` in `config.yaml`. |
+| `/yolo` | Toggle YOLO mode — skip all dangerous command approval prompts. |
+| `/commands [page]` | Browse all commands and skills (paginated). |
+| `/approve [session\|always]` | Approve and execute a pending dangerous command. `session` approves for this session only; `always` adds to permanent allowlist. |
+| `/deny` | Reject a pending dangerous command. |
+| `/update` | Update Hermes Agent to the latest version. |
+| `/restart` | Gracefully restart the gateway after draining active runs. When the gateway comes back online, it sends a confirmation to the requester's chat/thread. |
+| `/debug` | Upload debug report (system info + logs) and get shareable links. |
+| `/help` | Show messaging help. |
+| `/<skill-name>` | Invoke any installed skill by name. |
 
 ## 备注
 
-- `/skin`、`/snapshot`、`/reload`、`/tools`、`/toolsets`、`/browser`、`/config`、`/cron`、`/platforms`、`/paste`、`/image`、`/statusbar`、`/plugins`、`/busy`、`/indicator`、`/redraw`、`/clear`、`/history`、`/save`、`/copy`、`/handoff`、`/billing` 以及 `/quit` 均为**仅限 CLI 使用**的命令。 
-- `/skills` 命令**仅用于在 CLI 中搜索、浏览和安装**；其写入审批相关的子命令（`pending`、`approve`、`reject`、`diff`、`approval`）在 `skills.write_approval` 机制开启时，也可在消息平台中使用。`/memory` 命令则可在两种场景下使用。 
-- `/verbose` 默认**仅限 CLI 使用**，但若在 `config.yaml` 中设置 `display.tool_progress_command: true`，则可在消息平台上启用该功能。启用后，它会循环切换 `display.tool_progress` 的显示模式，并将设置保存到配置文件中。 
-- `/sethome`、`/update`、`/restart`、`/approve`、`/deny`、`/topic`、`/platform` 以及 `/commands` 均为**仅用于消息传递**的命令。 
-- `/status`、`/version`、`/background`、`/queue`、`/steer`、`/voice`、`/reload-mcp`、`/reload-skills`、`/rollback`、`/debug`、`/fast`、`/footer`、`/curator`、`/kanban`、`/credits`、`/suggestions`、`/blueprint`、`/learn`、`/sessions` 以及 `/yolo` 命令则可在**CLI 和消息网关两种环境中使用**。 
-- `/voice join`、`/voice channel` 以及 `/voice leave` 命令仅在 Discord 中有效。 
-- 在 TUI 界面中，`/sessions` 会显示当前 TUI 进程中的活跃会话。若需查看已保存或已关闭的对话记录，可使用 `/resume [name]` 或 `hermes --tui --resume <id-or-title>` 命令。 
+- `/skin`、/snapshot`、/export`、/import`、/reload`、/tools`、/toolsets`、/browser`、/config`、/cron`、/platforms`、/paste`、/image`、/statusbar`、/battery`、/focus`、/plugins`、/indicator`、/wake`、/journey`、/redraw`、/clear`、/history`、/save`、/copy`、/handoff`、/prompt`、/pet`、/hatch`、/timestamps`、/subscription` 以及 /quit 均为**仅适用于 CLI 的命令**。
 
-## 破坏性命令的确认提示
+- `/skills` 命令在**搜索/浏览/安装功能上仅支持 CLI 使用**；其用于审核写入权限的子命令（如 `pending`、`approve`、`reject`、`diff`、`approval`）在启用了 `skills.write_approval` 选项后，也可在消息平台中使用。而 `/memory` 命令则**在两种平台上均可用**。
 
-CLI 会在执行那些会清除未保存会话状态的斜杠命令之前弹出确认提示。目前属于破坏性命令的命令列表如下：
+- `/verbose` 默认为**仅适用于 CLI 的命令**，但可通过在 `config.yaml` 中设置 `display.tool_progress_command: true` 来使其在消息平台上启用。启用后，该命令会循环切换 `display.tool_progress` 模式，并将当前模式保存至配置文件中。
+
+- `/focus` 与 `/verbose` 共享同一个抑制路径（`display.tool_progress`），因此二者不会产生冲突：执行 `/focus on` 会将工具进度显示状态设置为“关闭”，并将当前模式存储在 `display.focus_saved_tool_progress` 下；执行 `/focus off` 则可恢复原有设置。在处于聚焦状态时切换 `/verbose` 的启用状态，会同时恢复工具进度显示并清除聚焦标识。聚焦视图仅用于显示——它不会更改对话历史、系统提示词或发送给模型的任何内容，因此对提示词缓存毫无影响。
+
+- /sethome`、/restart`、/approve`、/deny`、/topic`、/platform` 以及 /commands 均为**仅适用于消息平台的命令**。
+- `/status`、/`egress`、/`version`、/`whoami`、/`bg`、/`btw`、/`queue`、/`steer`、/`voice`、/`reload-mcp`、/`reload-skills`、/`rollback`、/`diff`、/`debug`、/`fast`、/`approvals`、/`busy`、/`footer`、/`curator`、/`kanban`、/`topup`、/`suggestions`、/`blueprint`、/`learn`、/`init`、/`sessions` 以及 /`yolo` 命令在 CLI 和消息网关中均可用。  
+- /`voice join`、/`voice channel` 以及 /`voice leave` 命令仅在 Discord 环境下才有意义。  
+- 在 TUI 模式中，/`sessions` 用于显示当前 TUI 进程中的实时会话；若需查看已保存或已关闭的会话记录，则可使用 /`resume [name]` 或 `hermes --tui --resume <id-or-title>` 命令。
+
+## 破坏性命令的确认提示  
+
+在运行会清除未保存会话状态的斜杠命令之前，CLI 会给出确认提示。目前属于破坏性命令的包括以下几类：
 
 | 命令 | 会清除的内容 |
 |------|--------------|
-| `/clear` | 清空屏幕并启动新会话——当前的会话 ID 及内存中的历史记录都会被删除。 |
-| `/new` / `/reset` | 启动新会话（新的会话 ID + 空历史记录）。 |
-| `/undo` | 从历史记录中删除上一次用户与智能体之间的对话内容。 |
-| `/exit --delete` / `/quit --delete` | 退出程序，并**永久删除**当前会话的 SQLite 历史记录及磁盘上的对话记录文件。 |
+| /`clear` | 清空屏幕并启动全新会话——当前的会话 ID 以及内存中的历史记录都会被删除。 |
+| /`new` / /`reset` | 启动全新会话（生成新的会话 ID 并清空历史记录）。 |
+| /`undo` | 从历史记录中移除最近一次用户与助手之间的对话内容。 |
+| /`exit --delete` / /`quit --delete` | 退出程序的同时，永久删除当前会话的 SQLite 历史记录及磁盘上的会话文本。 |
 
-对于上述每一条命令，CLI 都会弹出三选一的确认弹窗：**仅本次批准**（本次执行该命令，但之后仍会提示）、**始终批准**（以后执行此类破坏性命令时不再提示，同时将 `approvals.destructive_slash_confirm` 设置为 `false`）、或**取消**。**直接跳过提示**：在命令后附加 `now`、`--yes` 或 `-y`，即可一次性绕过确认弹窗——例如 `/reset now`、`/new --yes my-session`、`/clear -y`、`/undo -y`。当终端无法正确显示该确认弹窗时（有关 Windows PowerShell 的问题可参见 [issue #30768](https://github.com/NousResearch/hermes-agent/issues/30768)），或需要在脚本中调用 CLI 时，此功能尤为实用。
+对于上述每一类命令，CLI 都会弹出三选一的确认模态框：**仅本次确认**（本次执行该命令），**始终确认**（允许该命令执行，并将 `approvals.destructive_slash_confirm` 的值设为 `false`，从而让后续的破坏性命令无需再次提示即可运行），或 **取消**。
 
-如需全局禁用这些确认提示，可在 `~/.hermes/config.yaml` 中将 `approvals.destructive_slash_confirm` 的值设置为 `false`；若要重新启用，则将其改回 `true`。相关详细信息请参阅 [安全机制——破坏性斜杠命令的确认流程](../user-guide/security.md#dangerous-command-approval)。
+**直接跳过：** 在命令后添加 `now`、`--yes` 或 `-y`，即可绕过单次调用的确认弹窗——例如 `/reset now`、`/new --yes my-session`、`/clear -y`、`/undo -y`。当终端无法正确显示该确认弹窗时（关于 Windows PowerShell 的相关问题可参见 [issue #30768](https://github.com/NousResearch/hermes-agent/issues/30768)），或在通过脚本调用 CLI 时，此方法十分有用。
+
+如需全局禁用这些确认提示，可在 `~/.hermes/config.yaml` 中将 `approvals.destructive_slash_confirm` 的值设置为 `false`；若要重新启用该功能，则将其值改回 `true`。相关背景信息请参阅 [安全性——破坏性斜杠命令的确认机制](../user-guide/security.md#dangerous-command-approval)。
