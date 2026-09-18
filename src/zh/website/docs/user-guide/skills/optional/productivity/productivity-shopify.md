@@ -1,26 +1,26 @@
 ---
-title: "Shopify — Shopify Admin & Storefront GraphQL APIs via curl"
+title: "Shopify — Query Shopify Admin/Storefront GraphQL APIs via curl"
 sidebar_label: "Shopify"
-description: "Shopify Admin & Storefront GraphQL APIs via curl"
+description: "Query Shopify Admin/Storefront GraphQL APIs via curl"
 ---
 
 {/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # Shopify
 
-通过 curl 访问 Shopify 管理后台及前端店铺的 GraphQL API，可处理产品、订单、客户、库存以及元字段等相关操作。
+通过 curl 查询 Shopify 管理后台/店铺前端 GraphQL API。
 
 ## 技能元数据
 
 | | |
 |---|---|
-| 来源 | 可选 — 通过 `hermes skills install official/productivity/shopify` 安装 |
-| 路径 | `optional-skills/productivity/shopify` |
+| 来源 | 可选 — 使用 `hermes skills install official/productivity/shopify` 安装 |
+| 路径 | `optional-skills/productivity\shopify` |
 | 版本 | `1.0.0` |
 | 创建者 | 社区用户 |
 | 许可协议 | MIT |
 | 支持平台 | linux、macos、windows |
-| 标签 | `Shopify`、`电子商务`、`Commerce`、`API`、`GraphQL` |
+| 标签 | `Shopify`、`电子商务`、`商业`、`API`、`GraphQL` |
 | 相关技能 | [`airtable`](/docs/user-guide/skills/bundled/productivity/productivity-airtable)、[`xurl`](/docs/user-guide/skills/bundled/social-media/social-media-xurl) |
 
 ## 参考：完整的 SKILL.md 文件
@@ -29,38 +29,45 @@ description: "Shopify Admin & Storefront GraphQL APIs via curl"
 以下是当触发该技能时 Hermes 会加载的完整技能定义。技能处于激活状态时，智能体将依据此内容执行操作。
 :::
 
-# Shopify — 管理后台及前端店铺 GraphQL API
+# Shopify — 管理后台与店铺前端 GraphQL API
 
-可直接通过 `curl` 操作 Shopify 店铺：列出产品、管理库存、查询订单、更新客户信息、读取元字段等。无需 SDK 也不用应用框架，仅需 GraphQL 接口以及自定义应用的访问令牌即可。
+可直接通过 `curl` 操作 Shopify 店铺：列出商品、管理库存、获取订单信息、更新客户资料、读取元数据。无需 SDK 也不用应用框架——仅需 GraphQL 接口以及自定义应用访问令牌即可。
 
-自 2024 年 4 月起，REST 管理后台 API 已属于旧版本，仅会接收安全补丁。所有管理操作请使用 **GraphQL 管理 API**；针对仅用于读取的客户端查询（如产品、系列、购物车信息），则可使用 **前端店铺 GraphQL API**。
+自 2024 年 4 月起，REST 管理后台 API 已属于旧版本，仅会接收安全补丁。**所有管理操作请使用 GraphQL 管理 API**；对于仅用于读取数据的客户端查询（如商品、系列、购物车信息），则请使用**店铺前端 GraphQL API**。
 
-## 前提条件
+## 先决条件
 
-1. 进入 Shopify 管理后台：**设置 → 应用与销售渠道 → 开发应用 → 创建应用**。
-2. 点击 **配置管理 API 权限范围**，选择所需功能（见下方示例），然后保存。
-3. **安装应用** — 管理 API 访问令牌仅会显示一次，请立即复制，因为 Shopify 不会再次展示该令牌。令牌开头为 `shpat_`。
-4. 将该令牌保存到 `${HERMES_HOME:-~/.hermes}/.env` 文件中：
+1. 在 Shopify 管理后台中：**设置 → 应用与销售渠道 → 开发应用 → 创建应用**。  
+2. 点击 **配置管理后台 API 权限范围**，选择所需选项（如下例所示），然后保存。  
+3. 选择 **安装应用**，此时管理后台 API 访问令牌将仅显示一次，请立即复制——Shopify 不会再次显示该令牌。令牌的起始格式为 `shpat_`。  
+4. 将其保存至 `${HERMES_HOME:-~/.hermes}/.env` 文件中：
    ```
    SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxx
    SHOPIFY_STORE_DOMAIN=my-store.myshopify.com
    SHOPIFY_API_VERSION=2026-01
    ```
 
-> **重要提示：** 自2026年1月1日起，通过Shopify管理后台创建的新“传统自定义应用”将不再存在。新的应用开发应使用**开发者控制台**（`shopify.dev/docs/apps/build/dev-dashboard`）。现有通过管理后台创建的应用仍可正常使用。如果用户的店铺在2026-01-01之后且没有现有的自定义应用，请引导其使用开发者控制台，而非传统的管理后台流程。
+> **重要提示：** 自 2026 年 1 月 1 日起，通过 Shopify 管理后台创建的旧版“自定义应用”将不再存在。新项目应使用 **开发控制台**（`shopify.dev/docs/apps/build/dev-dashboard`）进行搭建。现有通过管理后台创建的应用仍可正常使用。如果用户的店铺在 2026-01-01 之后且没有自定义应用，建议引导其直接使用开发控制台，而非传统的管理后台流程。
 
-按任务划分的常用权限范围：
+不同任务对应的常用权限范围：
 - 产品/系列：`read_products`、`write_products`
 - 库存：`read_inventory`、`write_inventory`、`read_locations`
-- 订单：`read_orders`、`write_orders`（仅返回最近的30笔订单，不支持`read_all_orders`）
+- 订单：`read_orders`、`write_orders`（可读取最近 30 笔订单，不可使用 `read_all_orders`）
 - 客户：`read_customers`、`write_customers`
 - 草稿订单：`read_draft_orders`、`write_draft_orders`
-- 发货处理：`read_fulfillments`、`write_fulfillments`
-- 元字段/元对象：由对应的资源权限范围控制
+- 配送信息：`read_fulfillments`、`write_fulfillments`
+- 元字段/元对象：由对应的资源权限范围覆盖
 
-## API基础知识
+## API 基础知识
 
-- **端点地址：** `https://$
+- **端点地址：** `https:// $SHOPIFY_STORE_DOMAIN/admin/api/$SHOPIFY_API_VERSION/graphql.json`  
+- **认证头信息：** `X-Shopify-Access-Token: $SHOPIFY_ACCESS_TOKEN`（而非 `Authorization: Bearer`）  
+- **请求方法：** 始终为 `POST`，内容类型始终为 `application/json`，请求体格式为 `{"query": "...", "variables": {...}}`  
+- **HTTP 200 状态码并不代表操作成功。** GraphQL 会在顶层 `errors` 数组及每个字段的 `userErrors` 中返回错误信息，务必同时检查这两部分内容。  
+- **ID 为 GID 格式的字符串：** `gid://shopify/Product/10079467700516`、`gid://shopify/Variant/...`、`gid://shopify/Order/...`。请直接使用这些完整格式的字符串，切勿删除前缀部分。  
+- **速率限制机制：** 根据查询成本通过“漏桶算法”进行控制。每个响应都会包含 `extensions.cost` 字段，其中列有 `requestedQueryCost`、`actualQueryCost` 以及 `throttleStatus.{currentlyAvailable, maximumAvailable, restoreRate}` 等信息。当 `currentlyAvailable` 的值低于下一次查询所需的成本时，应暂停请求以等待恢复。普通店铺的速率限制为 100 点/次，恢复速度为 50 次/分钟；Plus 账户的对应数值分别为 1000 点/次和 100 次/分钟。  
+
+可复用的基础 curl 请求模板：
 
 ```bash
 shop_gql() {
@@ -74,7 +81,7 @@ shop_gql() {
 }
 ```
 
-通过 `jq` 处理输出以提升可读性。选项 `-sS` 能够显示错误信息，同时隐藏进度条。
+通过 `jq` 处理输出以便更易于阅读。选项 `-sS` 可让错误信息保持显示，同时隐藏进度条。
 
 ## 发现功能
 
@@ -103,7 +110,7 @@ query($q: String!) {
 
 查询语法支持使用 `title:`、`sku:`、`vendor:`、`product_type:`、`status:active`、`tag:` 以及 `created_at:>2025-01-01` 等条件。完整的语法规范请参见：https://shopify.dev/docs/api/usage/search-syntax
 
-### 按页获取产品（游标方式）
+### 按页加载商品（游标方式）
 ```bash
 shop_gql '
 query($cursor: String) {
@@ -115,7 +122,7 @@ query($cursor: String) {
 # subsequent calls: pass the previous endCursor
 ```
 
-### 获取具有变体及元字段的产品
+### 获取包含变体及元字段的产品
 ```bash
 shop_gql '
 query($id: ID!) {
@@ -127,7 +134,7 @@ query($id: ID!) {
 }' '{"id":"gid://shopify/Product/10079467700516"}' | jq
 ```
 
-### 创建具有一个变体的产品
+### 创建仅包含一个变体的产品
 ```bash
 shop_gql '
 mutation($input: ProductCreateInput!) {
@@ -138,7 +145,7 @@ mutation($input: ProductCreateInput!) {
 }' '{"input":{"title":"Test Hoodie","status":"DRAFT","vendor":"Hermes","productType":"Apparel","tags":["test"]}}'
 ```
 
-在最新版本中，变体现已拥有独立的突变机制：
+在最新版本中，变体现已拥有独立的突变功能。
 
 ```bash
 # Add variants after creating the product
@@ -164,7 +171,7 @@ mutation($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
 
 ## 订单
 
-### 查看近期订单（默认显示最近30笔订单，如不使用`read_all_orders`参数则可查看全部）
+### 查看近期订单（默认显示最近30笔订单，如使用`read_all_orders`参数则可查看全部）
 ```bash
 shop_gql '
 {
@@ -181,7 +188,7 @@ shop_gql '
 
 实用的订单查询筛选条件包括：`financial_status:paid|pending|refunded`、`fulfillment_status:unfulfilled|fulfilled`、`created_at:>2025-01-01`、`tag:gift` 以及 `email:foo@example.com`。
 
-### 获取包含配送地址的单一订单信息
+### 获取包含配送地址的单个订单信息
 ```bash
 shop_gql '
 query($id: ID!) {
@@ -217,7 +224,7 @@ mutation($input: CustomerInput!) {
 
 ## 库存管理
 
-库存信息存储在与具体款式关联的**库存条目**中，并按**存放位置**来记录相应的数量。
+库存以与具体规格版本关联的**库存条目**形式存在，同时还会按**存储位置**记录相应的数量。
 
 ```bash
 # Get inventory for a variant across all locations
@@ -235,7 +242,7 @@ query($id: ID!) {
 }' '{"id":"gid://shopify/ProductVariant/..."}'
 ```
 
-调整库存（增量）——使用 `inventoryAdjustQuantities` 函数：
+调整库存（增量）——使用 `inventoryAdjustQuantities` 功能：
 
 ```bash
 shop_gql '
@@ -292,9 +299,11 @@ mutation($metafields: [MetafieldsSetInput!]!) {
 
 ## Storefront API（公共只读版）
 
-该版本使用独立的端点与令牌，专为面向客户的应用程序及氢能架构风格的无头系统设计。其请求头也有所不同：
+该版本使用独立的接口端点与令牌，专为面向客户的应用程序及 Hydrogen 风格的无头架构设计。其请求头也有所不同：
 
-- **端点地址：** `https://$
+- **接口端点：** `https:// $SHOPIFY_STORE_DOMAIN/api/$SHOPIFY_API_VERSION/graphql.json`
+- **公共认证请求头：** `X-Shopify-Storefront-Access-Token: <公共令牌>` —— 可嵌入浏览器中使用
+- **私有认证请求头：** `Shopify-Storefront-Private-Token: <私有令牌>` —— 仅服务器端使用
 
 ```bash
 curl -sS -X POST \
@@ -306,7 +315,7 @@ curl -sS -X POST \
 
 ## 批量操作
 
-针对超过速率限制大小的导出数据（如完整产品目录、全年的所有订单）：
+针对超过速率限制规模的导出数据（如完整产品目录、全年的所有订单）：
 
 ```bash
 # 1. Start bulk query
@@ -343,26 +352,26 @@ mutation($topic: WebhookSubscriptionTopic!, $sub: WebhookSubscriptionInput!) {
 }' '{"topic":"ORDERS_CREATE","sub":{"callbackUrl":"https://example.com/webhook","format":"JSON"}}'
 ```
 
-请使用应用程序的客户端密钥（而非访问令牌）来验证传入的 Webhook HMAC 值：
+请使用应用程序的客户端密钥（而非访问令牌）来验证传入的 Webhook HMAC。
 
 ```bash
 echo -n "$REQUEST_BODY" | openssl dgst -sha256 -hmac "$APP_SECRET" -binary | base64
 # Compare to X-Shopify-Hmac-Sha256 header
 ```
 
-## 常见问题
+## 常见问题与陷阱
 
-- **REST 接口虽存在但已冻结。** 请勿再为 `/admin/api/.../products.json` 开发新的集成方案，应改用 GraphQL。
-- **令牌格式校验。** 管理员令牌以 `shpat_` 开头，而店铺公开令牌则以 `shpua_` 开头。如果使用了错误的令牌格式，所有请求都会返回 401 错误，且不会附带有用的错误信息。
-- **使用有效令牌却仍返回 403 错误 = 缺少权限范围。** Shopify 会返回 `{"errors":[{"message":"Access denied for ..."}]}`。此时需在应用中重新配置管理员 API 的权限范围，然后重新安装应用以生成新的令牌。
-- **`userErrors` 为空并不代表操作成功。** 还需检查 `data.<mutation>.<resource>` 的值是否非空。某些失败情况会导致这两个字段均为空，因此需要仔细查看完整响应内容。
-- **GID 与数字 ID 的区别。** 旧版的 REST 接口返回的是数字 ID，而 GraphQL 要求使用完整的 GID 字符串。转换方法为：`gid://shopify/Product/<numeric>`。
-- **速率限制的意外影响。** 单次调用 `products(first: 250)` 且嵌套层级较深时，可能会消耗 1000 多个积分，导致使用标准套餐的店铺立即被限流。建议先缩小查询范围，查看 `extensions.cost` 的数值后再进行调整。
-- **分页顺序问题。** `products(first: N, reverse: true)` 是按 `id` 降序排列，而非按 `created_at` 排序。如需按“最新优先”排序，应使用 `sortKey: CREATED_AT, reverse: true`。
-- **获取历史数据需使用 `read_all_orders`。** 若不使用该权限范围，`orders(...)` 查询将默认仅返回最近 60 天内的订单数据。此时不会出现错误，但返回的结果数量会少于预期。对于拥有大量订单的 Shopify Plus 商家，可通过应用的保护数据设置来申请此权限范围。
-- **货币类型为字符串。** 金额将以 `"49.00"` 的字符串形式返回，而非 `49.0` 这样的数字形式。如果需要处理零填充问题，切勿盲目使用 `jq tonumber` 工具。
-- **多货币金额字段包含 `shopMoney`（店铺货币）和 `presentmentMoney`（客户显示货币）两种类型。** 应始终统一选择其中一种格式进行使用。
+- **REST 接口虽存在但已停止使用。** 请勿再为 `/admin/api/.../products.json` 开发新的集成，应改用 GraphQL。
+- **令牌格式检查。** 管理员令牌以 `shpat_` 开头，而店铺公开令牌则以 `shpua_` 开头。如果使用了错误前缀的令牌，所有请求都会返回 401 错误，且不会附带有用的错误信息。
+- **使用有效令牌仍出现 403 错误 = 缺少权限范围。** Shopify 会返回 `{"errors":[{"message":"Access denied for ..."}]}`。此时需在应用中重新配置管理 API 的权限范围，然后重新安装应用以生成新的令牌。
+- **`userErrors` 为空并不代表操作成功。** 还需检查 `data.<mutation>.<resource>` 是否非空。某些错误情况下这两项都会为空，因此需要仔细查看整个响应内容。
+- **GID 与数字 ID 的区别。** 旧版 REST 接口返回的是数字 ID，而 GraphQL 要求使用完整的 GID 字符串。转换方法为：`gid://shopify/Product/<numeric>`。
+- **速率限制的意外影响。** 单次调用 `products(first: 250)` 且嵌套层级较深时，可能会消耗 1000 多个积分，导致标准套餐的店铺立即被限流。建议先缩小查询范围，查看 `extensions.cost` 的数值后再进行调整。
+- **分页顺序问题。** `products(first: N, reverse: true)` 是按 `id` 从大到小排序，而非按创建时间排序。如需按“最新优先”排序，应使用 `sortKey: CREATED_AT, reverse: true`。
+- **获取历史数据时需使用 `read_all_orders`。** 若不添加此权限范围，`orders(...)` 查询将默认仅返回最近 60 天内的订单数据。虽然不会报错，但返回的结果数量会少于预期。对于拥有大量订单的 Shopify Plus 商家，可通过应用的保护数据设置来申请该权限范围。
+- **货币类型为字符串格式**。金额将以 `"49.00"` 的形式返回，而非 `49.0`。如果需要确保数值始终带有足够位数，请勿盲目使用 `jq tonumber` 函数进行处理。
+- **多货币金额字段**同时包含 `shopMoney`（店铺使用的货币）和 `presentmentMoney`（客户看到的货币）。请统一选择其中一种格式进行使用。
 
-## 安全性注意事项
+## 安全性
 
-在 Shopify 中执行的变更操作都是真实有效的——它们能够创建产品、处理退款、取消订单以及安排发货。在运行 `productDelete`、`orderCancel`、`refundCreate` 或任何批量变更操作之前，务必明确说明要进行的更改内容、涉及的店铺，並获得用户确认。除非用户拥有独立的开发店铺，否则无法使用生产环境数据的分支环境进行测试。
+在 Shopify 中执行的操作都是真实有效的——它们会创建产品、处理退款、取消订单以及安排发货。在运行 `productDelete`、`orderCancel`、`refundCreate` 或任何批量操作之前，务必明确说明要进行的更改内容、涉及的店铺，并获得用户确认。除非用户拥有独立的开发商店，否则系统中不存在与生产环境数据分离的测试环境副本。
