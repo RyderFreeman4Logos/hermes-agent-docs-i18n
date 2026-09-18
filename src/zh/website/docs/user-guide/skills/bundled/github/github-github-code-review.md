@@ -4,11 +4,11 @@ sidebar_label: "Github Code Review"
 description: "Review PRs: diffs, inline comments via gh or REST"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据该技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
-# GitHub代码审查
+# GitHub 代码审查
 
-通过 gh 或 REST 接口对差异内容及行内注释进行代码审查。
+通过 gh 或 REST 接口查看差异、添加内联评论，从而对 Pull Request 进行审查。
 
 ## 技能元数据
 
@@ -23,19 +23,19 @@ description: "Review PRs: diffs, inline comments via gh or REST"
 | 标签 | `GitHub`、`Code-Review`、`Pull-Requests`、`Git`、`Quality` |
 | 相关技能 | [`github-auth`](/docs/user-guide/skills/bundled/github/github-github-auth)、[`github-pr-workflow`](/docs/user-guide/skills/bundled/github/github-github-pr-workflow) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能启用时，代理会将这些内容视为操作指令。
 :::
 
-# GitHub代码审查
+# GitHub 代码审查
 
-在推送代码之前对本地修改进行审查，或审查 GitHub 上已开放的 Pull Request。该技能主要使用基础的 `git` 命令——仅当涉及 Pull Request 操作时才会用到 `gh`/`curl` 工具。
+在推送代码之前对本地修改进行代码审查，或审查 GitHub 上已开放的 Pull Request。该技能主要使用常规的 `git` 命令——仅当涉及 Pull Request 操作时才会用到 `gh`/`curl` 工具。
 
 ## 先决条件
 
-- 已在 GitHub 完成身份验证（参见 `github-auth` 技能）
+- 已在 GitHub 上完成身份验证（参见 `github-auth` 技能）
 - 处于某个 git 仓库中
 
 ### 设置（用于处理 Pull Request）
@@ -49,7 +49,7 @@ else
     if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-      GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
+      GITHUB_TOKEN=$(uv run python3 "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
     fi
   fi
 fi
@@ -62,7 +62,7 @@ REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
 
 ## 1. 查看本地更改（推送前）
 
-这完全基于 `git` —— 可在任何地方使用，无需 API。
+这完全基于 `git` —— 在任何地方都能使用，无需 API。
 
 ### 获取差异内容
 
@@ -82,14 +82,14 @@ git diff main...HEAD --stat
 
 ### 审核策略
 
-1. **首先把握整体概览：**
+1. **首先把握整体情况：**
 
 ```bash
 git diff main...HEAD --stat
 git log main..HEAD --oneline
 ```
 
-2. **逐个文件审查**——对发生更改的文件使用 `read_file` 函数以获取完整上下文，并通过差异对比功能查看具体修改内容：
+2. **逐个文件查看**——对发生变更的文件使用 `read_file` 函数以获取完整上下文，并通过差异对比功能了解具体更改内容：
 
 ```bash
 git diff main...HEAD -- src/auth/login.py
@@ -115,7 +115,7 @@ git diff main...HEAD | grep -n "<<<<<<\|>>>>>>\|======="
 
 ### 审核输出格式
 
-在审核本地更改时，请按照以下结构呈现审核结果：
+在审核本地代码变更时，请按照以下结构呈现审核结果：
 
 ```
 ## Code Review Summary
@@ -177,9 +177,9 @@ for f in json.load(sys.stdin):
     print(f\"{f['status']:10} +{f['additions']:-4} -{f['deletions']:-4}  {f['filename']}\")"
 ```
 
-### 在本地查看 Pull Request 以进行全面审查
+### 在本地查看 PR 以进行完整审查
 
-该功能可直接使用普通的 `git` 命令——无需借助 `gh`：
+该功能可直接使用常规的 `git` 命令实现——无需借助 `gh`：
 
 ```bash
 # Fetch the PR branch and check it out
@@ -198,7 +198,7 @@ git diff main...pr-123
 gh pr checkout 123
 ```
 
-### 在 Pull Request 上留下评论
+### 在 Pull Request 上添加评论
 
 **使用 gh 工具添加常规 PR 评论：**
 
@@ -217,7 +217,7 @@ curl -s -X POST \
 
 ### 留下内联评审评论
 
-**使用 gh 通过 API 添加单条内联评论：**
+**使用 gh（通过 API）添加单条内联评论：**
 
 ```bash
 HEAD_SHA=$(gh pr view 123 --json headRefOid --jq '.headRefOid')
@@ -254,7 +254,7 @@ curl -s -X POST \
 
 ### 提交正式审核（批准/请求修改）
 
-**通过 gh 实现：**
+**使用 gh 工具：**
 
 ```bash
 gh pr review 123 --approve --body "LGTM!"
@@ -262,7 +262,7 @@ gh pr review 123 --request-changes --body "See inline comments."
 gh pr review 123 --comment --body "Some suggestions, nothing blocking."
 ```
 
-**使用 curl —— 可以以原子方式提交多条评论：**
+**使用 curl 时——多条评论可原子化地一并提交：**
 
 ```bash
 HEAD_SHA=$(curl -s \
@@ -293,23 +293,23 @@ curl -s -X POST \
 
 ## 3. 审核检查清单
 
-在进行代码审核（本地或 PR）时，需系统地检查以下内容：
+在执行代码审核（本地或 PR）时，需系统地检查以下内容：
 
 ### 正确性
 - 代码是否实现了预期的功能？
-- 是否处理了边缘情况（空输入、空值、大数据量、并发访问等）？
+- 是否处理了边缘情况（空输入、空值、大数据量、并发访问）？
 - 错误处理是否得当？
 
 ### 安全性
 - 不存在硬编码的机密信息、凭证或 API 密钥
-- 对用户输入进行了验证
+- 对用户输入进行验证
 - 无 SQL 注入、XSS 或路径遍历风险
-- 在需要处进行了身份认证与授权检查
+- 在必要处进行身份认证与授权检查
 
 ### 代码质量
-- 变量、函数和类的命名清晰
-- 不存在不必要的复杂性或过早的抽象设计
-- 遵循 DRY 原则——没有应被提取出来的重复逻辑
+- 变量、函数和类的命名清晰明了
+- 无不必要的复杂性或过早的抽象设计
+- 遵循 DRY 原则——无应被提取出来的重复逻辑
 - 函数职责单一，专注明确
 
 ### 测试
@@ -318,35 +318,35 @@ curl -s -X POST \
 - 测试用例是否易于阅读和维护？
 
 ### 性能
-- 不存在 N+1 查询或不必要的循环
-- 在合适的地方使用了缓存机制
-- 异步代码路径中不存在阻塞操作
+- 无 N+1 查询或不必要的循环
+- 在合适的地方使用缓存提升性能
+- 异步代码路径中无阻塞操作
 
 ### 文档
 - 公共 API 已有文档说明
-- 难以理解的逻辑部分配有解释“为何如此设计”的注释
-- 如果功能发生变更，已更新 README 文件
+- 非显而易见的逻辑配有解释“为何如此设计”的注释
+- 若功能发生变更，需及时更新 README
 
 ---
 
 ## 4. 推送前审核工作流程
 
-当用户要求你“审核代码”或“在推送前检查”时，请按以下步骤操作：
+当用户要求你“审核代码”或“在推送前进行检查”时：
 
-1. `git diff main...HEAD --stat` — 查看修改范围
-2. `git diff main...HEAD` — 查看完整的差异内容
-3. 对每个被修改的文件，如需更多上下文信息，可使用 `read_file` 功能
-4. 按照上述检查清单进行审核
-5. 以结构化格式呈现审核结果（严重问题 / 警告 / 建议 / 无问题）
-6. 如果发现严重问题，可主动提出在用户推送前帮其修复
+1. `git diff main...HEAD --stat` — 查看变更范围  
+2. `git diff main...HEAD` — 查看完整差异内容  
+3. 对于每个被修改的文件，如需更多上下文信息，请使用 `read_file` 功能  
+4. 按照上述清单进行检查  
+5. 以结构化格式呈现检测结果（严重问题 / 警告 / 建议 / 无问题）  
+6. 若发现严重问题，可主动提出在用户推送代码前帮其修复  
 
 ---
 
 ## 5. PR 审核工作流程（端到端）
 
-当用户要求你“审核 PR #N”、“看看这个 PR”或提供 PR 链接时，请遵循以下流程：
+当用户要求你“审核 PR #N”、“看看这个 PR”，或提供 PR 链接时，请按照以下步骤操作：
 
-### 第一步：搭建环境
+### 第一步：准备环境
 
 ```bash
 source "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/gh-env.sh"
@@ -355,7 +355,7 @@ source "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/gh-env.s
 
 ### 第 2 步：收集 Pull Request 相关信息
 
-在深入研究代码之前，先获取 Pull Request 的元数据、描述以及变更文件列表，以便了解其工作范围。
+在深入研究代码之前，先获取 Pull Request 的元数据、描述以及修改过的文件列表，以便了解其范围。
 
 **使用 gh 工具时：**
 ```bash
@@ -377,9 +377,9 @@ curl -s -H "Authorization: token $GITHUB_TOKEN" \
   https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/files
 ```
 
-### 第 3 步：在本地查看该 Pull Request
+### 第3步：在本地查看该拉取请求
 
-这样您即可完全使用 `read_file`、`search_files` 函数，同时还能运行测试。
+这样您就可以完全使用 `read_file` 和 `search_files` 函数，同时还能运行测试。
 
 ```bash
 git fetch origin pull/$PR_NUMBER/head:pr-$PR_NUMBER
@@ -398,7 +398,7 @@ git diff main...HEAD --name-only
 git diff main...HEAD -- path/to/file.py
 ```
 
-对于每一个被修改过的文件，建议使用 `read_file` 功能来查看该改动周围的完整代码上下文——仅通过差异对比往往无法发现那些只有结合周边代码才能识别的问题。
+对于每一个被修改过的文件，建议使用 `read_file` 命令来查看该改动周围的完整代码上下文——仅通过差异对比往往无法发现那些只有结合周边代码才能识别的问题。
 
 ### 第 5 步：在本地运行自动化检查（如适用）
 
@@ -412,15 +412,15 @@ ruff check . 2>&1 | head -30
 # or: eslint, clippy, etc.
 ```
 
-### 第 6 步：应用审查检查表（第 3 节）
+### 第6步：应用审查检查清单（第3节）
 
-逐一检查以下各个类别：正确性、安全性、代码质量、测试、性能以及文档情况。
+逐一检查以下类别：正确性、安全性、代码质量、测试、性能以及文档。
 
-### 第 7 步：将审查结果发布到 GitHub
+### 第7步：将审查结果发布到GitHub
 
-汇总您的发现，并通过内联评论的形式提交正式的审查报告。
+汇总您的发现，并以包含内联评论的正式审查形式提交。
 
-**使用 gh 命令：**
+**使用gh命令：**
 ```bash
 # If no issues — approve
 gh pr review $PR_NUMBER --approve --body "Reviewed by Hermes Agent. Code looks clean — good test coverage, no security concerns."
@@ -429,7 +429,7 @@ gh pr review $PR_NUMBER --approve --body "Reviewed by Hermes Agent. Code looks c
 gh pr review $PR_NUMBER --request-changes --body "Found a few issues — see inline comments."
 ```
 
-**使用 curl — 带有多条内联注释的原子级审核：**
+**使用 curl — 带有多条内联评论的原子化审核：**
 ```bash
 HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
   https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER \
@@ -451,11 +451,11 @@ curl -s -X POST \
   }"
 ```
 
-### 第8步：还需添加总结评论
+### 第8步：另外添加总结评论
 
-除了内联评论外，还需撰写一级总结内容，以便PR提交者能一目了然地掌握整体情况。请使用`references/review-output-template.md`中规定的审核输出格式。
+除了内联评论外，还需留下顶层总结，以便 PR 提交者能一目了然地掌握整体情况。请使用 `references/review-output-template.md` 中规定的审查输出格式。
 
-**通过gh平台操作时：**
+**通过 gh 工具操作时：**
 ```bash
 gh pr comment $PR_NUMBER --body "$(cat <<'EOF'
 ## Code Review Summary
@@ -492,4 +492,4 @@ git branch -D pr-$PR_NUMBER
 
 - **批准** — 不存在任何严重或警告级别的问题，仅有轻微建议或所有方面均无问题  
 - **要求修改** — 存在必须在合并前解决的严重或警告级别问题  
-- **仅发表意见** — 仅提出观察结果与建议，且没有会阻碍流程的问题（在不确定或该 PR仍处于草稿阶段时使用）
+- **仅发表意见** — 仅提出观察结果与建议，且不存在阻碍因素（在不确定或该 Pull Request 仍处于草稿阶段时使用）
