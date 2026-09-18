@@ -3074,6 +3074,7 @@
       - [Windows（原生版）使用指南](zh/website/docs/user-guide/windows-native.md)
       - [Windows（WSL2）使用指南](zh/website/docs/user-guide/windows-wsl-quickstart.md)
       - [Egress](zh/website/docs/user-guide/egress/index.md)
+        - [出站凭证注入代理（iron-proxy）](zh/website/docs/user-guide/egress/iron-proxy.md)
       - [Features]()
         - [ACP主机集成](zh/website/docs/user-guide/features/acp.md)
         - [API服务器](zh/website/docs/user-guide/features/api-server.md)
