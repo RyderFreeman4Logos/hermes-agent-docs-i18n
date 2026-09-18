@@ -1722,6 +1722,7 @@
 
 # 中文
 
+- [插件兼容性声明文件（临时方案）](zh/COMPAT_MANIFEST.md)
 - [为 Hermes Agent 做贡献](zh/CONTRIBUTING.es.md)
 - [为 Hermes Agent 做贡献](zh/CONTRIBUTING.md)
 - [Hermes Agent ☤](zh/README.es.md)
