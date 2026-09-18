@@ -2221,7 +2221,7 @@
           - [服务器部署指南](zh/optional-skills/mlops/inference/llama-cpp/references/server.md)
           - [GGUF故障排查指南](zh/optional-skills/mlops/inference/llama-cpp/references/troubleshooting.md)
       - [Outlines]()
-        - [概要：结构化文本生成](zh/optional-skills/mlops/inference/outlines/SKILL.md)
+        - [大纲生成：结构化文本生成](zh/optional-skills/mlops/inference/outlines/SKILL.md)
         - [References]()
           - [后端配置指南](zh/optional-skills/mlops/inference/outlines/references/backends.md)
           - [可直接用于生产环境的示例](zh/optional-skills/mlops/inference/outlines/references/examples.md)
