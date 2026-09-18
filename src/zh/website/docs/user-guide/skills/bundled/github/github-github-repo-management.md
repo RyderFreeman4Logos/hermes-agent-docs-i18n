@@ -4,7 +4,7 @@ sidebar_label: "Github Repo Management"
 description: "Clone/create/fork repos; manage remotes, releases"
 ---
 
-{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能对应的 SKILL.md 文件自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
+{/* 本页面由 website/scripts/generate-skill-docs.py 根据技能的 SKILL.md 自动生成。请直接编辑源文件 SKILL.md，而非此页面。 */}
 
 # GitHub 仓库管理
 
@@ -26,12 +26,12 @@ description: "Clone/create/fork repos; manage remotes, releases"
 ## 参考：完整 SKILL.md 内容
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，Agent 就会依据此内容执行操作。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。技能激活后，Agent 就会看到这些指令作为操作指南。
 :::
 
 # GitHub 仓库管理
 
-创建、克隆、分叉、配置及管理 GitHub 仓库。各功能模块首先展示 `gh` 命令，若不可用则回退至 `git` + `curl` 方式。
+创建、克隆、分叉、配置及管理 GitHub 仓库。各功能部分首先展示 `gh` 命令，若不可用则回退至 `git` + `curl` 方式。
 
 ## 先决条件
 
@@ -48,7 +48,7 @@ else
     if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-      GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
+      GITHUB_TOKEN=$(uv run python3 "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
     fi
   fi
 fi
@@ -72,7 +72,7 @@ REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
 
 ## 1. 克隆仓库
 
-克隆操作完全基于 `git` 实现——无论从哪个方向操作，其效果都完全一致：
+克隆操作完全基于 `git` 实现——无论哪种方式执行，效果都完全一致：
 
 ```bash
 # Clone via HTTPS (works with credential helper or token-embedded URL)
@@ -145,7 +145,7 @@ git remote add origin https://github.com/$GH_USER/my-new-project.git
 git push -u origin main
 ```
 
-在某个组织下创建：
+要在某个组织下创建：
 
 ```bash
 curl -s -X POST \
@@ -371,7 +371,7 @@ for s in json.load(sys.stdin)['secrets']:
     print(f\"  {s['name']:30}  updated: {s['updated_at']}\")"
 ```
 
-注意：对于敏感信息的设置，使用 `gh secret set` 会简单得多。如果确实需要设置敏感信息，但当前没有安装 `gh`，建议仅为此项操作单独安装它。
+注意：对于敏感信息的设置，使用 `gh secret set` 会简单得多。如果确实需要设置敏感信息且环境中没有 `gh` 工具，建议仅为此目的安装该工具。
 
 ## 8. 版本发布
 
@@ -519,8 +519,8 @@ for g in json.load(sys.stdin):
 
 ## 快速参考表
 
-| 操作 | gh | git + curl |
-|------|-----|-----------|
+| 操作 | gh 命令 | git + curl 命令 |
+|------|---------|----------------|
 | 克隆仓库 | `gh repo clone o/r` | `git clone https://github.com/o/r.git` |
 | 创建仓库 | `gh repo create name --public` | `curl POST /user/repos` |
 | 分支复制 | `gh repo fork o/r --clone` | `curl POST /repos/o/r/forks` + `git clone` |
@@ -529,4 +529,4 @@ for g in json.load(sys.stdin):
 | 创建版本发布 | `gh release create v1.0` | `curl POST /repos/o/r/releases` |
 | 列出工作流 | `gh workflow list` | `curl GET /repos/o/r/actions/workflows` |
 | 重新运行 CI 流水线 | `gh run rerun ID` | `curl POST /repos/o/r/actions/runs/ID/rerun` |
-| 设置密钥 | `gh secret set KEY` | `curl PUT /repos/o/r/actions/secrets/KEY`（需进行加密处理） |
+| 设置机密信息 | `gh secret set KEY` | `curl PUT /repos/o/r/actions/secrets/KEY`（需进行加密处理） |
