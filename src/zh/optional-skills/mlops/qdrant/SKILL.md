@@ -1,10 +1,10 @@
 ---
-name: qdrant-vector-search
-description: High-performance vector similarity search engine for RAG and semantic search. Use when building production RAG systems requiring fast nearest neighbor search, hybrid search with filtering, or scalable vector storage with Rust-powered performance.
-version: 1.0.0
+name: qdrant
+description: Vector search engine for production RAG systems.
+version: 1.0.1
 author: Orchestra Research
 license: MIT
-dependencies: [qdrant-client>=1.12.0]
+dependencies: [qdrant-client>=1.14.0]
 platforms: [linux, macos, windows]
 metadata:
   hermes:
@@ -14,31 +14,31 @@ metadata:
 
 # Qdrant - 向量相似度搜索引擎
 
-一款基于 Rust 开发的高性能向量数据库，专为生产环境中的 RAG 与语义搜索而设计。
+一款基于 Rust 开发的高性能向量数据库，专为生产环境中的 RAG 任务及语义搜索而设计。
 
 ## 何时选择 Qdrant
 
 **以下场景适合使用 Qdrant：**
-- 构建对低延迟有要求的实际 RAG 系统
+- 构建对低延迟有较高要求的实际 RAG 系统
 - 需要混合搜索方式（向量查询 + 元数据过滤）
 - 需要通过分片/复制实现水平扩展
-- 希望在本地部署以获得完全的数据控制权
+- 希望在本地部署以获得对数据的完全控制权
 - 每条记录需要存储多种向量格式（密集向量 + 稀疏向量）
-- 构建实时推荐系统
+- 开发实时推荐系统
 
 **核心特性：**
-- **基于 Rust 开发**：内存安全，性能卓越
-- **强大的过滤功能**：可在搜索过程中根据任意字段进行过滤
+- **基于 Rust 构建**：内存安全且性能优异
+- **强大过滤功能**：可在搜索过程中根据任意字段进行过滤
 - **多向量支持**：每个数据点可存储密集向量、稀疏向量及多种密集向量格式
 - **量化技术**：提供标量量化、乘积量化及二进制量化，提升内存效率
-- **分布式架构**：支持 Raft 共识机制、分片与复制功能
+- **分布式架构**：支持 Raft 共识机制、分片及复制功能
 - **REST + gRPC 接口**：两种 API 功能完全对等
 
-**如需其他替代方案，请考虑：**
+**如需其他替代方案，可考虑：**
 - **Chroma**：部署更简单，适用于嵌入式场景
-- **FAISS**：原始处理速度最快，适合研究及批量处理任务
+- **FAISS**：原始处理速度最快，适合研究及批量处理场景
 - **Pinecone**：全托管服务，适合无需自行运维的用户
-- **Weaviate**：优先推荐使用 GraphQL 接口，内置向量化工具
+- **Weaviate**：优先支持 GraphQL，内置向量化工具
 
 ## 快速入门
 
@@ -89,23 +89,23 @@ client.upsert(
     ]
 )
 
-# Search with filtering
-results = client.search(
+# Search with filtering (query_points is the current API; client.search is removed in qdrant-client 1.14+)
+response = client.query_points(
     collection_name="documents",
-    query_vector=[0.15, 0.25, ...],
+    query=[0.15, 0.25, ...],
     query_filter={
         "must": [{"key": "category", "match": {"value": "tech"}}]
     },
     limit=10
 )
 
-for point in results:
+for point in response.points:
     print(f"ID: {point.id}, Score: {point.score}, Payload: {point.payload}")
 ```
 
 ## 核心概念
 
-### 积分——基本数据单位
+### 点数——基本数据单位
 
 ```python
 from qdrant_client.models import PointStruct
@@ -169,14 +169,15 @@ print(f"Points: {info.points_count}, Vectors: {info.vectors_count}")
 ### 基本搜索
 
 ```python
-# Simple nearest neighbor search
-results = client.search(
+# Simple nearest neighbor search (returns a QueryResponse; use .points)
+response = client.query_points(
     collection_name="documents",
-    query_vector=[0.1, 0.2, ...],
+    query=[0.1, 0.2, ...],
     limit=10,
     with_payload=True,
     with_vectors=False  # Don't return vectors (faster)
 )
+results = response.points
 ```
 
 ### 筛选搜索
@@ -185,9 +186,9 @@ results = client.search(
 from qdrant_client.models import Filter, FieldCondition, MatchValue, Range
 
 # Complex filtering
-results = client.search(
+response = client.query_points(
     collection_name="documents",
-    query_vector=query_embedding,
+    query=query_embedding,
     query_filter=Filter(
         must=[
             FieldCondition(key="category", match=MatchValue(value="tech")),
@@ -198,12 +199,12 @@ results = client.search(
         ]
     ),
     limit=10
-)
+).points
 
 # Shorthand filter syntax
-results = client.search(
+response = client.query_points(
     collection_name="documents",
-    query_vector=query_embedding,
+    query=query_embedding,
     query_filter={
         "must": [
             {"key": "category", "match": {"value": "tech"}},
@@ -211,23 +212,27 @@ results = client.search(
         ]
     },
     limit=10
-)
+).points
 ```
 
 ### 批量搜索
 
 ```python
-from qdrant_client.models import SearchRequest
+from qdrant_client.models import QueryRequest
 
-# Multiple queries in one request
-results = client.search_batch(
+# Multiple queries in one request (search_batch is replaced by query_batch_points)
+responses = client.query_batch_points(
     collection_name="documents",
     requests=[
-        SearchRequest(vector=[0.1, ...], limit=5),
-        SearchRequest(vector=[0.2, ...], limit=5, filter={"must": [...]}),
-        SearchRequest(vector=[0.3, ...], limit=10)
+        QueryRequest(query=[0.1, ...], limit=5),
+        QueryRequest(query=[0.2, ...], limit=5, filter={"must": [...]}),
+        QueryRequest(query=[0.3, ...], limit=10)
     ]
 )
+# Each element is a QueryResponse; use .points
+for resp in responses:
+    for point in resp.points:
+        print(point.id, point.score)
 ```
 
 ## RAG集成
@@ -268,12 +273,12 @@ client.upsert(collection_name="knowledge_base", points=points)
 # RAG retrieval
 def retrieve(query: str, top_k: int = 5) -> list[dict]:
     query_vector = encoder.encode(query).tolist()
-    results = client.search(
+    response = client.query_points(
         collection_name="knowledge_base",
-        query_vector=query_vector,
+        query=query_vector,
         limit=top_k
     )
-    return [{"text": r.payload["text"], "score": r.score} for r in results]
+    return [{"text": r.payload["text"], "score": r.score} for r in response.points]
 
 # Use in RAG pipeline
 context = retrieve("What is Python?")
@@ -305,7 +310,7 @@ query_engine = index.as_query_engine()
 
 ## 多向量支持
 
-### 命名向量（不同的嵌入模型）
+### 命名向量（不同嵌入模型）
 
 ```python
 from qdrant_client.models import VectorParams, Distance
@@ -334,12 +339,14 @@ client.upsert(
     ]
 )
 
-# Search specific vector
-results = client.search(
+# Search specific named vector (pass the vector name via `using`)
+response = client.query_points(
     collection_name="hybrid_search",
-    query_vector=("dense", query_dense),  # Specify which vector
+    query=query_dense,
+    using="dense",  # Specify which named vector to search
     limit=10
 )
+results = response.points
 ```
 
 ### 稀疏向量（BM25、SPLADE）
@@ -363,6 +370,8 @@ client.upsert(
 
 ## 量化（内存优化）
 
+需对整个输入内容进行转换，不得提前终止。
+
 ```python
 from qdrant_client.models import ScalarQuantization, ScalarQuantizationConfig, ScalarType
 
@@ -380,15 +389,16 @@ client.create_collection(
 )
 
 # Search with rescoring
-results = client.search(
+response = client.query_points(
     collection_name="quantized",
-    query_vector=query,
+    query=query,
     search_params={"quantization": {"rescore": True}},  # Rescore top results
     limit=10
 )
+results = response.points
 ```
 
-## 载荷索引功能
+## 载荷索引构建
 
 ```python
 from qdrant_client.models import PayloadSchemaType
@@ -441,16 +451,16 @@ client.update_collection(
 
 ## 最佳实践
 
-1. **批量操作**——使用批量插入/查询以提高效率  
-2. **负载索引**——对过滤条件中用到的字段进行索引  
-3. **量化处理**——对于包含超过100万个向量的大型集合，建议启用该功能  
-4. **分片**——当集合中的向量数量超过1000万时，应采用分片机制  
-5. **磁盘存储**——对于较大的负载数据，建议启用`on_disk_payload`选项  
-6. **连接池**——重复使用客户端实例  
+1. **批量操作** – 采用批量插入/查询以提高效率  
+2. **负载索引** – 对过滤条件中用到的字段进行索引  
+3. **量化处理** – 对包含超过100万个向量的大型集合启用该功能  
+4. **分片机制** – 对包含超过1000万个向量的集合使用分片  
+5. **磁盘存储** – 对较大的负载数据启用 `on_disk_payload` 设置  
+6. **连接池** – 重复利用客户端实例  
 
 ## 常见问题
 
-**带过滤条件的查询速度缓慢：**
+**使用过滤条件时搜索速度缓慢：**
 ```python
 # Create payload index for filtered fields
 client.create_payload_index(
@@ -485,13 +495,13 @@ client = QdrantClient(
 ## 参考资料
 
 - **[高级用法](references/advanced-usage.md)** - 分布式模式、混合搜索、推荐功能
-- **[故障排除](references/troubleshooting.md)** - 常见问题、调试方法、性能优化
+- **[故障排查](references/troubleshooting.md)** - 常见问题、调试方法、性能优化
 
 ## 资源链接
 
-- **GitHub仓库**：https://github.com/qdrant/qdrant（拥有22,000多个星标）
+- **GitHub仓库**：https://github.com/qdrant/qdrant（拥有2.2万+星标）
 - **官方文档**：https://qdrant.tech/documentation/
 - **Python客户端**：https://github.com/qdrant/qdrant-client
 - **云服务平台**：https://cloud.qdrant.io
-- **当前版本**：1.12.0及以上
+- **当前版本**：1.14.0及以上
 - **许可证**：Apache 2.0
