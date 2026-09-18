@@ -1982,6 +1982,7 @@
       - [References]()
         - [Excalidraw 颜色方案](zh/optional-skills/creative/excalidraw/references/colors.md)
         - [Excalidraw 深色模式图表](zh/optional-skills/creative/excalidraw/references/dark-mode.md)
+        - [Excalidraw 图表示例](zh/optional-skills/creative/excalidraw/references/examples.md)
     - [Heartmula]()
       - [HeartMuLa - 开源音乐生成工具](zh/optional-skills/creative/heartmula/SKILL.md)
     - [Hyperframes]()
