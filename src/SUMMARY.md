@@ -2171,6 +2171,7 @@
         - [References]()
           - [API评估](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/api-evaluation.md)
           - [基准测试指南](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/benchmark-guide.md)
+          - [自定义任务](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/custom-tasks.md)
           - [分布式评估](zh/optional-skills/mlops/evaluation/evaluating-llms-harness/references/distributed-eval.md)
       - [Weights And Biases]()
         - [Weights & Biases：机器学习实验跟踪与MLOps工具](zh/optional-skills/mlops/evaluation/weights-and-biases/SKILL.md)
