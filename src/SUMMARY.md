@@ -3069,6 +3069,7 @@
       - [Messaging](zh/website/docs/user-guide/messaging/index.md)
         - [A2A（智能体间通信）](zh/website/docs/user-guide/messaging/a2a.md)
         - [BlueBubbles（iMessage）](zh/website/docs/user-guide/messaging/bluebubbles.md)
+        - [Buzz](zh/website/docs/user-guide/messaging/buzz.md)
         - [钉钉集成设置](zh/website/docs/user-guide/messaging/dingtalk.md)
         - [Discord 设置](zh/website/docs/user-guide/messaging/discord.md)
         - [邮件设置](zh/website/docs/user-guide/messaging/email.md)
