@@ -2844,6 +2844,7 @@
     - [Github]()
       - [GitHub](zh/skills/software-development/github/SKILL.md)
       - [References]()
+        - [GitHub 认证设置](zh/skills/software-development/github/references/auth.md)
         - [CI故障排查快速参考指南](zh/skills/software-development/github/references/ci-troubleshooting.md)
         - [Conventional Commits 快速参考指南](zh/skills/software-development/github/references/conventional-commits.md)
         - [GitHub REST API 快速参考指南](zh/skills/software-development/github/references/github-api-cheatsheet.md)
