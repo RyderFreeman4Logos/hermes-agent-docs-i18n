@@ -3297,7 +3297,7 @@
             - [可比公司分析](zh/website/docs/user-guide/skills/optional/finance/finance-comps-analysis.md)
             - [DCF 模型](zh/website/docs/user-guide/skills/optional/finance/finance-dcf-model.md)
             - [Excel Author](zh/website/docs/user-guide/skills/optional/finance/finance-excel-author.md)
-            - [LBO模型构建](zh/website/docs/user-guide/skills/optional/finance/finance-lbo-model.md)
+            - [LBO 模型](zh/website/docs/user-guide/skills/optional/finance/finance-lbo-model.md)
             - [合并模型](zh/website/docs/user-guide/skills/optional/finance/finance-merger-model.md)
             - [Polymarket](zh/website/docs/user-guide/skills/optional/finance/finance-polymarket.md)
             - [Pptx Author](zh/website/docs/user-guide/skills/optional/finance/finance-pptx-author.md)
