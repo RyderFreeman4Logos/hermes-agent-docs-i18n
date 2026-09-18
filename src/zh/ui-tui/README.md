@@ -1,6 +1,6 @@
 # Hermes TUI
 
-专为Hermes打造的基于React与Ink的终端用户界面。屏幕渲染由TypeScript负责，而会话管理、工具操作、模型调用以及大部分命令逻辑则由Python处理。
+专为Hermes设计的基于React与Ink的终端用户界面。屏幕渲染由TypeScript负责，而会话管理、工具操作、模型调用以及大部分命令逻辑则由Python处理。
 
 ```bash
 hermes --tui
@@ -13,7 +13,7 @@ hermes --tui
 `GatewayClient` 会创建：
 
 ```text
-python -P -m tui_gateway.entry
+python -m tui_gateway.entry
 ```
 
 解释器的解析顺序为：`HERMES_PYTHON` → `PYTHON` → `$VIRTUAL_ENV/bin/python` → `./.venv/bin/python` → `./venv/bin/python` → `python3`（在 Windows 系统上则为 `python`）。
@@ -31,17 +31,17 @@ stdin/stdout: JSON-RPC requests, responses, events
 stderr: captured into an in-memory log ring
 ```
 
-格式错误的标准输出行会被视为协议噪声，并以 `gateway.protocol_error` 的形式呈现。而标准错误行则会被标记为 `gateway.stderr`。这两种输出都不会直接显示在终端上。
+格式错误的标准输出行会被视为协议噪声，并以 `gateway.protocol_error` 的形式呈现。而标准错误行则会被标记为 `gateway.stderr`。这两种信息均不会直接输出到终端中。
 
 ## 运行方式
 
-从仓库根目录出发，常规的运行路径为：
+从代码仓库的根目录出发，常规的运行路径为：
 
 ```bash
 hermes --tui
 ```
 
-该命令行工具要求必须存在 `ui-tui/dist/entry.js` 文件，或者能够获取到完整的源代码，以便执行 `npm install` 和 `npm run dev` 操作。
+该命令行工具要求必须存在 `ui-tui/dist/entry.js` 文件，或者具备完整的源代码，以便执行 `npm install` 和 `npm run dev` 指令。
 
 ```bash
 cd ui-tui
@@ -66,210 +66,222 @@ npm test         # single run
 npm run test:watch
 ```
 
+## 实时代理
+
+当子任务正在运行时，Composer 上方会自动显示控制栏。该控栏会展示实时的子任务数量、任务名称、耗时以及最新操作状态。在终端宽度较窄的情况下，其显示行数会相应减少；已完成的任务会保存在现有的 `/agents`/`/replay` 历史记录中，而不会持续占用 Composer 的空间。异步完成的任务单元不会被计入额外的代理数量。
+
+- **Ctrl+T**：展开代理列表且不会清除当前草稿；**Esc**：返回上一页。
+- **↑/↓**：选择某个代理，**Enter**：查看该代理的详细信息（工具、输出、文件及使用情况）。
+- **t**：查看该代理的实时对话记录尾部；**g/G**：切换到记录顶部/底部。
+- **e**：打开单独的引导表单。**Enter**：将引导指令加入队列，**Esc**：返回上一页。“已入队”仅表示该指令已被接收，等待进入下一个工具处理阶段，并不代表已确认执行。
+- **x**：请求停止所选子任务；**X**：请求停止整个子树下的所有任务。
+原有的排序/过滤、暂停/继续生成、时间轴显示以及回放控制功能依然可用。
+
+该代理列表会通过会话范围的 `subagent.list` RPC 请求以及流式事件动态更新内容。仅“实时对话记录尾部”视图会定期查询 `subagent.tail` 数据，而引导功能则使用现有的 `subagent.steer` RPC 接口。模型工具的架构及提示词缓存机制均保持不变。
+
 ## 应用模型
 
-`src/app.tsx` 是用户界面的核心。复杂的逻辑被拆分到 `src/app/` 目录下：
+`src/app.tsx` 是用户界面的核心文件。复杂的逻辑功能被拆分到 `src/app/` 目录下：
 
-- `src/app/createGatewayEventHandler.ts` —— 将网关事件映射为状态更新
-- `src/app/createSlashHandler.ts` —— 处理本地斜杠命令分发
-- `src/app/useComposerState.ts` —— 负责草稿编辑、多行缓冲区以及队列编辑功能
-- `src/app/useInputHandlers.ts` —— 负责按键处理与路由
-- `src/app/useMainApp.ts` —— 顶层组合钩子：连接所有子钩子，管理对话记录历史、会话轮询，并为 `app.tsx` 提供所需属性
-- `src/app/useSessionLifecycle.ts` —— 管理会话的创建、恢复、激活、关闭以及可见历史记录的重置
-- `src/app/useSubmission.ts` —— 负责消息发送、shell 命令执行（`!cmd`）、内联插值（`{!cmd}`），以及忙碌输入模式的分发（排队/引导/中断）
-- `src/app/turnController.ts` —— 一个带状态管理的类，负责驱动对话轮次生命周期：缓冲流式数据变化，管理工具与推理状态，处理中断和消息完成后的状态转换
-- `src/app/turnStore.ts` —— 用于存储对话轮次状态的 nanostore（包含流式文本、工具信息、推理内容、子智能体状态、待办事项及操作轨迹）
-- `src/app/useConfigSync.ts` —— 在会话启动时获取 `config.get full` 的配置信息，并每5秒轮询一次配置的修改时间；应用显示设置并在配置发生变化时触发 MCP 重新加载
-- `src/app/useLongRunToolCharms.ts` —— 当工具运行时间超过8秒时，触发相关操作提示消息
-- `src/app/overlayStore.ts` / `src/app/uiStore.ts` —— 用于存储覆盖层和界面状态的 nanostore
-- `src/app/delegationStore.ts` —— 用于存储子智能体生成数量上限以及覆盖层折叠状态的 nanostore
-- `src/app/spawnHistoryStore.ts` —— 内存中的环形存储结构（保留最近10条），用于保存已完成的子智能体输出快照；在对话轮次结束时为 `/replay` 功能提供数据
-- `src/app/inputSelectionStore.ts` —— 用于存储当前活动文本输入选择范围的 nanostore
-- `src/app/gatewayContext.tsx` —— 用于网关客户端的 React 上下文
-- `src/app/gatewayRecovery.ts` —— 一个纯函数，用于在网关崩溃后决定是否重新启动并继续运行，允许3次尝试，每次尝试间隔60秒
-- `src/app/setupHandoff.ts` —— 启动外部 `hermes setup` 工具，在其运行期间暂停 Ink 应用，成功后开启新会话
-- `src/app/scroll.ts` —— 滚动视口的同时保持文本选择位置同步
-- `src/app/interfaces.ts` —— 内部接口定义（如 ComposerActions、GatewayRpc 等）
+- `src/app/createGatewayEventHandler.ts`：负责将网关事件映射为状态更新。
+- `src/app/createSlashHandler.ts`：用于处理本地的斜杠命令调度。
+- `src/app/useComposerState.ts` — 草稿模式、多行缓冲区以及队列编辑功能  
+- `src/app/useInputHandlers.ts` — 按键处理逻辑  
+- `src/app/useMainApp.ts` — 顶层组合钩子：连接所有子钩子，管理对话记录历史、会话轮询，并为 `app.tsx` 提供所需属性  
+- `src/app/useSessionLifecycle.ts` — 处理会话的创建/恢复/激活/关闭操作以及可见历史记录的重置  
+- `src/app/useSubmission.ts` — 负责消息发送、命令执行（`!cmd`）、内联插值（`{!cmd}`），以及忙碌输入模式的管理（队列/引导/中断）  
+- `src/app/turnController.ts` — 一个带状态管理的类，用于控制对话轮次流程：缓存流式数据变化，管理工具与推理状态，处理中断及消息完成状态切换  
+- `src/app/turnStore.ts` — 用于存储对话轮次相关状态的纳米存储库（包括流式文本、工具信息、推理过程、子智能体状态、待办事项及操作轨迹）  
+- `src/app/useConfigSync.ts` — 在会话启动时获取完整配置信息，并每5秒检查配置文件的修改时间；根据配置变化应用显示设置并触发MCP重新加载  
+- `src/app/useLongRunToolCharms.ts` — 当工具运行时间超过8秒时，触发相关活动提示信息  
+- `src/app/overlayStore.ts` / `src/app/uiStore.ts` — 用于存储覆盖层及用户界面状态的纳米存储库  
+- `src/app/delegationStore.ts` — 用于管理子智能体生成数量上限以及覆盖层折叠状态的纳米存储库  
+- `src/app/spawnHistoryStore.ts` — 内存中的环形缓存（最多保存最近10条），用于存储已完成的子智能体运行快照，可在需要回放时使用这些数据
+- `src/app/inputSelectionStore.ts` — 用于暴露当前文本输入选择区域的 nanostore  
+- `src/app/gatewayContext.tsx` — 用于 gateway 客户端的 React context  
+- `src/app/gatewayRecovery.ts` — 一个纯函数，用于在 gateway 发生故障后决定是否重新启动并继续运行，允许最多尝试 3 次，每次间隔 60 秒  
+- `src/app/setupHandoff.ts` — 启动外部 `hermes setup` 工具，在其运行期间暂停 Ink 的功能，成功后开启新会话  
+- `src/app/scroll.ts` — 在滚动视口的同时保持文本选择位置的同步  
+- `src/app/interfaces.ts` — 内部接口（如 ComposerActions、GatewayRpc 等）  
 
-### 斜杠命令子系统（`src/app/slash/`）
+### Slash 命令子系统（`src/app/slash/`）  
 
-- `types.ts` —— 定义 `SlashCommand` 接口以及 `SlashRunCtx` 执行上下文（包含网关 RPC、对话记录辅助函数、会话引用及过时保护机制）
-- `registry.ts` —— 按注册顺序从所有命令文件中组装出 `SLASH_COMMANDS` 列表（按核心功能 → 计费功能 → 信用额度 → 会话管理 → 操作功能 → 设置功能 → 调试功能的顺序），并提供 `findSlashCommand(name)` 方法以实现不区分大小写的查询
-- `commands/core.ts` —— 通用 TUI 命令
-- `commands/billing.ts` —— `/billing` 命令：管理 Nous 的远程消费——购买信用额度、自动重新加载以及设置消费限额
-- `commands/credits.ts` —— `/credits` 命令
-- `commands/session.ts` —— 会话及智能体相关命令
-- `commands/ops.ts` —— 操作类命令
-- `commands/setup.ts` —— `/setup` 命令
-- `commands/debug.ts` —— `/heapdump`、 `/mem` 命令
-
-顶层 `app.tsx` 会将这些组件整合为 Ink 树结构，其中包含静态对话记录输出、实时流式助手行、提示覆盖层、队列预览、状态栏、输入行以及补全列表。
+- `types.ts` — `SlashCommand` 接口以及 `SlashRunCtx` 执行上下文（包含 gateway rpc、转录辅助功能、会话引用及过时检测机制）  
+- `registry.ts` — 按注册顺序从所有命令文件中汇总出 `SLASH_COMMANDS`（依次为核心功能 → 计费功能 → 信用额度管理 → 会话管理 → 操作管理 → 设置功能 → 调试功能），并提供 `findSlashCommand(name)` 方法以实现不区分大小写的查询  
+- `commands/core.ts` — 通用 TUI 命令  
+- `commands/billing.ts` — `/billing`：管理 Nous 的远程支出——购买信用额度、自动充值及设置限额  
+- `commands/credits.ts` — `/credits`  
+- `commands/session.ts` — 会话及智能体相关命令  
+- `commands/ops.ts` — 操作类命令  
+- `commands/setup.ts` — `/setup`  
+- `commands/debug.ts` — `/heapdump`、 `/mem`
+顶层 `app.tsx` 负责将这些组件整合为 Ink 树结构，其中包含“静态”对话记录输出、实时流式助手行、提示语覆盖层、队列预览、状态规则、输入行以及补全列表。
 
 在顶层管理的状态包括：
 
-- 对话记录与流式数据状态
+- 对话记录与流式处理状态
 - 队列中的消息及输入历史记录
 - 会话生命周期状态
-- 工具处理进度与推理文本
-- 用于审批、澄清、授权执行及敏感信息输入的提示流程
+- 工具处理进度及推理文本
+- 用于确认、澄清、授权执行及输入敏感信息的提示流程
 - 斜杠命令路由逻辑
-- Tab 补全与路径补全功能
+- Tab 键补全与路径补全功能
 - 来自网关主题数据的主题状态
 
-最终，用户界面会以标准的 Ink 树结构呈现，包含静态对话记录输出、实时流式助手行、提示覆盖层、队列预览、状态栏、输入行以及补全列表。
+用户界面将以常规的 Ink 树形式呈现，包含“静态”对话记录输出、实时流式助手行、提示语覆盖层、队列预览、状态规则、输入行以及补全列表。
 
-欢迎面板的内容由 `session.info` 提供，并通过 `branding.tsx` 组件进行渲染。
+欢迎面板的内容由 `session.info` 提供，并通过 `branding.tsx` 进行渲染。
 
-## 快捷键与交互方式
+## 快捷键与交互操作
 
-当前的输入处理逻辑分散在 `app.tsx`、`components/textInput.tsx` 以及各种提示/选择器组件中。
+当前的输入功能由 `app.tsx`、`components/textInput.tsx` 以及各类提示语/选择器组件共同实现。
 
-### 主要聊天输入操作
+### 主要聊天输入功能
 
-| 键位                             | 功能描述                                                                                                                                                |
+| Key                             | Behavior                                                                                                                                                |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Enter`                         | 提交当前草稿内容                                                                                                                                |
-| 连按两次空 `Enter`             | 若队列中有消息且智能体正在处理中，则中断当前运行；若队列中有消息且智能体处于空闲状态，则发送队列中的下一条消息                 |
-| `Shift+Enter` / `Alt+Enter`     | 在当前草稿中插入换行符                                                                                                                   |
-| `\` + `Enter`                   | 将当前内容追加到多行缓冲区中（适用于不支持修饰键的终端作为备用方案）                                                               |
-| `Ctrl+C`                        | 中断当前运行，或清除当前草稿，若没有待处理内容则直接退出                                                                                       |
-| `Ctrl+D`                        | 退出应用                                                                                                                                                    |
-| `Cmd/Ctrl+G` / `Alt+G`          | 打开包含当前草稿的 `$EDITOR` 编辑器（在 VSCode/Cursor 中可使用 `Alt+G`——它们将主键绑定为“查找下一个”功能）                                     |
-| `Ctrl+L`                        | 开启新会话（功能与 `/clear` 相同）                                                                                                                          |
-| `Ctrl+V` / `Alt+V`              | 先尝试粘贴文本，若无法粘贴则尝试附加图片或文件                                                                                                 |
-| `Tab`                           | 应用当前选中的补全建议                                                                                                                             |
-| `Up/Down`                       | 若补全列表已打开，则在补全选项间切换；否则先编辑队列中的消息，再查看输入历史记录                                                     |
-| `Left/Right`                    | 移动光标位置                                                                                                                                         |
-| 按住 `Left/Right` 键移动        | 当终端发送 `Ctrl` 或 `Meta` 键与方向键组合时，按住该键可逐词移动光标                                                                       |
-| `Home` / `Ctrl+A`               | 移动到行首                                                                                                                                           |
-| `End` / `Ctrl+E`                | 移动到行尾                                                                                                                                             |
-| `Backspace`                     | 删除光标左侧的字符                                                                                                                            |
-| `Delete`                        | 删除光标右侧的字符                                                                                                                            |
-| 按住 `Backspace` 键删除        | 删除上一个单词                                                                                                                                |
-| 按住 `Delete` 键删除        | 删除下一个单词                                                                                                                                    |
-| `Ctrl+W`                        | 删除上一个单词                                                                                                                                |
-| `Ctrl+U`                        | 从光标位置向左删除直到行首                                                                                                                    |
-| `Ctrl+K`                        | 从光标位置向右删除直到行尾                                                                                                                    |
-| `Meta+B` / `Meta+F`             | 逐词移动光标                                                                                                                                            |
-| `!cmd`                          | 通过网关运行 shell 命令                                                                                                                 |
-| `{!cmd}`                        | 在发送消息前进行内联 shell 插值；队列中的草稿内容在发送前会保持原始文本形式                                                             |
-
-注意事项：
-
-- 仅当存在补全选项且未处于多行模式时，`Tab` 键才会生效。
-- 队列/历史记录导航功能也仅在非多行模式下可用。
-- `PgUp` / `PgDn` 功能由终端模拟器处理，TUI 层不支持这些操作。
-
-### 提示与选择器模式| 场景                     | 键值                | 行为描述                                          |
-| --------------------------- | ------------------- | ------------------------------------------------- |
-| 审批提示框                 | `Up/Down`, `Enter`  | 移动光标并确认所选的审批选项                     |
-| 审批提示框                 | `o`, `s`, `a`, `d`  | 快速选择“仅一次”、“当前会话”、“始终允许”、“拒绝”   |
-| 审批提示框                 | `Esc`, `Ctrl+C`     | 拒绝请求                                          |
-| 需选择选项的澄清提示框     | `Up/Down`, `Enter`  | 移动光标并确认所选选项                         |
-| 需选择选项的澄清提示框     | 单位数              | 快速选择对应编号的选项                         |
-| 需选择选项的澄清提示框     | 输入“Other”后按 `Enter` | 切换为自由文本输入模式                         |
-| 进入自由文本输入模式       | `Enter`             | 提交已输入的文本答案                               |
-| sudo/密码提示框           | `Enter`             | 提交已输入的值                                     |
-| sudo/密码提示框           | `Ctrl+C`            | 通过发送空响应取消操作                           |
-| 会话选择器恢复功能         | `Up/Down`, `Enter`  | 移动光标并继续选择已选中的会话                   |
-| 会话选择器恢复功能         | `1-9`               | 快速选择前九个可见会话中的任意一个                 |
-| 会话选择器恢复功能         | `Esc`, `Ctrl+C`     | 关闭会话选择器                                     |
+| `Enter`                         | Submit the current draft                                                                                                                                |
+| empty `Enter` twice             | If queued messages exist and the agent is busy, interrupt the current run. If queued messages exist and the agent is idle, send the next queued message |
+| `Shift+Enter` / `Alt+Enter`     | Insert a newline in the current draft                                                                                                                   |
+| `\` + `Enter`                   | Append the line to the multiline buffer (fallback for terminals without modifier support)                                                               |
+| `Ctrl+C`                        | Interrupt active run, or clear the current draft, or exit if nothing is pending                                                                         |
+| `Ctrl+D`                        | Exit                                                                                                                                                    |
+| `Cmd/Ctrl+G` / `Alt+G`          | Open `$EDITOR` with the current draft (use `Alt+G` in VSCode/Cursor — they bind the primary keystroke to Find Next)                                     |
+| `Ctrl+L`                        | New session (same as `/clear`)                                                                                                                          |
+| `Ctrl+V` / `Alt+V`              | Paste text first, then fall back to image/path attachment when applicable                                                                               |
+| `Tab`                           | Apply the active completion                                                                                                                             |
+| `Up/Down`                       | Cycle completions if the completion list is open; otherwise edit queued messages first, then walk input history                                         |
+| `Left/Right`                    | Move the cursor                                                                                                                                         |
+| modified `Left/Right`           | Move by word when the terminal sends `Ctrl` or `Meta` with the arrow key                                                                                |
+| `Home` / `Ctrl+A`               | Start of line                                                                                                                                           |
+| `End` / `Ctrl+E`                | End of line                                                                                                                                             |
+| `Backspace`                     | Delete the character to the left of the cursor                                                                                                          |
+| `Delete`                        | Delete the character to the right of the cursor                                                                                                         |
+| modified `Backspace`            | Delete the previous word                                                                                                                                |
+| modified `Delete`               | Delete the next word                                                                                                                                    |
+| `Ctrl+W`                        | Delete the previous word                                                                                                                                |
+| `Ctrl+U`                        | Delete from the cursor back to the start of the line                                                                                                    |
+| `Ctrl+K`                        | Delete from the cursor to the end of the line                                                                                                           |
+| `Meta+B` / `Meta+F`             | Move by word                                                                                                                                            |
+| `!cmd`                          | Run a shell command through the gateway                                                                                                                 |
+| `{!cmd}`                        | Inline shell interpolation before send; queued drafts keep the raw text until they are sent                                                            |
 
 备注：
 
-- 自由文本输入模式及带掩码的提示框均使用 `ink-text-input` 组件，因此其文本编辑行为遵循该组件的默认绑定规则，而非 `components/textInput.tsx` 的规则。
-- 当有阻塞性提示框打开时，主聊天输入的热键功能会被暂停。
-- 目前客户端中，澄清模式没有专用的取消快捷键；sudo和密码提示框仅通过应用层的阻塞处理函数提供 `Ctrl+C` 取消功能。
+- 仅当存在补全选项且未处于多行模式时，`Tab` 键才会触发补全功能。
+- 队列/历史记录导航功能也仅在非多行模式下可用。
+- `PgUp` / `PgDn` 键的功能由终端模拟器处理，TUI 不支持这些操作。
+
+### 提示词模式与选择器模式
+
+| 场景                     | 按键                | 行为描述                                          |
+| --------------------------- | ------------------- | ------------------------------------------------- |
+| 审批提示框                 | `Up/Down`, `Enter`  | 移动并确认所选的审批选项                         |
+| 审批提示框                 | `o`, `s`, `a`, `d`  | 快速选择“仅一次”、“当前会话”、“始终允许”、“拒绝”   |
+| 审批提示框                 | `Esc`, `Ctrl+C`     | 拒绝审批                                          |
+| 带选项的澄清提示框         | `Up/Down`, `Enter`  | 移动并确认所选的选项                             |
+| 带选项的澄清提示框         | 单位数              | 快速选择对应的编号选项                         |
+| 带选项的澄清提示框         | 输入“Other”后按 `Enter` | 切换到自由文本输入模式                         |
+| 进入自由文本输入模式       | `Enter`             | 提交输入的答案                                   |
+| sudo/密钥提示框            | `Enter`             | 提交输入的值                                     |
+| sudo/密钥提示框            | `Ctrl+C`            | 通过发送空响应取消操作                         |
+| 会话选择器恢复功能         | `Up/Down`, `Enter`  | 移动并继续选择已选会话                           |
+| 会话选择器恢复功能         | `1-9`               | 快速选择前九个可见会话中的任意一个             |
+| 会话选择器恢复功能         | `Esc`, `Ctrl+C`     | 关闭会话选择器                                   |
+
+备注：
+
+- 要区分自由文本模式与掩码提示，请使用 `ink-text-input`，此时文本编辑将遵循该库的默认绑定规则，而非 `components/textInput.tsx` 的规则。
+- 当处于阻塞提示状态时，主聊天输入的热键功能将被暂时禁用。
+- 需说明的是，当前客户端中该模式并未配备专用的取消快捷键；对于超级用户令牌和密钥相关的提示，仅能通过应用层级的阻塞处理程序提供 `Ctrl+C` 这一取消方式。
 
 ### 交互规则
 
-- 在智能体正在处理任务时输入的纯文本会被放入队列，而非立即发送。
-- 斜杠命令及 `!cmd` 格式的指令不会进入队列，即便在智能体正在运行时也会立即执行。
+- 当智能体正在处理任务时输入的纯文本会被放入队列中，而非立即发送。
+- 斜杠命令以及 `!cmd` 格式的指令不会进入队列，即便在智能体正在运行时也会立即执行。
 - 每次智能体回复后队列内容会自动清空，除非当前有正在编辑的队列项。
-- 当队列中无待编辑内容时，历史记录功能才会启用，此时 `Up/Down` 键用于编辑历史记录。
-- 在编辑队列中的草稿时，其原有的 `!cmd` 及 `{!cmd}` 格式文本会保持不变。只有当该草稿实际被发送时，Shell命令及插值功能才会生效。
-- 若将队列中的某项内容加载到输入框后再次输入纯文本，该队列项将被替换，从队列预览中移除，并提升至优先级以便下一步发送。如果智能体仍在处理任务，编辑后的内容会被移到队列最前端，在当前任务完成后发送。
-- 补全建议的触发会有60毫秒的延迟。以 `/` 开头的输入会使用 `complete.slash` 机制；以 `./`、`../`、`~/`、`/` 或 `@` 开头的尾随标记则使用 `complete.path` 机制。
-- 粘贴的文本会直接插入到草稿中，不会被换行符拆分。
-- `Cmd/Ctrl+G`（在VSCode/Cursor中为 `Alt+G`，该快捷键会拦截“查找下一个”操作的主键输入）会将当前草稿内容，包括多行缓冲区内容，写入临时文件，暂停Ink组件运行，启动 `$EDITOR` 编辑器；如果编辑器正常退出，则恢复TUI界面并提交已保存的文本。
-- 输入历史记录会存储在 `~/.hermes/.hermes_history` 目录下，或 `HERMES_HOME` 指定的路径中。
+- `Up/Down` 键会优先处理队列中的消息编辑，而历史记录仅在没有待编辑的队列项时才会显示。
+- 在编辑队列中的草稿时，其原有的 `!cmd` 和 `{!cmd}` 格式文本会保持不变。shell 命令及插值功能则会在该队列项实际被发送时才执行。
+- 如果将队列中的某项内容复制到输入框并重新输入纯文本，该队列项将被替换，从队列预览中移除，并提升为下一个待发送项。如果智能体仍在处理任务，经过编辑的项会移到队列最前端，在当前任务完成后再被发送。
+- 补全请求的延迟时间为 60 毫秒。以 `/` 开头的输入会使用 `complete.slash` 补全机制；以 `./`、`../`、`~/`、`/` 或 `@` 开头的尾随标识符则会使用 `complete.path` 补全机制。
+- 粘贴的文本会直接插入草稿中，不会被换行符拆分。
+- 按下 `Cmd/Ctrl+G`（在 VSCode/Cursor 中为 `Alt+G`，该键会拦截“查找下一个”功能的主键输入）会将当前草稿，包括多行缓冲区内容，写入临时文件，暂停 Ink 工具，启动 `$EDITOR` 编辑器；如果编辑器正常退出，则恢复 TUI 界面并发送已保存的文本。
+- 输入历史记录存储在 `~/.hermes/.hermes_history` 文件中，或位于 `HERMES_HOME` 目录下。
 
-## 渲染方式
+## 输出渲染
 
-智能体的输出可通过两种方式呈现：
+智能体的输出可以通过两种方式之一进行呈现：
 
-- 若消息内容已包含ANSI格式，`messageLine.tsx` 会直接将其打印出来；
-- 否则，`components/markdown.tsx` 会将简化的Markdown语法转换为Ink组件进行渲染。
+- 如果消息内容已包含 ANSI 格式，`messageLine.tsx` 会直接将其显示出来；  
+- 否则，`components/markdown.tsx` 会将简化的 Markdown 内容转换为 Ink 组件进行渲染。  
 
-该Markdown渲染器可处理标题、列表、块引文、表格、代码块、差异高亮显示、内联代码、强调文本、链接以及普通URL。
+该 Markdown 渲染器能够处理标题、列表、块引文、表格、代码块、差异高亮显示、内联代码、强调文本、链接以及普通 URL。  
 
-工具/状态相关的操作会在实时活动栏中显示，而对话记录行则始终聚焦在用户与智能体的轮次切换上。
+工具/状态相关的操作会显示在实时活动栏中，而对话记录则仅展示用户与助手的轮次内容。  
 
-## 提示流控制
+## 提示词流程  
 
-Python网关可以暂停主循环并请求结构化输入：
+Python 网关可以暂停主循环并请求结构化输入：  
+- `approval.request`：允许一次、仅限当前会话允许、始终允许或拒绝；  
+- `clarify.request`：从预设选项中选择或输入自定义答案；  
+- `sudo.request`：以掩码形式输入密码；  
+- `secret.request`：以掩码形式输入指定环境变量的值；  
+- `session.list`：供 `SessionPicker` 在 `/resume` 功能中使用。  
 
-- `approval.request`：允许“仅一次”、“当前会话有效”、“始终允许”或“拒绝”
-- `clarify.request`：从选项中选择或输入自定义答案
-- `sudo.request`：输入带掩码的密码
-- `secret.request`：输入指定环境变量的带掩码值
-- `session.list`：供 `SessionPicker` 组件在调用 `/resume` 时使用
+这些均为 `app.tsx` 中的状态型 UI 分支，而非独立的界面页面。  
 
-这些均为 `app.tsx` 文件中的状态驱动型UI分支，并非独立的页面。
+## 命令  
 
-## 命令列表
+以下命令由 TUI 客户端直接处理；无法识别的命令则通过 `slash.exec` 和 `command.dispatch` 传递给 Python 网关。  
 
-以下命令由TUI客户端直接处理；未被识别的命令则会通过 `slash.exec` 和 `command.dispatch` 机制传递给Python网关处理。
+### 核心命令（`core.ts`）  
+`/help`、`/quit`（别名 `/exit`）、`/update`、`/clear`（别名 `/new`）、  
+`/density`、`/copy`、`/paste`、`/details`（别名 `/detail`）、  
+`/statusbar`（别名 `/sb`）、`/queue`（别名 `/q`）、`/logs`、`/history`、  
+`/save`、`/undo`、`/retry`、`/steer`、`/mouse`（别名 `/scroll`）、  
+`/status`、`/title`、`/fortune`、`/redraw`、`/terminal-setup`  
 
-### 核心命令（`core.ts`）
-`/help`, `/quit`（别名 `/exit`）、`/update`、`/clear`（别名 `/new`）、
-`/compact`、`/copy`、`/paste`、`/details`（别名 `/detail`）、
-`/statusbar`（别名 `/sb`）、`/queue`（别名 `/q`）、`/logs`、`/history`、
-`/save`、`/undo`、`/retry`、`/steer`、`/mouse`（别名 `/scroll`）、
-`/status`、`/title`、`/fortune`、`/redraw`、`/terminal-setup`
+### 计费相关命令（`billing.ts`）  
+`/billing` —— 管理 Nous 的远程支出，包括购买额度、自动充值及设置限额。
 
-### 计费相关命令（`billing.ts`）
-`/billing` —— 管理Nous远程服务的使用费用，包括购买积分、自动充值及设置使用限额
-
-### 会话相关命令（`session.ts`）
-`/model`、`/sessions`（别名 `/switch`、`/session`、`/resume`）、
-`/background`（别名 `/bg`、`/btw`）、`/image`、`/personality`、
-`/compress`、`/branch`（别名 `/fork`）、`/voice`、`/skin`、
+### 会话 (`session.ts`)
+`/model`、`/sessions`（别名：`/switch`、`/session`、`/resume`），
+`/bg`、`/btw`、`/image`、`/personality`，
+`/compress`、`/branch`（别名：`/fork`）、`/voice`、`/skin`，
 `/indicator`、`/yolo`、`/reasoning`、`/fast`、`/busy`、`/verbose`、`/usage`
 
-### 操作管理命令（`ops.ts`）
-`/stop`、`/reload-mcp`（别名 `/reload_mcp`）、`/reload`、`/browser`、
-`/rollback`、`/agents`（别名 `/tasks`）、`/replay`、`/replay-diff`、
-`/skills`、`/reload-skills`（别名 `/reload_skills`）、`/plugins`、`/tools`
+### 操作 (`ops.ts`)
+`/stop`、`/reload-mcp`（别名：`/reload_mcp`）、`/reload`、`/browser`，
+`/rollback`、`/agents`（别名：`/tasks`）、`/replay`、`/replay-diff`，
+`/skills`、`/reload-skills`（别名：`/reload_skills`）、`/plugins`、`/tools`
 
-### 积分相关命令（`credits.ts`）
-`/credits` —— 查看Nous积分余额及为浏览器充值
+### 余额 (`credits.ts`)
+`/credits` — 查看 Nous 信用余额及浏览器充值情况
 
-### 设置相关命令（`setup.ts`）
-`/setup` —— 启动外部的 `hermes setup` 向导，该向导运行期间会暂停Ink组件的功能
+### 设置 (`setup.ts`)
+`/setup` — 启动外部 `hermes setup` 向导，运行期间暂停 Ink 功能
 
-### 调试相关命令（`debug.ts`）
-`/heapdump`、`/mem` —— 提供V8内存诊断功能
+### 调试 (`debug.ts`)
+`/heapdump`、`/mem` — V8 内存诊断工具
 
 ---
 
-以上未涵盖的指令都会被传递给以下处理路径：
-
+以上未涵盖的请求将依次通过以下处理方式：
 1. `slash.exec`
 2. `command.dispatch`
 
-这样一来，Python网关便可以独立处理别名、插件、技能以及基于注册表的命令，而无需在TUI客户端中重复实现相关逻辑。
+这样，Python 即可管理别名、插件、技能以及基于注册表的命令，而无需在 TUI 中重复实现相关逻辑。
 
-## 事件体系
+## 事件接口
 
-客户端目前处理的主要事件类型如下：
+客户端当前支持的主要事件类型：
 
-| 事件类型                     | 数据内容                                                                     |
-| ---------------------------- | --------------------------------------------------------------------------- |
+| Event                      | Payload                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
 | `gateway.ready`            | `{ skin? }`                                                                 |
 | `skin.changed`             | `{ skin }`                                                                  |
-| `session.info`             | 用于显示横幅以及工具/技能面板的会话元数据                         |
-| `message.start`            | 开始智能体内容流式输出                                             |
+| `session.info`             | session metadata for banner + tool/skill panels                             |
+| `message.start`            | start assistant streaming                                                   |
 | `message.delta`            | `{ text, rendered? }`                                                       |
 | `message.complete`         | `{ text, rendered?, usage, status }`                                        |
 | `thinking.delta`           | `{ text }`                                                                  |
@@ -285,9 +297,9 @@ Python网关可以暂停主循环并请求结构化输入：
 | `clarify.request`          | `{ question, choices?, request_id }`                                        |
 | `approval.request`         | `{ command, description, allow_permanent? }`                                |
 | `sudo.request`             | `{ request_id }`                                                            |
-| `sudo.expire`              | `{ request_id }` 清除已超时的sudo提示框                             |
+| `sudo.expire`              | `{ request_id }` clears a timed-out sudo prompt                             |
 | `secret.request`           | `{ prompt, env_var, request_id }`                                           |
-| `secret.expire`            | `{ request_id }` 清除已超时的密码提示框                           |
+| `secret.expire`            | `{ request_id }` clears a timed-out secret prompt                           |
 | `background.complete`      | `{ task_id, text }`                                                         |
 | `billing.step_up.verification` | `{ verification_url, user_code }`                                       |
 | `review.summary`           | `{ text }`                                                                  |
@@ -301,29 +313,29 @@ Python网关可以暂停主循环并请求结构化输入：
 | `subagent.progress`        | `{ text }`                                                                  |
 | `subagent.complete`        | `{ status, summary?, text?, duration_seconds? }`                            |
 | `error`                    | `{ message }`                                                               |
-| `gateway.stderr`           | 由子进程的错误输出汇总生成                                         |
-| `gateway.protocol_error`   | 由格式错误的标准输出汇总生成                                         |
+| `gateway.stderr`           | synthesized from child stderr                                               |
+| `gateway.protocol_error`   | synthesized from malformed stdout                                           |
 | `gateway.start_timeout`    | `{ cwd?, python?, stderr_tail? }`                                           |
 
 ## 主题模型
 
-客户端初始会使用 `theme.ts` 文件中定义的 `DEFAULT_THEME` 主题，随后再从 `gateway.ready` 事件中合并网关提供的主题数据。
+客户端首先使用 `theme.ts` 中定义的 `DEFAULT_THEME` 作为基础主题，随后再合并来自 `gateway.ready` 的网关界面皮肤数据。
 
-当前可覆盖的品牌定制项包括：
+当前可覆盖的品牌元素包括：
 
-- 智能体名称
-- 提示符符号
-- 欢迎语
-- 告别语
+- 代理名称
+- 提示符号
+- 欢迎文本
+- 告别文本
 
-当前可覆盖的颜色自定义项包括：
+当前可覆盖的颜色设置包括：
 
-- 横幅标题、强调色、边框颜色、背景色及暗化效果
-- 标签、确定按钮、错误提示、警告提示的颜色
+- 标题栏、强调色、边框、内容区域及背景色
+- 标签、确认按钮、错误提示及警告提示的颜色
 
-`branding.tsx` 文件会利用这些自定义值来渲染Logo、会话面板以及更新通知。
+`branding.tsx` 会利用这些值来渲染徽标、会话面板以及更新通知。  
 
-## 文件结构映射
+## 文件结构图
 
 ```text
 ui-tui/

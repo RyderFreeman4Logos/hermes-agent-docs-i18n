@@ -13,7 +13,7 @@ The client entrypoint is `src/entry.tsx`. It exits early if `stdin` is not a TTY
 `GatewayClient` spawns:
 
 ```text
-python -P -m tui_gateway.entry
+python -m tui_gateway.entry
 ```
 
 Interpreter resolution order is: `HERMES_PYTHON` → `PYTHON` → `$VIRTUAL_ENV/bin/python` → `./.venv/bin/python` → `./venv/bin/python` → `python3` (or `python` on Windows).
@@ -65,6 +65,26 @@ Tests use vitest:
 npm test         # single run
 npm run test:watch
 ```
+
+## Live agents
+
+The dock above the composer appears automatically while children are running. It shows
+actual live-child counts, task names, elapsed time, and the latest activity. Its row budget
+shrinks on short terminals; finished work remains in the existing `/agents` / `/replay` history
+rather than permanently occupying composer space. Async completion units are not counted
+as extra agents.
+
+- **Ctrl+T** expands the roster without clearing your draft; **Esc** returns.
+- **↑/↓** selects an agent, **Enter** opens its details (tools, output, files, usage).
+- **t** opens its bounded live transcript tail; **g/G** moves to top/bottom.
+- **e** opens a separate steering form. **Enter** queues guidance and **Esc** returns.
+  “Queued” means accepted for the next tool boundary, not confirmed delivery.
+- **x** requests that the selected child stop; **X** requests a subtree stop.
+- Existing sort/filter, spawn-pause, timeline, and replay controls remain available.
+
+The roster hydrates from the session-scoped `subagent.list` RPC alongside streamed events.
+Only an open tail view polls `subagent.tail`; steering uses the existing `subagent.steer` RPC.
+No model tool schema or prompt-caching behavior changes.
 
 ## App model
 
@@ -225,7 +245,7 @@ The following commands are handled directly by the TUI client. Unrecognized comm
 
 ### Core (`core.ts`)
 `/help`, `/quit` (alias `/exit`), `/update`, `/clear` (alias `/new`),
-`/compact`, `/copy`, `/paste`, `/details` (alias `/detail`),
+`/density`, `/copy`, `/paste`, `/details` (alias `/detail`),
 `/statusbar` (alias `/sb`), `/queue` (alias `/q`), `/logs`, `/history`,
 `/save`, `/undo`, `/retry`, `/steer`, `/mouse` (alias `/scroll`),
 `/status`, `/title`, `/fortune`, `/redraw`, `/terminal-setup`
@@ -235,7 +255,7 @@ The following commands are handled directly by the TUI client. Unrecognized comm
 
 ### Session (`session.ts`)
 `/model`, `/sessions` (aliases `/switch`, `/session`, `/resume`),
-`/background` (aliases `/bg`, `/btw`), `/image`, `/personality`,
+`/bg`, `/btw`, `/image`, `/personality`,
 `/compress`, `/branch` (alias `/fork`), `/voice`, `/skin`,
 `/indicator`, `/yolo`, `/reasoning`, `/fast`, `/busy`, `/verbose`, `/usage`
 
