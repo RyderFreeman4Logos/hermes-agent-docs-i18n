@@ -2361,7 +2361,7 @@
     - [Here Now]()
       - [here.now](zh/optional-skills/productivity/here-now/SKILL.md)
     - [Memento Flashcards]()
-      - [Memento抽认卡 —— 基于间隔重复法的抽认卡功能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
+      - [Memento抽认卡 —— 间隔重复抽认卡技能](zh/optional-skills/productivity/memento-flashcards/SKILL.md)
     - [Property Listings]()
       - [房产列表技能](zh/optional-skills/productivity/property-listings/SKILL.md)
     - [Shop]()
