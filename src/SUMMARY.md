@@ -3397,7 +3397,7 @@
           - [Security]()
             - [1Password](zh/website/docs/user-guide/skills/optional/security/security-1password.md)
             - [Godmode](zh/website/docs/user-guide/skills/optional/security/security-godmode.md)
-            - [OSS取证分析](zh/website/docs/user-guide/skills/optional/security/security-oss-forensics.md)
+            - [OSS 安全取证](zh/website/docs/user-guide/skills/optional/security/security-oss-forensics.md)
             - [Sherlock](zh/website/docs/user-guide/skills/optional/security/security-sherlock.md)
             - [网络渗透测试](zh/website/docs/user-guide/skills/optional/security/security-web-pentest.md)
           - [Smart Home]()
