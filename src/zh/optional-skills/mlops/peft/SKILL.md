@@ -1,6 +1,6 @@
 ---
-name: peft-fine-tuning
-description: Parameter-efficient fine-tuning for LLMs using LoRA, QLoRA, and 25+ methods. Use when fine-tuning large models (7B-70B) with limited GPU memory, when you need to train <1% of parameters with minimal accuracy loss, or for multi-adapter serving. HuggingFace's official library integrated with transformers ecosystem.
+name: peft
+description: Fine-tune large LLMs with LoRA on limited GPU memory.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
@@ -18,21 +18,21 @@ metadata:
 
 ## 何时使用 PEFT
 
-**以下情况建议使用 PEFT/LoRA：**
-- 在消费级 GPU（如 RTX 4090、A100）上对 7B–70B 规模的模型进行微调
-- 需要训练的比例低于 1%（适配器大小仅为 6MB，而完整模型需 14GB 内存）
+**在以下情况下使用 PEFT/LoRA：**
+- 在消费级 GPU（如 RTX 4090、A100）上对 7B 至 70B 规模的模型进行微调
+- 需要训练的参数占比低于 1%（适配器大小仅为 6MB，而完整模型需 14GB 内存）
 - 希望通过多个任务专用适配器实现快速迭代
 - 基于同一个基础模型部署多个微调后的版本
 
-**以下情况建议使用 QLoRA（PEFT + 量化技术）：**
+**在以下情况下使用 QLoRA（PEFT + 量化技术）：**
 - 在单块 24GB 内存的 GPU 上对 70B 规模的模型进行微调
 - 内存是主要限制因素
-- 愿意接受约 5% 的质量损失以换取更低的计算成本
+- 愿意为略低的质量接受约 5% 的性能折损
 
-**以下情况建议采用完整微调方式：**
+**在以下情况下请选择完整微调：**
 - 训练参数量较小的模型（<10亿参数）
-- 需要最高质量结果且拥有充足的计算资源
-- 模型应用场景发生显著变化，必须更新所有权重
+- 需要最高质量且拥有充足的计算资源
+- 由于领域差异较大，必须更新所有模型权重
 
 ## 快速入门
 
@@ -151,17 +151,17 @@ model = get_peft_model(model, lora_config)
 # 70B model now fits on single 24GB GPU!
 ```
 
-## LoRA参数选择
+## LoRA 参数选择
 
 ### Rank（秩）——容量与效率的平衡
 
-| 秩数 | 可训练参数量 | 内存占用 | 质量水平 | 典型应用场景 |
+| 秩数 | 可训练参数量 | 内存占用 | 效果质量 | 典型应用场景 |
 |------|--------------|----------|---------|--------------|
-| 4 | 约300万 | 极低 | 较低 | 简单任务、原型开发 |
-| **8** | 约700万 | 低 | 良好 | **推荐的首选值** |
-| **16** | 约1400万 | 中等 | 更优 | **通用微调场景** |
-| 32 | 约2700万 | 较高 | 高 | 复杂任务 |
-| 64 | 约5400万 | 高 | 最高 | 领域适配、700亿参数模型 |
+| 4 | 约 300 万 | 极低 | 较差 | 简单任务、原型开发 |
+| **8** | 约 700 万 | 低 | 良好 | **推荐的首选值** |
+| **16** | 约 1400 万 | 中等 | 更佳 | **通用微调场景** |
+| 32 | 约 2700 万 | 较高 | 高 | 复杂任务 |
+| 64 | 约 5400 万 | 高 | 最高 | 领域适配、700 亿参数模型 |
 
 ### Alpha（lora_alpha）——缩放因子
 
@@ -258,9 +258,9 @@ with model.disable_adapter():
 | IA3 | 0.01% | 几乎无 | 最快 | 少样本适配 |
 | 前缀调优 | 0.1% | 低 | 中等 | 生成内容控制 |
 | 提示词调优 | 0.001% | 几乎无 | 快 | 简单任务适配 |
-| P-Tuning v2 | 0.1% | 低 | 中等 | 自然语言理解任务 |
+| P-Tuning v2 | 0.1% | 低 | 中等 | NLU任务 |
 
-### IA3（参数极少）
+### IA3（参数量极少）
 
 ```python
 from peft import IA3Config
@@ -305,7 +305,7 @@ trainer = SFTTrainer(
 trainer.train()
 ```
 
-### 使用 Axolotl（YAML 配置）
+### 使用 Axolotl（YAML 配置文件）
 
 ```yaml
 # axolotl config.yaml
@@ -321,7 +321,7 @@ lora_target_modules:
 lora_target_linear: true  # Target all linear layers
 ```
 
-### 使用 vLLM（推理模式）
+### 使用 vLLM 进行推理
 
 ```python
 from vllm import LLM
@@ -341,7 +341,7 @@ outputs = llm.generate(
 
 ### 内存占用（Llama 3.1 8B）
 
-| 方法 | GPU内存占用 | 可训练参数量 |
+| 方法 | GPU内存 | 可训练参数量 |
 |--------|-----------|--------------|
 | 全量微调 | 60+ GB | 8B（100%） |
 | LoRA r=16 | 18 GB | 14M（0.17%） |
@@ -350,8 +350,8 @@ outputs = llm.generate(
 
 ### 训练速度（A100 80GB）
 
-| 方法 | 每秒处理Token数 | 相较于全量微调的速度倍数 |
-|--------|----------------|--------------------------|
+| 方法 | 每秒处理Token数 | 相较于全量微调的速度 |
+|--------|----------------|----------------------|
 | 全量微调 | 2,500 | 1倍 |
 | LoRA | 3,200 | 1.3倍 |
 | QLoRA | 2,100 | 0.84倍 |
@@ -413,23 +413,23 @@ TrainingArguments(learning_rate=1e-4)
 
 ## 最佳实践
 
-1. **初始参数设置 r=8-16**，若效果不佳可适当提高该值  
-2. **以 alpha = 2 * rank 作为起始值**  
-3. **为获得最佳的质量与效率平衡，建议使用注意力机制及多层感知机层**  
-4. **启用梯度检查点技术**以节省内存  
-5. **频繁保存适配器文件**（体积小，便于回滚）  
-6. **在合并模型前，务必使用保留数据集进行评估**  
-7. **在普通硬件上处理 70B 及以上规模的模型时，建议采用 QLoRA 方案**  
+1. **初始值设为 r=8-16**，若效果不佳可适当提高该数值。
+2. **以 alpha = 2 * rank 作为起始参数**。
+3. **为获得最佳的质量与效率平衡，建议使用注意力机制与多层感知机层**。
+4. **开启梯度检查点功能**，以节省内存资源。
+5. **频繁保存适配器文件**（文件体积小，便于回滚操作）。
+6. **在合并模型前，务必在保留数据集上进行评估**。
+7. 在普通硬件上处理 70B 及以上规模的模型时，建议使用 QLoRA 技术。
 
 ## 参考资料
 
-- **[高级用法](references/advanced-usage.md)** – DoRA、LoftQ、排名稳定化技术及自定义模块  
-- **[故障排除](references/troubleshooting.md)** – 常见错误、调试方法及优化技巧  
+- **[高级用法](references/advanced-usage.md)** – DoRA、LoftQ、排名稳定化技术及自定义模块
+- **[故障排查](references/troubleshooting.md)** – 常见错误、调试方法及优化技巧
 
 ## 资源链接
 
-- **GitHub 仓库**：https://github.com/huggingface/peft  
-- **官方文档**：https://huggingface.co/docs/peft  
-- **LoRA 相关论文**：arXiv:2106.09685  
-- **QLoRA 相关论文**：arXiv:2305.14314  
+- **GitHub 仓库**：https://github.com/huggingface/peft
+- **官方文档**：https://huggingface.co/docs/peft
+- **LoRA 相关论文**：arXiv:2106.09685
+- **QLoRA 相关论文**：arXiv:2305.14314
 - **模型列表**：https://huggingface.co/models?library=peft
