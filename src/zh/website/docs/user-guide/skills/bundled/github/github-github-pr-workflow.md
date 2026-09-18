@@ -8,7 +8,7 @@ description: "GitHub PR lifecycle: branch, commit, open, CI, merge"
 
 # GitHub Pull Request 工作流
 
-GitHub PR 生命周期：分支创建、代码提交、PR 提交、CI 测试、合并代码。
+GitHub PR 生命周期：分支创建、代码提交、PR 提交、CI 测试、合并合并。
 
 ## 技能元数据
 
@@ -23,22 +23,22 @@ GitHub PR 生命周期：分支创建、代码提交、PR 提交、CI 测试、�
 | 标签 | `GitHub`、`Pull-Requests`、`CI/CD`、`Git`、`Automation`、`Merge` |
 | 相关技能 | [`github-auth`](/docs/user-guide/skills/bundled/github/github-github-auth)、[`github-code-review`](/docs/user-guide/skills/bundled/github/github-github-code-review) |
 
-## 参考：完整 SKILL.md 内容
+## 参考：完整的 SKILL.md 文件
 
 :::info
-以下是当触发该技能时 Hermes 所加载的完整技能定义。技能处于激活状态时，代理程序会将此内容视为操作指令。
+以下是当触发该技能时 Hermes 所加载的完整技能定义。当技能处于激活状态时，Agent 就会看到这些指令作为操作指南。
 :::
 
 # GitHub Pull Request 工作流
 
-关于管理 PR 生命周期的完整指南。各章节首先介绍使用 `gh` 命令的方案，随后为未安装 `gh` 的机器提供 `git` + `curl` 的备用方案。
+关于管理 PR 生命周期的完整指南。每个章节首先介绍使用 `gh` 命令的方法，随后为没有 `gh` 工具的机器提供 `git` + `curl` 的替代方案。
 
 ## 先决条件
 
 - 已在 GitHub 上完成身份验证（参见 `github-auth` 技能）
-- 所处环境为拥有 GitHub 远程仓库的 git 项目目录
+- 所在目录为包含 GitHub 远程仓库的 git 项目
 
-### 快速身份验证检测
+### 快速认证检测
 
 ```bash
 # Determine which method to use throughout this workflow
@@ -51,7 +51,7 @@ else
     if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-      GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
+      GITHUB_TOKEN=$(uv run python3 "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
     fi
   fi
 fi
@@ -60,7 +60,7 @@ echo "Using: $AUTH"
 
 ### 从 Git 远程地址中提取所有者/仓库名
 
-许多 `curl` 命令都需要知道 `owner/repo` 的信息。可直接从 git 远程地址中获取该信息：
+许多 `curl` 命令都需要知道 `owner/repo` 的信息。可从 git 远程地址中获取该信息：
 
 ```bash
 # Works for both HTTPS and SSH remote URLs
@@ -73,7 +73,7 @@ echo "Owner: $OWNER, Repo: $REPO"
 
 ## 1. 分支创建
 
-此步骤完全基于 `git` 操作——无论采用何种方式结果都一致：
+此步骤完全基于 `git` 操作——无论采用何种方式，操作逻辑都完全一致：
 
 ```bash
 # Make sure you're up to date
@@ -89,7 +89,7 @@ git checkout -b feat/add-user-authentication
 - `fix/描述内容` —— 错误修复
 - `refactor/描述内容` —— 代码重构
 - `docs/描述内容` —— 文档更新
-- `ci/描述内容` —— CI/CD相关更改
+- `ci/描述内容` —— CI/CD相关修改
 
 ## 2. 提交代码变更
 
@@ -108,7 +108,7 @@ git commit -m "feat: add JWT-based user authentication
 - Add unit tests for auth flow"
 ```
 
-提交信息格式（常规提交规范）：
+提交信息格式（Conventional Commits）：
 ```
 type(scope): short description
 
@@ -161,9 +161,9 @@ curl -s -X POST \
   }"
 ```
 
-响应的 JSON 中包含 PR 的 `number` 字段——请将其保存下来，以便后续使用。
+响应的 JSON 中包含 Pull Request 的 `number` —— 请将其保存下来，以供后续命令使用。
 
-如需将任务创建为草稿，可在 JSON 正文中添加 `"draft": true`。
+如需将其创建为草稿，可在 JSON 正文中添加 `"draft": true`。
 
 ## 4. 监控 CI 状态
 
@@ -227,9 +227,9 @@ done
 
 ## 5. 自动修复 CI 失败问题
 
-当 CI 流水线失败时，系统会自动进行诊断并解决问题。该流程适用于任何认证方式。
+当 CI 流水线失败时，系统会自动进行诊断并解决问题。该机制适用于任何认证方式。
 
-### 第一步：获取失败详情
+### 步骤 1：获取失败详情
 
 **使用 gh 认证时：**
 
@@ -285,7 +285,7 @@ git push
 
 1. 检查CI状态 → 确定故障点
 2. 查看故障日志 → 理解错误原因
-3. 使用 `read_file` + `patch`/`write_file` → 修复代码
+3. 使用 `read_file` + `patch`/`write_file` → 修正代码
 4. 执行 `git add . && git commit -m "fix: ..." && git push`
 5. 等待CI构建完成 → 再次检查状态
 6. 若仍存在故障则重复上述步骤（最多尝试3次，之后需询问用户）
@@ -325,7 +325,7 @@ git checkout main && git pull origin main
 git branch -d $BRANCH
 ```
 
-合并方式：`"merge"`（合并提交）、`"squash"`、`"rebase"`。
+合并方式：`"merge"`（合并提交）、`"squash"`、`"rebase"` 
 
 ### 启用自动合并（curl命令）
 
