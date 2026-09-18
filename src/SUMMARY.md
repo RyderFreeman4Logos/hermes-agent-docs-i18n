@@ -3310,7 +3310,7 @@
           - [Email]()
             - [Agentmail](zh/website/docs/user-guide/skills/optional/email/email-agentmail.md)
           - [Finance]()
-            - [三表模型](zh/website/docs/user-guide/skills/optional/finance/finance-3-statement-model.md)
+            - [三报表模型](zh/website/docs/user-guide/skills/optional/finance/finance-3-statement-model.md)
             - [可比公司分析](zh/website/docs/user-guide/skills/optional/finance/finance-comps-analysis.md)
             - [DCF 模型](zh/website/docs/user-guide/skills/optional/finance/finance-dcf-model.md)
             - [Excel Author](zh/website/docs/user-guide/skills/optional/finance/finance-excel-author.md)
