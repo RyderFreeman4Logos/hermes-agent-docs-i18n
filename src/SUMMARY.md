@@ -1920,6 +1920,7 @@
           - [复古风格](zh/optional-skills/creative/baoyu-comic/references/tones/vintage.md)
           - [温暖风格](zh/optional-skills/creative/baoyu-comic/references/tones/warm.md)
     - [Comfyui]()
+      - [ComfyUI](zh/optional-skills/creative/comfyui/SKILL.md)
       - [References]()
         - [comfy-cli 命令参考手册](zh/optional-skills/creative/comfyui/references/official-cli.md)
         - [ComfyUI REST + WebSocket API 参考手册](zh/optional-skills/creative/comfyui/references/rest-api.md)
