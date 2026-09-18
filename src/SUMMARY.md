@@ -3245,7 +3245,7 @@
           - [Devops]()
             - [Actual Computer 的配置](zh/website/docs/user-guide/skills/optional/devops/devops-actual-setup.md)
             - [Docker 管理](zh/website/docs/user-guide/skills/optional/devops/devops-docker-management.md)
-            - [Hermes S6 容器监控功能](zh/website/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision.md)
+            - [Hermes S6 容器监控](zh/website/docs/user-guide/skills/optional/devops/devops-hermes-s6-container-supervision.md)
             - [inference.sh CLI](zh/website/docs/user-guide/skills/optional/devops/devops-inference-sh-cli.md)
             - [Pinggy 隧道](zh/website/docs/user-guide/skills/optional/devops/devops-pinggy-tunnel.md)
             - [设置向导生成器](zh/website/docs/user-guide/skills/optional/devops/devops-setup-wizard-generator.md)
