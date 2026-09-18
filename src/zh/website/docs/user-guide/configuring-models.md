@@ -6,105 +6,116 @@ sidebar_position: 3
 
 Hermes 使用两种类型的模型槽位：
 
-- **主模型**——智能体用于思考的模型。每一条用户消息、每一次工具调用循环以及每一条流式响应都会经过该模型处理。
-- **辅助模型**——智能体将部分任务分派给这些较小的模型来执行，例如上下文压缩、视觉处理（图像分析）、网页摘要生成、审批评分、MCP 工具路由、会话标题生成以及技能搜索等。每种辅助模型都有独立的槽位，且可以单独进行覆盖配置。
+- **主模型**——代理用于进行思考的核心模型。每条用户消息、每个工具调用循环以及所有流式响应都会经过该模型处理。
+- **辅助模型**——代理用于处理的一些小型任务，如上下文压缩、视觉分析（图像处理）、网页摘要生成、审批评分、MCP工具路由、会话标题生成以及技能搜索等。每种辅助模型都有独立的槽位，且可以单独进行配置覆盖。
 
-本页面介绍如何通过控制面板配置这两种模型。如果您更喜欢使用配置文件或命令行工具，请跳转到文末的[其他方法](#alternative-methods)。
+本页面介绍了如何通过控制面板配置这两种模型。如果您更喜欢使用配置文件或命令行界面，请跳转到文末的[其他配置方式](#alternative-methods)。若想在本地机器而非云服务提供商上运行模型，请参阅[本地模型](/user-guide/local-models)。
 
-:::提示 最快捷方式：Nous Portal
-[Nous Portal](/user-guide/features/tool-gateway)允许用户通过一个订阅账户获取300多种模型。在全新安装后，只需运行 `hermes setup --portal` 即可登录，并通过一条命令将 Nous 设置为默认提供商。使用 `hermes portal info` 可以查看当前已配置的模型情况。
+:::提示 最快捷方案：Nous Portal
+[Nous Portal](/user-guide/features/tool-gateway) 允许用户通过一个订阅账户获取300多种模型。在首次安装时，只需运行 `hermes setup --portal` 即可一次性登录并设置Nous作为服务提供商。使用 `hermes portal info` 可以查看当前已配置的模型信息。
 
-- 使用 Portal 订阅的用户还能享受**按令牌计费提供商10%的折扣**。
+- 使用Portal订阅服务的用户还能享受**按令牌计费的服务提供商9折优惠**。
 :::
 
-:::注意 `model:` 结构——空字符串与映射格式
-在全新安装时，默认配置文件中会包含 `model: ""`（一个表示“尚未配置”的空字符串）。首次运行 `hermes setup` 或 `hermes model` 后，该键会立即升级为包含 `provider`、`default`、`base_url` 和 `api_mode` 子键的映射格式——这与本页面以及 [`profiles.md`](./profiles.md) / [`configuration.md`](./configuration.md) 中所示的结构一致。如果您在 `config.yaml` 文件中看到空字符串，只需运行 `hermes model`（或点击控制面板中的**更改**按钮），Hermes 会自动将其转换为映射格式。
+:::note `model:` 结构 —— 空字符串与映射值
+在全新安装的情况下，自带的默认配置中 `model` 的值为 `""`（即空字符串，表示“尚未配置”）。首次运行 `hermes setup` 或 `hermes model` 后，该键会立即升级为包含 `provider`、`default`、`base_url` 和 `api_mode` 子键的映射结构——这一结构在本页面以及 [`profiles.md`](./profiles.md) / [`configuration.md`](./configuration.md) 中均有展示。如果您在 `config.yaml` 中看到空字符串，只需运行 `hermes model`（或点击控制面板中的 **Change** 按钮），Hermes 便会自动将其转换为字典格式。
 :::
 
 ## 模型页面
 
-打开控制面板，点击侧边栏中的**模型**选项。页面会显示两个部分：
+打开控制面板，点击侧边栏中的 **Models**。页面会显示两个部分：
 
-1. **模型设置**——顶部面板，用于将模型分配到各个槽位。
-2. **使用情况分析**——以卡片形式展示选定时间段内参与过会话的所有模型，同时显示令牌消耗量、成本以及功能标签。
+1. **模型设置** —— 位于顶部面板，用于将模型分配到对应槽位。
+2. **使用情况分析** —— 以排序后的卡片形式展示选定时间段内曾运行过会话的所有模型，同时显示令牌数量、成本以及能力标识。
 
 ![模型页面概览](/img/docs/dashboard-models/overview.png)
 
-最顶端的卡片即为**模型设置**面板。主行始终显示智能体在新建会话时会使用的模型。点击**更改**即可打开模型选择器。
+最顶端的卡片即为 **模型设置** 面板。主行始终显示代理在新建会话时会调用的模型。点击 **Change** 可打开选择器。
 
-## 设置主模型
+## 设置默认模型
 
-点击主模型行上的**更改**按钮：
+点击“默认模型”行上的 **Change** 按钮：
 
 ![模型选择器对话框](/img/docs/dashboard-models/picker-dialog.png)
 
 选择器包含两列内容：
 
-- **左侧**——已认证的提供商。此处仅显示您已配置的提供商（已设置API密钥、已完成OAuth认证或被定义为自定义端点的提供商）。如果某个提供商未显示，请前往**密钥**选项页添加相应的凭证。
-- **右侧**——所选提供商的精选模型列表。这些是Hermes为该提供商推荐的智能体模型，而非 `/models` 目录中完整的模型列表（在OpenRouter平台上，该目录包含400多种模型，涵盖文本转语音、图像生成及重排序等功能）。
+- **左侧**——已通过认证的提供方。此处仅显示您已配置的提供方（即设置了 API 密钥、已完成 OAuth 认证，或被定义为自定义端点的那些）。如果某个提供方未显示，请前往 **Keys** 页面并添加其凭证。
+- **右侧**——所选提供方的精选模型列表。这些是 Hermes 为该提供方推荐的智能体模型，而非原始的 `/models` 列表（在 OpenRouter 中，该列表包含 400 多种模型，涵盖文本转语音、图像生成以及重排序功能等）。
 
-在过滤框中输入内容，即可按提供商名称、标识符或模型ID进行筛选。
+在过滤框中输入内容，即可按提供方名称、标识符或模型 ID 进行筛选。
 
-选定某个模型后点击**切换**，Hermes会将其写入 `~/.hermes/config.yaml` 文件的 `model` 部分。**此操作仅适用于新建会话**——您已打开的任何聊天窗口将继续使用初始设置的模型。若要更换当前聊天窗口中的模型，可在该窗口内使用 `/model` 命令。
+选定一个模型后点击 **Switch**，Hermes 会将其写入 `~/.hermes/config.yaml` 文件的 `model` 部分。**此操作仅适用于新会话**——您已打开的任何聊天窗口将继续使用最初选定的模型。若要即时更换当前聊天的模型，可在该聊天窗口中使用 `/model` 命令。
+
+### 会话中的模型切换与上下文警告
+
+当您在**正在进行的会话中**切换模型时（通过 Herm TUI 模型选择器、`hermes` CLI，或 Telegram/Discord 上的 `/model` 命令），Hermes 会评估您的**下一条消息**是否需要针对新模型对应的上下文窗口进行**预处理压缩**。如果该会话的上下文压缩阈值已接近或超过该模型的阈值（详见 [上下文压缩](./configuration.md#context-compression)），系统会在切换回复中显示警告——该警告与针对高资源消耗模型发出的通知使用相同的 `warning_message` 路径。尽管如此，模型切换仍会立即生效；压缩操作会在模型回复之前、即**用户发送的第一条消息之后**执行。
+
+:::warning 会话中途切换会重置提示词缓存  
+提示词缓存是按照处理请求的模型来区分的，因此一旦在对话过程中更换模型——无论是通过显式的 `/model` 切换、[自动回退机制](./features/fallback-providers.md)，还是将[凭证池](./features/credential-pools.md)切换到其他账户——下一条消息就会以全额输入令牌费用重新读取整个对话历史，而无法使用缓存的（约优惠75–90%）费用。在长时间会话中，这种一次性重新读取的成本可能会超过两种模型之间每令牌的费用差异。可在必要时进行切换，但建议在对话初期或新会话开始后立即操作。  
 :::
 
-## 会话进行中的模型切换与上下文警告
+### 无人值守数据训练版本  
 
-当您在**正在进行的会话中**切换模型时（通过Herm TUI模型选择器、`hermes`命令行工具，或在Telegram/Discord上使用 `/model` 命令），Hermes会评估您的**下一条消息**是否需要针对新模型对应的上下文窗口执行**预处理上下文压缩**操作。如果会话的上下文长度已接近或超过该模型的压缩阈值（详见[上下文压缩](./configuration.md#context-compression)部分），系统会在切换回复中发出警告——这与针对高成本模型的警告机制相同。尽管如此，模型切换仍会立即生效；压缩操作会在模型响应之前的**第一条用户消息**处执行。
+带有 `-contributor` 后缀的模型（例如 `muse-spark-1.2-contributor`、`muse-spark-1.3-contributor`）价格较低，因为供应商可能会利用您的提示词和回复内容来训练模型。交互式模型选择界面始终会显示确认提示。而像看板工作进程和定时任务代理这类非交互式启动方式则无法进行此类确认，因此会被直接拒绝。  
 
-:::警告 会话进行中的模型切换会重置提示词缓存
-提示词缓存是按照处理请求的模型来区分的，因此无论是在对话过程中手动切换模型、使用[自动回退机制](./features/fallback-providers.md)还是通过[凭证池](./features/credential-pools.md)切换到其他账户，下一条消息都将以全额令牌费用重新读取整个对话历史，而无法使用缓存后的较低费用（通常可节省75–90%）。在长时间会话中，这种一次性重新读取的成本可能远高于两种模型之间的单令牌成本差异。建议在必要时再进行模型切换，最好是在对话初期或新建会话后立即操作。
-:::
+如果您同意让模型使用无人值守工作负载中的数据来进行训练，请留下明确的确认记录：
+
+```bash
+hermes config set security.allow_data_training_tiers_noninteractive true
+```
+
+每次在无人值守模式下启动时，Hermes 仍会显示完整的数据策略警告信息及确认密钥，因此工作节点日志中会保留审计追踪记录。此设置无法屏蔽与高成本模型或提供商路由相关的警告，也无法替代交互式确认提示。如需取消该功能，请使用命令 `hermes config unset security.allow_data_training_tiers_noninteractive`。
 
 ## 设置辅助模型
 
-点击**显示辅助模型**即可查看11个任务槽位：
+点击 **Show auxiliary** 可查看 11 个任务槽位：
 
-![辅助模型面板展开图](/img/docs/dashboard-models/auxiliary-expanded.png)
+![辅助面板展开状态](/img/docs/dashboard-models/auxiliary-expanded.png)
 
-所有辅助任务的默认值为 `auto`——这意味着Hermes也会尝试使用主模型来处理这些任务。如果该路径不可用或出现容量限制类故障，系统会依次尝试任务特定的 `auxiliary.<task>.fallback_chain` 配置、主模型的 `fallback_providers` / `fallback_model` 回退链，最后再使用Hermes内置的辅助模型发现机制。如果您希望为某些辅助任务选择更便宜或更快速的模型，可以对其进行单独覆盖配置。
+所有辅助任务的默认值为 `auto`，这意味着 Hermes 也会尝试使用您的主模型来处理该任务。如果该路径不可用或出现容量限制类故障，系统将依次按照任务特定的 `auxiliary.<task>.fallback_chain` 设置、主模型的 `fallback_providers`/`fallback_model` 设置，以及 Hermes 内置的辅助模型发现流程进行处理。若希望为某些次要任务选用成本更低或速度更快的模型，可对特定任务进行覆盖设置。
 
-### 常见的覆盖配置方式
+### 常见覆盖设置方式
 
-| 任务类型 | 何时进行覆盖配置 |
+| Task | When to override |
 |---|---|
-| **标题生成** | 几乎总是需要覆盖。有一些成本仅为0.10美元/百万次的快速模型，既能生成Opus格式的会话标题，也能生成其他格式的标题。在OpenRouter平台上，默认配置为此类模型为 `google/gemini-3-flash-preview`。 |
-| **视觉处理** | 当主模型不支持视觉功能时。此时可选用 `google/gemini-2.5-flash` 或 `gpt-4o-mini` 等模型。 |
-| **上下文压缩** | 当您在处理Opus/M2.7格式的上下文时消耗了大量推理令牌用于摘要生成时。使用快速聊天模型即可以1/50的成本完成相同任务。 |
-| **审批功能** | 对于 `approval_mode: smart` 模式，可使用快速且低成本的模型（如haiku、flash、gpt-5-mini）来自动判断是否批准低风险指令。使用高成本模型在此场景下属于资源浪费。 |
-| **网页提取** | 当您频繁使用 `web_extract` 功能时。其逻辑与上下文压缩类似——摘要生成无需复杂的推理过程。 |
-| **技能中心** | `hermes skills search` 功能会使用此路径。通常保持默认的 `auto` 设置即可。 |
-| **MCP工具路由** | 用于MCP工具的路由功能。通常保持默认的 `auto` 设置即可。 |
-| **任务分类指定器** | 用于处理Kanban任务分类功能（即 `hermes kanban specify` 命令），可将简略的任务描述转换为具体的执行规范。使用低成本但功能完备的模型即可满足需求。 |
-| **Kanban任务分解器** | 用于将Kanban任务分解为适合不同专业角色的子任务结构。 |
-| **角色描述生成器** | 用于生成角色描述内容（即 `hermes profile describe --auto` 命令或控制面板中的自动生成按钮）。属于短时间、低成本的调用操作。 |
-| **内容审核器** | 用于执行内容审核相关的技能使用检查功能。在基于推理能力的模型上运行此类任务可能需要数分钟，因此使用成本较低的辅助模型通常更为合适。 |
+| **Title Gen** | When title latency or cost matters more than matching the main model. Pin a known-good flash model, or set `auxiliary.title_generation.prefer_fast_model: true` to let Hermes choose the provider's fast tier. |
+| **Vision** | When your main model lacks vision support. Point it at `google/gemini-2.5-flash` or `gpt-4o-mini`. |
+| **Compression** | When you're burning reasoning tokens on Opus/M2.7 just to summarize context. A fast chat model does the job at 1/50th the cost. |
+| **Approval** | For `approval_mode: smart` — a fast/cheap model (haiku, flash, gpt-5-mini) decides whether to auto-approve low-risk commands. Expensive models here are waste. |
+| **Web Extract** | When you use `web_extract` heavily. Same logic as compression — summarization doesn't need reasoning. |
+| **Skills Hub** | `hermes skills search` uses this. Usually fine at `auto`. |
+| **MCP** | MCP tool routing. Usually fine at `auto`. |
+| **Triage Specifier** | Routes the Kanban triage specifier (`hermes kanban specify`) that expands a rough one-liner into a concrete spec. A cheap, capable model works well. |
+| **Kanban Decomposer** | Routes Kanban task decomposition — splits a triage task into a graph of child tasks for specialist profiles. |
+| **Profile Describer** | Routes profile-description generation (`hermes profile describe --auto` / the dashboard auto-generate button). Short, cheap call. |
+| **Curator** | Routes the curator skill-usage review pass. Can run for minutes on reasoning models, so a cheaper aux model is often worthwhile. |
 
-### 单个任务的覆盖配置
+### 单任务覆盖设置
 
-点击任意辅助任务行上的**更改**按钮。系统会打开相同的模型选择器，操作流程一致：选择提供商和模型后点击**切换**，该行就会显示为 `provider · model` 的格式，而不再显示 `auto (使用主模型)` 的提示。
+点击任意辅助任务行上的**更改**按钮。系统会打开相同的选项选择器，操作流程也一致——选择提供商和模型，然后点击切换按钮。该行内容将更新为显示`提供商 · 模型`，而非`auto (use main model)`。
 
-### 将所有设置恢复为自动模式
+### 将所有设置重置为自动模式
 
-如果您进行了过度的自定义配置并希望重新恢复默认设置，可点击辅助模型部分顶部的**将所有设置恢复为自动模式**按钮。这样所有槽位都会再次使用主模型。
+如果您进行了过度调整并希望重新开始，可点击辅助任务区域顶部的**将所有设置重置为自动模式**。此时所有任务都将恢复使用主模型。
 
 ## “用作”快捷功能
 
-页面上的每个模型卡片都配有**“用作”**下拉菜单。这是一个快速配置方式——只需选择在分析报告中出现的某个模型，点击**“用作”**，即可一键将其分配到主模型槽位或任意特定的辅助任务中：
+页面上的每个模型卡片都配有**用作**下拉菜单。这是一条快速路径——选择您在分析数据中看到的模型，点击**用作**，即可一键将其分配到主任务槽或任意特定的辅助任务中：
 
-![“用作”下拉菜单](/img/docs/dashboard-models/use-as-dropdown.png)
+![Use as dropdown](/img/docs/dashboard-models/use-as-dropdown.png)
 
 该下拉菜单包含以下选项：
 
-- **主模型**——与直接在主模型行上点击“更改”功能相同。
-- **所有辅助任务**——可将该模型同时分配到全部11个辅助槽位。当您希望所有辅助任务都使用同一款低成本快速模型时，此选项非常实用。
-- **单个任务选项**——包括视觉处理、网页提取、上下文压缩等任务类型。当前已分配给各任务的模型会标记为 `current`。
+- **主模型**——与直接点击主任务行上的更改按钮效果相同。
+- **所有辅助任务**——将该模型同时分配到全部11个辅助任务槽中。当您希望所有辅助任务都使用成本较低的闪存模型时，此选项非常实用。
+- **单个任务选项**——如视觉处理、网页提取、压缩等。每个任务当前所分配的模型会标有`current`字样。
 
-当前被分配了模型的卡片会显示 `main` 或 `aux · <任务类型>` 的标签，这样您就能一目了然地了解历史上哪些模型被配置在了哪些位置。
+当前已被分配了任务的卡片会显示`main`或`aux · <任务>`标签，这样您就能一目了然地看到历史模型分别被应用在了哪些任务中。
 
-## 保存到 `config.yaml` 的内容
+## 保存到`config.yaml`的内容
 
-通过控制面板保存配置后，Hermes会将相关设置写入 `~/.hermes/config.yaml` 文件，具体内容如下：
+通过控制面板保存设置时，Hermes会将相关配置写入`~/.hermes/config.yaml`文件，具体内容如下：
 
 **主模型：**
 ```yaml
@@ -128,7 +139,7 @@ auxiliary:
     download_timeout: 30
 ```
 
-**辅助功能：自动（默认值）：**
+**辅助功能：自动模式（默认值）：**
 ```yaml
 auxiliary:
   compression:
@@ -138,9 +149,9 @@ auxiliary:
     # ... other fields unchanged
 ```
 
-当同时设置 `provider: auto` 和 `model: ''` 时，Hermes 会使用该任务对应的主模型进行处理；即便主路由无法处理辅助调用，也会遵循预设的回退策略。
+当同时设置 `provider: auto` 和 `model: ''` 时，Hermes 会使用该任务对应的默认模型来处理请求；不过，如果主路由无法处理相应的辅助调用，系统仍会遵循预设的回退策略。
 
-可选的、针对特定任务的回退链则位于同一个辅助任务之下：
+针对特定任务的可选回退链则存储在同一个辅助任务目录下：
 
 ```yaml
 auxiliary:
@@ -154,35 +165,107 @@ auxiliary:
 
 当未指定 `fallback_chain` 时，`auto` 模式会先使用顶层的 `fallback_providers` 链，然后再启用内置的辅助发现链。
 
+## 各提供程序的请求选项
+
+提供程序条目（位于 `providers:` 字典中的 `providers.<name>`，或旧版 `custom_providers` 列表中的项）支持一系列参数，用于控制 Hermes 与端点之间的通信方式：
+
+**`extra_headers`** — 用于为发送至该提供程序基础 URL 的每个 LLM 请求添加额外的 HTTP 标头。这些标头会在 URL/配置文件默认值及用户自定义标头之后被应用，因此即便发生凭据更换或客户端重建，它们依然有效。该选项适用于 Cloudflare Access 服务令牌、代理认证或自定义承载方案等场景。
+
+```yaml
+providers:
+  my-gateway:
+    api: https://llm.internal.example.com/v1
+    api_key: sk-...
+    extra_headers:
+      CF-Access-Client-Id: "xxxx.access"
+      CF-Access-Client-Secret: "yyyy"
+```
+
+请求头中的值通常包含凭证信息——Hermes绝不会记录这些内容。`extra_headers`适用于兼容OpenAI的路由；而`anthropic_messages`和`bedrock_converse`这两种API模式则不使用该参数。
+
+**`discover_models`** — 将其设置为`false`（默认值为`true`）即可跳过对端点 `/models` 页面的查询，仅使用在配置项中指定的模型。这对于那些模型列表加载缓慢、不可靠或存在大量干扰信息的网关来说非常实用：
+
+```yaml
+providers:
+  my-gateway:
+    api: https://llm.internal.example.com/v1
+    discover_models: false
+    models:
+      - my-finetune-v2
+      - my-finetune-v1
+```
+
+当关闭发现功能后，模型选择器（`hermes model`、`/model`）将显示已配置的模型列表，而非实时探测结果。
+
+**`openai_native_compaction`** — 仅在对对话内容极为信任的 OpenAI 兼容端点上，才将该功能设置为 `true`。原生压缩机制会将数据负载发送至该服务提供商所配置的 `base_url` 地址：
+
+```yaml
+providers:
+  trusted-proxy:
+    api: https://llm.internal.example.com/v1
+    capabilities:
+      openai_native_compaction: true
+```
+
+对于那种仅在收到请求后才解析原始模型别名的网关，可通过针对每个模型的 `prompt_caching` 功能，将该别名标记为提示词缓存中的条目。
+
+```yaml
+providers:
+  model-proxy:
+    api: https://gateway.example.com/v1
+    transport: openai_chat  # or anthropic_messages
+    models:
+      fable:
+        context_length: 1000000
+        prompt_caching: true
+```
+
+Hermes会将该声明直接匹配到对应的提供者路由及运行时模型ID，而不会重写别名，也不会根据提供者的名称、主机或模型系列来推断其支持能力。标记布局会遵循所配置的传输协议：`openai_chat`使用与OpenAI兼容的封装格式，而`anthropic_messages`则采用原生内部块格式。若将`prompt_caching: false`设置为值，即可明确禁用某个模型的缓存标记；若不设置该参数，Hermes则会继续执行常规的提供者及模型能力检测。
+
+:::注意 旧格式
+早期的配置文件会使用顶层的`custom_providers:`列表（其中使用`base_url`而非`api`）。这种格式仍然有效，并会在执行`hermes update`操作（配置版本v12及以上）时自动迁移为`providers:`字典格式。
+:::
+
+### Nous Portal：Claude通过哪种接口传输
+Nous Portal通过两种路由来提供其`anthropic/*`模型：与OpenAI兼容的 `/v1/chat/completions`接口，以及Anthropic Messages原生的 `/v1/messages`接口。`nous.anthropic_wire`参数用于选择其中一种接口。
+
+```yaml
+nous:
+  anthropic_wire: chat     # default. "native" = the Anthropic Messages wire; "auto" = decide per session
+```
+
+目前默认值为 `chat`。原生传输方式是更优的选择（带签名的思维块能原封不动地传递，同时还能保留原生的 `cache_control` 设置），但在 Portal 的 OpenRouter 提供的路径上，当并发工具调用形成循环时，有 14%–20% 的连续请求会重新写入上一轮的提示词缓存，这相当于整个请求量的 15%–20% 用于缓存写入操作；而在相同测试中，`chat` 路径的该数值为 0。若希望恢复使用原生传输方式（例如在 Portal 端的修复版本发布后），可将参数设置为 `native`。仅 `anthropic/*` 系列模型会受此影响，Nous 平台上的其他所有模型目前均已使用 `chat`/`completions` 机制。
+
+`auto` 模式适用于 Portal 通过多个上游源提供相同模型的情况。会话初始以 `chat` 模式启动，Hermes 会识别是哪个上游响应了首次请求，只有当确认该上游能稳定使用原生传输方式时，才会将对应会话切换为原生模式——这种切换发生在两次请求之间，因此不会导致正在处理的响应丢失或现有缓存失效。目前尚无上游源被标记为“安全”，所以 `auto` 模式的表现与 `chat` 完全一致；设置该模式的目的是让切换决策基于实际测试数据而非手动配置。
+
 ## 何时生效？
 
 - **CLI**（`hermes chat`）：下一次调用 `hermes chat` 时。
-- **网关**（Telegram、Discord、Slack 等）：下一个*新*会话开始时。现有会话将保持原有的模型。如需强制所有会话都应用此更改，需重启网关（`hermes gateway restart`）。
-- **控制面板聊天标签页**（`/chat`）：下一个新的伪终端连接建立时。当前已打开的聊天会保持原有模型——可在其中使用 `/model` 命令进行热切换。
-
-这些更改不会影响正在运行的会话中的提示词缓存。这是有意为之：在会话中更换主模型需要重置缓存（系统提示词包含特定于模型的内容），而我们将其保留给聊天界面中的 `/model` 命令使用。
+- **网关**（Telegram、Discord、Slack 等）：下一个*新*会话开始时。现有会话将继续使用原有的模型。如需强制所有会话立即应用更改，可重启网关（`hermes gateway restart`）。
+- **控制面板聊天标签页**（`/chat`）：下一个新的实时文本对话窗口创建时。当前已打开的聊天窗口会保持原有模型——可在其中使用 `/model` 命令进行热切换。
+在正在运行的会话中，更新模型并不会使提示词缓存失效。这是有意为之：若需在会话内更换主模型，则必须重置缓存（因为系统提示词中包含特定于模型的内容），而我们保留通过聊天界面中的 `/model` 命令来执行此项操作。
 
 ## 故障排除
 
 ### 选择器中显示“无已认证的提供方”
 
-只有具备有效凭证的提供方才会被 Hermes 列出。请检查侧边栏中的 **Keys**——你应该能看到 API 密钥、成功的 OAuth 认证信息或自定义端点 URL。如果所需提供方不在列表中，可运行 `hermes setup` 进行配置，或前往 **Keys** 页面添加相应的环境变量。
+只有当提供方拥有有效的凭证时，Hermes才会将其列出来。请检查侧边栏中的 **Keys** —— 你应该能看到 API 密钥、成功的 OAuth 认证信息或自定义端点 URL 中的一种。如果所需提供方不在列表中，请运行 `hermes setup` 进行配置，或者前往 **Keys** 页面添加相应的环境变量。
 
-### 正在运行的聊天中主模型未发生变化
+### 正在使用的聊天窗口中的主模型并未改变
 
-这是正常现象。控制面板会保存 `config.yaml` 文件，新会话会读取该文件。而当前正在使用的聊天属于实时代理进程，会一直保留创建时的模型。若要为特定会话热切换模型，可在聊天界面中使用 `/model <名称>` 命令。
+这是正常现象。控制面板会保存 `config.yaml` 文件，新启动的会话会读取该文件。而当前打开的聊天窗口属于实时代理进程，它会保持创建时的模型版本不变。若需为该特定会话热更模型，请在聊天界面中使用 `/model <模型名称>` 命令。
 
-### 辅助模型覆盖设置“未生效”
+### 辅助模型的覆盖设置“未生效”
 
-需检查以下三点：
+请检查以下三点：
 
-1. **是否已启动新会话？**现有聊天不会重新读取配置文件。
-2. **`provider` 是否设置为除 `auto` 以外的值？**如果该字段显示为 `auto`，则任务仍在使用你的主模型。请点击 **Change** 并选择实际的提供方。
-3. **该提供方是否已完成认证？**如果你为某个任务指定了 `minimax`，但并未拥有 MiniMax API 密钥，该任务将回退到 OpenRouter 的默认提供方，并在 `agent.log` 中记录警告信息。
+1. **是否已启动新会话？** 已有的聊天窗口不会重新读取配置文件。
+2. **`provider` 的值是否设置为除 `auto` 以外的其他选项？** 如果该字段显示为 `auto`，则任务仍在使用你的主模型。请点击 **Change** 并选择真实的提供方。
+3. **该提供方是否已完成认证？** 如果你为某个任务指定了 `minimax`，但并未拥有 MiniMax API 密钥，那么该任务将会回退到 openrouter 的默认设置，并在 `agent.log` 文件中记录警告信息。
 
-### 我已选择了模型，但 Hermes 仍自动切换了提供方
+### 我已选择了模型，但 Hermes 仍自动更换了提供方
 
-在 OpenRouter（或任何聚合平台）上，纯模型名称会首先在聚合平台内部进行解析。因此，在 OpenRouter 上输入的 `claude-sonnet-4` 实际会被转换为 `anthropic/claude-sonnet-4.6`，并保持你的 OpenRouter 认证状态。但如果你在原生 Anthropic 认证环境中输入 `claude-sonnet-4`，它将保持为 `claude-sonnet-4-6` 的形式。如果出现意外的提供方切换，请确认当前使用的提供方是否符合预期——选择器始终会在对话框顶部显示当前的主模型。
+在 OpenRouter（或任何聚合平台）上，模型名称会首先在 해당聚合平台内部进行解析。因此，在 OpenRouter 上输入的 `claude-sonnet-4` 会被转换为 `anthropic/claude-sonnet-4.6`，并且仍保持通过 OpenRouter 进行身份认证。但如果在直接使用 Anthropic 身份认证的环境中输入 `claude-sonnet-4`，其名称则仍为 `claude-sonnet-4-6`。如果发现模型提供方意外发生变化，请确认当前使用的提供方确实符合预期——选择器总会将当前默认的提供方显示在对话框的顶部。
 
 ## 其他方法
 
@@ -196,17 +279,17 @@ auxiliary:
 /model claude-opus-4.6 --once                    # next turn only, then auto-restores
 ```
 
-`--global` 的功能与控制面板的 **Change** 按钮相同，同时还能直接切换正在运行的会话。
+`--global` 的作用与控制面板中的 **Change** 按钮相同，同时还能直接切换正在运行的会话。
 
-`--once` 仅适用于单轮对话，在对话结束后无论成功、出错还是被中断，都会恢复到之前的模型。所有设置都不会被保留：如果在某轮对话中途重启网关，系统会重新使用原始模型。该选项适用于将某个复杂问题转交给高性能模型处理（“仅此一次使用 Opus”），或在对简单查询时切换到低成本模型。
+`--once` 仅适用于单轮对话，在对话结束后（无论成功、出错还是被中断）都会恢复到之前的模型。所有设置都不会被保留：如果在某轮对话中途重启网关，系统会重新使用原来的模型。该选项适用于将某个复杂问题转交给更强大的模型处理（“仅此一次使用 Opus 模型”），或在对简单查询时使用成本较低的模型。
 
 :::note 提示词缓存成本
-单轮切换会导致两次破坏提供方的提示词缓存前缀（即先切换出去再切回来）。在基于缓存前缀的提供方（如 Anthropic、OpenAI）上进行的长时间会话中，下一轮对话需要重新支付全部的输入成本。因此，对于短时间会话或从低成本模型升级到高性能模型的场景，`--once` 更为合适；但在长时间的昂贵模型会话中快速提出一个简单问题，其成本可能反而高于节省的费用。
+单轮切换会导致两次打破提供方的提示词缓存前缀（即切换出去再切回来）。在基于缓存前缀的提供方（如 Anthropic、OpenAI）上进行的长时间会话中，下一轮对话需要重新支付全部的输入成本。因此，对于短时间会话或从低成本模型升级到高成本模型的场景，`--once` 更为合适；但在漫长的高成本会话中快速提出一个次要问题，其带来的成本可能反而高于节省的成本。
 :::
 
 ### 自定义别名
 
-你可以为经常使用的模型定义自己的简写名称，然后在 CLI 或任何消息平台中使用 `/model <alias>` 来调用它们。有两种等效的格式——选择最适合你工作流程的那种即可。
+为您经常使用的模型定义自定义简称，然后在运行中的会话中使用 `/model <alias>`，或在启动时使用 `hermes chat --model <alias>`。有两种等效的格式——请选择适合您工作流程的那种。
 
 **标准格式（顶层 `model_aliases:`）**——可完全控制提供方及基础 URL：
 
@@ -221,16 +304,36 @@ model_aliases:
     provider: x-ai
 ```
 
-**简短字符串格式（`model.aliases.<name>: provider/model`）**——在命令行中使用十分便捷，因为`hermes config set`仅能写入标量值，而无法设置自定义的`base_url`：
+指向自身端点的别名也可携带该端点的认证信息，认证信息可以是 `api_key`（直接值或 `"${VAR}"` 引用形式），也可以是 `key_env`（环境变量名称）。若同时设置了这两种方式，则以 `api_key` 的值为准。
+
+```yaml
+model_aliases:
+  theta:
+    model: theta-1
+    provider: custom
+    base_url: "https://theta.example.com/v1"
+    key_env: THETA_API_KEY        # or: api_key: "${THETA_API_KEY}"
+```
+
+当别名未指定任一值时，该密钥将从别名中的 **host** 字段确定——对于 `ollama.com` 接口使用 `OLLAMA_API_KEY`，对于 `api.deepseek.com` 则使用 `DEEPSEEK_API_KEY`，依此类推。该密钥绝不会继承自切换前处于激活状态的提供方，因此切换别名无法将某个提供方的密钥发送到另一个提供方的服务器上。
+
+**短字符串格式（`model.aliases.<名称>: provider/model`）**——在命令行中使用更为便捷，因为 `hermes config set` 命令既支持存储标量值，现在也支持解析内联列表/映射字面量；不过这种简写别名格式仍无法指定自定义的 `base_url`：
 
 ```bash
 hermes config set model.aliases.fav anthropic/claude-opus-4.6
 hermes config set model.aliases.grok x-ai/grok-4
 ```
 
-这两条路径都会将指令传递给同一个加载器（`hermes_cli/model_switch.py`）。在 `model_aliases:` 中定义的模型别名，会优先于 `model.aliases:` 中具有相同名称的别名。
+`hermes config set` 命令也支持内联的**列表/映射字面量**（JSON/YAML 流式格式）。请为这些内容添加引号，以确保 shell 能将其原封不动地传递过去：
 
-随后可在聊天中输入 `/model fav` 或 `/model grok`。用户自定义的别名会覆盖内置的简写名称（如 `sonnet`、`kimi`、`opus` 等）。更多详细信息请参阅 [自定义模型别名](/reference/slash-commands#custom-model-aliases)。
+> ```bash
+> hermes config set platform_toolsets.line '["clarify", "file", "web"]'
+> hermes config set display.tool_progress_overrides '{"terminal": "off"}'
+> ```
+
+这两种方式都会将配置传递给同一个加载器（`hermes_cli/model_switch.py`）。在 `model_aliases:` 中声明的条目，会优先于 `model.aliases:` 中具有相同名称的条目。
+
+之后可在聊天中使用 `/model fav` 或 `/model grok` 命令。用户自定义的别名会覆盖内置的简写名称（如 `sonnet`、`kimi`、`opus` 等）。详细参考信息请参阅 [自定义模型别名](/reference/slash-commands#custom-model-aliases)。
 
 ### `hermes model` 子命令
 
@@ -238,17 +341,17 @@ hermes config set model.aliases.grok x-ai/grok-4
 hermes model            # Interactive provider + model picker (the canonical way to switch defaults)
 ```
 
-`hermes model` 会指导您选择提供商，完成身份验证（OAuth 流程会自动打开浏览器；而使用 API 密钥的提供商则会提示输入密钥），随后从该提供商提供的精选模型目录中挑选具体的模型。所选模型的信息会被写入 `~/.hermes/config.yaml` 文件中的 `model.provider` 和 `model.default` 字段。
+`hermes model` 会引导您完成选择提供商、进行身份验证（OAuth 流程会自动打开浏览器；而基于 API 密钥的提供商则会提示输入密钥），随后从该提供商精选的模型目录中挑选具体的模型。所选模型信息会被写入 `~/.hermes/config.yaml` 文件中的 `model.provider` 和 `model.default` 字段。
 
-若不想启动选择器即可查看所有提供商和模型，可使用控制面板或以下的 REST 接口。要查看 CLI 当前实际使用的设置，可执行 `hermes config get model --json` 和 `hermes status` 命令。
+若不想启动选择界面即可查看所有提供商和模型，可使用控制面板或以下的 REST 接口。要查看 CLI 当前实际使用的配置，可执行 `hermes config get model --json` 以及 `hermes status` 命令。
 
 ### 直接编辑配置
 
-可直接修改 `~/.hermes/config.yaml` 文件，然后重启读取该文件的进程。完整的配置结构请参考 [配置参考文档](./configuration.md)。
+可直接修改 `~/.hermes/config.yaml` 文件，然后重启读取该文件的程序。完整的配置结构请参考 [配置参考文档](./configuration.md)。
 
 ### REST API
 
-控制面板使用了三个接口，非常适合用于编写脚本：
+控制面板使用了三个接口，非常适合用于脚本编写：
 
 ```bash
 # List authenticated providers + curated model lists
@@ -278,4 +381,4 @@ curl -X POST -H "Content-Type: application/json" -H "X-Hermes-Session-Token: $TO
   http://localhost:PORT/api/model/set
 ```
 
-在系统启动时，会将该会话令牌注入到控制台页面的 HTML 代码中，并且每次服务器重启后都会更换。如果您需要针对正在运行的控制台编写脚本，可以通过浏览器的开发者工具获取该令牌（地址为 `window.__HERMES_SESSION_TOKEN__`）。
+在系统启动时，会将该会话令牌注入到控制台页面的 HTML 代码中，并且在每次服务器重启时都会更新。如果您需要针对正在运行的控制台编写脚本，可以通过浏览器的开发者工具获取该令牌（位于 `window.__HERMES_SESSION_TOKEN__` 中）。
