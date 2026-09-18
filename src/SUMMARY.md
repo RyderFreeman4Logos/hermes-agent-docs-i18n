@@ -2581,6 +2581,8 @@
       - [Claude Code — Hermes编排指南](zh/skills/autonomous-ai-agents/claude-code/SKILL.md)
     - [Codex]()
       - [Codex CLI](zh/skills/autonomous-ai-agents/codex/SKILL.md)
+    - [Computer Use]()
+      - [计算机操作功能（通用型，支持所有模型，跨平台）](zh/skills/autonomous-ai-agents/computer-use/SKILL.md)
     - [Hermes Agent]()
       - [Hermes Agent](zh/skills/autonomous-ai-agents/hermes-agent/SKILL.md)
       - [References]()
