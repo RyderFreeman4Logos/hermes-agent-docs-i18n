@@ -3058,7 +3058,7 @@
       - [机器人模式](zh/website/docs/user-guide/bot-mode.md)
       - [检查点与 `/rollback` 功能](zh/website/docs/user-guide/checkpoints-and-rollback.md)
       - [CLI 接口](zh/website/docs/user-guide/cli.md)
-      - [配置](zh/website/docs/user-guide/configuration.md)
+      - [Hermes Agent 配置](zh/website/docs/user-guide/configuration.md)
       - [模型配置](zh/website/docs/user-guide/configuring-models.md)
       - [Hermes 桌面端](zh/website/docs/user-guide/desktop.md)
       - [Hermes Docker 部署指南](zh/website/docs/user-guide/docker.md)
